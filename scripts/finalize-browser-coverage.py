@@ -2,6 +2,7 @@
 """Collect source-matched public reports from exactly one isolated browser run."""
 import argparse
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -10,6 +11,8 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--run',type=Path)
 parser.add_argument('--run-index',type=Path)
 parser.add_argument('--go-unit-run',type=Path)
+parser.add_argument('--unit-directory',type=Path,
+                    help='Passed full frontend unit run to combine; supports a fresh directory without overwriting retained evidence.')
 parser.add_argument('--enforce',action='store_true')
 parser.add_argument('--output',type=Path,default=ROOT/'.local/coverage/browser')
 args=parser.parse_args()
@@ -24,7 +27,10 @@ else:
     candidates=list((ROOT/'.local/browser-tests').glob('*/use-case-results.json'))
     if len(candidates)!=1:raise SystemExit('Pass --run explicitly unless this checkout has exactly one browser report.')
     run=candidates[0].parent
-unit=ROOT/'.local/coverage/frontend-unit/coverage-final.json'
+unit_directory=args.unit_directory or Path(os.environ.get('GATEGOLD_UNIT_COVERAGE_DIRECTORY',ROOT/'.local/coverage/frontend-unit'))
+unit=unit_directory.resolve()/'coverage-final.json'
+if (args.unit_directory is not None or os.environ.get('GATEGOLD_UNIT_COVERAGE_DIRECTORY')) and not unit.is_file():
+    raise SystemExit('The explicitly selected frontend unit coverage profile is missing.')
 command=['node',str(ROOT/'scripts/report-browser-code-coverage.mjs'),str(run/'js-coverage'),str(args.output/'code')]
 if unit.is_file():command.append(str(unit))
 subprocess.run(command,cwd=ROOT,check=True)

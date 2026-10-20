@@ -19,6 +19,8 @@ The Makefile and the browser, unit-coverage, backend-coverage, contract-generati
 
 Soft budgets trigger cleanup between jobs. Active jobs, pinned evidence and incomplete work are protected; if they prevent meeting a budget, admission fails instead of deleting them. The watchdog does not control unrelated applications or guarantee against another process filling the disk between samples.
 
+Commands inside a captured test source can share the parent watchdog only when its lease is still held, the exact test run is registered in that lease, and the source directory has a valid regular manifest. Only the owned UUID run locations under `.local/go-verification` and `.local/browser-tests` qualify. Symlink aliases and unregistered copies are refused. Nested migration commands therefore use the same monitored cache and concurrency slot as their full verification run.
+
 ## Inspect and clean
 
 ```bash

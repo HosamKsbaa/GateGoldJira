@@ -7,7 +7,7 @@ from pathlib import Path
 import shutil
 import tempfile
 
-FOLDERS = ("backend", "frontend/src", "frontend/e2e", "frontend/tooling", "frontend/public", "scripts", "specs", "infra/sql", "infra/compute", "docs/use-cases", "integrations/antigravity/src", "integrations/antigravity/tests", "integrations/antigravity/plugin")
+FOLDERS = ("backend", "frontend/src", "frontend/e2e", "frontend/tooling", "frontend/public", "scripts", "specs", "infra/sql", "infra/compute", "docs/use-cases", "identity/auth0/src", "integrations/antigravity/src", "integrations/antigravity/tests", "integrations/antigravity/plugin")
 IGNORED = {".cache", ".local", "node_modules", "vendor", "__pycache__", "dist"}
 BACKEND_SUFFIXES = {".go", ".mod", ".sum", ".sql", ".json", ".yaml", ".yml", ".txt", ".csv"}
 REQUIRED = {
@@ -24,14 +24,19 @@ def source_files(root: Path) -> list[Path]:
         for path in (root / folder).rglob("*"):
             if not path.is_file() or any(part in IGNORED for part in path.relative_to(root).parts):
                 continue
+            # Published coverage is derived output. Treating the report being
+            # produced as a source input makes publication invalidate itself.
+            if path.is_relative_to(root / 'docs/use-cases/current-coverage'):
+                continue
             if folder == "backend" and path.suffix not in BACKEND_SUFFIXES:
                 continue
             files.add(path.relative_to(root))
-    for name in ("Makefile", "compose.dev.yaml", ".node-version", ".github/workflows/ci.yml", "integrations/antigravity/build.mjs", "integrations/antigravity/README.md"):
+    for name in ("AGENTS.md", "Makefile", "compose.dev.yaml", ".node-version", ".github/workflows/ci.yml", "identity/auth0/README.md", "integrations/antigravity/build.mjs", "integrations/antigravity/README.md"):
         if (root / name).is_file():
             files.add(Path(name))
     for pattern in ("*.json", "*.ts"):
         files.update(path.relative_to(root) for path in (root / "frontend").glob(pattern))
+        files.update(path.relative_to(root) for path in (root / "identity/auth0").glob(pattern))
         files.update(path.relative_to(root) for path in (root / "integrations/antigravity").glob(pattern))
     return sorted(files)
 
@@ -61,7 +66,7 @@ def capture(root: Path, destination: Path) -> None:
             (staging / "source-manifest.json").write_text(json.dumps(manifest, sort_keys=True))
             # Installed dependencies and compiler caches are immutable inputs or
             # concurrency-safe caches. Application source remains a private copy.
-            for relative in ("frontend/node_modules", "integrations/antigravity/node_modules", ".tools", ".cache"):
+            for relative in ("frontend/node_modules", "identity/auth0/node_modules", "integrations/antigravity/node_modules", ".tools", ".cache"):
                 if (root / relative).exists():
                     target = staging / relative
                     target.parent.mkdir(parents=True, exist_ok=True)

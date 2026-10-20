@@ -112,6 +112,46 @@ class StorageWatchdogTests(unittest.TestCase):
                 wrapper.wait()
         self.assertEqual([action for action in self.actions() if action != 'check'], ['begin', 'end'])
 
+    def test_signal_during_waitpid_does_not_reenter_the_child_wait_lock(self):
+        # Python holds Popen's waitpid lock around this real OS boundary. Deliver
+        # the signal there deterministically rather than relying on host load.
+        import time
+        child_ready = self.root / 'locked-child-ready'
+        signal_sent = self.root / 'signal-from-waitpid'
+        child = ('import os,time,pathlib; pathlib.Path(' + repr(str(child_ready)) +
+                 ').write_text(str(os.getpid())); time.sleep(60)')
+        source = '''import importlib.util,os,pathlib,signal,sys
+spec=importlib.util.spec_from_file_location('owned_guard',sys.argv[1])
+guard=importlib.util.module_from_spec(spec);spec.loader.exec_module(guard)
+ready=pathlib.Path(sys.argv[3]);sent=pathlib.Path(sys.argv[4])
+original=os.waitpid
+def waitpid(pid,options):
+ if options==os.WNOHANG and ready.exists() and not sent.exists():
+  sent.write_text(str(pid));os.kill(os.getpid(),signal.SIGTERM)
+ return original(pid,options)
+os.waitpid=waitpid
+sys.exit(guard.run(pathlib.Path(sys.argv[2]),'fixture',[],[sys.executable,'-c',sys.argv[5]],interval=.05))
+'''
+        wrapper = subprocess.Popen([sys.executable, '-c', source, str(ROOT / 'scripts/with-project-storage.py'), str(self.root), str(child_ready), str(signal_sent), child], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        try:
+            deadline = time.monotonic() + 5
+            while not signal_sent.exists() and time.monotonic() < deadline:
+                time.sleep(.01)
+            self.assertTrue(signal_sent.exists(), 'The signal must reach the actual waitpid boundary.')
+            self.assertEqual(signal_sent.read_text(), child_ready.read_text())
+            self.assertEqual(wrapper.wait(timeout=5), 143)
+        finally:
+            if wrapper.poll() is None:
+                # A hung wrapper still owns/reaps this direct child's PID. Do
+                # not signal its old numeric group after a successful exit.
+                if child_ready.exists():
+                    try:os.killpg(int(child_ready.read_text()), signal.SIGKILL)
+                    except ProcessLookupError:pass
+                wrapper.kill()
+            wrapper.wait()
+        self.assertEqual([action for action in self.actions() if action != 'check'], ['begin', 'end'])
+        self.assertEqual(list((self.root / '.local/storage/leases').iterdir()), [])
+
     def test_owned_descendant_is_stopped_after_its_leader_has_exited(self):
         import time
         marker = self.root / 'descendant'

@@ -27,10 +27,38 @@ def inherited_lease(root):
     lease = os.environ.get('GATEGOLD_STORAGE_LEASE', '')
     if len(lease) != 32 or any(c not in '0123456789abcdef' for c in lease):
         return False
-    if os.environ.get('GATEGOLD_STORAGE_ROOT') != str(root):
+    owner_text = os.environ.get('GATEGOLD_STORAGE_ROOT', '')
+    owner = Path(owner_text)
+    if not owner.is_absolute() or str(owner.resolve()) != owner_text:
         return False
-    directory = root / '.local/storage/leases'
-    if any((root / name).is_symlink() for name in ('.local', '.local/storage', '.local/storage/leases')):
+    captured_run = None
+    if root != owner:
+        try:
+            relative = root.relative_to(owner)
+        except ValueError:
+            return False
+        parts = relative.parts
+        if (len(parts) != 4 or parts[0] != '.local' or parts[1] not in ('go-verification', 'browser-tests')
+                or len(parts[2]) != 32 or any(c not in '0123456789abcdef' for c in parts[2])
+                or parts[3] != 'source'
+                or any((owner.joinpath(*parts[:index])).is_symlink() for index in range(1, 5))):
+            return False
+        manifest = root / 'source-manifest.json'
+        if not manifest.is_file() or manifest.is_symlink():
+            return False
+        try:
+            sources = json.loads(manifest.read_text())
+        except (OSError, ValueError):
+            return False
+        if not isinstance(sources, dict) or not sources or any(
+                not isinstance(name, str) or not name or Path(name).is_absolute() or '..' in Path(name).parts
+                or not isinstance(digest, str) or len(digest) != 64
+                or any(c not in '0123456789abcdef' for c in digest)
+                for name, digest in sources.items()):
+            return False
+        captured_run = Path(*parts[:3]).as_posix()
+    directory = owner / '.local/storage/leases'
+    if any((owner / name).is_symlink() for name in ('.local', '.local/storage', '.local/storage/leases')):
         return False
     metadata, lock = directory / (lease + '.json'), directory / (lease + '.lock')
     if metadata.is_symlink() or lock.is_symlink() or not metadata.is_file():
@@ -40,7 +68,12 @@ def inherited_lease(root):
             try:
                 fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
             except BlockingIOError:
-                return json.loads(metadata.read_text()).get('locked') is True
+                value = json.loads(metadata.read_text())
+                if not isinstance(value, dict):
+                    return False
+                return value.get('locked') is True and (captured_run is None or (
+                    value.get('version') == 1 and value.get('leaseId') == lease
+                    and isinstance(value.get('paths'), list) and captured_run in value['paths']))
     except (OSError, ValueError):
         pass
     return False
@@ -81,7 +114,13 @@ def run(root, kind, paths, command, interval=15):
     if inherited_lease(root):
         # The outer command owns admission, watchdog and the process group.
         if paths:
-            arguments = [sys.executable, str(root / 'scripts/project-storage.py'), '--root', str(root),
+            owner = Path(os.environ['GATEGOLD_STORAGE_ROOT'])
+            if owner != root:
+                if any(Path(path).is_absolute() or '..' in Path(path).parts for path in paths):
+                    raise ValueError('Captured commands may register only paths inside their owned source run.')
+                # All nested outputs belong to the already registered run.
+                paths = [Path(*root.relative_to(owner).parts[:3]).as_posix()]
+            arguments = [sys.executable, str(owner / 'scripts/project-storage.py'), '--root', str(owner),
                          'protect', '--lease', os.environ['GATEGOLD_STORAGE_LEASE']]
             for path in paths:
                 arguments.extend(['--path', path])
@@ -99,8 +138,8 @@ def run(root, kind, paths, command, interval=15):
     def interrupted(number, _frame):
         nonlocal requested_signal
         requested_signal = number
-        if process is not None:
-            stop_owned_group(process)
+        # A signal may interrupt Popen.wait while its waitpid lock is held.
+        # Never re-enter poll/wait or a cleanup subprocess from that handler.
 
     previous = {number: signal.signal(number, interrupted) for number in (signal.SIGINT, signal.SIGTERM)}
     try:
@@ -117,30 +156,36 @@ def run(root, kind, paths, command, interval=15):
         environment = os.environ.copy()
         environment.update(GATEGOLD_STORAGE_LEASE=lease, GATEGOLD_STORAGE_ROOT=str(root))
         process = subprocess.Popen(command, env=environment, start_new_session=True)
+        next_check = time.monotonic() + interval
         while True:
             if requested_signal:
                 stop_owned_group(process)
                 return 128 + requested_signal
             try:
-                status = process.wait(timeout=interval)
+                # Observe cancellation promptly without running the disk scan
+                # more often than the configured watchdog interval.
+                status = process.wait(timeout=min(.1, max(0, next_check - time.monotonic())))
                 return 128 + requested_signal if requested_signal else (status if status >= 0 else 128 - status)
             except subprocess.TimeoutExpired:
+                if requested_signal or time.monotonic() < next_check:
+                    continue
                 result = subprocess.run(base + ['check'], capture_output=True, text=True)
                 if result.returncode:
                     print('Storage watchdog stopped this command: ' + (result.stdout or result.stderr).strip(), file=sys.stderr)
                     stop_owned_group(process)
                     return 125
+                next_check = time.monotonic() + interval
     finally:
         if process is not None:
             stop_owned_group(process)
-        for number, handler in previous.items():
-            signal.signal(number, handler)
         if admitted:
             result = subprocess.run(base + ['end', '--lease', lease], capture_output=True, text=True)
             if result.returncode:
                 print('Storage lease cleanup needs attention: ' + (result.stderr or result.stdout).strip(), file=sys.stderr)
         os.close(descriptor)
         lock.unlink(missing_ok=True)
+        for number, handler in previous.items():
+            signal.signal(number, handler)
 
 
 def main():
@@ -152,6 +197,9 @@ def main():
     args = parser.parse_args()
     command = args.command[1:] if args.command[:1] == ['--'] else args.command
     try:
+        absolute_root = args.root.absolute()
+        if any(path.is_symlink() for path in (absolute_root, *absolute_root.parents)):
+            raise ValueError('Storage roots must not use symlink aliases.')
         return run(args.root.resolve(), args.kind, args.path, command)
     except (ValueError, OSError) as error:
         print('Storage guard: ' + str(error), file=sys.stderr)

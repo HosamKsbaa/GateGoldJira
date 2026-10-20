@@ -1,0 +1,55 @@
+{
+  "environment": "isolated authenticated REST + MCP, 100k canonical issues in one hot project, 100 simultaneous users; no cloud acceptance",
+  "cloudAcceptance": false,
+  "generatedAt": "2026-10-14T15:52:05.400847707Z",
+  "goVersion": "go1.27.2",
+  "workload": {
+    "activeUsers": 100,
+    "hotProjectIssues": 100000,
+    "issues": 100000
+  },
+  "measurements": [
+    {
+      "action": "mixed/read-search",
+      "trials": 1000,
+      "p50Ms": 480.94,
+      "p99Ms": 569.1,
+      "p95Ms": 546.767,
+      "maxMs": 643.309,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "mixed/read-broad-board",
+      "trials": 10,
+      "p50Ms": 1714.407,
+      "p99Ms": 2373.923,
+      "p95Ms": 2373.923,
+      "maxMs": 2373.923,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "mixed/write-priority",
+      "trials": 200,
+      "p50Ms": 1415.384,
+      "p99Ms": 1914.954,
+      "p95Ms": 1882.819,
+      "maxMs": 1926.537,
+      "localBudgetMs": 750
+    },
+    {
+      "action": "mixed/write-comment",
+      "trials": 100,
+      "p50Ms": 1006.836,
+      "p99Ms": 1273.355,
+      "p95Ms": 1249.988,
+      "maxMs": 1286.192,
+      "localBudgetMs": 750
+    }
+  ],
+  "observedHeapPeakBytes": 83746920,
+  "poolMaxConnections": 10,
+  "poolAcquireCount": 2820,
+  "poolAcquireMs": 768444.992,
+  "poolEmptyAcquireCount": 2813,
+  "locksWaitingAtEnd": 0
+}

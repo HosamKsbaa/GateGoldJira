@@ -1,0 +1,173 @@
+{
+  "environment": "local-loopback PostgreSQL; no Cloud target",
+  "cloudAcceptance": false,
+  "generatedAt": "2026-10-14T16:17:12.90557242Z",
+  "goVersion": "go1.27.2",
+  "workload": {
+    "activity_events": 50000,
+    "arabicIssues": 4000,
+    "boards": 60,
+    "comments": 20000,
+    "datedIssues": 5000,
+    "issue_dependencies": 1000,
+    "issues": 10000,
+    "labels": 200,
+    "notifications": 50000,
+    "pictures": 1000,
+    "projects": 20,
+    "subtasks": 2000,
+    "users": 51
+  },
+  "measurements": [
+    {
+      "action": "project-list",
+      "trials": 100,
+      "p50Ms": 3.642,
+      "p99Ms": 5.861,
+      "p95Ms": 4.276,
+      "maxMs": 10.741,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "issue-detail",
+      "trials": 100,
+      "p50Ms": 5.213,
+      "p99Ms": 13.7,
+      "p95Ms": 8.937,
+      "maxMs": 18.417,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "issue-search-Arabic-labels",
+      "trials": 100,
+      "p50Ms": 45.446,
+      "p99Ms": 67.451,
+      "p95Ms": 62.505,
+      "maxMs": 68.066,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "board-counts-2000-issues",
+      "trials": 100,
+      "p50Ms": 117.095,
+      "p99Ms": 191.336,
+      "p95Ms": 153.203,
+      "maxMs": 202.618,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "board-page-bounded",
+      "trials": 100,
+      "p50Ms": 150.233,
+      "p99Ms": 197.431,
+      "p95Ms": 180.892,
+      "maxMs": 207.514,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "comments-page-500-comments",
+      "trials": 100,
+      "p50Ms": 6.993,
+      "p99Ms": 13.824,
+      "p95Ms": 8.732,
+      "maxMs": 18.577,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "inbox-summary-50000",
+      "trials": 100,
+      "p50Ms": 13.141,
+      "p99Ms": 20.42,
+      "p95Ms": 18.588,
+      "maxMs": 22.983,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "inbox-page-50000",
+      "trials": 100,
+      "p50Ms": 17.939,
+      "p99Ms": 29.751,
+      "p95Ms": 26.336,
+      "maxMs": 40.23,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "activity-page-50000",
+      "trials": 100,
+      "p50Ms": 11.586,
+      "p99Ms": 18.519,
+      "p95Ms": 15.634,
+      "maxMs": 18.935,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "labels-page",
+      "trials": 100,
+      "p50Ms": 3.491,
+      "p99Ms": 5.182,
+      "p95Ms": 4.048,
+      "maxMs": 8.249,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "issue-update",
+      "trials": 100,
+      "p50Ms": 7.519,
+      "p99Ms": 20.272,
+      "p95Ms": 10.647,
+      "maxMs": 31.516,
+      "localBudgetMs": 750
+    },
+    {
+      "action": "issue-create",
+      "trials": 100,
+      "p50Ms": 26.98,
+      "p99Ms": 42.408,
+      "p95Ms": 37.242,
+      "maxMs": 44.811,
+      "localBudgetMs": 750
+    },
+    {
+      "action": "comment-and-next-inbox",
+      "trials": 100,
+      "p50Ms": 11.53,
+      "p99Ms": 21.317,
+      "p95Ms": 20.234,
+      "maxMs": 22.102,
+      "localBudgetMs": 5000
+    },
+    {
+      "action": "picture-upload-10MiB",
+      "trials": 100,
+      "p50Ms": 143.36,
+      "p99Ms": 166.467,
+      "p95Ms": 160.24,
+      "maxMs": 172.855,
+      "localBudgetMs": 30000
+    },
+    {
+      "action": "picture-download-1MiB",
+      "trials": 100,
+      "p50Ms": 8.557,
+      "p99Ms": 14.805,
+      "p95Ms": 10.663,
+      "maxMs": 18.028,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "50-concurrent-users-round",
+      "trials": 100,
+      "p50Ms": 1130.43,
+      "p99Ms": 1339.053,
+      "p95Ms": 1278.967,
+      "maxMs": 1352.712,
+      "localBudgetMs": 5000
+    }
+  ],
+  "observedHeapPeakBytes": 113282232,
+  "poolMaxConnections": 10,
+  "poolAcquireCount": 16397,
+  "poolAcquireMs": 2223775.67,
+  "poolEmptyAcquireCount": 9100,
+  "locksWaitingAtEnd": 0
+}

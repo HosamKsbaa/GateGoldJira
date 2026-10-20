@@ -1,0 +1,252 @@
+{
+  "environment": "isolated loopback HTTP + real PostgreSQL + pgx prepared SQL; text/default/alternate-sort search request-local custom planning; no cloud target",
+  "cloudAcceptance": false,
+  "generatedAt": "2026-10-14T16:08:44.646366015Z",
+  "goVersion": "go1.27.2",
+  "workload": {
+    "hotProjectIssues": 95000,
+    "issues": 100000
+  },
+  "measurements": [
+    {
+      "action": "force_generic_plan/number-global",
+      "trials": 20,
+      "p50Ms": 3.523,
+      "p99Ms": 8.176,
+      "p95Ms": 3.79,
+      "maxMs": 8.176,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/complete-key",
+      "trials": 20,
+      "p50Ms": 40.988,
+      "p99Ms": 55.086,
+      "p95Ms": 54.176,
+      "maxMs": 55.086,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/title-literal",
+      "trials": 20,
+      "p50Ms": 40.753,
+      "p99Ms": 55.812,
+      "p95Ms": 53.449,
+      "maxMs": 55.812,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/key-prefix",
+      "trials": 20,
+      "p50Ms": 80.26,
+      "p99Ms": 106.027,
+      "p95Ms": 93.462,
+      "maxMs": 106.027,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/short-Arabic-no-match",
+      "trials": 20,
+      "p50Ms": 107.964,
+      "p99Ms": 127.259,
+      "p95Ms": 124.951,
+      "maxMs": 127.259,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/empty-query",
+      "trials": 20,
+      "p50Ms": 48.287,
+      "p99Ms": 89.986,
+      "p95Ms": 78.712,
+      "maxMs": 89.986,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/number-global",
+      "trials": 20,
+      "p50Ms": 7.462,
+      "p99Ms": 9.492,
+      "p95Ms": 9.43,
+      "maxMs": 9.492,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/complete-key",
+      "trials": 20,
+      "p50Ms": 37.785,
+      "p99Ms": 49.726,
+      "p95Ms": 48.878,
+      "maxMs": 49.726,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/title-literal",
+      "trials": 20,
+      "p50Ms": 39.128,
+      "p99Ms": 52.779,
+      "p95Ms": 47.873,
+      "maxMs": 52.779,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/key-prefix",
+      "trials": 20,
+      "p50Ms": 78.719,
+      "p99Ms": 111.34,
+      "p95Ms": 98.385,
+      "maxMs": 111.34,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/short-Arabic-no-match",
+      "trials": 20,
+      "p50Ms": 112.582,
+      "p99Ms": 128.382,
+      "p95Ms": 127.849,
+      "maxMs": 128.382,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/empty-query",
+      "trials": 20,
+      "p50Ms": 47.315,
+      "p99Ms": 60.632,
+      "p95Ms": 54.336,
+      "maxMs": 60.632,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_generic_plan/number-global",
+      "trials": 20,
+      "p50Ms": 3.649,
+      "p99Ms": 8.902,
+      "p95Ms": 5.457,
+      "maxMs": 8.902,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_generic_plan/complete-key",
+      "trials": 20,
+      "p50Ms": 43.614,
+      "p99Ms": 57.21,
+      "p95Ms": 56.704,
+      "maxMs": 57.21,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_generic_plan/key-prefix",
+      "trials": 20,
+      "p50Ms": 83.616,
+      "p99Ms": 107.869,
+      "p95Ms": 97.588,
+      "maxMs": 107.869,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_generic_plan/short-Arabic-no-match",
+      "trials": 20,
+      "p50Ms": 123.152,
+      "p99Ms": 248.82,
+      "p95Ms": 180.261,
+      "maxMs": 248.82,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_generic_plan/empty-query",
+      "trials": 20,
+      "p50Ms": 57.692,
+      "p99Ms": 104.956,
+      "p95Ms": 85.623,
+      "maxMs": 104.956,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_generic_plan/type-ID-filter",
+      "trials": 20,
+      "p50Ms": 60.709,
+      "p99Ms": 83.73,
+      "p95Ms": 81.644,
+      "maxMs": 83.73,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_generic_plan/priority-ID-sort",
+      "trials": 20,
+      "p50Ms": 337.531,
+      "p99Ms": 455.745,
+      "p95Ms": 399.747,
+      "maxMs": 455.745,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_custom_plan/number-global",
+      "trials": 20,
+      "p50Ms": 13.114,
+      "p99Ms": 18.421,
+      "p95Ms": 18.354,
+      "maxMs": 18.421,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_custom_plan/complete-key",
+      "trials": 20,
+      "p50Ms": 47.287,
+      "p99Ms": 58.902,
+      "p95Ms": 58.493,
+      "maxMs": 58.902,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_custom_plan/key-prefix",
+      "trials": 20,
+      "p50Ms": 101.177,
+      "p99Ms": 139.594,
+      "p95Ms": 132.956,
+      "maxMs": 139.594,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_custom_plan/short-Arabic-no-match",
+      "trials": 20,
+      "p50Ms": 105.016,
+      "p99Ms": 118.652,
+      "p95Ms": 115.826,
+      "maxMs": 118.652,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_custom_plan/empty-query",
+      "trials": 20,
+      "p50Ms": 54.48,
+      "p99Ms": 70.304,
+      "p95Ms": 62.446,
+      "maxMs": 70.304,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_custom_plan/type-ID-filter",
+      "trials": 20,
+      "p50Ms": 59.13,
+      "p99Ms": 72.638,
+      "p95Ms": 65.004,
+      "maxMs": 72.638,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_custom_plan/priority-ID-sort",
+      "trials": 20,
+      "p50Ms": 379.832,
+      "p99Ms": 474.99,
+      "p95Ms": 461.101,
+      "maxMs": 474.99,
+      "localBudgetMs": 500
+    }
+  ],
+  "observedHeapPeakBytes": 125992768,
+  "poolMaxConnections": 10,
+  "poolAcquireCount": 296,
+  "poolAcquireMs": 5.431,
+  "poolEmptyAcquireCount": 0,
+  "locksWaitingAtEnd": 0
+}

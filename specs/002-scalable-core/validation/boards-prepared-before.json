@@ -1,0 +1,338 @@
+{
+  "environment": "isolated authenticated HTTP + PostgreSQL + generated pgx prepared board SQL; transaction-local custom planning; no cloud target",
+  "cloudAcceptance": false,
+  "generatedAt": "2026-10-14T09:24:44.786296375Z",
+  "goVersion": "go1.27.2",
+  "workload": {
+    "hotProjectIssues": 100000,
+    "issues": 100000
+  },
+  "measurements": [
+    {
+      "action": "force_generic_plan/full/query-\"\"",
+      "trials": 20,
+      "p50Ms": 59.023,
+      "p95Ms": 74.406,
+      "maxMs": 76.33,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/full/query-\"94000\"",
+      "trials": 20,
+      "p50Ms": 58.742,
+      "p95Ms": 77.971,
+      "maxMs": 85.609,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/full/query-\"unique-94000\"",
+      "trials": 20,
+      "p50Ms": 305.205,
+      "p95Ms": 382.01,
+      "maxMs": 391.187,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/full/query-\"ز\"",
+      "trials": 20,
+      "p50Ms": 330.836,
+      "p95Ms": 541.466,
+      "maxMs": 567.85,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/full/next-page",
+      "trials": 20,
+      "p50Ms": 57.034,
+      "p95Ms": 67.974,
+      "maxMs": 70.938,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/sparse/query-\"\"",
+      "trials": 20,
+      "p50Ms": 62.72,
+      "p95Ms": 81.899,
+      "maxMs": 83.959,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/sparse/query-\"94000\"",
+      "trials": 20,
+      "p50Ms": 57.262,
+      "p95Ms": 65.776,
+      "maxMs": 75.796,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/sparse/query-\"unique-94000\"",
+      "trials": 20,
+      "p50Ms": 226.195,
+      "p95Ms": 277.133,
+      "maxMs": 279.872,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/sparse/query-\"ز\"",
+      "trials": 20,
+      "p50Ms": 222.567,
+      "p95Ms": 260.676,
+      "maxMs": 267.092,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/sparse/next-page",
+      "trials": 20,
+      "p50Ms": 70.507,
+      "p95Ms": 85.825,
+      "maxMs": 112.926,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/stale/query-\"\"",
+      "trials": 20,
+      "p50Ms": 70.068,
+      "p95Ms": 90.386,
+      "maxMs": 95.642,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/stale/query-\"94000\"",
+      "trials": 20,
+      "p50Ms": 66.404,
+      "p95Ms": 80.574,
+      "maxMs": 96.671,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/stale/query-\"unique-94000\"",
+      "trials": 20,
+      "p50Ms": 229.617,
+      "p95Ms": 282.275,
+      "maxMs": 306.639,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/stale/query-\"ز\"",
+      "trials": 20,
+      "p50Ms": 217.885,
+      "p95Ms": 246.486,
+      "maxMs": 248.541,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/stale/next-page",
+      "trials": 20,
+      "p50Ms": 64.091,
+      "p95Ms": 77.806,
+      "maxMs": 85.667,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/unranked/query-\"\"",
+      "trials": 20,
+      "p50Ms": 70.953,
+      "p95Ms": 78.27,
+      "maxMs": 80.392,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/unranked/query-\"94000\"",
+      "trials": 20,
+      "p50Ms": 56.718,
+      "p95Ms": 67.492,
+      "maxMs": 74.222,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/unranked/query-\"unique-94000\"",
+      "trials": 20,
+      "p50Ms": 248.36,
+      "p95Ms": 305.203,
+      "maxMs": 318.484,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/unranked/query-\"ز\"",
+      "trials": 20,
+      "p50Ms": 227.992,
+      "p95Ms": 247.505,
+      "maxMs": 260.471,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/unranked/next-page",
+      "trials": 20,
+      "p50Ms": 60.298,
+      "p95Ms": 79.164,
+      "maxMs": 93.812,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/full/query-\"\"",
+      "trials": 20,
+      "p50Ms": 57.778,
+      "p95Ms": 71.39,
+      "maxMs": 72.948,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/full/query-\"94000\"",
+      "trials": 20,
+      "p50Ms": 54.317,
+      "p95Ms": 73.446,
+      "maxMs": 75.953,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/full/query-\"unique-94000\"",
+      "trials": 20,
+      "p50Ms": 319.973,
+      "p95Ms": 363.507,
+      "maxMs": 364.552,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/full/query-\"ز\"",
+      "trials": 20,
+      "p50Ms": 321.958,
+      "p95Ms": 407.231,
+      "maxMs": 412.469,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/full/next-page",
+      "trials": 20,
+      "p50Ms": 60.866,
+      "p95Ms": 72.808,
+      "maxMs": 73.245,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/sparse/query-\"\"",
+      "trials": 20,
+      "p50Ms": 62.032,
+      "p95Ms": 69.58,
+      "maxMs": 71.55,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/sparse/query-\"94000\"",
+      "trials": 20,
+      "p50Ms": 56.77,
+      "p95Ms": 64.07,
+      "maxMs": 66.949,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/sparse/query-\"unique-94000\"",
+      "trials": 20,
+      "p50Ms": 229.794,
+      "p95Ms": 270.14,
+      "maxMs": 310.25,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/sparse/query-\"ز\"",
+      "trials": 20,
+      "p50Ms": 217.105,
+      "p95Ms": 263.141,
+      "maxMs": 284.476,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/sparse/next-page",
+      "trials": 20,
+      "p50Ms": 69.94,
+      "p95Ms": 75.379,
+      "maxMs": 76.958,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/stale/query-\"\"",
+      "trials": 20,
+      "p50Ms": 64.852,
+      "p95Ms": 74.803,
+      "maxMs": 83.386,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/stale/query-\"94000\"",
+      "trials": 20,
+      "p50Ms": 57.425,
+      "p95Ms": 63.163,
+      "maxMs": 72.958,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/stale/query-\"unique-94000\"",
+      "trials": 20,
+      "p50Ms": 229.142,
+      "p95Ms": 264.858,
+      "maxMs": 307.594,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/stale/query-\"ز\"",
+      "trials": 20,
+      "p50Ms": 217.082,
+      "p95Ms": 235.383,
+      "maxMs": 242.796,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/stale/next-page",
+      "trials": 20,
+      "p50Ms": 59.343,
+      "p95Ms": 69.321,
+      "maxMs": 76.111,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/unranked/query-\"\"",
+      "trials": 20,
+      "p50Ms": 62.89,
+      "p95Ms": 80.254,
+      "maxMs": 80.846,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/unranked/query-\"94000\"",
+      "trials": 20,
+      "p50Ms": 55.751,
+      "p95Ms": 68.687,
+      "maxMs": 69.613,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/unranked/query-\"unique-94000\"",
+      "trials": 20,
+      "p50Ms": 224.97,
+      "p95Ms": 254.594,
+      "maxMs": 287.753,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/unranked/query-\"ز\"",
+      "trials": 20,
+      "p50Ms": 217.258,
+      "p95Ms": 249.874,
+      "maxMs": 256.197,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/unranked/next-page",
+      "trials": 20,
+      "p50Ms": 58.188,
+      "p95Ms": 68.691,
+      "maxMs": 87.834,
+      "localBudgetMs": 500
+    }
+  ],
+  "observedHeapPeakBytes": 103039432,
+  "poolMaxConnections": 4,
+  "poolAcquireCount": 48,
+  "poolAcquireMs": 8.972,
+  "poolEmptyAcquireCount": 1,
+  "locksWaitingAtEnd": 0
+}

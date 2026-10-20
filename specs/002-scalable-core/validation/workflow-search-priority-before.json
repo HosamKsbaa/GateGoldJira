@@ -1,0 +1,162 @@
+{
+  "environment": "isolated loopback HTTP + real PostgreSQL + pgx prepared SQL; text/default search request-local custom planning; no cloud target",
+  "cloudAcceptance": false,
+  "generatedAt": "2026-10-14T01:10:25.33172842Z",
+  "goVersion": "go1.27.2",
+  "workload": {
+    "hotProjectIssues": 95000,
+    "issues": 100000
+  },
+  "measurements": [
+    {
+      "action": "force_generic_plan/number-global",
+      "trials": 20,
+      "p50Ms": 4.1,
+      "p95Ms": 5.087,
+      "maxMs": 11.082,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/complete-key",
+      "trials": 20,
+      "p50Ms": 48.679,
+      "p95Ms": 60.546,
+      "maxMs": 64.501,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/title-literal",
+      "trials": 20,
+      "p50Ms": 51.04,
+      "p95Ms": 114.562,
+      "maxMs": 144.077,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/key-prefix",
+      "trials": 20,
+      "p50Ms": 93.69,
+      "p95Ms": 143.652,
+      "maxMs": 145.628,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/short-Arabic-no-match",
+      "trials": 20,
+      "p50Ms": 138.932,
+      "p95Ms": 171.976,
+      "maxMs": 189.642,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/empty-query",
+      "trials": 20,
+      "p50Ms": 56.693,
+      "p95Ms": 69.94,
+      "maxMs": 83.645,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/number-global",
+      "trials": 20,
+      "p50Ms": 6.561,
+      "p95Ms": 8.111,
+      "maxMs": 8.506,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/complete-key",
+      "trials": 20,
+      "p50Ms": 45.878,
+      "p95Ms": 51.248,
+      "maxMs": 56.805,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/title-literal",
+      "trials": 20,
+      "p50Ms": 53.944,
+      "p95Ms": 78.264,
+      "maxMs": 80.745,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/key-prefix",
+      "trials": 20,
+      "p50Ms": 121.244,
+      "p95Ms": 140.616,
+      "maxMs": 148.205,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/short-Arabic-no-match",
+      "trials": 20,
+      "p50Ms": 135.466,
+      "p95Ms": 171.051,
+      "maxMs": 222.137,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/empty-query",
+      "trials": 20,
+      "p50Ms": 54.06,
+      "p95Ms": 71.367,
+      "maxMs": 92.074,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_generic_plan/number-global",
+      "trials": 20,
+      "p50Ms": 4.062,
+      "p95Ms": 6.467,
+      "maxMs": 7.617,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_generic_plan/complete-key",
+      "trials": 20,
+      "p50Ms": 50.169,
+      "p95Ms": 66.612,
+      "maxMs": 67.116,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_generic_plan/key-prefix",
+      "trials": 20,
+      "p50Ms": 97.841,
+      "p95Ms": 110.441,
+      "maxMs": 116.131,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_generic_plan/short-Arabic-no-match",
+      "trials": 20,
+      "p50Ms": 142.675,
+      "p95Ms": 193.511,
+      "maxMs": 200.299,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_generic_plan/empty-query",
+      "trials": 20,
+      "p50Ms": 63.304,
+      "p95Ms": 73.826,
+      "maxMs": 90.54,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "modern/force_generic_plan/type-ID-filter",
+      "trials": 20,
+      "p50Ms": 78.331,
+      "p95Ms": 101.54,
+      "maxMs": 103.069,
+      "localBudgetMs": 500
+    }
+  ],
+  "observedHeapPeakBytes": 93305264,
+  "poolMaxConnections": 0,
+  "poolAcquireCount": 0,
+  "poolAcquireMs": 0,
+  "poolEmptyAcquireCount": 0,
+  "locksWaitingAtEnd": 0
+}

@@ -1,0 +1,18 @@
+{
+  "environment": "local Angular development server and small isolated fixture",
+  "cloudAcceptance": false,
+  "measurements": [
+    {
+      "action": "project",
+      "trials": 100,
+      "p95Ms": 123.87231100001372,
+      "maxMs": 160.5904669999727
+    },
+    {
+      "action": "board",
+      "trials": 100,
+      "p95Ms": 590.847947000002,
+      "maxMs": 798.1107579999953
+    }
+  ]
+}

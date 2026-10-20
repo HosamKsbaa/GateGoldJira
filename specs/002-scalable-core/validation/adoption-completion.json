@@ -1,0 +1,253 @@
+{
+  "date": "2026-10-15",
+  "migration": 19,
+  "applicationTables": 44,
+  "liveSourceEquivalence": [
+    {
+      "table": "activity_events",
+      "rows": 15,
+      "equal": true
+    },
+    {
+      "table": "assignment_rule_records",
+      "rows": 1,
+      "equal": true
+    },
+    {
+      "table": "attachments",
+      "rows": 4,
+      "equal": true
+    },
+    {
+      "table": "board_column_stages",
+      "rows": 8,
+      "equal": true
+    },
+    {
+      "table": "board_columns",
+      "rows": 8,
+      "equal": true
+    },
+    {
+      "table": "board_issue_ranks",
+      "rows": 10,
+      "equal": true
+    },
+    {
+      "table": "board_records",
+      "rows": 2,
+      "equal": true
+    },
+    {
+      "table": "comment_version_attachments",
+      "rows": 3,
+      "equal": true
+    },
+    {
+      "table": "comment_version_mentions",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "comment_versions",
+      "rows": 4,
+      "equal": true
+    },
+    {
+      "table": "comments",
+      "rows": 4,
+      "equal": true
+    },
+    {
+      "table": "company_settings",
+      "rows": 1,
+      "equal": true
+    },
+    {
+      "table": "development_links",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "field_definitions",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "field_options",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "idempotency_records",
+      "rows": 16,
+      "equal": true
+    },
+    {
+      "table": "issue_approvals",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "issue_dependencies",
+      "rows": 1,
+      "equal": true
+    },
+    {
+      "table": "issue_field_values",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "issue_import_sources",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "issue_labels",
+      "rows": 1,
+      "equal": true
+    },
+    {
+      "table": "issue_links",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "issue_records",
+      "rows": 5,
+      "equal": true
+    },
+    {
+      "table": "issue_type_workflows",
+      "rows": 3,
+      "equal": true
+    },
+    {
+      "table": "issue_types",
+      "rows": 3,
+      "equal": true
+    },
+    {
+      "table": "issue_watchers",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "labels",
+      "rows": 1,
+      "equal": true
+    },
+    {
+      "table": "notification_deliveries",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "notification_due_events",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "notification_preferences",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "notifications",
+      "rows": 8,
+      "equal": true
+    },
+    {
+      "table": "planning_issue",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "planning_items",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "priorities",
+      "rows": 3,
+      "equal": true
+    },
+    {
+      "table": "project_memberships",
+      "rows": 2,
+      "equal": true
+    },
+    {
+      "table": "projects",
+      "rows": 1,
+      "equal": true
+    },
+    {
+      "table": "saved_issue_searches",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "transition_required_fields",
+      "rows": 0,
+      "equal": true
+    },
+    {
+      "table": "upload_reservations",
+      "rows": 3,
+      "equal": true
+    },
+    {
+      "table": "user_identities",
+      "rows": 4,
+      "equal": true
+    },
+    {
+      "table": "users",
+      "rows": 5,
+      "equal": true
+    },
+    {
+      "table": "workflow_stages",
+      "rows": 4,
+      "equal": true
+    },
+    {
+      "table": "workflow_transitions",
+      "rows": 12,
+      "equal": true
+    },
+    {
+      "table": "workflows",
+      "rows": 1,
+      "equal": true
+    }
+  ],
+  "freshPairRestore": {
+    "migration": 19,
+    "sourceProjectionsEqual": 44,
+    "objectFilesRestored": 15,
+    "publishedAssetsShaSizeGenerationVerified": 4,
+    "originalAcceptedReceiptsPreserved": 16
+  },
+  "localApiSmoke": {
+    "apiReady": true,
+    "webReady": true,
+    "existingOwnerSignIn": true,
+    "legacyAndNativeIssueReads": 5,
+    "preservedCurrentRichComments": 4,
+    "boardsRead": 2,
+    "liveNativeNumericSearch": true,
+    "publicActivationReadiness": true,
+    "unconfirmedActivationRejected": true,
+    "nonAdministratorReviewRejected": true,
+    "originalProjectModePreserved": true,
+    "restTokenRejectedByMCP": true,
+    "retainedObjectFilesEqual": 15,
+    "publishedAssetsDownloaded": 4,
+    "preexistingPublishedAssetsWithoutBytes": 0,
+    "originalAcceptedReceiptsPreserved": 16
+  },
+  "existingTabVisualInspection": "Blocked by in-app browser security policy; no alternate browser/protocol used. Separate isolated 153-case browser acceptance passed."
+}

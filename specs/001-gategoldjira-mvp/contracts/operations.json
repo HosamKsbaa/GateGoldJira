@@ -1,0 +1,6728 @@
+{
+  "contractVersion": "1.2.0",
+  "basePath": "/api/v1",
+  "schemaFormat": "JSON Schema 2020-12; refs to domain.schema.json",
+  "note": "Design catalog. Runtime OpenAPI/MCP schemas generated from Go. Path fields become path params; GET page.limit/page.cursor flatten to limit/cursor, other scalar fields query params; complex filters use documented JSON query parameters. REST mutations map retryReference to Idempotency-Key; remaining arguments are JSON body except multipart upload. MCP uses declared input object directly. Every mutation returns result+receipt.",
+  "operations": [
+    {
+      "id": "get_me",
+      "rest": {
+        "method": "GET",
+        "path": "/me"
+      },
+      "mcpTool": "get_me",
+      "permission": "approved active caller",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": []
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/Me"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/Me"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_users",
+      "rest": {
+        "method": "GET",
+        "path": "/admin/users"
+      },
+      "mcpTool": "list_users",
+      "permission": "administrator",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageUser"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageUser"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "approve_user",
+      "rest": {
+        "method": "POST",
+        "path": "/admin/users"
+      },
+      "mcpTool": "approve_user",
+      "permission": "administrator",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "administrator": {
+            "type": "boolean"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "email",
+          "displayName",
+          "administrator",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/ApproveUserResult"
+      },
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/ApproveUserResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "update_user",
+      "rest": {
+        "method": "PUT",
+        "path": "/admin/users/{userId}"
+      },
+      "mcpTool": "update_user",
+      "permission": "administrator",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "administrator": {
+            "type": "boolean"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "userId",
+          "expectedRevision",
+          "email",
+          "displayName",
+          "active",
+          "administrator",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/UpdateUserResult"
+      },
+      "notes": "Full replacement of editable fields; no identity rebind; last-Admin guard and assignment cleanup.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/UpdateUserResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_projects",
+      "rest": {
+        "method": "GET",
+        "path": "/projects"
+      },
+      "mcpTool": "list_projects",
+      "permission": "approved active caller",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          },
+          "includeArchived": {
+            "type": "boolean"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageProject"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageProject"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "get_project",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}"
+      },
+      "mcpTool": "get_project",
+      "permission": "project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/Project"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/Project"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "create_project",
+      "rest": {
+        "method": "POST",
+        "path": "/projects"
+      },
+      "mcpTool": "create_project",
+      "permission": "administrator",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9]{1,9}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/CreateProjectResult"
+      },
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/CreateProjectResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "update_project",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}"
+      },
+      "mcpTool": "update_project",
+      "permission": "administrator",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2000
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "projectId",
+          "expectedRevision",
+          "name",
+          "description",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/UpdateProjectResult"
+      },
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/UpdateProjectResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "archive_project",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/archive"
+      },
+      "mcpTool": "archive_project",
+      "permission": "administrator",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "projectId",
+          "expectedRevision",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/ArchiveProjectResult"
+      },
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/ArchiveProjectResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "restore_project",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/restore"
+      },
+      "mcpTool": "restore_project",
+      "permission": "administrator",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "projectId",
+          "expectedRevision",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/RestoreProjectResult"
+      },
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/RestoreProjectResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_memberships",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/memberships"
+      },
+      "mcpTool": "list_memberships",
+      "permission": "administrator",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          },
+          "includeRemoved": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageMembership"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageMembership"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "set_membership",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}/memberships/{userId}"
+      },
+      "mcpTool": "set_membership",
+      "permission": "administrator; archived project allowed",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "userId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/InitialRevision"
+          },
+          "role": {
+            "$ref": "domain.schema.json#/$defs/Role"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "projectId",
+          "userId",
+          "expectedRevision",
+          "role",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SetMembershipResult"
+      },
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SetMembershipResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "remove_membership",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/memberships/{userId}/remove"
+      },
+      "mcpTool": "remove_membership",
+      "permission": "administrator; archived project allowed",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "userId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "projectId",
+          "userId",
+          "expectedRevision",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/RemoveMembershipResult"
+      },
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/RemoveMembershipResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_assignees",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/assignees"
+      },
+      "mcpTool": "list_assignees",
+      "permission": "project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          },
+          "query": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageUserSummary"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageUserSummary"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_mention_candidates",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/mention-candidates"
+      },
+      "mcpTool": "list_mention_candidates",
+      "permission": "project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          },
+          "query": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageUserSummary"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageUserSummary"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "search_issues",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/search"
+      },
+      "mcpTool": "search_issues",
+      "permission": "approved active caller",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "filters": {
+            "$ref": "domain.schema.json#/$defs/IssueFilter"
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          }
+        },
+        "required": [
+          "filters"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageIssueSummary"
+      },
+      "notes": "Read-only POST for a typed filter body. assignee.kind=self is My Issues.",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageIssueSummary"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "get_issue",
+      "rest": {
+        "method": "GET",
+        "path": "/issues/{issueId}"
+      },
+      "mcpTool": "get_issue",
+      "permission": "project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          }
+        },
+        "required": [
+          "issueId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/Issue"
+      },
+      "notes": "Web exact-key search resolves to immutable ID.",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/Issue"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "create_issue",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/issues"
+      },
+      "mcpTool": "create_issue",
+      "permission": "project writer; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 10000
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "task",
+              "bug"
+            ]
+          },
+          "priority": {
+            "$ref": "domain.schema.json#/$defs/Priority"
+          },
+          "assigneeId": {
+            "anyOf": [
+              {
+                "$ref": "domain.schema.json#/$defs/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "dueDate": {
+            "anyOf": [
+              {
+                "$ref": "domain.schema.json#/$defs/Date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "labelIds": {
+            "type": "array",
+            "items": {
+              "$ref": "domain.schema.json#/$defs/Id"
+            },
+            "maxItems": 10
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "projectId",
+          "title",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/CreateIssueResult"
+      },
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/CreateIssueResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "update_issue",
+      "rest": {
+        "method": "PUT",
+        "path": "/issues/{issueId}"
+      },
+      "mcpTool": "update_issue",
+      "permission": "project writer; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "editable": {
+            "$ref": "domain.schema.json#/$defs/IssueEditable"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "issueId",
+          "expectedRevision",
+          "editable",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/UpdateIssueResult"
+      },
+      "notes": "Full replacement, including explicit nullable assignee/dueDate and complete labels. Status uses move_issue; subtask type remains fixed.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/UpdateIssueResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_subtasks",
+      "rest": {
+        "method": "GET",
+        "path": "/issues/{parentId}/subtasks"
+      },
+      "mcpTool": "list_subtasks",
+      "permission": "project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "parentId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          }
+        },
+        "required": [
+          "parentId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageIssueSummary"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageIssueSummary"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "create_subtask",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{parentId}/subtasks"
+      },
+      "mcpTool": "create_subtask",
+      "permission": "project writer; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "parentId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedParentRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 10000
+          },
+          "priority": {
+            "$ref": "domain.schema.json#/$defs/Priority"
+          },
+          "assigneeId": {
+            "anyOf": [
+              {
+                "$ref": "domain.schema.json#/$defs/Id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "dueDate": {
+            "anyOf": [
+              {
+                "$ref": "domain.schema.json#/$defs/Date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "labelIds": {
+            "type": "array",
+            "items": {
+              "$ref": "domain.schema.json#/$defs/Id"
+            },
+            "maxItems": 10
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "parentId",
+          "expectedParentRevision",
+          "title",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/CreateSubtaskResult"
+      },
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/CreateSubtaskResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "move_issue",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/move"
+      },
+      "mcpTool": "move_issue",
+      "permission": "project writer; active project and source board if supplied",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "targetStatus": {
+            "$ref": "domain.schema.json#/$defs/Status"
+          },
+          "expectedSourceOrderRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "expectedTargetOrderRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "sourceBoardId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedBoardRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "issueId",
+          "expectedRevision",
+          "targetStatus",
+          "expectedSourceOrderRevision",
+          "expectedTargetOrderRevision",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/MoveIssueResult"
+      },
+      "notes": "Append to target column; same status is no-op. Board ID/revision supplied together. Complete guard applies; WIP warns only.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/MoveIssueResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "reorder_issue",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/reorder"
+      },
+      "mcpTool": "reorder_issue",
+      "permission": "project writer; active project and source board if supplied",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "expectedOrderRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "neighborIssueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "placement": {
+            "type": "string",
+            "enum": [
+              "before",
+              "after"
+            ]
+          },
+          "sourceBoardId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedBoardRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "issueId",
+          "expectedRevision",
+          "expectedOrderRevision",
+          "neighborIssueId",
+          "placement",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/ReorderIssueResult"
+      },
+      "notes": "Same-status real neighbor; no partial client order replaces hidden cards.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/ReorderIssueResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_labels",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/labels"
+      },
+      "mcpTool": "list_labels",
+      "permission": "project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          },
+          "query": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageLabel"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageLabel"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "create_label",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/labels"
+      },
+      "mcpTool": "create_label",
+      "permission": "project writer; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "projectId",
+          "name",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/CreateLabelResult"
+      },
+      "notes": "Trim/casefold lookup returns existing matching label. Attach/remove via update_issue.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/CreateLabelResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_boards",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/boards"
+      },
+      "mcpTool": "list_boards",
+      "permission": "project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          },
+          "includeArchived": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageBoard"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageBoard"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "create_board",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/boards"
+      },
+      "mcpTool": "create_board",
+      "permission": "project writer; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "savedFilters": {
+            "$ref": "domain.schema.json#/$defs/IssueFilter"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "projectId",
+          "name",
+          "savedFilters",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/CreateBoardResult"
+      },
+      "notes": "Project IDs in filter absent or exactly current project; WIP starts unset.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/CreateBoardResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "get_board",
+      "rest": {
+        "method": "GET",
+        "path": "/boards/{boardId}"
+      },
+      "mcpTool": "get_board",
+      "permission": "project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "boardId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "temporaryFilters": {
+            "$ref": "domain.schema.json#/$defs/IssueFilter"
+          }
+        },
+        "required": [
+          "boardId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/BoardView"
+      },
+      "notes": "Columns counts full saved and visible views; does not load all cards. Complex temporary filters serialized as validated JSON query parameter.",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/BoardView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_board_cards",
+      "rest": {
+        "method": "POST",
+        "path": "/boards/{boardId}/columns/{status}/search"
+      },
+      "mcpTool": "list_board_cards",
+      "permission": "project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "boardId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "status": {
+            "$ref": "domain.schema.json#/$defs/Status"
+          },
+          "temporaryFilters": {
+            "$ref": "domain.schema.json#/$defs/IssueFilter"
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          }
+        },
+        "required": [
+          "boardId",
+          "status"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/CardPage"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/CardPage"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "update_board",
+      "rest": {
+        "method": "PUT",
+        "path": "/boards/{boardId}"
+      },
+      "mcpTool": "update_board",
+      "permission": "eligible creator or administrator; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "boardId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "savedFilters": {
+            "$ref": "domain.schema.json#/$defs/IssueFilter"
+          },
+          "wipLimits": {
+            "$ref": "domain.schema.json#/$defs/WipLimits"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "boardId",
+          "expectedRevision",
+          "name",
+          "savedFilters",
+          "wipLimits",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/UpdateBoardResult"
+      },
+      "notes": "Default board: only administrator, name/all-issues filters unchanged; WIP editable.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/UpdateBoardResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "archive_board",
+      "rest": {
+        "method": "POST",
+        "path": "/boards/{boardId}/archive"
+      },
+      "mcpTool": "archive_board",
+      "permission": "eligible creator or administrator; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "boardId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "boardId",
+          "expectedRevision",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/ArchiveBoardResult"
+      },
+      "notes": "Default board cannot archive.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/ArchiveBoardResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "restore_board",
+      "rest": {
+        "method": "POST",
+        "path": "/boards/{boardId}/restore"
+      },
+      "mcpTool": "restore_board",
+      "permission": "eligible creator or administrator; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "boardId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "boardId",
+          "expectedRevision",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/RestoreBoardResult"
+      },
+      "notes": "Default board cannot archive.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/RestoreBoardResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_dependencies",
+      "rest": {
+        "method": "GET",
+        "path": "/issues/{issueId}/dependencies"
+      },
+      "mcpTool": "list_dependencies",
+      "permission": "project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "blocked_by",
+              "blocks"
+            ]
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          }
+        },
+        "required": [
+          "issueId",
+          "direction"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageDependency"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageDependency"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "add_dependency",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/dependencies"
+      },
+      "mcpTool": "add_dependency",
+      "permission": "project writer; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "blockerId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedIssueRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "expectedGraphRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "issueId",
+          "blockerId",
+          "expectedIssueRevision",
+          "expectedGraphRevision",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/AddDependencyResult"
+      },
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/AddDependencyResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "remove_dependency",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/dependencies/{blockerId}/remove"
+      },
+      "mcpTool": "remove_dependency",
+      "permission": "project writer; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "blockerId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedIssueRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "expectedDependencyRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "expectedGraphRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "issueId",
+          "blockerId",
+          "expectedIssueRevision",
+          "expectedDependencyRevision",
+          "expectedGraphRevision",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/RemoveDependencyResult"
+      },
+      "notes": "Result represents removed relationship; history retained.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/RemoveDependencyResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_comments",
+      "rest": {
+        "method": "GET",
+        "path": "/issues/{issueId}/comments"
+      },
+      "mcpTool": "list_comments",
+      "permission": "project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          }
+        },
+        "required": [
+          "issueId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageComment"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageComment"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "create_comment",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/comments"
+      },
+      "mcpTool": "create_comment",
+      "permission": "project writer; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "body": {
+            "$ref": "domain.schema.json#/$defs/CommentBody"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "issueId",
+          "body",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/CreateCommentResult"
+      },
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/CreateCommentResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "update_comment",
+      "rest": {
+        "method": "PUT",
+        "path": "/comments/{commentId}"
+      },
+      "mcpTool": "update_comment",
+      "permission": "author with current write access; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "commentId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "body": {
+            "$ref": "domain.schema.json#/$defs/CommentBody"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "commentId",
+          "expectedRevision",
+          "body",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/UpdateCommentResult"
+      },
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/UpdateCommentResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_comment_versions",
+      "rest": {
+        "method": "GET",
+        "path": "/comments/{commentId}/versions"
+      },
+      "mcpTool": "list_comment_versions",
+      "permission": "project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "commentId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          }
+        },
+        "required": [
+          "commentId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageCommentVersion"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageCommentVersion"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_pictures",
+      "rest": {
+        "method": "GET",
+        "path": "/issues/{issueId}/pictures"
+      },
+      "mcpTool": "list_pictures",
+      "permission": "project reader; only caller's unexpired drafts",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          },
+          "includeOwnDrafts": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "issueId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PagePicture"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PagePicture"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "upload_picture",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/pictures"
+      },
+      "mcpTool": "upload_picture",
+      "permission": "project writer; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "upload": {
+            "$ref": "domain.schema.json#/$defs/PictureUpload"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "issueId",
+          "upload",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/UploadPictureResult"
+      },
+      "notes": "REST multipart maps metadata+file to same command; MCP base64. Draft private until successful comment save; gallery publishes immediately.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/UploadPictureResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "get_picture",
+      "rest": {
+        "method": "GET",
+        "path": "/pictures/{pictureId}"
+      },
+      "mcpTool": "get_picture",
+      "permission": "project reader for published; uploader plus current project access for draft",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pictureId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          }
+        },
+        "required": [
+          "pictureId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/Picture"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/Picture"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "download_picture",
+      "rest": {
+        "method": "GET",
+        "path": "/pictures/{pictureId}/content"
+      },
+      "mcpTool": "download_picture",
+      "permission": "same current picture access",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pictureId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          }
+        },
+        "required": [
+          "pictureId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PictureDownload"
+      },
+      "notes": "REST binary response with MIME, no-store/nosniff; MCP typed metadata+one base64 field, short explicit text content.",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PictureDownload"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "detach_gallery_picture",
+      "rest": {
+        "method": "POST",
+        "path": "/pictures/{pictureId}/detach"
+      },
+      "mcpTool": "detach_gallery_picture",
+      "permission": "project writer; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "pictureId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedIssueRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "pictureId",
+          "expectedIssueRevision",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/DetachGalleryPictureResult"
+      },
+      "notes": "Removes current gallery reference, not stored object or comment-version references; audit retains history.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/DetachGalleryPictureResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "get_inbox_summary",
+      "rest": {
+        "method": "GET",
+        "path": "/notifications/summary"
+      },
+      "mcpTool": "get_inbox_summary",
+      "permission": "caller recipient only",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": []
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/InboxSummary"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/InboxSummary"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_notifications",
+      "rest": {
+        "method": "GET",
+        "path": "/notifications"
+      },
+      "mcpTool": "list_notifications",
+      "permission": "caller recipient only",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          },
+          "unreadOnly": {
+            "type": "boolean"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageNotification"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageNotification"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "get_notification",
+      "rest": {
+        "method": "GET",
+        "path": "/notifications/{notificationId}"
+      },
+      "mcpTool": "get_notification",
+      "permission": "caller recipient only",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "notificationId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          }
+        },
+        "required": [
+          "notificationId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/Notification"
+      },
+      "notes": "Pure read. Opening in UI follows with set_notification_read before reporting read state.",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/Notification"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "set_notification_read",
+      "rest": {
+        "method": "PUT",
+        "path": "/notifications/{notificationId}/read-state"
+      },
+      "mcpTool": "set_notification_read",
+      "permission": "caller recipient only; accessible project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "notificationId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "read": {
+            "type": "boolean"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "notificationId",
+          "expectedRevision",
+          "read",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SetNotificationReadResult"
+      },
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SetNotificationReadResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "mark_all_notifications_read",
+      "rest": {
+        "method": "POST",
+        "path": "/notifications/mark-all-read"
+      },
+      "mcpTool": "mark_all_notifications_read",
+      "permission": "caller recipient only",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/MarkAllNotificationsReadResult"
+      },
+      "notes": "Accessible current snapshot only; counts/results carry no other inbox data.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/MarkAllNotificationsReadResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_activity",
+      "rest": {
+        "method": "GET",
+        "path": "/admin/activity"
+      },
+      "mcpTool": "list_activity",
+      "permission": "Administrator for global/project activity; current project readers for paired issue resource kind/id, excluding private subscription and inbox history",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          },
+          "resourceKind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "resourceId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "projectId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageActivity"
+      },
+      "notes": "Resource filters supplied as matching pair; includes retained relevant changes, excluding private inbox body.",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageActivity"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_attachments",
+      "rest": {
+        "method": "GET",
+        "path": "/issues/{issueId}/attachments"
+      },
+      "mcpTool": "list_attachments",
+      "permission": "current approved project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          }
+        },
+        "required": [
+          "issueId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageAttachment"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageAttachment"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      },
+      "notes": "Bounded attached-document list; detached immutable bytes remain available by ID to current authorized readers."
+    },
+    {
+      "id": "get_attachment",
+      "rest": {
+        "method": "GET",
+        "path": "/attachments/{attachmentId}"
+      },
+      "mcpTool": "get_attachment",
+      "permission": "current approved project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "attachmentId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          }
+        },
+        "required": [
+          "attachmentId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/Attachment"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/Attachment"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      },
+      "notes": "Protected attachment metadata; no object coordinates or public URLs."
+    },
+    {
+      "id": "upload_attachment",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/attachments"
+      },
+      "mcpTool": "upload_attachment",
+      "permission": "project writer; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "upload": {
+            "$ref": "domain.schema.json#/$defs/AttachmentUpload"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "issueId",
+          "upload",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/UploadAttachmentResult"
+      },
+      "notes": "REST multipart metadata {filename,mimeType}+file; MCP canonical base64. PDF/TXT/CSV/DOCX/XLSX <=10MiB. Validate bytes, reserve caller-scoped retry, publish immutable content and advance issue revision atomically with metadata/audit.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/UploadAttachmentResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "download_attachment",
+      "rest": {
+        "method": "GET",
+        "path": "/attachments/{attachmentId}/content"
+      },
+      "mcpTool": "download_attachment",
+      "permission": "current approved project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "attachmentId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          }
+        },
+        "required": [
+          "attachmentId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/AttachmentDownload"
+      },
+      "notes": "REST private/no-store/nosniff binary download with Content-Disposition attachment; MCP typed metadata and one base64 field, no duplicated byte text.",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/AttachmentDownload"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "detach_attachment",
+      "rest": {
+        "method": "POST",
+        "path": "/attachments/{attachmentId}/detach"
+      },
+      "mcpTool": "detach_attachment",
+      "permission": "project writer; active project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "attachmentId": {
+            "$ref": "domain.schema.json#/$defs/Id"
+          },
+          "expectedIssueRevision": {
+            "$ref": "domain.schema.json#/$defs/Revision"
+          },
+          "retryReference": {
+            "$ref": "domain.schema.json#/$defs/RetryReference"
+          }
+        },
+        "required": [
+          "attachmentId",
+          "expectedIssueRevision",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/DetachAttachmentResult"
+      },
+      "notes": "CAS using current issue revision removes list reference and increments issue revision. Retain immutable metadata/bytes and audit; authorized downloads by ID continue.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/DetachAttachmentResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_saved_searches",
+      "rest": {
+        "method": "GET",
+        "path": "/issue-searches"
+      },
+      "mcpTool": "list_saved_searches",
+      "permission": "accessible project reader; private caller-owned state",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": []
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SavedSearchList"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SavedSearchList"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "save_issue_search",
+      "rest": {
+        "method": "PUT",
+        "path": "/issue-searches/{searchId}"
+      },
+      "mcpTool": "save_issue_search",
+      "permission": "accessible project reader; private caller-owned state",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "searchId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "retryReference": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedRevision": {
+            "pattern": "^(0|[1-9][0-9]*)$",
+            "type": "string"
+          },
+          "filters": {
+            "$ref": "domain.schema.json#/$defs/IssueFilter"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "type": "string"
+          },
+          "removed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "searchId",
+          "retryReference",
+          "expectedRevision",
+          "name",
+          "filters"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SavedSavedSearch"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SavedSavedSearch"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "set_issue_link",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/links"
+      },
+      "mcpTool": "set_issue_link",
+      "permission": "project writer",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "retryReference": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "expectedRevision": {
+            "pattern": "^[1-9][0-9]*$",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "relates_to",
+              "duplicates"
+            ],
+            "type": "string"
+          },
+          "targetId": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "issueId",
+          "retryReference",
+          "expectedRevision",
+          "targetId",
+          "kind",
+          "enabled"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SavedIssueView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SavedIssueView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "organize_issue",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/organize"
+      },
+      "mcpTool": "organize_issue",
+      "permission": "project writer",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "retryReference": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "backlog": {
+            "type": "boolean"
+          },
+          "expectedRevision": {
+            "pattern": "^[1-9][0-9]*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "issueId",
+          "retryReference",
+          "expectedRevision"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SavedIssueView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SavedIssueView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "set_issue_watch",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/watch"
+      },
+      "mcpTool": "set_issue_watch",
+      "permission": "accessible project reader; private caller-owned state",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "retryReference": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "watching": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "issueId",
+          "retryReference",
+          "watching"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SavedWatchView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SavedWatchView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "reorder_backlog",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/backlog-order"
+      },
+      "mcpTool": "reorder_backlog",
+      "permission": "current writable project member or administrator",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "before": {
+            "type": "boolean"
+          },
+          "expectedOrderRevision": {
+            "pattern": "^[1-9][0-9]*$",
+            "type": "string"
+          },
+          "expectedRevision": {
+            "pattern": "^[1-9][0-9]*$",
+            "type": "string"
+          },
+          "neighborId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "retryReference": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "before",
+          "expectedOrderRevision",
+          "expectedRevision",
+          "issueId",
+          "neighborId",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SavedBacklogChange"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/IssueFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SavedBacklogChange"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/IssueFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_development_links",
+      "rest": {
+        "method": "GET",
+        "path": "/issues/{issueId}/development-links"
+      },
+      "mcpTool": "list_development_links",
+      "permission": "current accessible issue project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "page": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
+              "cursor": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              }
+            }
+          }
+        },
+        "required": [
+          "issueId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageDevelopmentLinkView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/FailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageDevelopmentLinkView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/FailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "save_development_link",
+      "rest": {
+        "method": "PUT",
+        "path": "/issues/{issueId}/development-links/{linkId}"
+      },
+      "mcpTool": "save_development_link",
+      "permission": "current writable issue project member or administrator",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "linkId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "expectedRevision": {
+            "pattern": "^(0|[1-9][0-9]*)$",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "pull_request",
+              "commit",
+              "other"
+            ],
+            "type": "string"
+          },
+          "removed": {
+            "type": "boolean"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "url": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "retryReference": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "expectedRevision",
+          "issueId",
+          "kind",
+          "linkId",
+          "removed",
+          "retryReference",
+          "title",
+          "url"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SavedDevelopmentLinkView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/FailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SavedDevelopmentLinkView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/FailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "get_issue_planning",
+      "rest": {
+        "method": "GET",
+        "path": "/issues/{issueId}/planning"
+      },
+      "mcpTool": "get_issue_planning",
+      "permission": "current accessible issue project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "issueId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/IssuePlanningView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/IssuePlanningView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "set_issue_planning",
+      "rest": {
+        "method": "PUT",
+        "path": "/issues/{issueId}/planning"
+      },
+      "mcpTool": "set_issue_planning",
+      "permission": "current writable issue project member or administrator; epic/release belong to same project and expected kind",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "epicId": {
+            "format": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expectedRevision": {
+            "pattern": "^(0|[1-9][0-9]*)$",
+            "type": "string"
+          },
+          "releaseId": {
+            "format": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "retryReference": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "epicId",
+          "expectedRevision",
+          "issueId",
+          "releaseId",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SavedIssuePlanningView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SavedIssuePlanningView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "get_notification_preferences",
+      "rest": {
+        "method": "GET",
+        "path": "/notifications/preferences"
+      },
+      "mcpTool": "get_notification_preferences",
+      "permission": "approved active caller; private caller-owned preferences",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": []
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/NotificationPreferencesView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/NotificationFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/NotificationPreferencesView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/NotificationFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "update_notification_preferences",
+      "rest": {
+        "method": "PUT",
+        "path": "/notifications/preferences"
+      },
+      "mcpTool": "update_notification_preferences",
+      "permission": "approved active caller; private caller-owned preferences",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "dueReminders": {
+            "type": "boolean"
+          },
+          "emailMode": {
+            "enum": [
+              "off",
+              "instant",
+              "daily"
+            ],
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "enum": [
+                "watching",
+                "comment",
+                "mention",
+                "assignment",
+                "status",
+                "due_date",
+                "dependency_blocked",
+                "dependency_resolved",
+                "subtask_created",
+                "subtasks_completed"
+              ],
+              "type": "string"
+            },
+            "maxItems": 10,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "expectedRevision": {
+            "pattern": "^[1-9][0-9]*$",
+            "type": "string"
+          },
+          "inAppEnabled": {
+            "type": "boolean"
+          },
+          "retryReference": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "dueReminders",
+          "emailMode",
+          "events",
+          "expectedRevision",
+          "inAppEnabled",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SavedNotificationPreferencesView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/NotificationFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SavedNotificationPreferencesView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/NotificationFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_automation_rules",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/automation-rules"
+      },
+      "mcpTool": "list_automation_rules",
+      "permission": "current accessible project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "page": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
+              "cursor": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              }
+            }
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PageAutomationRuleView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/FailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PageAutomationRuleView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/FailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "save_automation_rule",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}/automation-rules/{ruleId}"
+      },
+      "mcpTool": "save_automation_rule",
+      "permission": "administrator; current writable project; one enabled assignment rule per stage",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "ruleId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "assigneeId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "expectedRevision": {
+            "pattern": "^(0|[1-9][0-9]*)$",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "stage": {
+            "pattern": "^(todo|in_progress|review|done)(:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?$",
+            "type": "string"
+          },
+          "retryReference": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "assigneeId",
+          "enabled",
+          "expectedRevision",
+          "name",
+          "projectId",
+          "retryReference",
+          "ruleId",
+          "stage"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SavedAutomationRuleView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/FailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SavedAutomationRuleView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/FailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_backlog",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/backlog"
+      },
+      "mcpTool": "list_backlog",
+      "permission": "current accessible project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "page": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
+              "cursor": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              }
+            }
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/BacklogPage"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/IssueFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/BacklogPage"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/IssueFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "export_issues",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/issues/export"
+      },
+      "mcpTool": "export_issues",
+      "permission": "current accessible project reader; scoped filtered export",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "filters": {
+            "$ref": "domain.schema.json#/$defs/IssueFilter"
+          },
+          "page": {
+            "$ref": "domain.schema.json#/$defs/PageRequest"
+          }
+        },
+        "required": [
+          "filters",
+          "projectId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/IssueExport"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/IssueFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/IssueExport"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/IssueFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "import_issues",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/issues/import"
+      },
+      "mcpTool": "import_issues",
+      "permission": "current writable project member or administrator",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "backlog": {
+            "type": "boolean"
+          },
+          "batchId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "csv": {
+            "maxLength": 1048576,
+            "minLength": 1,
+            "type": "string"
+          },
+          "mapping": {
+            "$ref": "domain.schema.json#/$defs/ImportMapping"
+          },
+          "retryReference": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "backlog",
+          "batchId",
+          "csv",
+          "mapping",
+          "projectId",
+          "retryReference"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SavedImportResult"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/IssueFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SavedImportResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/IssueFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "preview_issue_import",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/issues/import-preview"
+      },
+      "mcpTool": "preview_issue_import",
+      "permission": "current writable project member or administrator; read-only preview",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "csv": {
+            "maxLength": 1048576,
+            "minLength": 1,
+            "type": "string"
+          },
+          "mapping": {
+            "$ref": "domain.schema.json#/$defs/ImportMapping"
+          }
+        },
+        "required": [
+          "csv",
+          "mapping",
+          "projectId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/ImportPreview"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/IssueFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/ImportPreview"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/IssueFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "get_kanban_report",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/kanban-report"
+      },
+      "mcpTool": "get_kanban_report",
+      "permission": "current accessible project reader; bounded UTC date window",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "from": {
+            "format": "date",
+            "type": "string"
+          },
+          "through": {
+            "format": "date",
+            "type": "string"
+          },
+          "page": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
+              "cursor": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              }
+            }
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/KanbanReport"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/KanbanReport"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_planning_items",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/planning"
+      },
+      "mcpTool": "list_planning_items",
+      "permission": "current accessible project reader",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "epic",
+              "release"
+            ],
+            "type": "string"
+          },
+          "page": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
+              "cursor": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              }
+            }
+          }
+        },
+        "required": [
+          "projectId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PagePlanningItemView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PagePlanningItemView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "create_planning_item",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/planning"
+      },
+      "mcpTool": "create_planning_item",
+      "permission": "current writable project member or administrator",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "epic",
+              "release"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "active",
+              "complete"
+            ],
+            "type": "string"
+          },
+          "targetDate": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "retryReference": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "description",
+          "kind",
+          "name",
+          "projectId",
+          "retryReference",
+          "status",
+          "targetDate"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SavedPlanningItemView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SavedPlanningItemView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "update_planning_item",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}/planning/{planningId}"
+      },
+      "mcpTool": "update_planning_item",
+      "permission": "current writable project member or administrator; planning item belongs to project",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "planningId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 2000,
+            "type": "string"
+          },
+          "expectedRevision": {
+            "pattern": "^[1-9][0-9]*$",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "active",
+              "complete"
+            ],
+            "type": "string"
+          },
+          "targetDate": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "retryReference": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "description",
+          "expectedRevision",
+          "name",
+          "planningId",
+          "projectId",
+          "retryReference",
+          "status",
+          "targetDate"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/SavedPlanningItemView"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/SavedPlanningItemView"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "list_planning_issues",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/planning/{planningId}/issues"
+      },
+      "mcpTool": "list_planning_issues",
+      "permission": "current accessible project reader; planning item belongs to that project",
+      "mutation": false,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "projectId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "planningId": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "page": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
+              "cursor": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              }
+            }
+          }
+        },
+        "required": [
+          "planningId",
+          "projectId"
+        ]
+      },
+      "output": {
+        "$ref": "domain.schema.json#/$defs/PagePlanningIssueSummary"
+      },
+      "failure": {
+        "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "domain.schema.json#/$defs/PagePlanningIssueSummary"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "domain.schema.json#/$defs/PlanningFailureBody"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

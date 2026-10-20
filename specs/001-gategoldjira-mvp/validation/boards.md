@@ -1,0 +1,11 @@
+# Local Kanban checkpoint
+
+Verified 2026-10-12 with PostgreSQL 18.6, the official Go MCP SDK and Chromium. Tasks T061–T073 are complete for the current local story.
+
+- Fourteen combined access/project/issue/board browser cases passed; six exercise boards. These cover Arabic named views, settings that preserve issues, equal/exceeded Review limits, temporary visibility versus saved WIP counts, actual dragging, keyboard moves/order, paged columns, a 100-card rendering cap, Viewer restrictions, unfinished prerequisites, stale settings/focus recovery, archive/restore, and original-reference retry after a committed move response is lost.
+- PostgreSQL race checks cover shared hidden-card order, exhausted-rank gaps and append overflow, unchanged content revisions during rebalance, no-op/replay event identity, creator/Admin/default-board rules, archived-source replay denial, and account/membership revocation while a repeatable read waits for the company lock.
+- A 31-prerequisite Done guard returns the first 25 summaries and a cursor usable by ordinary authorized `search_issues` with the matching `prerequisiteFor` filter. A Done parent rejects reopened children. Reopened blockers keep the dependent's status and emit exactly one blocked notification; last blockers and children produce their corresponding atomic effects.
+- All 28 current REST routes match the operation catalog. Board mutation results remain Board summaries as designed; board reads and movement return the specified counts/views. Concrete issue-or-board conflict records and unfinished pages validate against the design schema. Movement and reorder replay across actual REST/MCP adapters without duplicate events.
+- Go race checks, vet, strict Angular application/template/test compilation, 34 frontend unit checks, generated drift and import boundaries passed. Production Angular initial output is 735 kB raw / 157 kB estimated transfer, below the 1 MB hard limit; the 600 kB warning is still open for final optimization.
+
+Recheck board filters/projections after the later label and subtask stories. Auth0, Google Cloud, actual assistant interoperability, employee usability and cloud performance/recovery remain unverified external gates. This is a local story checkpoint, not full MVP completion.

@@ -1,0 +1,114 @@
+{
+  "environment": "isolated loopback HTTP + real PostgreSQL + pgx prepared SQL; text/default search request-local custom planning; no cloud target",
+  "cloudAcceptance": false,
+  "generatedAt": "2026-10-13T21:39:15.697476875Z",
+  "goVersion": "go1.27.2",
+  "workload": {
+    "hotProjectIssues": 95000,
+    "issues": 100000
+  },
+  "measurements": [
+    {
+      "action": "force_generic_plan/number-global",
+      "trials": 20,
+      "p50Ms": 11.136,
+      "p95Ms": 23.269,
+      "maxMs": 23.79,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/complete-key",
+      "trials": 20,
+      "p50Ms": 34.703,
+      "p95Ms": 47.185,
+      "maxMs": 58.878,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/title-literal",
+      "trials": 20,
+      "p50Ms": 36.159,
+      "p95Ms": 50.341,
+      "maxMs": 57.957,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/key-prefix",
+      "trials": 20,
+      "p50Ms": 102.032,
+      "p95Ms": 353.053,
+      "maxMs": 373.565,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/short-Arabic-no-match",
+      "trials": 20,
+      "p50Ms": 167.504,
+      "p95Ms": 188.675,
+      "maxMs": 206.053,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_generic_plan/empty-query",
+      "trials": 20,
+      "p50Ms": 61.856,
+      "p95Ms": 81.219,
+      "maxMs": 83.241,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/number-global",
+      "trials": 20,
+      "p50Ms": 10.055,
+      "p95Ms": 15.797,
+      "maxMs": 15.8,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/complete-key",
+      "trials": 20,
+      "p50Ms": 33.667,
+      "p95Ms": 48.324,
+      "maxMs": 51.477,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/title-literal",
+      "trials": 20,
+      "p50Ms": 36.431,
+      "p95Ms": 58.436,
+      "maxMs": 58.958,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/key-prefix",
+      "trials": 20,
+      "p50Ms": 85.489,
+      "p95Ms": 119.963,
+      "maxMs": 167.37,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/short-Arabic-no-match",
+      "trials": 20,
+      "p50Ms": 143.66,
+      "p95Ms": 267.261,
+      "maxMs": 278.545,
+      "localBudgetMs": 500
+    },
+    {
+      "action": "force_custom_plan/empty-query",
+      "trials": 20,
+      "p50Ms": 69.1,
+      "p95Ms": 158.855,
+      "maxMs": 183.894,
+      "localBudgetMs": 500
+    }
+  ],
+  "observedHeapPeakBytes": 73994760,
+  "poolMaxConnections": 10,
+  "poolAcquireCount": 254,
+  "poolAcquireMs": 6.117,
+  "poolEmptyAcquireCount": 0,
+  "locksWaitingAtEnd": 0
+}

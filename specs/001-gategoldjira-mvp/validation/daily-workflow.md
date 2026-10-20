@@ -1,0 +1,35 @@
+# Daily Jira workflow implementation evidence
+
+Updated2026-10-13, Africa/Cairo. Implements DAILY-001–DAILY-009 with the existing feature-first Angular/Go/PostgreSQL structure, shared typed REST/MCP services and separate frontend/backend. No new runtime dependencies, message broker or cloud resources were introduced.
+
+## Delivered behavior
+
+- Board cards open an issue drawer while retaining the board view. Inline status, assignee, priority and due-date actions use revision checks and explicit conflict review. Native full-issue links and keyboard/card dragging remain available. Quick controls reset to confirmed values after a rejected write.
+- One project workflow synchronizes names/order/transitions across boards and both transports. Each stage has a WIP warning. Retirement explicitly chooses a replacement, preserves history and moves up to100 issues with existing prerequisite/reopen checks. Existing legacy board differences stay restrictive until explicitly saved. A view-only board change does not advance unrelated board revisions.
+- Issue readers can inspect safe retained issue activity, comments and files. Private subscription/inbox state does not enter another reader's issue history. Authorization is reevaluated for history reads and watcher deliveries.
+- New-issue picture/file queues retain the created issue ID and upload retry references on partial failure. Descriptions/comments/board settings and File objects remain as in-memory session drafts across app navigation; reload/sign-out clears them. Pending picture/document uploads block editor submission.
+- A multi-file attachment area accepts up to20files per queue,10MiB each. Image/PDF previews fetch private bytes; other types download. Rich descriptions/comments can include private file references. Files are not executed or treated as trusted HTML.
+- Exact custom-stage and teammate filters, stable due/priority/created/updated sorting, private saved searches and bulk changes are implemented. Up to100 issues are processed individually; stale issues remain selected with their own error and uncertain writes keep the original intent/reference. Viewers cannot select bulk-edit rows.
+- Backlog, archive/restore, clone, watcher subscriptions and retained same-project relates-to/duplicates links are available. Clone copies fields and text only; it does not copy comments, files, links or subtasks. Dependencies continue to enforce blocked completion separately.
+- Avatar filters, eligible-stage creation, actual workflow transition previews and compact mobile stage navigation work with the existing keyboard alternatives. Foreground30-second refresh pauses for drafts and pending mutations and preserves expanded windows/scroll.
+
+## Verification
+
+- Complete real-PostgreSQL Go suite passes. Complete Go race suite and vet pass. Focused race reruns cover final workflow reconciliation/no-op behavior, attachment watcher notifications and runtime-role permissions.
+- Generated SQL/OpenAPI/SDK/Zod output has zero drift. Catalog:60 business operations,32 mutations; all-operation role/retry parity includes private searches, watchers, links and organization. Local username/password exchange remains separate.
+- Strict Angular application/templates and test compilation pass.86frontend unit tests across14files pass. Identity Action type/build/test and CommonJS load pass. Go feature/platform import boundaries pass.
+- Browser verification uses disposable companies and private fixtures. Complete suite:50passed, zero skipped, in3.2minutes (`.local/browser-tests/7631a40f5df5438cbacb4e4feacbcb05/`). A final HTML-source draft guard correction was followed by13/13 affected daily-workflow, board-editor/rich-text and discussion tests passing in40.1seconds (`.local/browser-tests/feefc1fdb36b441584dab3ebb93f302d/`). The strengthened draft scenario verifies an Arabic HTML-source leave warning and restored content.
+- Production build passes at866.75kB raw /188.32kB estimated initial transfer. The600kB initial warning and8kB component-style warning (Kanban9.12kB) remain visible; both are below the existing error budgets. No threshold was increased.
+- Full local workload passes:50users,20projects,10,000issues,20,000comments,50,000events/inbox entries,1GiB seed pictures and100trials per action. Maximum measured ordinary read p95=43.51ms; issue update9.17ms;10MiB image upload423.53ms;50-concurrent-user round167.59ms. See [performance.md](performance.md). These are local measurements, not Cloud acceptance.
+- Browser navigation benchmark:100project reads p95=122.05ms;100board navigations p95=558.02ms on the local development server, both below the2second regression budget.
+- Desktop board/drawer and390px phone screenshots were visually inspected. Current evidence is in ignored `.local/browser-evidence/`, including `jira-board-desktop.png`, `jira-board-phone.png`, `jira-issue-preview-desktop.png`, `issue-comments-and-attachments.png`, `board-flow-editor.png` and `rich-text-issue.png`.
+
+The tests found and fixed a membership editor success/reload race, quick-edit visual rollback after conflicts, missing restricted-runtime grants for new tables, unchanged workflow reconciliation, no-op saves unnecessarily invalidating other boards, and HTML-source drafts failing to activate leave protection while the visual editor was empty. Browser selectors were updated for the added drawer, assignee controls and canonical shared workflow metadata. The clock-controlled refresh test installs its clock before application timers; the timing test scopes navigation to the sidebar and project main region. No failing assertion was disabled to obtain acceptance. Earlier failure traces remain in their private run directories.
+
+## Local rollout and limits
+
+Migrations00006/00007 were applied additively after a private backup in `.local/backups/daily-workflow-20261013/`. API127.0.0.1:21080 was restarted with the tested binary; web localhost:4201 is running. Existing accounts/credential hashes match the pre-rollout checksums. Counts remain4users,1project,5issues,2boards; schema version advances5→7. Existing Owner password exchange, current user, project/board/issue reads, issue activity, saved searches, health/readiness and web all return200. Business data and files were not reseeded.
+
+`infra/sql/runtime-grants.sql` now covers retained attachments and organization tables with explicit mutable-column permissions. Isolated PostgreSQL checks prove permitted work and denied ownership/history rewriting, business deletion and DDL. Apply these grants as schema owner after migrations when using a restricted production runtime account.
+
+The original eight external Auth0/Google OAuth, selected-assistant, employee usability, billing/cloud performance and recovery gates remain pending. Sprints, epics, estimates, automation and custom fields remain deferred. Stage retirement is intentionally bounded to100 issues per transaction; move larger stages in batches first. Keep retained tables/stage identities on application rollback.

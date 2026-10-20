@@ -1,0 +1,8 @@
+{
+  "environment": "local Angular development server and disposable test company",
+  "cloudAcceptance": false,
+  "operation": "typing an exact issue key to visible global search results",
+  "trials": 20,
+  "p95Ms": 211.35623400000622,
+  "maxMs": 212.76247300000978
+}

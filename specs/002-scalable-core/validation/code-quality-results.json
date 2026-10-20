@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-16",
+  "reviewed_fixes": 4,
+  "frontend": {
+    "unit_tests": 114,
+    "test_files": 22,
+    "strict_app_and_test_types": true,
+    "initial_kb": 545.24,
+    "estimated_transfer_kb": 135.38
+  },
+  "identity_unit_tests": 1,
+  "source_capture_unit_tests": 3,
+  "browser": {
+    "scenarios_verified": 163,
+    "acceptance": "Combined complete-suite and current-source focused reruns; earlier failed whole commands are not claimed as successful.",
+    "complete_162_case_run": {
+      "startTime": "2026-10-16T00:58:30.910Z",
+      "duration": 930540.741,
+      "expected": 160,
+      "skipped": 0,
+      "unexpected": 2,
+      "flaky": 0
+    },
+    "affected_20_case_followup": {
+      "startTime": "2026-10-16T01:20:08.484Z",
+      "duration": 245152.828,
+      "expected": 19,
+      "skipped": 0,
+      "unexpected": 1,
+      "flaky": 0
+    },
+    "final_mcp_and_saved_search_followup": {
+      "startTime": "2026-10-16T01:26:45.203Z",
+      "duration": 28073.103,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "resolved_failures": [
+      "Clear stale saved-search success while the next save is pending",
+      "Exclude trace recording overhead from the unchanged timing budget",
+      "Scope proxy actions to the active connection when revoked names repeat"
+    ],
+    "current_production_and_test_source_matches_final_followup": true,
+    "timing": {
+      "limit_p95_ms": 2000,
+      "project_p95_ms": 882.67,
+      "board_p95_ms": 1836.61,
+      "typing_p95_ms": 478.46,
+      "navigation_samples_each": 100,
+      "typing_samples": 20,
+      "navigation_trace": "off",
+      "cloud_acceptance": false
+    }
+  },
+  "go": {
+    "runtime_packages_covered": 31,
+    "coverage": "Combined isolated runs with fresh affected-package rechecks",
+    "current_test_tree_compiles": true,
+    "vet": true,
+    "reachable_vulnerabilities": 0,
+    "uncalled_required_module_advisories": 1
+  },
+  "ci": {
+    "browser_job_added": true,
+    "workflow_structure_checked": true,
+    "remote_execution": false,
+    "pinned_real_mcp_proxy_enabled": true,
+    "proxy_dependency_audit_vulnerabilities": 0
+  },
+  "company_database_migrated_by_this_task": false,
+  "company_volumes_removed": false,
+  "quality_driver_removed": true,
+  "external_acceptance": "Auth0/Google, GCS/IAM, hosting/idle-start, billing and external paired restore remain pending"
+}

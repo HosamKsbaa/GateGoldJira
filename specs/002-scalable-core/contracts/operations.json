@@ -1,0 +1,1275 @@
+{
+  "contractVersion": "1.10.0",
+  "extends": "../../001-gategoldjira-mvp/contracts/operations.json",
+  "note": "Additive operation catalog; runtime schemas are generated from concrete Go models. Legacy entries remain unchanged.",
+  "operations": [
+    {
+      "id": "patch_issue_field",
+      "rest": {
+        "method": "PATCH",
+        "path": "/issues/{issueId}/fields"
+      },
+      "mcpTool": "patch_issue_field",
+      "permission": "current active project write access; selected prior value must match",
+      "mutation": true,
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "issueId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "field": {
+            "enum": [
+              "assigneeId",
+              "priority",
+              "dueDate"
+            ]
+          },
+          "assignee": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "prior": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "prior",
+              "value"
+            ]
+          },
+          "priority": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "prior": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              }
+            },
+            "required": [
+              "prior",
+              "value"
+            ]
+          },
+          "dueDate": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "prior": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "value": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "prior",
+              "value"
+            ]
+          },
+          "retryReference": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "issueId",
+          "field",
+          "retryReference"
+        ],
+        "oneOf": [
+          {
+            "properties": {
+              "field": {
+                "const": "assigneeId"
+              }
+            },
+            "required": [
+              "assignee"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "priority"
+                  ]
+                },
+                {
+                  "required": [
+                    "dueDate"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "properties": {
+              "field": {
+                "const": "priority"
+              }
+            },
+            "required": [
+              "priority"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "assignee"
+                  ]
+                },
+                {
+                  "required": [
+                    "dueDate"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "properties": {
+              "field": {
+                "const": "dueDate"
+              }
+            },
+            "required": [
+              "dueDate"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "assignee"
+                  ]
+                },
+                {
+                  "required": [
+                    "priority"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "output": {
+        "$ref": "../../001-gategoldjira-mvp/contracts/domain.schema.json#/$defs/UpdateIssueResult"
+      },
+      "notes": "Full replacement, including explicit nullable assignee/dueDate and complete labels. Status uses move_issue; subtask type remains fixed.",
+      "audit": "Every saved change; successful no-op/replay creates no duplicate activity",
+      "retry": "Caller scoped; >=24h; hash includes operation+normalized args; current authorization rechecked",
+      "failure": {
+        "$ref": "../../001-gategoldjira-mvp/contracts/domain.schema.json#/$defs/Failure"
+      },
+      "mcpOutput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": true
+              },
+              "data": {
+                "$ref": "../../001-gategoldjira-mvp/contracts/domain.schema.json#/$defs/UpdateIssueResult"
+              },
+              "error": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ok": {
+                "const": false
+              },
+              "data": {
+                "type": "null"
+              },
+              "error": {
+                "$ref": "../../001-gategoldjira-mvp/contracts/domain.schema.json#/$defs/Failure"
+              }
+            },
+            "required": [
+              "ok",
+              "data",
+              "error"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "get_project_configuration",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/configuration",
+        "apiVersion": 2
+      },
+      "mcpTool": "get_project_configuration",
+      "permission": "current project read access",
+      "mutation": false,
+      "inputModel": "configuration.GetInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_project_configuration/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_project_configuration/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "list_issue_types",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/issue-types",
+        "apiVersion": 2
+      },
+      "mcpTool": "list_issue_types",
+      "permission": "current project read access",
+      "mutation": false,
+      "inputModel": "configuration.ListInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_issue_types/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_issue_types/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "list_priorities",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/priorities",
+        "apiVersion": 2
+      },
+      "mcpTool": "list_priorities",
+      "permission": "current project read access",
+      "mutation": false,
+      "inputModel": "configuration.ListInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_priorities/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_priorities/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "save_issue_type",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}/issue-types/{typeId}",
+        "apiVersion": 2
+      },
+      "mcpTool": "save_issue_type",
+      "permission": "current project configuration access and matching configuration revision",
+      "mutation": true,
+      "inputModel": "configuration.SaveTypeInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_issue_type/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_issue_type/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "save_priority",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}/priorities/{priorityId}",
+        "apiVersion": 2
+      },
+      "mcpTool": "save_priority",
+      "permission": "current project configuration access and matching configuration revision",
+      "mutation": true,
+      "inputModel": "configuration.SavePriorityInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_priority/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_priority/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "set_project_defaults",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}/configuration/defaults",
+        "apiVersion": 2
+      },
+      "mcpTool": "set_project_defaults",
+      "permission": "current project configuration access; changed defaults require modern issue access",
+      "mutation": true,
+      "inputModel": "configuration.SetDefaultsInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/set_project_defaults/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/set_project_defaults/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "list_membership_candidates",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/membership-candidates",
+        "apiVersion": 1
+      },
+      "mcpTool": "list_membership_candidates",
+      "permission": "current project configuration access; minimal directory names only",
+      "mutation": false,
+      "inputModel": "identity.CandidateInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_membership_candidates/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_membership_candidates/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "list_workflows",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/workflows",
+        "apiVersion": 2
+      },
+      "mcpTool": "list_workflows",
+      "permission": "current project read access",
+      "mutation": false,
+      "inputModel": "configuration.ListInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_workflows/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_workflows/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "list_workflow_stages",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/workflows/{workflowId}/stages",
+        "apiVersion": 2
+      },
+      "mcpTool": "list_workflow_stages",
+      "permission": "current project read access",
+      "mutation": false,
+      "inputModel": "configuration.StageListInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_workflow_stages/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_workflow_stages/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "list_workflow_transitions",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/workflows/{workflowId}/transitions",
+        "apiVersion": 2
+      },
+      "mcpTool": "list_workflow_transitions",
+      "permission": "current project read access",
+      "mutation": false,
+      "inputModel": "configuration.StageListInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_workflow_transitions/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_workflow_transitions/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "list_type_workflow_bindings",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/issue-types/{typeId}/workflows",
+        "apiVersion": 2
+      },
+      "mcpTool": "list_type_workflow_bindings",
+      "permission": "current project read access",
+      "mutation": false,
+      "inputModel": "configuration.BindingListInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_type_workflow_bindings/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_type_workflow_bindings/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "save_workflow",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}/workflows/{workflowId}",
+        "apiVersion": 2
+      },
+      "mcpTool": "save_workflow",
+      "permission": "current project configuration access and matching configuration revision",
+      "mutation": true,
+      "inputModel": "configuration.SaveWorkflowInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_workflow/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_workflow/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "save_workflow_stage",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}/workflows/{workflowId}/stages/{stageId}",
+        "apiVersion": 2
+      },
+      "mcpTool": "save_workflow_stage",
+      "permission": "current project configuration access and matching configuration revision",
+      "mutation": true,
+      "inputModel": "configuration.SaveStageInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_workflow_stage/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_workflow_stage/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "save_workflow_transition",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}/workflows/{workflowId}/transitions/{transitionId}",
+        "apiVersion": 2
+      },
+      "mcpTool": "save_workflow_transition",
+      "permission": "current project configuration access and matching configuration revision",
+      "mutation": true,
+      "inputModel": "configuration.SaveTransitionInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_workflow_transition/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_workflow_transition/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "set_type_workflow_binding",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}/issue-types/{typeId}/workflows/{workflowId}",
+        "apiVersion": 2
+      },
+      "mcpTool": "set_type_workflow_binding",
+      "permission": "current project configuration access and matching configuration revision",
+      "mutation": true,
+      "inputModel": "configuration.SetBindingInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/set_type_workflow_binding/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/set_type_workflow_binding/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "migrate_workflow_issues",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/workflow-migrations",
+        "apiVersion": 2
+      },
+      "mcpTool": "migrate_workflow_issues",
+      "permission": "current project configuration access and matching configuration revision",
+      "mutation": true,
+      "inputModel": "configuration.MigrationInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/migrate_workflow_issues/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/migrate_workflow_issues/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "get_issue_v2",
+      "rest": {
+        "method": "GET",
+        "path": "/issues/{issueId}",
+        "apiVersion": 2
+      },
+      "mcpTool": "get_issue_v2",
+      "permission": "current project read access",
+      "mutation": false,
+      "inputModel": "issues.ModernGetInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_issue_v2/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_issue_v2/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "search_issues_v2",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/search",
+        "apiVersion": 2
+      },
+      "mcpTool": "search_issues_v2",
+      "permission": "current project read access",
+      "mutation": false,
+      "inputModel": "issues.ModernSearchInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/search_issues_v2/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/search_issues_v2/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "create_issue_v2",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/issues",
+        "apiVersion": 2
+      },
+      "mcpTool": "create_issue_v2",
+      "permission": "current project write access with canonical choice and issue/selected-field guards",
+      "mutation": true,
+      "inputModel": "issues.ModernCreateInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/create_issue_v2/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/create_issue_v2/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "update_issue_v2",
+      "rest": {
+        "method": "PUT",
+        "path": "/issues/{issueId}",
+        "apiVersion": 2
+      },
+      "mcpTool": "update_issue_v2",
+      "permission": "current project write access with canonical choice and issue/selected-field guards",
+      "mutation": true,
+      "inputModel": "issues.ModernUpdateInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/update_issue_v2/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/update_issue_v2/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "patch_issue_field_v2",
+      "rest": {
+        "method": "PATCH",
+        "path": "/issues/{issueId}/fields",
+        "apiVersion": 2
+      },
+      "mcpTool": "patch_issue_field_v2",
+      "permission": "current project write access with canonical choice and issue/selected-field guards",
+      "mutation": true,
+      "inputModel": "issues.ModernPatchInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/patch_issue_field_v2/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/patch_issue_field_v2/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "move_issue_v2",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/move",
+        "apiVersion": 2
+      },
+      "mcpTool": "move_issue_v2",
+      "permission": "current project write access with canonical choice and issue/selected-field guards",
+      "mutation": true,
+      "inputModel": "issues.ModernMoveInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/move_issue_v2/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/move_issue_v2/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "list_issue_transitions_v2",
+      "rest": {
+        "method": "GET",
+        "path": "/issues/{issueId}/transitions",
+        "apiVersion": 2
+      },
+      "mcpTool": "list_issue_transitions_v2",
+      "permission": "current project read access; current write/configuration capability is returned per move",
+      "mutation": false,
+      "inputModel": "issues.TransitionOptionsInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_issue_transitions_v2/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_issue_transitions_v2/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "get_board_v2",
+      "rest": {
+        "method": "GET",
+        "path": "/boards/{boardId}",
+        "apiVersion": 2
+      },
+      "mcpTool": "get_board_v2",
+      "permission": "current project access; writes require active membership, current revisions and full-view capacity; layout writes require eligible board creator or project administrator",
+      "mutation": false,
+      "inputModel": "boards.GetInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_board_v2/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_board_v2/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "list_board_cards_v2",
+      "rest": {
+        "method": "POST",
+        "path": "/boards/{boardId}/columns/{columnId}/search",
+        "apiVersion": 2
+      },
+      "mcpTool": "list_board_cards_v2",
+      "permission": "current project access; writes require active membership, current revisions and full-view capacity; layout writes require eligible board creator or project administrator",
+      "mutation": false,
+      "inputModel": "boards.NativeCardsInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_board_cards_v2/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_board_cards_v2/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "create_board_v2",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/boards",
+        "apiVersion": 2
+      },
+      "mcpTool": "create_board_v2",
+      "permission": "current project access; writes require active membership, current revisions and full-view capacity; layout writes require eligible board creator or project administrator",
+      "mutation": true,
+      "inputModel": "boards.CreateInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/create_board_v2/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/create_board_v2/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "save_board_layout_v2",
+      "rest": {
+        "method": "PUT",
+        "path": "/boards/{boardId}/layout",
+        "apiVersion": 2
+      },
+      "mcpTool": "save_board_layout_v2",
+      "permission": "current project access; writes require active membership, current revisions and full-view capacity; layout writes require eligible board creator or project administrator",
+      "mutation": true,
+      "inputModel": "boards.SaveLayoutInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_board_layout_v2/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_board_layout_v2/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "move_board_card_v2",
+      "rest": {
+        "method": "POST",
+        "path": "/boards/{boardId}/cards/move",
+        "apiVersion": 2
+      },
+      "mcpTool": "move_board_card_v2",
+      "permission": "current project access; writes require active membership, current revisions and full-view capacity; layout writes require eligible board creator or project administrator",
+      "mutation": true,
+      "inputModel": "boards.NativeMoveInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/move_board_card_v2/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/move_board_card_v2/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "reorder_board_card_v2",
+      "rest": {
+        "method": "POST",
+        "path": "/boards/{boardId}/cards/reorder",
+        "apiVersion": 2
+      },
+      "mcpTool": "reorder_board_card_v2",
+      "permission": "current project access; writes require active membership, current revisions and full-view capacity; layout writes require eligible board creator or project administrator",
+      "mutation": true,
+      "inputModel": "boards.NativeMoveInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/reorder_board_card_v2/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/reorder_board_card_v2/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "list_fields",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/fields",
+        "apiVersion": 2
+      },
+      "mcpTool": "list_fields",
+      "permission": "current project access; configuration writes require project administration; issue writes require eligible active membership and current context",
+      "mutation": false,
+      "inputModel": "configuration.ListInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_fields/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_fields/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "list_field_options",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/fields/{fieldId}/options",
+        "apiVersion": 2
+      },
+      "mcpTool": "list_field_options",
+      "permission": "current project access; configuration writes require project administration; issue writes require eligible active membership and current context",
+      "mutation": false,
+      "inputModel": "configuration.FieldOptionsInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_field_options/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_field_options/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "save_field",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}/fields/{fieldId}",
+        "apiVersion": 2
+      },
+      "mcpTool": "save_field",
+      "permission": "current project access; configuration writes require project administration; issue writes require eligible active membership and current context",
+      "mutation": true,
+      "inputModel": "configuration.SaveFieldInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_field/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_field/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "save_field_option",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}/fields/{fieldId}/options/{optionId}",
+        "apiVersion": 2
+      },
+      "mcpTool": "save_field_option",
+      "permission": "current project access; configuration writes require project administration; issue writes require eligible active membership and current context",
+      "mutation": true,
+      "inputModel": "configuration.SaveFieldOptionInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_field_option/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_field_option/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "backfill_field_defaults",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/fields/{fieldId}/backfill",
+        "apiVersion": 2
+      },
+      "mcpTool": "backfill_field_defaults",
+      "permission": "current project access; configuration writes require project administration; issue writes require eligible active membership and current context",
+      "mutation": true,
+      "inputModel": "configuration.BackfillFieldInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/backfill_field_defaults/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/backfill_field_defaults/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "get_transition_policy",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/workflows/{workflowId}/transitions/{transitionId}/policy",
+        "apiVersion": 2
+      },
+      "mcpTool": "get_transition_policy",
+      "permission": "current project access; configuration writes require project administration; issue writes require eligible active membership and current context",
+      "mutation": false,
+      "inputModel": "configuration.TransitionPolicyInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_transition_policy/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_transition_policy/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "save_transition_policy",
+      "rest": {
+        "method": "PUT",
+        "path": "/projects/{projectId}/workflows/{workflowId}/transitions/{transitionId}/policy",
+        "apiVersion": 2
+      },
+      "mcpTool": "save_transition_policy",
+      "permission": "current project access; configuration writes require project administration; issue writes require eligible active membership and current context",
+      "mutation": true,
+      "inputModel": "configuration.SaveTransitionPolicyInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_transition_policy/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_transition_policy/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "get_issue_fields",
+      "rest": {
+        "method": "GET",
+        "path": "/issues/{issueId}/custom-fields",
+        "apiVersion": 2
+      },
+      "mcpTool": "get_issue_fields",
+      "permission": "current project access; configuration writes require project administration; issue writes require eligible active membership and current context",
+      "mutation": false,
+      "inputModel": "issues.CustomFieldsInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_issue_fields/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_issue_fields/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "save_issue_fields",
+      "rest": {
+        "method": "PUT",
+        "path": "/issues/{issueId}/custom-fields",
+        "apiVersion": 2
+      },
+      "mcpTool": "save_issue_fields",
+      "permission": "current project access; configuration writes require project administration; issue writes require eligible active membership and current context",
+      "mutation": true,
+      "inputModel": "issues.SaveCustomFieldsInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_issue_fields/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/save_issue_fields/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "get_issue_approvals",
+      "rest": {
+        "method": "GET",
+        "path": "/issues/{issueId}/transitions/{transitionId}/approvals",
+        "apiVersion": 2
+      },
+      "mcpTool": "get_issue_approvals",
+      "permission": "current project access; configuration writes require project administration; issue writes require eligible active membership and current context",
+      "mutation": false,
+      "inputModel": "issues.ApprovalContextInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_issue_approvals/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_issue_approvals/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "vote_issue_approval",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/transitions/{transitionId}/approvals",
+        "apiVersion": 2
+      },
+      "mcpTool": "vote_issue_approval",
+      "permission": "current project access; configuration writes require project administration; issue writes require eligible active membership and current context",
+      "mutation": true,
+      "inputModel": "issues.ApprovalVoteInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/vote_issue_approval/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/vote_issue_approval/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "resubmit_issue_approval",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/transitions/{transitionId}/resubmit",
+        "apiVersion": 2
+      },
+      "mcpTool": "resubmit_issue_approval",
+      "permission": "current project access; configuration writes require project administration; issue writes require eligible active membership and current context",
+      "mutation": true,
+      "inputModel": "issues.ApprovalResubmitInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/resubmit_issue_approval/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/resubmit_issue_approval/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "get_asset_policy",
+      "rest": {
+        "method": "GET",
+        "path": "/asset-policy"
+      },
+      "mcpTool": "get_asset_policy",
+      "permission": "Current active project access; writes require membership; unpublished assets and sessions belong to the uploader. Policy requires an active account.",
+      "mutation": false,
+      "inputModel": "attachments.AssetPolicy",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_asset_policy/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_asset_policy/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "get_asset",
+      "rest": {
+        "method": "GET",
+        "path": "/assets/{assetId}"
+      },
+      "mcpTool": "get_asset",
+      "permission": "Current active project access; writes require membership; unpublished assets and sessions belong to the uploader. Policy requires an active account.",
+      "mutation": false,
+      "inputModel": "attachments.AssetGetInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_asset/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_asset/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "list_assets",
+      "rest": {
+        "method": "GET",
+        "path": "/issues/{issueId}/assets"
+      },
+      "mcpTool": "list_assets",
+      "permission": "Current active project access; writes require membership; unpublished assets and sessions belong to the uploader. Policy requires an active account.",
+      "mutation": false,
+      "inputModel": "attachments.AssetListInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_assets/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/list_assets/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "upload_asset",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/assets"
+      },
+      "mcpTool": "upload_asset",
+      "permission": "Current active project access; writes require membership; unpublished assets and sessions belong to the uploader. Policy requires an active account.",
+      "mutation": true,
+      "inputModel": "attachments.AssetUploadToolInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/upload_asset/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/upload_asset/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "detach_asset",
+      "rest": {
+        "method": "POST",
+        "path": "/assets/{assetId}/detach"
+      },
+      "mcpTool": "detach_asset",
+      "permission": "Current active project access; writes require membership; unpublished assets and sessions belong to the uploader. Policy requires an active account.",
+      "mutation": true,
+      "inputModel": "attachments.AssetDetachInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/detach_asset/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/detach_asset/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "download_asset_chunk",
+      "rest": {
+        "method": "GET",
+        "path": "/assets/{assetId}/chunk"
+      },
+      "mcpTool": "download_asset_chunk",
+      "permission": "Current active project access; writes require membership; unpublished assets and sessions belong to the uploader. Policy requires an active account.",
+      "mutation": false,
+      "inputModel": "attachments.AssetDownloadInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/download_asset_chunk/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/download_asset_chunk/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "start_asset_upload",
+      "rest": {
+        "method": "POST",
+        "path": "/issues/{issueId}/asset-uploads"
+      },
+      "mcpTool": "start_asset_upload",
+      "permission": "Current active project access; writes require membership; unpublished assets and sessions belong to the uploader. Policy requires an active account.",
+      "mutation": true,
+      "inputModel": "attachments.StartUploadInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/start_asset_upload/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/start_asset_upload/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "get_asset_upload",
+      "rest": {
+        "method": "GET",
+        "path": "/asset-uploads/{sessionId}"
+      },
+      "mcpTool": "get_asset_upload",
+      "permission": "Current active project access; writes require membership; unpublished assets and sessions belong to the uploader. Policy requires an active account.",
+      "mutation": false,
+      "inputModel": "attachments.GetUploadInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_asset_upload/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_asset_upload/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "append_asset_chunk",
+      "rest": {
+        "method": "POST",
+        "path": "/asset-uploads/{sessionId}/chunks"
+      },
+      "mcpTool": "append_asset_chunk",
+      "permission": "Current active project access; writes require membership; unpublished assets and sessions belong to the uploader. Policy requires an active account.",
+      "mutation": true,
+      "inputModel": "attachments.AppendUploadInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/append_asset_chunk/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/append_asset_chunk/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "finalize_asset_upload",
+      "rest": {
+        "method": "POST",
+        "path": "/asset-uploads/{sessionId}/finalize"
+      },
+      "mcpTool": "finalize_asset_upload",
+      "permission": "Current active project access; writes require membership; unpublished assets and sessions belong to the uploader. Policy requires an active account.",
+      "mutation": true,
+      "inputModel": "attachments.FinalizeUploadInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/finalize_asset_upload/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/finalize_asset_upload/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "cancel_asset_upload",
+      "rest": {
+        "method": "POST",
+        "path": "/asset-uploads/{sessionId}/cancel"
+      },
+      "mcpTool": "cancel_asset_upload",
+      "permission": "Current active project access; writes require membership; unpublished assets and sessions belong to the uploader. Policy requires an active account.",
+      "mutation": true,
+      "inputModel": "attachments.CancelUploadInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/cancel_asset_upload/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/cancel_asset_upload/outputSchema"
+      },
+      "retriable": true
+    },
+    {
+      "id": "get_project_activation",
+      "rest": {
+        "method": "GET",
+        "path": "/projects/{projectId}/configuration/activation",
+        "apiVersion": 2
+      },
+      "mcpTool": "get_project_activation",
+      "permission": "current project administrator/configuration access; current readiness and confirmed revisions for activation",
+      "mutation": false,
+      "inputModel": "configuration.GetInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_project_activation/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/get_project_activation/outputSchema"
+      },
+      "retriable": false
+    },
+    {
+      "id": "activate_project_core",
+      "rest": {
+        "method": "POST",
+        "path": "/projects/{projectId}/configuration/activation",
+        "apiVersion": 2
+      },
+      "mcpTool": "activate_project_core",
+      "permission": "current project administrator/configuration access; current readiness and confirmed revisions for activation",
+      "mutation": true,
+      "inputModel": "configuration.ActivateInput",
+      "input": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/activate_project_core/inputSchema"
+      },
+      "output": {
+        "$ref": "../../../backend/api/mcp-tools.json#/tools/activate_project_core/outputSchema"
+      },
+      "retriable": true
+    }
+  ]
+}

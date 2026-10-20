@@ -153,11 +153,16 @@ export class FileQueueComponent {
       return;
     }
     item.cancelReference ??= crypto.randomUUID();
+    const generation = this.generation,
+      epoch = this.auth.sessionEpoch();
+    const current = () => generation === this.generation && epoch === this.auth.sessionEpoch();
     try {
       await this.api.cancel(item.sessionId, item.cancelReference);
+      if (!current()) return;
       this.files.update(items => items.filter(value => value.id !== item.id));
       this.remember();
     } catch (error: unknown) {
+      if (!current()) return;
       item.error =
         error instanceof Error
           ? error.message

@@ -244,7 +244,7 @@ export class DateLabelFieldsComponent {
       );
       if (!current()) return;
       this.retry.finish();
-      this.name.reset();
+      if (this.name.value.trim() === name) this.name.reset();
       const label = saved.result;
       this.cache.labels.set(label.id, label);
       this.selected.set(label.id, label);

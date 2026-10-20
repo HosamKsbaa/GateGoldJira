@@ -1,0 +1,258 @@
+<nav class="breadcrumbs" aria-label="Breadcrumb"
+  ><a routerLink="/projects">Projects</a><span aria-hidden="true">/</span>
+  @if (project(); as project) {
+    <a [routerLink]="['/projects', project.id]"
+      ><bdi>{{ project.key }} · {{ project.name }}</bdi></a
+    >
+  }
+  <span aria-hidden="true">/</span><span>Import and export</span></nav
+>
+<header class="page-heading"
+  ><div
+    ><p class="eyebrow">Project data</p><h1>Import and export</h1
+    ><p class="muted"
+      >Move existing work into this project, or download a filtered CSV for your team.</p
+    ></div
+  ></header
+>
+<gg-request-status [state]="state" />
+@if (notice()) {
+  <p class="notice" role="status">{{ notice() }}</p>
+}
+@if (project()) {
+  <div class="transfer-layout">
+    <section class="panel import-panel" aria-labelledby="import-heading">
+      <div class="panel-heading"
+        ><div
+          ><h2 id="import-heading">Import issues</h2
+          ><p>Preview and check each row before creating work.</p></div
+        >
+        @if (csv()) {
+          <button type="button" class="secondary" [disabled]="busy()" (click)="startNewImport()"
+            >Start a new import</button
+          >
+        }
+      </div>
+      @if (!canImport()) {
+        <p class="notice">{{
+          project()?.archived
+            ? 'Restore this project before importing work.'
+            : 'Project members and administrators can import issues. Your current access is read-only.'
+        }}</p>
+      } @else {
+        @if (restored()) {
+          <p class="notice"
+            >Your import draft was restored in this tab. Preview it again before continuing. Drafts
+            are cleared when you sign out or reload.</p
+          >
+        }
+        @if (!locked()) {
+          <div class="csv-drop" (dragover)="$event.preventDefault()" (drop)="drop($event)"
+            ><label for="import-csv">Choose CSV file</label
+            ><input
+              id="import-csv"
+              type="file"
+              accept=".csv,text/csv"
+              [disabled]="busy()"
+              (change)="fileChanged($event)"
+            /><p>Drop a UTF-8 CSV here · up to 1 MiB and 100 data rows per import.</p></div
+          >
+        }
+        <gg-request-status [state]="previewState" />
+        @if (csv()) {
+          <p class="file-name"
+            ><strong
+              ><bdi>{{ fileName() }}</bdi></strong
+            >
+            · {{ headers().length }} columns</p
+          >
+          <div class="mapping-header"
+            ><h3>Map CSV columns</h3
+            ><p
+              >Automatic uses recognized column names. Choose a column explicitly when your headings
+              differ.</p
+            ></div
+          >
+          <form [formGroup]="mapping" class="mapping-grid">
+            @for (field of fields; track field.key) {
+              <label [for]="'map-' + field.key"
+                >{{ field.label }}{{ field.key === 'title' ? ' · Required' : ''
+                }}<select [id]="'map-' + field.key" [formControlName]="field.key">
+                  <option value="">{{
+                    field.key === 'title'
+                      ? 'Automatic: title or summary'
+                      : 'Automatic / skip if absent'
+                  }}</option>
+                  @for (column of headers(); track column) {
+                    <option [value]="column">{{ column }}</option>
+                  }
+                </select></label
+              >
+            }
+          </form>
+          <details class="import-guidance"
+            ><summary>Accepted values and repeat imports</summary
+            ><ul
+              ><li
+                >Assignee accepts an eligible teammate’s name, email or ID. Ambiguous names must be
+                corrected.</li
+              ><li>Use task or bug, low/medium/high priority, and dates in YYYY-MM-DD format.</li
+              ><li>Separate labels with semicolons. Stage must match the project workflow.</li
+              ><li>Descriptions can use plain or html format; HTML is sanitized.</li
+              ><li
+                >Map Source key to a stable unique ID, such as OLDPROJECT-123. Keep the same IDs for
+                repeated imports and retries.</li
+              ></ul
+            ></details
+          >
+          <button
+            type="button"
+            class="secondary preview-button"
+            [disabled]="busy()"
+            (click)="previewImport()"
+            >Preview import</button
+          >
+          @if (preview(); as preview) {
+            <div class="preview-summary" role="status"
+              ><strong>{{ preview.validCount }} valid rows</strong
+              ><span [class.has-errors]="preview.errorCount > 0"
+                >{{ preview.errorCount }} rows need attention</span
+              ></div
+            >
+            <div class="table-scroll"
+              ><table
+                ><caption class="sr-only">Import preview</caption
+                ><thead
+                  ><tr
+                    ><th>CSV row</th><th>Issue title</th><th>Source key</th><th>Validation</th></tr
+                  ></thead
+                ><tbody>
+                  @for (row of preview.rows; track row.rowNumber) {
+                    <tr [class.invalid-row]="row.errors.length > 0"
+                      ><td>{{ row.rowNumber }}</td
+                      ><td dir="auto">{{ row.title || 'Missing title' }}</td
+                      ><td
+                        ><bdi>{{ row.sourceKey || 'Not supplied' }}</bdi></td
+                      ><td>
+                        @if (row.errors.length) {
+                          <ul class="row-errors">
+                            @for (error of row.errors; track error.field + error.message) {
+                              <li>{{ error.field }}: {{ error.message }}</li>
+                            }
+                          </ul>
+                        } @else if (row.duplicateIssueId) {
+                          <a [routerLink]="['/issues', row.duplicateIssueId]"
+                            >Existing issue · will reuse</a
+                          >
+                        } @else {
+                          <span class="valid-row">Ready to import</span>
+                        }
+                      </td></tr
+                    >
+                  }
+                </tbody></table
+              ></div
+            >
+            <div class="import-confirmation"
+              ><label class="checkbox"
+                ><input type="checkbox" [formControl]="backlog" /> Put imported unstarted work in
+                Backlog</label
+              ><label class="checkbox"
+                ><input type="checkbox" [formControl]="confirmed" /> I reviewed this preview and
+                want to import its valid rows.</label
+              ><p class="field-hint"
+                >Invalid rows are reported individually. Existing source keys and retry references
+                prevent duplicate work.</p
+              ><button
+                type="button"
+                [disabled]="busy() || !preview.validCount || !confirmed.value"
+                (click)="importValidRows()"
+                >{{ result()?.failedCount ? 'Retry failed rows' : 'Import valid rows' }}</button
+              ></div
+            >
+          }
+          @if (locked()) {
+            <p class="field-hint"
+              >This import is locked to its original file and mappings so retries preserve identity.
+              Start a new import to use a different file.</p
+            >
+          }
+          <gg-request-status [state]="importState" />
+          @if (result(); as result) {
+            <section class="import-result" aria-labelledby="result-heading"
+              ><h3 id="result-heading">Import result</h3
+              ><p role="status"
+                >{{ result.createdCount }} created · {{ result.existingCount }} existing ·
+                {{ result.failedCount }} failed</p
+              ><ul class="result-rows">
+                @for (row of result.rows; track row.rowNumber) {
+                  <li
+                    ><span class="result-row-number">Row {{ row.rowNumber }}</span
+                    ><div
+                      ><strong dir="auto">{{ row.title }}</strong>
+                      @if (row.issueId) {
+                        <a [routerLink]="['/issues', row.issueId]"
+                          ><bdi>{{ row.key || 'Open issue' }}</bdi></a
+                        >
+                      }
+                      @if (row.errors.length) {
+                        <ul class="row-errors">
+                          @for (error of row.errors; track error.field + error.message) {
+                            <li>{{ error.field }}: {{ error.message }}</li>
+                          }
+                        </ul>
+                      }</div
+                    ><span class="row-state" [class.has-errors]="row.status === 'failed'">{{
+                      row.status
+                    }}</span></li
+                  >
+                }
+              </ul>
+              @if (result.failedCount) {
+                <p
+                  >Correct permanent row errors in a new CSV. Retry this import after a temporary
+                  service failure.</p
+                >
+              } @else {
+                <a
+                  routerLink="/issues"
+                  [queryParams]="{
+                    projectId: projectId(),
+                    view: backlog.value ? 'backlog' : 'active',
+                  }"
+                  >View imported issues</a
+                >
+              }
+            </section>
+          }
+        }
+      }
+    </section>
+    <section class="panel export-panel" aria-labelledby="export-heading"
+      ><h2 id="export-heading">Export issues</h2
+      ><p>Download every matching issue, including all result pages.</p
+      ><label for="export-query"
+        >Issue key or title<input
+          id="export-query"
+          [formControl]="exportQuery"
+          dir="auto"
+          placeholder="Leave blank for all matching work" /></label
+      ><label for="export-view"
+        >Work to export<select id="export-view" [formControl]="exportView"
+          ><option value="all">All current work</option
+          ><option value="active">Active board</option
+          ><option value="backlog">Backlog</option
+          ><option value="archived">Archived work</option></select
+        ></label
+      ><p class="field-hint"
+        >The server applies your project access and protects spreadsheet formulas. Descriptions and
+        source identifiers are included for round trips.</p
+      ><button type="button" [disabled]="busy()" (click)="exportCSV()">Export CSV</button>
+      @if (exportState.busy()) {
+        <p role="status">Preparing {{ exportedRows() }} / {{ exportTotal() || '…' }} issues…</p
+        ><button type="button" class="secondary" (click)="cancelExport()">Cancel export</button>
+      }
+      <gg-request-status [state]="exportState"
+    /></section>
+  </div>
+}

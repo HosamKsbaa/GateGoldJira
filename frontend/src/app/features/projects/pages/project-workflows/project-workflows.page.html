@@ -1,0 +1,431 @@
+<nav class="breadcrumb" aria-label="Breadcrumb"
+  ><a [routerLink]="['/projects', projectId]">Project</a><span>/</span
+  ><a [routerLink]="['/projects', projectId, 'settings']">Settings</a><span>/</span
+  ><span>Workflows</span></nav
+>
+<header class="page-heading"
+  ><div
+    ><p class="eyebrow">Project settings</p><h1>Workflows</h1
+    ><p class="muted"
+      >Define stages and allowed moves. Each issue keeps its assigned process.</p
+    ></div
+  ><button type="button" (click)="openWorkflow()" [disabled]="!writable() || frozen()"
+    >Create workflow</button
+  ></header
+>
+<gg-request-status [state]="state" />
+@if (notice()) {
+  <p class="notice" role="status">{{ notice() }}</p>
+}
+@if (reviewRequired()) {
+  <p class="notice"
+    >The configuration changed. Your draft is preserved.
+    <button type="button" class="secondary" (click)="review()" [disabled]="state.busy()"
+      >Review current configuration</button
+    ></p
+  >
+}
+<div class="workflow-layout">
+  <nav class="workflow-list" aria-label="Workflows">
+    @for (item of workflows(); track item.id) {
+      <button
+        type="button"
+        [class.active]="item.id === selectedFlow()"
+        (click)="selectFlow(item.id)"
+        [disabled]="state.busy() || frozen()"
+        ><strong dir="auto">{{ item.name }}</strong
+        ><span>{{ item.retired ? 'Retired' : 'Active' }}</span></button
+      >
+    }
+    @if (workflowCursor()) {
+      <button type="button" class="more" (click)="more('workflows')" [disabled]="state.busy()"
+        >More workflows</button
+      >
+    }
+  </nav>
+  <section class="workflow-content" aria-label="Selected workflow">
+    @if (flow(); as flow) {
+      <div class="section-heading"
+        ><div
+          ><h2 dir="auto">{{ flow.name }}</h2
+          ><p>{{
+            flow.retired
+              ? 'Existing issues retain this process. New issues cannot use it.'
+              : 'Manage the process independently of board layout.'
+          }}</p></div
+        ><div class="inline-actions"
+          ><button
+            type="button"
+            class="secondary"
+            (click)="openWorkflow(true)"
+            [disabled]="!editableFlow() || frozen()"
+            >Edit workflow</button
+          ><button type="button" (click)="openStage()" [disabled]="!editableFlow() || frozen()"
+            >Add stage</button
+          ></div
+        ></div
+      >
+      <section aria-labelledby="stages-heading"
+        ><h3 id="stages-heading">Stages</h3
+        ><p class="help"
+          >Close intake before migrating work. Retire a stage after its remaining issues and rules
+          are moved.</p
+        >
+        <div class="stage-grid">
+          @for (stage of stages(); track stage.id) {
+            <article class="stage-card" [class.retired]="stage.retired"
+              ><div class="stage-top"
+                ><span class="category" [attr.data-category]="stage.category">{{
+                  stage.category === 'in_progress'
+                    ? 'In progress'
+                    : stage.category === 'todo'
+                      ? 'To do'
+                      : stage.category === 'review'
+                        ? 'Review'
+                        : 'Done'
+                }}</span
+                ><span class="order">{{ stage.position }}</span></div
+              ><h4 dir="auto">{{ stage.name }}</h4
+              ><p
+                >{{
+                  stage.retired
+                    ? 'Retired'
+                    : stage.acceptsEntries
+                      ? 'Open to new entries'
+                      : 'Intake closed'
+                }}
+                @if (stage.initial) {
+                  · Initial stage
+                }</p
+              ><button
+                type="button"
+                class="secondary"
+                (click)="openStage(stage)"
+                [disabled]="!editableFlow() || frozen()"
+                [attr.aria-label]="'Edit stage ' + stage.name"
+                >Edit stage</button
+              ></article
+            >
+          }
+        </div>
+        @if (stageCursor()) {
+          <button
+            type="button"
+            class="secondary more"
+            (click)="more('stages')"
+            [disabled]="state.busy()"
+            >More stages</button
+          >
+        }
+      </section>
+      <section aria-labelledby="moves-heading"
+        ><div class="section-heading"
+          ><div
+            ><h3 id="moves-heading">Allowed moves</h3
+            ><p class="help">A board cannot bypass these rules.</p></div
+          ><button
+            type="button"
+            class="secondary"
+            (click)="openTransition()"
+            [disabled]="!editableFlow() || frozen()"
+            >Add move</button
+          ></div
+        ><div class="table-scroll"
+          ><table
+            ><thead
+              ><tr
+                ><th>From</th><th>To</th><th>Who can move</th><th>Availability</th
+                ><th><span class="sr-only">Actions</span></th></tr
+              ></thead
+            ><tbody>
+              @for (move of transitions(); track move.id) {
+                <tr
+                  ><td dir="auto">{{ stageName(move.fromStageId) }}</td
+                  ><td dir="auto">{{ stageName(move.toStageId) }}</td
+                  ><td>{{
+                    move.requiredPermission === 'project_admin'
+                      ? 'Project administrators'
+                      : 'Project members'
+                  }}</td
+                  ><td>{{ move.retired ? 'Retired' : 'Active' }}</td
+                  ><td
+                    ><button
+                      type="button"
+                      class="secondary"
+                      (click)="openTransition(move)"
+                      [disabled]="!editableFlow() || frozen()"
+                      [attr.aria-label]="
+                        'Edit move from ' +
+                        stageName(move.fromStageId) +
+                        ' to ' +
+                        stageName(move.toStageId)
+                      "
+                      >Edit</button
+                    ><button
+                      type="button"
+                      class="secondary"
+                      (click)="ruleTransition.set(move.id)"
+                      [disabled]="!editableFlow() || frozen()"
+                      [attr.aria-label]="'Requirements for move to ' + stageName(move.toStageId)"
+                      >Requirements</button
+                    ></td
+                  ></tr
+                >
+              }
+            </tbody></table
+          ></div
+        >
+        @if (transitionCursor()) {
+          <button
+            type="button"
+            class="secondary more"
+            (click)="more('transitions')"
+            [disabled]="state.busy()"
+            >More moves</button
+          >
+        }
+      </section>
+    }
+    @if (ruleTransition(); as transition) {
+      <gg-transition-policy
+        [projectId]="projectId"
+        [workflowId]="selectedFlow()"
+        [transitionId]="transition"
+        (changed)="reload()"
+        (cancelled)="ruleTransition.set(null)"
+      />
+    }
+    <section aria-labelledby="bindings-heading"
+      ><div class="section-heading"
+        ><div
+          ><h3 id="bindings-heading">Issue type workflows</h3
+          ><p class="help"
+            >Changing the default affects future issues. Existing issues keep their workflow.</p
+          ></div
+        ><button
+          type="button"
+          class="secondary"
+          (click)="openBinding()"
+          [disabled]="!writable() || frozen() || configuration()?.mode !== 'modern'"
+          >Add binding</button
+        ></div
+      ><label class="type-picker"
+        >Issue type<select
+          [value]="selectedType()"
+          (change)="selectTypeEvent($event)"
+          [disabled]="state.busy() || frozen()"
+        >
+          @for (type of types(); track type.id) {
+            <option [value]="type.id">{{ type.name }}{{ type.retired ? ' · Retired' : '' }}</option>
+          }
+        </select></label
+      >
+      @if (typeCursor()) {
+        <button
+          type="button"
+          class="secondary more"
+          (click)="more('types')"
+          [disabled]="state.busy()"
+          >More issue types</button
+        >
+      }
+      <ul class="binding-list">
+        @for (binding of bindings(); track binding.workflowId) {
+          <li
+            ><div
+              ><strong dir="auto">{{ flowName(binding.workflowId) }}</strong
+              ><span
+                >{{ binding.default ? 'Creation default · ' : ''
+                }}{{ binding.acceptsNew ? 'Accepts new issues' : 'Existing issues only' }}</span
+              ></div
+            ><button
+              type="button"
+              class="secondary"
+              (click)="openBinding(binding)"
+              [disabled]="!writable() || frozen() || configuration()?.mode !== 'modern'"
+              >Edit binding</button
+            ></li
+          >
+        }
+      </ul>
+      @if (bindingCursor()) {
+        <button
+          type="button"
+          class="secondary more"
+          (click)="more('bindings')"
+          [disabled]="state.busy()"
+          >More bindings</button
+        >
+      }
+    </section>
+    <section class="migration-section"
+      ><div
+        ><h3>Move existing work</h3
+        ><p class="help"
+          >Migrate from a closed stage in batches. Completion category stays the same.</p
+        ></div
+      ><button
+        type="button"
+        class="secondary"
+        (click)="openMigration()"
+        [disabled]="!writable() || frozen() || configuration()?.mode !== 'modern'"
+        >Migrate issues</button
+      ></section
+    >
+    @if (panel(); as panel) {
+      <form class="editor" [formGroup]="activeForm()" (ngSubmit)="save()"
+        ><h3>{{
+          panel === 'workflow'
+            ? 'Workflow details'
+            : panel === 'stage'
+              ? 'Stage details'
+              : panel === 'transition'
+                ? 'Allowed move'
+                : panel === 'binding'
+                  ? 'Issue type binding'
+                  : 'Migrate a batch'
+        }}</h3>
+        <fieldset [disabled]="state.busy() || frozen()">
+          @if (panel === 'workflow') {
+            <div [formGroup]="workflowForm"
+              ><label
+                >Workflow name<input formControlName="name" dir="auto" autocomplete="off" /></label
+              ><label class="check"
+                ><input type="checkbox" formControlName="retired" />Retire this workflow</label
+              ><p class="help"
+                >Replace all creation defaults first. Existing issues retain their process.</p
+              ></div
+            >
+          }
+          @if (panel === 'stage') {
+            <div [formGroup]="stageForm"
+              ><label
+                >Stage name<input formControlName="name" dir="auto" autocomplete="off" /></label
+              ><div class="form-row"
+                ><label
+                  >Category<select formControlName="category"
+                    ><option value="todo">To do</option
+                    ><option value="in_progress">In progress</option
+                    ><option value="review">Review</option
+                    ><option value="done">Done</option></select
+                  ></label
+                ><label
+                  >Position<input formControlName="position" inputmode="numeric" /></label></div
+              ><label class="check"
+                ><input type="checkbox" formControlName="initial" />Initial stage for new
+                issues</label
+              ><label class="check"
+                ><input type="checkbox" formControlName="acceptsEntries" />Accept new entries</label
+              ><label class="check"
+                ><input type="checkbox" formControlName="retired" />Retire this empty stage</label
+              ><p class="help"
+                >Prepare a closed stage, add its moves and board mapping, then open intake. Used
+                stage categories keep their identity.</p
+              ></div
+            >
+          }
+          @if (panel === 'transition') {
+            <div [formGroup]="transitionForm"
+              ><div class="form-row"
+                ><label
+                  >From stage<select formControlName="from"
+                    ><option value="">Choose a stage</option>
+                    @for (stage of stages(); track stage.id) {
+                      <option [value]="stage.id">{{ stage.name }}</option>
+                    }
+                  </select></label
+                ><label
+                  >To stage<select formControlName="to"
+                    ><option value="">Choose a stage</option>
+                    @for (stage of stages(); track stage.id) {
+                      <option [value]="stage.id">{{ stage.name }}</option>
+                    }
+                  </select></label
+                ></div
+              ><label
+                >Permission<select formControlName="permission"
+                  ><option value="">Any project writer</option
+                  ><option value="member">Project members</option
+                  ><option value="project_admin">Project administrators</option></select
+                ></label
+              ><label class="check"
+                ><input type="checkbox" formControlName="retired" />Retire this move</label
+              ><p class="help">Every retained stage must still have a path to Done.</p></div
+            >
+          }
+          @if (panel === 'binding') {
+            <div [formGroup]="bindingForm"
+              ><label
+                >Workflow<select formControlName="flow">
+                  @for (flow of workflows(); track flow.id) {
+                    <option [value]="flow.id"
+                      >{{ flow.name }}{{ flow.retired ? ' · Retired' : '' }}</option
+                    >
+                  }
+                </select></label
+              ><label class="check"
+                ><input type="checkbox" formControlName="default" />Default for new issues of this
+                type</label
+              ><label class="check"
+                ><input type="checkbox" formControlName="acceptsNew" />Accept new assignments</label
+              ><p class="help"
+                >The initial stage and all open stages must be mapped on the default board.</p
+              ></div
+            >
+          }
+          @if (panel === 'migration') {
+            <div [formGroup]="migrationForm"
+              ><label
+                >Closed source stage<select formControlName="source"
+                  ><option value="">Choose a source</option>
+                  @for (stage of closedStages(); track stage.id) {
+                    <option [value]="stage.id">{{ stage.name }}</option>
+                  }
+                </select></label
+              ><label
+                >Target workflow<select formControlName="targetFlow" (change)="loadTargets()">
+                  @for (flow of workflows(); track flow.id) {
+                    <option [value]="flow.id">{{ flow.name }}</option>
+                  }
+                </select></label
+              ><label
+                >Target stage<select formControlName="targetStage"
+                  ><option value="">Choose an open stage of the same category</option>
+                  @for (stage of targetStages(); track stage.id) {
+                    @if (!stage.retired && stage.acceptsEntries) {
+                      <option [value]="stage.id">{{ stage.name }} · {{ stage.category }}</option>
+                    }
+                  }
+                </select></label
+              >
+              @if (targetCursor()) {
+                <button type="button" class="secondary" (click)="more('targets')"
+                  >More target stages</button
+                >
+              }
+              <label
+                >Batch size<input type="number" min="1" max="100" formControlName="limit" /></label
+            ></div>
+          }
+        </fieldset>
+        @if (frozen()) {
+          <p class="help"
+            >This save could not be confirmed. Retry with its original values and reference.</p
+          >
+        }
+        <div class="actions"
+          ><button type="submit" [disabled]="!writable() || reviewRequired()">{{
+            frozen()
+              ? 'Retry original save'
+              : panel === 'migration'
+                ? 'Migrate batch'
+                : 'Save changes'
+          }}</button
+          ><button type="button" class="secondary" (click)="cancel()" [disabled]="state.busy()"
+            >Cancel</button
+          ></div
+        >
+      </form>
+    }
+  </section>
+</div>

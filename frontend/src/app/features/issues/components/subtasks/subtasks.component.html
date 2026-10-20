@@ -1,0 +1,114 @@
+<section class="subtasks" aria-label="Subtasks">
+  @if (issue().summary.parent; as parent) {
+    <header class="section-heading"
+      ><h2><gg-icon name="subtask" />Parent issue</h2></header
+    >
+    <a class="parent-link" [routerLink]="['/issues', parent.id]"
+      ><gg-icon name="arrow-up" />Open parent <bdi>{{ parent.key }}</bdi></a
+    >
+    <p class="section-hint"
+      >This subtask has its own assignment and discussion. Reopen its parent first if the parent is
+      Done.</p
+    >
+  } @else {
+    <header class="section-heading"
+      ><h2
+        ><gg-icon name="subtask" />Subtasks<span class="count">{{
+          issue().summary.subtaskProgress.total
+        }}</span></h2
+      ><div class="section-actions">
+        @if (issue().capabilities.includes('add_subtask') && !creating()) {
+          <button
+            [id]="addId"
+            type="button"
+            class="secondary add-button"
+            (click)="begin()"
+            [disabled]="state.busy()"
+            ><gg-icon name="plus" />Add subtask</button
+          >
+        }
+        <button
+          type="button"
+          class="icon-button refresh-button"
+          aria-label="Reload subtasks and progress"
+          title="Refresh subtasks"
+          (click)="refresh()"
+          [disabled]="state.busy()"
+          ><gg-icon name="refresh"
+        /></button> </div
+    ></header>
+    <gg-request-status [state]="state" />
+    @if (notice()) {
+      <p class="section-notice" role="status">{{ notice() }}</p>
+    }
+    @if (issue().summary.subtaskProgress.total) {
+      <div class="subtask-progress"
+        ><progress
+          [value]="issue().summary.subtaskProgress.done"
+          [max]="issue().summary.subtaskProgress.total"
+          aria-label="Subtask completion"
+        ></progress
+        ><span role="status"
+          >{{ issue().summary.subtaskProgress.done }} /
+          {{ issue().summary.subtaskProgress.total }} subtasks done</span
+        ></div
+      >
+    }
+    @if (children().length) {
+      <ul class="linked-issues">
+        @for (child of children(); track child.id) {
+          <li><gg-related-issue-row [issue]="child" [showDetails]="true" /></li>
+        }
+      </ul>
+    } @else if (!state.busy() && !creating()) {
+      <details class="empty-section"
+        ><summary>No subtasks yet</summary
+        ><p class="section-hint"
+          >Use Add subtask to break this issue into smaller pieces of work.</p
+        ></details
+      >
+    }
+    @if (cursor()) {
+      <button
+        type="button"
+        class="secondary"
+        (click)="load(cursor() ?? undefined)"
+        [disabled]="state.busy()"
+        >Next subtasks page</button
+      >
+    }
+    @if (children().length) {
+      <footer class="subtask-footer"
+        ><span>Complete subtasks before moving this issue to Done.</span
+        ><a
+          routerLink="/issues"
+          [queryParams]="{ projectId: issue().summary.projectId, parentId: issue().summary.id }"
+          aria-label="Find these subtasks in Issues"
+          >View all<gg-icon name="arrow-right" /></a
+      ></footer>
+    }
+    @if (category(issue().summary) === 'done') {
+      <p class="section-hint">Reopen this parent on its board before adding a subtask.</p>
+    }
+    @if (issue().capabilities.includes('add_subtask') && creating()) {
+      <div class="subtask-form"
+        ><h3>Create a subtask</h3>
+        <gg-modern-issue-form
+          [projectId]="issue().summary.projectId"
+          [subtask]="true"
+          [draftScope]="issueIdForDraft()"
+          [busy]="state.busy() || !!pendingModern()"
+          (create)="createModern($event)"
+          (cancel)="cancel()"
+        />
+        @if (pendingModern() && state.message()) {
+          <p class="section-hint">Retry the original subtask request to avoid duplicate work.</p
+          ><button type="button" (click)="retryModern()" [disabled]="state.busy()"
+            >Retry original subtask</button
+          >
+        }
+      </div>
+    }
+  }
+</section>
+

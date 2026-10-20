@@ -1,0 +1,62 @@
+<button
+  #trigger
+  type="button"
+  class="status-trigger"
+  [attr.data-category]="issue().summary.stage.category"
+  [attr.aria-label]="'Issue status: ' + name()"
+  aria-haspopup="menu"
+  [attr.aria-expanded]="opened()"
+  [attr.aria-controls]="opened() ? menuId : null"
+  [disabled]="disabled()"
+  (click)="toggle()"
+  ><bdi>{{ name() }}</bdi
+  ><gg-icon name="chevron-down"
+/></button>
+@if (opened()) {
+  <div class="status-popup" popover="manual"
+    ><p class="menu-heading">Move to</p><gg-request-status [state]="state" />
+    <div [id]="menuId" role="menu" aria-label="Issue status" class="status-options">
+      <button
+        type="button"
+        role="menuitemradio"
+        tabindex="-1"
+        [attr.data-status]="issue().summary.stage.id"
+        aria-checked="true"
+        (click)="choose(issue().summary.stage.id)"
+        ><span class="stage-dot" [attr.data-category]="issue().summary.stage.category"></span
+        ><bdi>{{ name() }}</bdi
+        ><gg-icon name="check"
+      /></button>
+      @for (option of optionsPage(); track option.transitionId) {
+        <button
+          type="button"
+          role="menuitemradio"
+          tabindex="-1"
+          [attr.data-status]="option.stage.id"
+          aria-checked="false"
+          [disabled]="!allowed(option.stage.id)"
+          (click)="choose(option.stage.id)"
+          ><span class="stage-dot" [attr.data-category]="option.stage.category"></span
+          ><span class="stage-label"
+            ><bdi>{{ option.stage.name }}</bdi>
+            @if (option.requiresApproval && !option.reviewSatisfied) {
+              <small>Approval required</small>
+            } @else if (!option.canRequest) {
+              <small>Project administrator required</small>
+            }
+          </span></button
+        >
+      }
+    </div>
+    @if (cursor()) {
+      <button type="button" class="secondary" (click)="load(true)" [disabled]="state.busy()"
+        >More stages</button
+      >
+    }
+    @if (state.message()) {
+      <button type="button" class="secondary" (click)="load()" [disabled]="state.busy()"
+        >Retry stages</button
+      >
+    }
+  </div>
+}

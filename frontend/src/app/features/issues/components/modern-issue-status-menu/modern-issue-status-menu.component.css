@@ -1,0 +1,8 @@
+.status-popup[popover] {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  overflow-y: auto;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}

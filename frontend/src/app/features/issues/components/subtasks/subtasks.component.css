@@ -1,0 +1,190 @@
+:host {
+  display: block;
+  min-width: 0;
+  margin: 28px 0;
+}
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 650;
+  margin: 0;
+}
+h2 > gg-icon {
+  color: var(--color-muted);
+  width: 17px;
+  height: 17px;
+}
+.count {
+  font-size: 11px;
+  font-weight: 500;
+  background: #f1f2f4;
+  border-radius: 9px;
+  padding: 1px 6px;
+  color: #44546f;
+}
+.section-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.add-button {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 12px;
+  padding: 5px 9px;
+  min-height: 32px;
+}
+.add-button gg-icon {
+  width: 15px;
+  height: 15px;
+}
+.refresh-button {
+  width: 30px;
+  min-height: 30px;
+  color: var(--color-muted);
+  background: transparent;
+}
+.refresh-button gg-icon {
+  width: 15px;
+  height: 15px;
+}
+.subtask-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 12px;
+}
+.subtask-progress progress {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  height: 5px;
+  border: 0;
+  border-radius: 4px;
+  background: #f1f2f4;
+  accent-color: #22a06b;
+}
+progress::-webkit-progress-bar {
+  background: #f1f2f4;
+  border-radius: 4px;
+}
+progress::-webkit-progress-value {
+  background: #22a06b;
+  border-radius: 4px;
+}
+.subtask-progress span {
+  color: var(--color-muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.linked-issues {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  border: 1px solid #dfe1e6;
+  border-radius: 7px;
+  overflow: hidden;
+}
+.linked-issues > li + li {
+  border-top: 1px solid #ebecf0;
+}
+.empty-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 16px;
+  background: #fafbfc;
+  color: var(--color-muted);
+}
+.empty-row strong {
+  font-size: 12px;
+  font-weight: 500;
+  color: #44546f;
+}
+.empty-row p {
+  margin: 3px 0 0;
+  font-size: 12px;
+}
+.subtask-footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.subtask-footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.subtask-footer gg-icon {
+  width: 13px;
+  height: 13px;
+}
+.subtask-form {
+  padding: 16px;
+  margin-top: 14px;
+  background: #fafbfc;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+h3 {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+.section-notice {
+  color: #216e4e;
+  font-size: 12px;
+}
+.section-hint {
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.parent-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+@media (max-width: 500px) {
+  .section-heading {
+    gap: 6px;
+  }
+  .add-button {
+    font-size: 11px;
+    padding-inline: 6px;
+  }
+  .subtask-form {
+    padding: 12px;
+  }
+}
+.empty-section {
+  font-size: 13px;
+  color: var(--color-muted);
+  margin-top: 8px;
+}
+.empty-section summary {
+  cursor: pointer;
+  min-height: 32px;
+  line-height: 32px;
+}
+.empty-section p {
+  line-height: 1.6;
+  margin: 6px 0;
+}

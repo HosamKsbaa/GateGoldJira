@@ -1,0 +1,141 @@
+@let item = issue();
+<article
+  class="issue-card"
+  (click)="openBody($event)"
+  [class.is-blocked]="item.blocked"
+  [class.is-done]="item.stage.category === 'done'"
+>
+  <h3>
+    <a class="card-open" [href]="'/issues/' + item.id" (click)="open($event)" dir="auto">{{
+      item.title
+    }}</a>
+  </h3>
+  @if (item.labels.length) {
+    <div class="card-labels">
+      @for (label of item.labels; track label.id) {
+        <span class="card-label" dir="auto">{{ label.name }}</span>
+      }
+    </div>
+  }
+  @if (item.blocked || item.dueDate) {
+    <div class="card-signals">
+      @if (item.blocked) {
+        <span class="blocked-tag" [title]="item.unfinishedBlockerCount + ' unfinished blockers'"
+          ><gg-icon name="flag" /> Blocked · {{ item.unfinishedBlockerCount }} unfinished</span
+        >
+      }
+      @if (item.dueDate) {
+        <span
+          class="due-tag"
+          [class.overdue]="item.overdue"
+          [title]="item.overdue ? 'This issue is overdue' : 'Due date'"
+          ><gg-icon name="calendar" /> Due {{ item.dueDate
+          }}{{ item.overdue ? ' · Overdue' : '' }}</span
+        >
+      }
+    </div>
+  }
+  @if (item.parent) {
+    <p class="subtask-parent">
+      Subtask of
+      <a [routerLink]="dragging() ? null : ['/issues', item.parent.id]">{{ item.parent.key }}</a>
+    </p>
+  }
+  @if (item.subtaskProgress.total) {
+    <p class="subtask-progress">
+      <gg-icon name="check" /> {{ item.subtaskProgress.done }} /
+      {{ item.subtaskProgress.total }} subtasks done
+    </p>
+  }
+  <footer class="card-footer">
+    <span
+      class="issue-type"
+      [class.bug]="item.type.key === 'bug'"
+      [title]="item.type.name"
+      [attr.aria-label]="'Issue type: ' + item.type.name"
+      ><gg-icon
+        [name]="
+          item.type.key === 'bug'
+            ? 'bug'
+            : item.type.behavior === 'subtask'
+              ? 'subtask'
+              : 'check-square'
+        "
+    /></span>
+    <a class="issue-key" [href]="'/issues/' + item.id" (click)="open($event)"
+      ><bdi>{{ item.key }}</bdi></a
+    >
+    <span
+      class="priority"
+      [class.high]="item.priority.key === 'high'"
+      [class.low]="item.priority.key === 'low'"
+      [title]="item.priority.name + ' priority'"
+      [attr.aria-label]="item.priority.name + ' priority'"
+      ><gg-icon [name]="item.priority.key === 'low' ? 'arrow-down' : 'arrow-up'"
+    /></span>
+    <span
+      class="assignee-avatar"
+      [class.unassigned]="!item.assignee"
+      [title]="item.assignee?.displayName ?? 'Unassigned'"
+      [attr.aria-label]="'Assignee: ' + (item.assignee?.displayName ?? 'Unassigned')"
+    >
+      @if (item.assignee) {
+        {{ initials(item.assignee.displayName) }}
+      } @else {
+        <gg-icon name="users" />
+      }
+    </span>
+  </footer>
+  @if (writable()) {
+    <details
+      class="card-move"
+      (mousedown)="$event.stopPropagation()"
+      (touchstart)="$event.stopPropagation()"
+    >
+      <summary [attr.aria-label]="'Move ' + item.key">
+        <gg-icon name="more" /><span
+          >Move <bdi>{{ item.key }}</bdi></span
+        >
+      </summary>
+      <div class="move-controls">
+        <label
+          >Destination column<select #destination [value]="columnId()">
+            @for (column of columns(); track column.id) {
+              <option [value]="column.id">{{ column.name }}</option>
+            }
+          </select></label
+        >
+        <button type="button" [disabled]="busy()" (click)="move.emit(destination.value)">
+          Choose destination
+        </button>
+        <label
+          >Same-column neighbor<select #neighbor (change)="neighborChoice.set(neighbor.value)">
+            <option value="">Choose a loaded issue</option>
+            @for (other of neighbors(); track other.id) {
+              @if (other.id !== item.id) {
+                <option [value]="other.id">{{ other.key }} · {{ other.title }}</option>
+              }
+            }
+          </select></label
+        >
+        <div class="actions">
+          <button
+            type="button"
+            class="secondary"
+            (click)="reorder.emit({ neighbor: neighbor.value, placement: 'before' })"
+            [disabled]="busy() || !neighborChoice()"
+          >
+            Move before</button
+          ><button
+            type="button"
+            class="secondary"
+            (click)="reorder.emit({ neighbor: neighbor.value, placement: 'after' })"
+            [disabled]="busy() || !neighborChoice()"
+          >
+            Move after
+          </button>
+        </div>
+      </div>
+    </details>
+  }
+</article>

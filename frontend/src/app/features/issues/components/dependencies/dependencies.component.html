@@ -1,0 +1,218 @@
+<section class="dependencies" aria-label="Dependencies">
+  <header class="section-heading"
+    ><h2><gg-icon name="link" />Dependencies</h2
+    ><div class="section-actions">
+      @if (writable() && !adding()) {
+        <button
+          type="button"
+          [id]="controlId + '-add'"
+          class="secondary add-button"
+          (click)="beginAdd()"
+          [disabled]="state.busy()"
+          ><gg-icon name="plus" />Add blocker</button
+        >
+      }
+      <button
+        type="button"
+        class="icon-button refresh-button"
+        aria-label="Reload dependencies"
+        title="Refresh dependencies"
+        (click)="load()"
+        [disabled]="state.busy()"
+        ><gg-icon name="refresh"
+      /></button> </div
+  ></header>
+  <gg-request-status [state]="state" />
+  @if (notice()) {
+    <p class="section-notice" role="status">{{ notice() }}</p>
+  }
+  @if (
+    state.failure()?.payload.error.code === 'conflict' ||
+    state.failure()?.payload.error.code === 'prerequisite_unfinished'
+  ) {
+    <button type="button" class="secondary" (click)="review()" [disabled]="state.busy()"
+      >Review current relationships</button
+    >
+  }
+  @if (blockedBy().length || blockedCursor()) {
+    <div class="relationship-group"
+      ><div class="group-heading"
+        ><h3>Blocked By</h3><span class="group-hint">Complete these issues first</span></div
+      >
+      <ul class="linked-issues">
+        @for (link of blockedBy(); track link.blocker.id) {
+          <li
+            ><gg-related-issue-row [issue]="link.blocker">
+              @if (writable()) {
+                <button
+                  type="button"
+                  class="icon-button unlink-button"
+                  (click)="remove(link)"
+                  [disabled]="state.busy()"
+                  [attr.aria-label]="'Remove blocker ' + link.blocker.key"
+                  title="Remove blocker"
+                  ><gg-icon name="close"
+                /></button>
+              }</gg-related-issue-row
+          ></li>
+        } @empty {
+          @if (!state.busy()) {
+            <li class="empty-row"><gg-icon name="check" /><span>No direct blockers.</span></li>
+          }
+        }
+      </ul>
+      @if (blockedCursor()) {
+        <button
+          type="button"
+          class="secondary"
+          (click)="more('blocked_by')"
+          [disabled]="state.busy()"
+          >More blockers</button
+        >
+      }
+    </div>
+  }
+  @if (blocks().length || blocksCursor()) {
+    <div class="relationship-group"
+      ><div class="group-heading"
+        ><h3>Blocks</h3><span class="group-hint">Waiting on this issue</span></div
+      >
+      <ul class="linked-issues">
+        @for (link of blocks(); track link.dependent.id) {
+          <li><gg-related-issue-row [issue]="link.dependent" /></li>
+        } @empty {
+          @if (!state.busy()) {
+            <li class="empty-row"
+              ><gg-icon name="link" /><span>No directly dependent issues.</span></li
+            >
+          }
+        }
+      </ul>
+      @if (blocksCursor()) {
+        <button type="button" class="secondary" (click)="more('blocks')" [disabled]="state.busy()"
+          >More dependent issues</button
+        >
+      }
+    </div>
+  }
+  @if (!blockedBy().length && !blocks().length && !state.busy() && !adding()) {
+    <details class="empty-section"
+      ><summary>No blocking relationships</summary
+      ><p class="section-hint"
+        >Link a blocker when another issue must finish first. Completion checks are enforced when
+        you move to Done.</p
+      ></details
+    >
+  }
+  @if (writable() && adding()) {
+    <div class="add-blocker-panel"
+      ><div class="add-heading"
+        ><h3>Add a blocker</h3
+        ><button
+          type="button"
+          class="icon-button"
+          aria-label="Cancel adding blocker"
+          title="Cancel"
+          (click)="cancelAdd()"
+          [disabled]="state.busy()"
+          ><gg-icon name="close" /></button
+      ></div>
+      <p>Link the work that must finish before this issue can be completed.</p>
+      <form [formGroup]="form" (ngSubmit)="search()" class="blocker-search">
+        <label [for]="controlId + '-query'" class="sr-only">Find a same-project issue</label>
+        <gg-icon name="search" aria-hidden="true" />
+        <input
+          [id]="controlId + '-query'"
+          formControlName="query"
+          type="search"
+          role="combobox"
+          aria-autocomplete="list"
+          [attr.aria-expanded]="searched() || searching()"
+          [attr.aria-controls]="searched() || searching() ? controlId + '-candidates' : null"
+          [attr.aria-describedby]="controlId + '-search-hint'"
+          [attr.aria-busy]="searching()"
+          [attr.aria-activedescendant]="
+            activeCandidate() >= 0 ? controlId + '-candidate-' + activeCandidate() : null
+          "
+          [readOnly]="state.busy()"
+          (keydown)="candidateKey($event)"
+          dir="auto"
+          autocomplete="off"
+          placeholder="Search by issue number, key or title"
+        />
+      </form>
+      <p [id]="controlId + '-search-hint'" class="search-hint"
+        >Searches as you type. Enter a number, issue key or title.</p
+      >
+      @if (searching()) {
+        <p class="search-progress" role="status">Searching issues…</p>
+      }
+      @if (searchState.message()) {
+        <gg-request-status [state]="searchState" />
+        <button
+          type="button"
+          class="secondary"
+          (click)="search()"
+          [disabled]="searching() || state.busy()"
+          >Retry search</button
+        >
+      }
+      @if (searched() || searching()) {
+        <ul
+          class="linked-issues search-results"
+          [id]="controlId + '-candidates'"
+          role="listbox"
+          aria-label="Blocker candidates"
+          [attr.aria-busy]="searching()"
+        >
+          @for (candidate of candidates(); track candidate.id; let index = $index) {
+            <li
+              role="option"
+              [id]="controlId + '-candidate-' + index"
+              [class.keyboard-active]="activeCandidate() === index"
+              [attr.aria-selected]="selected()?.id === candidate.id"
+              [class.is-selected]="selected()?.id === candidate.id"
+              ><gg-related-issue-row [issue]="candidate"
+                ><button
+                  type="button"
+                  class="secondary select-button"
+                  (click)="select(candidate)"
+                  [disabled]="searching() || state.busy()"
+                  [attr.aria-label]="'Select blocker ' + candidate.key"
+                  [attr.aria-pressed]="selected()?.id === candidate.id"
+                  >{{ selected()?.id === candidate.id ? 'Selected' : 'Select' }}</button
+                ></gg-related-issue-row
+              ></li
+            >
+          } @empty {
+            @if (searched() && !searching()) {
+              <li class="empty-row">No matching other issues.</li>
+            }
+          }
+        </ul>
+      }
+      @if (candidateCursor()) {
+        <button
+          type="button"
+          class="secondary"
+          (click)="search(candidateCursor() ?? undefined)"
+          [disabled]="searching() || state.busy()"
+          >More blocker candidates</button
+        >
+      }
+      @if (selected(); as candidate) {
+        <div class="confirm-blocker"
+          ><p
+            >Link <bdi>{{ candidate.key }}</bdi> as a blocker</p
+          ><button
+            [id]="controlId + '-confirm'"
+            type="button"
+            (click)="add()"
+            [disabled]="state.busy()"
+            >Add selected blocker</button
+          ></div
+        >
+      }
+    </div>
+  }
+</section>

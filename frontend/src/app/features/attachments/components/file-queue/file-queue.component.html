@@ -1,0 +1,95 @@
+<fieldset
+  class="file-drop"
+  [class.drag-over]="dragOver()"
+  (dragover)="$event.preventDefault(); dragOver.set(true)"
+  (dragleave)="dragOver.set(false)"
+  (drop)="drop($event)"
+>
+  <legend class="sr-only">Attach pictures and files</legend>
+  <div class="drop-prompt"
+    ><span class="drop-icon" aria-hidden="true">＋</span
+    ><div
+      ><button
+        type="button"
+        class="choose-button"
+        (click)="chooseFiles()"
+        [disabled]="busy() || disabled()"
+        >Choose files</button
+      ><span class="drop-hint"> or drop them here</span
+      ><p class="field-hint">Any file type · up to {{ size(maximumBytes()) }} each</p></div
+    ></div
+  >
+  <input
+    #fileInput
+    class="sr-only"
+    [id]="controlId"
+    aria-label="Choose files"
+    type="file"
+    multiple
+    (change)="select($event)"
+    [disabled]="busy() || disabled()"
+  />
+  @if (error()) {
+    <p role="alert" class="notice error">{{ error() }}</p>
+  }
+  @if (files().length) {
+    <ul class="queue-items">
+      @for (item of files(); track item.id) {
+        <li
+          ><div
+            ><bdi>{{ item.file.name }}</bdi
+            ><small
+              >{{ size(item.file.size) }} ·
+              {{
+                item.state === 'uploaded'
+                  ? 'Uploaded'
+                  : item.state === 'failed'
+                    ? 'Upload failed'
+                    : 'Ready to upload'
+              }}</small
+            >
+            @if (item.state !== 'uploaded' && item.receivedBytes !== undefined) {
+              <progress
+                [value]="progress(item)"
+                max="100"
+                [attr.aria-label]="'Upload progress for ' + item.file.name"
+              ></progress
+              ><small>{{ progress(item) }}%</small>
+            }
+            @if (item.error) {
+              <span class="queue-error" role="alert">{{ item.error }}</span>
+            }
+          </div>
+          @if (item.state !== 'uploaded') {
+            <button
+              type="button"
+              class="secondary"
+              (click)="cancelUpload(item)"
+              [disabled]="disabled()"
+              [attr.aria-label]="'Cancel upload for ' + item.file.name"
+              >Cancel</button
+            ><button
+              type="button"
+              class="secondary"
+              (click)="remove(item.id)"
+              [disabled]="busy() || disabled()"
+              [attr.aria-label]="'Remove queued ' + item.file.name"
+              >Remove</button
+            >
+          }
+        </li>
+      }</ul
+    ><div class="actions"
+      ><button type="button" (click)="upload()" [disabled]="busy() || disabled() || !pending()">{{
+        busy() ? 'Uploading…' : 'Upload queued files'
+      }}</button
+      ><button
+        type="button"
+        class="secondary"
+        (click)="clear()"
+        [disabled]="busy() || disabled()"
+        >{{ pending() ? 'Clear queue' : 'Dismiss uploaded files' }}</button
+      ></div
+    >
+  }
+</fieldset>

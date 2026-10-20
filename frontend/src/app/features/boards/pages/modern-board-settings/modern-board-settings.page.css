@@ -1,0 +1,60 @@
+.native-columns {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+.native-column {
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: #f7f8f9;
+}
+.native-column fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.native-column-heading {
+  display: flex;
+  gap: 14px;
+  align-items: end;
+  justify-content: space-between;
+}
+.native-column-heading label {
+  flex: 1;
+}
+.native-column-heading .actions {
+  flex: none;
+  padding-bottom: 2px;
+}
+.native-column-heading button {
+  padding: 7px;
+  min-width: 34px;
+}
+.workflow-source {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.workflow-source label {
+  flex: 1;
+  min-width: 200px;
+}
+.native-column .filter-grid {
+  margin-top: 12px;
+}
+.general-settings fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+@media (max-width: 650px) {
+  .native-column-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+  .native-column-heading label {
+    width: 100%;
+  }
+}

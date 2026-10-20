@@ -1,0 +1,251 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+.rich-text-editor {
+  min-width: 0;
+}
+.editor-surface {
+  border: 1px solid #b3b9c4;
+  border-radius: 8px;
+  background: white;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.editor-surface:focus-within {
+  border-color: #388bff;
+  box-shadow: 0 0 0 1px #388bff;
+}
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 6px 8px;
+  margin: 0;
+  background: #f7f8fa;
+  border-bottom: 1px solid #dfe1e6;
+}
+.editor-toolbar .format-button, .format-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 30px;
+  min-height: 30px;
+  padding: 5px;
+  background: transparent;
+  color: #44546f;
+  border: 0;
+  border-radius: 4px;
+  font-size: 13px;
+}
+.format-button gg-icon {
+  width: 16px;
+  height: 16px;
+}
+.format-button:hover:not(:disabled) {
+  background: #dcdfe4;
+  color: #172b4d;
+}
+.format-button.format-active {
+  background: #cce0ff;
+  color: #0055cc;
+}
+.format-bold {
+  font-weight: 750;
+}
+.format-italic {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+}
+.format-underline {
+  text-decoration: underline;
+}
+.toolbar-divider {
+  height: 18px;
+  width: 1px;
+  background: #dcdfe4;
+  margin: 0 4px;
+}
+.editor-toolbar .heading-select {
+  width: 108px;
+  min-height: 30px;
+  padding: 4px 5px;
+  border: 0;
+  background: transparent;
+  font-size: 12px;
+}
+.editor-mode {
+  display: flex;
+  margin-inline-start: auto;
+}
+.editor-host {
+  margin: 0;
+}
+.editor-host[hidden], .editor-attachments[hidden] {
+  display: none;
+}
+.editor-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px;
+  background: #f7f8fa;
+  border-bottom: 1px solid var(--color-border);
+}
+.editor-links input {
+  flex: 1 1 190px;
+  width: auto;
+  min-width: 0;
+}
+.editor-links button {
+  font-size: 12px;
+}
+.editor-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 12px 8px;
+}
+.paste-hint {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.editor-meta select {
+  width: 118px;
+  min-height: 28px;
+  border: 0;
+  padding: 3px 4px;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.editor-attachments {
+  padding: 0 12px 8px;
+}
+.editor-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.editor-count {
+  font-size: 11px;
+  color: var(--color-muted);
+  margin: 0;
+}
+.submit-actions {
+  display: flex;
+  gap: 6px;
+  margin-inline-start: auto;
+  flex-wrap: wrap;
+}
+.submit-actions button {
+  min-height: 34px;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.source-editor {
+  padding: 12px;
+}
+.source-editor label {
+  margin: 0 0 6px;
+  font-size: 12px;
+}
+.html-source {
+  font: 12px/1.6 ui-monospace, monospace;
+  min-height: 140px;
+}
+.source-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.source-footer p {
+  color: var(--color-muted);
+  font-size: 11px;
+  margin: 0;
+}
+.source-footer button {
+  font-size: 12px;
+}
+.notice, .loading-editor {
+  margin: 10px 12px;
+}
+.editor-table-tools {
+  position: relative;
+}
+.editor-table-tools > summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  min-height: 30px;
+  border-radius: 4px;
+  color: #44546f;
+  cursor: pointer;
+  list-style: none;
+}
+.editor-table-tools > summary::-webkit-details-marker {
+  display: none;
+}
+.editor-table-tools[open] > summary {
+  background: #cce0ff;
+  color: #0055cc;
+}
+.editor-table-tools > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 8px;
+  border: 1px solid #dfe1e6;
+  border-radius: 5px;
+  background: #fff;
+  max-width: 350px;
+}
+.editor-table-tools > div button {
+  font-size: 11px;
+  min-height: 30px;
+  padding: 5px 8px;
+}
+@media (max-width: 500px) {
+  .editor-toolbar {
+    padding: 5px;
+  }
+  .editor-toolbar .format-button {
+    width: 29px;
+    min-height: 32px;
+  }
+  .editor-toolbar .heading-select {
+    width: 96px;
+  }
+  .toolbar-divider {
+    margin: 0 2px;
+  }
+  .editor-meta {
+    align-items: start;
+  }
+  .paste-hint {
+    max-width: 170px;
+    line-height: 1.6;
+  }
+  .picture-count {
+    display: none;
+  }
+  .editor-footer {
+    align-items: start;
+  }
+  .submit-actions button {
+    min-height: 36px;
+  }
+}

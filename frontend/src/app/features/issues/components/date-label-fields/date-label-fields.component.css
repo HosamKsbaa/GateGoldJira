@@ -1,0 +1,76 @@
+:host {
+  display: block;
+}
+label {
+  font-size: 0.8125rem;
+}
+.field-hint {
+  font-size: 0.75rem;
+  margin-top: 0.3rem;
+}
+fieldset {
+  padding: 0.75rem 1rem 1rem;
+}
+legend {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0 0.35rem;
+}
+.label-search {
+  display: flex;
+  gap: 0.65rem;
+  align-items: end;
+  flex-wrap: wrap;
+}
+.label-search label {
+  flex: 1 1 130px;
+  min-width: 0;
+  margin-top: 0.1rem;
+}
+.label-search button {
+  font-size: 0.75rem;
+  white-space: normal;
+  max-width: 100%;
+}
+.label-options {
+  display: flex;
+  gap: 0.45rem 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 0.6rem;
+}
+.label-choice {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  background: #f7f8f9;
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.label-choice:has(input:checked) {
+  background: #e9f2ff;
+  border-color: #85b8ff;
+  color: #0052cc;
+}
+.label-choice input {
+  accent-color: var(--color-brand);
+  margin: 0;
+}
+.new-label {
+  margin-top: 0.8rem;
+}
+p.muted {
+  font-size: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+@media (max-width: 500px) {
+  .label-search {
+    flex-wrap: wrap;
+  }
+  .label-search label {
+    flex-basis: 100%;
+  }
+}

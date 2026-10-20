@@ -1,0 +1,276 @@
+<header class="page-heading issue-page-heading">
+  <div>
+    <p class="eyebrow">Projects / Work</p>
+    <h1>Issues</h1>
+  </div>
+  <button type="button" class="secondary" (click)="myIssues()">My Issues</button>
+  @if (writable()) {
+    <button id="new-issue" type="button" (click)="newIssue()" [disabled]="state.busy()">
+      New issue
+    </button>
+  }
+</header>
+<gg-request-status [state]="state" />
+@if (selectedProject(); as project) {
+  <nav class="project-view-tabs" aria-label="Project views">
+    <a [routerLink]="['/projects', project.id]">Project overview</a
+    ><span aria-current="page">Issues</span
+    ><a [routerLink]="['/boards/project', project.id]">Kanban boards</a
+    ><span class="project-context"
+      ><bdi>{{ project.key }} · {{ project.name }}</bdi></span
+    >
+  </nav>
+}
+<form [formGroup]="filters" class="issue-search" (ngSubmit)="search()">
+  <fieldset class="native-search-fields" [disabled]="bulk()?.frozen()">
+    <div class="search-toolbar">
+      <label class="query-field"
+        >Search by title or issue key<input
+          type="search"
+          formControlName="query"
+          dir="auto"
+          placeholder="Issue number, key or title"
+          [attr.aria-busy]="searchPending() || searchState.busy()"
+      /></label>
+      <label
+        >Project<select formControlName="projectId">
+          <option value="">All accessible projects</option>
+          @for (project of projects(); track project.id) {
+            <option [value]="project.id">{{ project.key }} · {{ project.name }}</option>
+          }
+        </select></label
+      >
+      <label
+        >Status<select formControlName="status">
+          <option value="">Any status</option>
+          @if (filters.controls.status.value === '__saved') {
+            <option value="__saved">Saved status filters</option>
+          }
+          <option value="open">Open issues</option>
+          <option value="todo">To do</option>
+          <option value="in_progress">In progress</option>
+          <option value="review">Review</option>
+          <option value="done">Done</option>
+        </select></label
+      >
+      <label
+        >Assigned to<select formControlName="assignee">
+          <option value="any">Anyone</option>
+          <option value="self">Me</option>
+          <option value="unassigned">Unassigned</option>
+          @for (user of people(); track user.id) {
+            <option [value]="user.id">{{ user.displayName }}</option>
+          }
+        </select></label
+      >
+      <button type="button" class="secondary" (click)="reset()">Reset filters</button>
+    </div>
+    <details class="advanced-filters">
+      <summary>Advanced filters</summary>
+      <div class="filter-grid">
+        <label
+          >Find teammate<input
+            type="search"
+            [formControl]="peopleQuery"
+            aria-label="Filter teammate search"
+            [attr.aria-busy]="peopleState.busy()"
+            dir="auto" /></label
+        ><gg-request-status [state]="peopleState" />
+        @if (peopleCursor()) {
+          <button
+            type="button"
+            class="secondary"
+            (click)="loadPeople(true)"
+            [disabled]="peopleState.busy()"
+          >
+            More teammates
+          </button>
+        }
+        <label>Due from<input type="date" formControlName="dueFrom" /></label
+        ><label>Due through<input type="date" formControlName="dueTo" /></label
+        ><label
+          >Overdue<select formControlName="overdue">
+            <option value="">Any due state</option>
+            <option value="true">Overdue</option>
+            <option value="false">Not overdue</option>
+          </select></label
+        >
+        <gg-parent-filter
+          [projectId]="filters.controls.projectId.value"
+          [control]="filters.controls.parentId"
+        />
+        <label
+          >Type<select formControlName="typeId">
+            <option value="">Any type</option>
+            @if (filters.controls.typeId.value === '__saved') {
+              <option value="__saved">Saved type filters</option>
+            }
+            @for (type of types(); track type.id) {
+              <option [value]="type.id">
+                {{ type.name }}{{ type.retired ? ' · Retired' : '' }}
+              </option>
+            }
+          </select></label
+        >
+        <label
+          >Priority<select formControlName="priorityId">
+            <option value="">Any priority</option>
+            @if (filters.controls.priorityId.value === '__saved') {
+              <option value="__saved">Saved priority filters</option>
+            }
+            @for (priority of priorities(); track priority.id) {
+              <option [value]="priority.id">
+                {{ priority.name }}{{ priority.retired ? ' · Retired' : '' }}
+              </option>
+            }
+          </select></label
+        >
+        <label
+          >View<select formControlName="view">
+            <option value="active">Active work</option>
+            <option value="backlog">Backlog</option>
+            <option value="archived">Archived issues</option>
+          </select></label
+        >
+        <label
+          >Sort<select formControlName="sort">
+            <option value="updated">Recently updated</option>
+            <option value="created">Newest created</option>
+            <option value="due">Earliest due</option>
+            <option value="priority">Highest priority</option>
+          </select></label
+        >
+        <label
+          >Blocked<select formControlName="blocked">
+            <option value="">Any blocked state</option>
+            <option value="true">Blocked</option>
+            <option value="false">Unblocked</option>
+          </select></label
+        >
+        <gg-date-label-fields
+          [projectId]="filters.controls.projectId.value"
+          [labelsControl]="filters.controls.labelIds"
+          [allowCreate]="false"
+        />
+        @if (typeCursor()) {
+          <button type="button" class="secondary" (click)="moreChoices('types')">More types</button>
+        }
+        @if (priorityCursor()) {
+          <button type="button" class="secondary" (click)="moreChoices('priorities')">
+            More priorities
+          </button>
+        }
+      </div>
+    </details>
+  </fieldset>
+</form>
+<gg-request-status [state]="optionsState" /><gg-request-status [state]="searchState" />
+<gg-saved-searches [filters]="filterSnapshot()" (applied)="applySaved($event)" />
+@if (fullSavedFilter()) {
+  <p class="notice">
+    The complete saved filters remain active, including all values. Editing a control changes only
+    that filter; Reset clears the saved filters.
+  </p>
+}
+@if (writable()) {
+  <gg-modern-bulk-actions
+    [projectId]="filters.controls.projectId.value"
+    [selected]="selected()"
+    [priorities]="priorities()"
+    [people]="people()"
+    (selectionChange)="selected.set($event)"
+    (changed)="search()"
+  />
+}
+<section
+  class="issue-results"
+  aria-label="Issue results"
+  [attr.aria-busy]="searchPending() || searchState.busy()"
+>
+  <div class="results-heading">
+    <h2>Results · {{ total() }}</h2>
+    <p class="muted">{{ items().length }} shown</p>
+  </div>
+  @if (searchPending() || searchState.busy()) {
+    <p role="status">Searching issues…</p>
+  }
+  @if (writable() && items().length) {
+    <button type="button" class="secondary" (click)="selectVisible()" [disabled]="bulk()?.frozen()">
+      Select visible issues
+    </button>
+  }
+  <ul class="linked-issues" aria-label="Issue results list">
+    @for (issue of items(); track issue.id) {
+      <li>
+        @if (writable()) {
+          <input
+            type="checkbox"
+            [attr.aria-label]="'Select issue ' + issue.key"
+            [checked]="chosen(issue.id)"
+            (change)="toggle(issue)"
+            [disabled]="bulk()?.frozen() || (!chosen(issue.id) && selected().length >= 100)"
+          />
+        }
+        <gg-related-issue-row [issue]="issue" [showDetails]="true" /><span
+          class="priority-value"
+          [attr.data-priority]="issue.priority.key"
+          ><bdi>{{ issue.priority.name }}</bdi></span
+        >
+      </li>
+    } @empty {
+      @if (!searchPending() && !searchState.busy()) {
+        <li>No issues match these filters.</li>
+      }
+    }
+  </ul>
+  @if (cursor()) {
+    <button
+      type="button"
+      class="secondary"
+      (click)="search(true)"
+      [disabled]="searchPending() || searchState.busy()"
+    >
+      More issues
+    </button>
+  }
+</section>
+@if (projectCursor()) {
+  <button type="button" class="secondary" (click)="loadProjects(true)" [disabled]="state.busy()">
+    More projects
+  </button>
+}
+@if (creating(); as creating) {
+  <dialog
+    #createDialog
+    class="issue-dialog"
+    aria-labelledby="create-issue-heading"
+    (cancel)="cancel($event)"
+  >
+    <header class="dialog-heading">
+      <h2 id="create-issue-heading">Create issue</h2>
+      <button
+        type="button"
+        class="secondary"
+        aria-label="Close create issue"
+        (click)="cancel()"
+        [disabled]="state.busy()"
+      >
+        ×
+      </button>
+    </header>
+    <div class="dialog-body">
+      <gg-request-status [state]="state" /><gg-modern-issue-form
+        [projectId]="filters.controls.projectId.value"
+        [busy]="state.busy() || !!pending()"
+        (create)="create($event)"
+        (cancel)="cancel()"
+      />
+      @if (pending() && state.message()) {
+        <p>Your draft is preserved. Retry the original request to avoid creating another issue.</p>
+        <button type="button" (click)="retryCreate()" [disabled]="state.busy()">
+          Retry original create
+        </button>
+      }
+    </div>
+  </dialog>
+}

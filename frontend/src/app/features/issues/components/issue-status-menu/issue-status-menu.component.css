@@ -1,0 +1,109 @@
+:host {
+  display: inline-block;
+  position: relative;
+  max-width: 100%;
+}
+.status-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: min(280px, 100%);
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  background: #e9f2ff;
+  color: #0055cc;
+  font-weight: 600;
+}
+.status-trigger bdi {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.status-trigger[data-category=todo] {
+  background: #f1f2f4;
+  color: #44546f;
+}
+.status-trigger[data-category=done] {
+  background: #dcfff1;
+  color: #216e4e;
+}
+.status-trigger:hover:not(:disabled), .status-trigger[aria-expanded=true] {
+  border-color: #85b8ff;
+  filter: brightness(.98);
+}
+.status-popup {
+  position: absolute;
+  z-index: 30;
+  inset-block-start: calc(100% + 6px);
+  inset-inline-start: 0;
+  width: 280px;
+  max-width: calc(100vw - 48px);
+  padding: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 8px 24px #091e4226, 0 0 1px #091e424f;
+}
+.menu-heading {
+  margin: 4px 8px 8px;
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.status-options {
+  max-height: min(320px, 45vh);
+  overflow-y: auto;
+}
+.status-options button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 38px;
+  padding: 9px 8px;
+  border: 0;
+  background: white;
+  color: var(--color-text);
+  text-align: start;
+  font-weight: 400;
+}
+.status-options button:hover:not(:disabled), .status-options button:focus-visible {
+  background: #f1f2f4;
+}
+.status-options button[aria-checked=true] {
+  background: #e9f2ff;
+  color: #0055cc;
+}
+.status-options button:disabled {
+  opacity: .65;
+  cursor: not-allowed;
+}
+.stage-label {
+  display: grid;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.stage-label small {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+.stage-dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 2px;
+  background: #579dff;
+}
+.stage-dot[data-category=todo] {
+  background: #8590a2;
+}
+.stage-dot[data-category=review] {
+  background: #9f8fef;
+}
+.stage-dot[data-category=done] {
+  background: #4bce97;
+}

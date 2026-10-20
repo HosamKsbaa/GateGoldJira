@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": [
+      "node",
+      "vitest/globals"
+    ],
+    "noEmit": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "vitest.config.ts",
+    "playwright.config.ts",
+    "openapi-ts.config.ts",
+    "e2e/**/*.ts",
+    "tooling/**/*.ts"
+  ]
+}

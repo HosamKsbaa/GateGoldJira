@@ -1,0 +1,25 @@
+:host { display: block; max-width: 1120px; margin: 0 auto; }
+.account-panel, .token-reveal { border: 1px solid var(--border, #dfe3e8); border-radius: 12px; padding: 24px; margin: 24px 0; background: var(--surface, #fff); }
+.token-reveal { border-color: #8cb3e8; background: #f4f8ff; }
+h2 { margin: 0 0 8px; font-size: 1.15rem; }
+p { line-height: 1.6; }
+fieldset { border: 0; padding: 0; margin: 20px 0 0; min-width: 0; }
+.token-fields { display: flex; align-items: end; gap: 16px; flex-wrap: wrap; }
+.token-fields label:first-child { flex: 1 1 300px; }
+label { display: grid; gap: 8px; font-weight: 600; }
+input, select { width: 100%; }
+.secret { font-family: monospace; margin: 10px 0 16px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.token-table { overflow-x: auto; margin-top: 20px; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th, td { padding: 14px 12px; border-bottom: 1px solid #e6e9ee; vertical-align: top; }
+th { color: #58677c; font-size: .8rem; }
+td small { display: block; color: #627087; margin-top: 6px; }
+td strong { overflow-wrap: anywhere; }
+.token-status { display: inline-block; font-size: .8rem; padding: 3px 9px; border-radius: 12px; background: #eef0f4; color: #536078; }
+.token-status.active { background: #e6f5ec; color: #246343; }
+.endpoint { overflow-wrap: anywhere; }
+@media (max-width: 600px) { .account-panel, .token-reveal { padding: 16px; } .token-fields { display: grid; } .token-fields label:first-child { min-width: 0; } }
+
+.token-actions { display: grid; gap: 8px; justify-items: start; }
+.activity-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }

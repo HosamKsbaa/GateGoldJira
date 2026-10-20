@@ -1,0 +1,429 @@
+<gg-request-status [state]="store.state" /><gg-request-status [state]="actionState" />
+@if (store.unfinished(); as unfinished) {
+  <section class="notice warning" aria-label="Unfinished prerequisites">
+    <h2>Unfinished prerequisites</h2>
+    <p>Complete the blocking work before moving this issue to Done.</p>
+    <ul class="linked-issues">
+      @for (issue of unfinished.items; track issue.id) {
+        <li><gg-related-issue-row [issue]="issue" [showDetails]="true" /></li>
+      }
+    </ul>
+    @if (unfinished.nextCursor) {
+      <button
+        type="button"
+        class="secondary"
+        (click)="store.loadPrerequisites(true)"
+        [disabled]="store.unfinishedState.busy()"
+      >
+        More unfinished work
+      </button>
+    }
+  </section>
+}
+<gg-request-status [state]="store.unfinishedState" />
+@if (store.unfinishedState.message()) {
+  <button
+    type="button"
+    class="secondary"
+    (click)="store.loadPrerequisites()"
+    [disabled]="store.unfinishedState.busy()"
+  >
+    Retry unfinished work
+  </button>
+}
+@if (store.notice()) {
+  <p class="notice" role="status">{{ store.notice() }}</p>
+}
+@if (store.view(); as view) {
+  <nav class="board-breadcrumbs" aria-label="Breadcrumb">
+    <a routerLink="/projects">Projects</a><span>/</span
+    ><a [routerLink]="['/projects', view.board.projectId]" dir="auto">{{ store.project()?.name }}</a
+    ><span>/</span><span>Board</span>
+  </nav>
+  <header class="page-heading board-heading">
+    <div class="board-title">
+      <h1 dir="auto">{{ view.board.name }}</h1>
+      <span class="board-kind">Kanban</span>
+    </div>
+    <div class="actions">
+      <a class="board-settings-link" [routerLink]="['/boards', view.board.id, 'settings']"
+        ><gg-icon name="settings" />Board settings</a
+      >
+      @if (store.writable()) {
+        <button
+          type="button"
+          id="board-create-trigger"
+          #createTrigger
+          (click)="openCreate()"
+          [disabled]="busy()"
+        >
+          <gg-icon name="plus" />Create issue
+        </button>
+      }
+    </div>
+  </header>
+  <nav class="board-tabs" aria-label="Project views">
+    <a class="selected" [routerLink]="['/boards', view.board.id]">Board</a
+    ><a routerLink="/issues" [queryParams]="{ projectId: view.board.projectId }">Issues</a
+    ><a [routerLink]="['/backlog', view.board.projectId]">Backlog</a
+    ><a [routerLink]="['/projects', view.board.projectId, 'planning']">Planning</a
+    ><a [routerLink]="['/projects', view.board.projectId, 'reports']">Reports</a
+    ><a [routerLink]="['/boards/project', view.board.projectId]">Project boards</a>
+  </nav>
+  @if (!store.writable()) {
+    <p class="notice">Read-only board{{ view.board.archived ? " · Archived view" : "" }}</p>
+  }
+  <div class="board-toolbar">
+    <div class="board-search">
+      <gg-icon name="search" /><input
+        type="search"
+        [formControl]="query"
+        aria-label="Search this board"
+        placeholder="Issue number, key or title"
+        dir="auto"
+        [attr.aria-busy]="store.loading()"
+      />
+    </div>
+    <button
+      type="button"
+      class="secondary quick-filter"
+      [attr.aria-pressed]="store.filters().assignee?.kind === 'self'"
+      (click)="toggleMine()"
+      [disabled]="busy()"
+    >
+      Only my issues
+    </button>
+    <details
+      #boardFilters
+      class="board-filters"
+      (keydown.escape)="closeFilters(boardFilters, $event)"
+    >
+      <summary><gg-icon name="filter" />Filters<gg-icon name="chevron-down" /></summary>
+      <div class="filter-content">
+        <button type="button" class="secondary" (click)="closeFilters(boardFilters)">
+          Close filters
+        </button>
+        <gg-native-board-filters
+          [projectId]="view.board.projectId"
+          [initial]="store.filters()"
+          [disabled]="busy()"
+          (changed)="filtersChanged($event)"
+        />
+      </div>
+    </details>
+    <button type="button" class="secondary" (click)="clearFilters()" [disabled]="busy()">
+      Clear filters</button
+    ><label class="group-board"
+      >Group by<select
+        aria-label="Group board by"
+        [value]="grouping()"
+        [disabled]="busy() || !!draggingId()"
+        (change)="groupChanged($event)"
+      >
+        <option value="none">None</option>
+        <option value="assignee">Assignee</option>
+        <option value="epic">Epic</option>
+      </select></label
+    ><button
+      type="button"
+      class="secondary refresh-board"
+      (click)="store.refresh()"
+      [disabled]="busy()"
+    >
+      <gg-icon name="refresh" />Reload board
+    </button>
+  </div>
+  <gg-board-quick-filters
+    [projectId]="view.board.projectId"
+    [filters]="store.filters()"
+    [disabled]="busy()"
+    (applied)="filtersChanged($event)"
+  />
+  <label class="stage-jump" [class.many-stages]="view.columns.length > 4"
+    >Jump to column<select
+      aria-label="Jump to column"
+      [value]="activeColumn() || view.columns[0]?.id"
+      (change)="jumpColumn($event)"
+    >
+      @for (column of view.columns; track column.id) {
+        <option [value]="column.id">{{ column.name }} · {{ column.visibleMatchCount }}</option>
+      }
+    </select></label
+  >
+  @if (store.loading()) {
+    <p role="status">Loading board…</p>
+  }
+  @if (store.pending()) {
+    <p class="notice">
+      The previous move has not been confirmed.
+      <button type="button" (click)="store.retry()" [disabled]="store.state.busy()">
+        Retry original move
+      </button>
+    </p>
+  }
+  <div
+    #scroll
+    class="kanban-scroll"
+    (scroll)="syncVisibleColumn()"
+    tabindex="0"
+    aria-label="Kanban board columns"
+  >
+    <div
+      class="kanban"
+      [class.swimlane-board]="grouping() !== 'none'"
+      cdkDropListGroup
+      [style.--stage-count]="view.columns.length"
+    >
+      @if (grouping() !== "none") {
+        <div class="board-column-summaries">
+          @for (column of store.columns(); track column.summary.id) {
+            <section
+              #columnElement
+              class="column-summary"
+              [attr.data-column-id]="column.summary.id"
+            >
+              <header class="column-heading">
+                <h2 dir="auto">
+                  {{ column.summary.name
+                  }}<span class="column-count">{{ column.summary.visibleMatchCount }}</span>
+                </h2>
+                @if (column.summary.wipLimit) {
+                  <span class="column-limit"
+                    >{{ column.summary.savedMatchCount }} / {{ column.summary.wipLimit }} ·
+                    {{ column.summary.wipMode }}</span
+                  >
+                }
+              </header>
+              @if (column.summary.limitExceeded) {
+                <p class="wip-warning" role="status">Full saved view exceeds its WIP warning.</p>
+              }
+              @if (column.skipped) {
+                <p class="window-notice">Showing the latest 200 loaded cards.</p>
+              }
+              @if (column.cursor) {
+                <button
+                  type="button"
+                  class="secondary load-cards"
+                  (click)="store.loadColumn(column.summary.id, true)"
+                  [disabled]="column.loading || busy()"
+                >
+                  More {{ column.summary.name }} issues
+                </button>
+              }
+            </section>
+          }
+        </div>
+      }
+      @for (lane of lanes(); track lane.id) {
+        <section class="board-lane" [attr.data-lane]="lane.id" style="display: contents">
+          @if (grouping() !== "none") {
+            <header class="swimlane-heading">
+              <button
+                type="button"
+                class="secondary"
+                [attr.aria-expanded]="!collapsed().has(lane.id)"
+                [attr.aria-label]="
+                  (collapsed().has(lane.id) ? 'Expand ' : 'Collapse ') + lane.name + ' group'
+                "
+                (click)="toggleLane(lane.id)"
+              >
+                <gg-icon
+                  [name]="collapsed().has(lane.id) ? 'chevron-right' : 'chevron-down'"
+                /><bdi>{{ lane.name }}</bdi
+                ><span>{{ lane.count }} loaded</span>
+              </button>
+            </header>
+          }
+          @if (!collapsed().has(lane.id)) {
+            <div
+              [class.lane-columns]="grouping() !== 'none'"
+              [style.display]="grouping() === 'none' ? 'contents' : null"
+            >
+              @for (cell of lane.cells; track cell.column.summary.id) {
+                @let column = cell.column;
+                <section
+                  #columnElement
+                  class="kanban-column"
+                  [attr.data-column-id]="column.summary.id"
+                  [class.wip-exceeded]="column.summary.limitExceeded"
+                  [attr.aria-label]="column.summary.name + ' column'"
+                >
+                  @if (grouping() === "none") {
+                    <header class="column-heading">
+                      <h2 dir="auto">
+                        {{ column.summary.name
+                        }}<span class="column-count">{{ column.summary.visibleMatchCount }}</span>
+                      </h2>
+                      @if (column.summary.wipLimit) {
+                        <span class="column-limit"
+                          >{{ column.summary.wipMode === "block" ? "Hard limit" : "WIP" }}
+                          {{ column.summary.savedMatchCount }} / {{ column.summary.wipLimit }}</span
+                        >
+                      }
+                    </header>
+                  }
+                  @if (column.summary.limitExceeded) {
+                    <p class="wip-warning" role="status">
+                      {{ column.summary.wipMode === "block" ? "At capacity" : "WIP warning" }} · The
+                      full saved view has {{ column.summary.savedMatchCount }} issues.
+                    </p>
+                  }
+                  <div
+                    class="card-list"
+                    cdkDropList
+                    [id]="'column-' + column.summary.id + '-' + lane.id"
+                    [cdkDropListData]="cell.target"
+                    [cdkDropListEnterPredicate]="canEnter"
+                    [cdkDropListDisabled]="!store.writable() || busy() || store.loading()"
+                    (cdkDropListDropped)="drop($event)"
+                  >
+                    @for (issue of cell.target.items; track issue.id) {
+                      <div
+                        cdkDrag
+                        [cdkDragData]="issue"
+                        [cdkDragDisabled]="!store.writable() || busy() || store.loading()"
+                        [cdkDragStartDelay]="{ touch: 150, mouse: 0 }"
+                        (cdkDragStarted)="draggingId.set(issue.id)"
+                        (cdkDragEnded)="draggingId.set(null)"
+                        class="draggable-card"
+                        [attr.data-issue-id]="issue.id"
+                      >
+                        <gg-native-issue-card
+                          [issue]="issue"
+                          [columnId]="column.summary.id"
+                          [columns]="view.columns"
+                          [neighbors]="cell.target.items"
+                          [writable]="store.writable()"
+                          [busy]="busy()"
+                          [dragging]="draggingId() === issue.id"
+                          (preview)="openPreview($event)"
+                          (move)="chooseDestination(issue, $event)"
+                          (reorder)="
+                            store.place(issue, column.summary.id, $event.neighbor, $event.placement)
+                          "
+                        />
+                        <div *cdkDragPlaceholder class="card-drop-placeholder">
+                          Place issue here
+                        </div>
+                      </div>
+                    }
+                    @if (column.loaded && !cell.target.items.length) {
+                      <div class="empty-column">
+                        <gg-icon name="board" />
+                        <p>No matching issues</p>
+                        <span>Move work here when its workflow allows.</span>
+                      </div>
+                    }
+                  </div>
+                  @if (column.loading) {
+                    <p role="status">Loading cards…</p>
+                  } @else if (!column.loaded) {
+                    <button
+                      type="button"
+                      class="load-cards secondary"
+                      (click)="store.loadColumn(column.summary.id)"
+                    >
+                      Load cards
+                    </button>
+                  }
+                  @if (grouping() === "none" && column.skipped) {
+                    <p class="window-notice">Showing the latest 200 loaded cards.</p>
+                  }
+                  @if (grouping() === "none" && column.cursor) {
+                    <button
+                      type="button"
+                      class="load-cards secondary"
+                      (click)="store.loadColumn(column.summary.id, true)"
+                      [disabled]="column.loading || busy()"
+                    >
+                      More {{ column.summary.name }} issues
+                    </button>
+                  }
+                </section>
+              }
+            </div>
+          }
+        </section>
+      } @empty {
+        <p class="grouped-empty">No groups match the loaded cards.</p>
+      }
+    </div>
+  </div>
+  <p class="field-hint">
+    Drag cards between columns or use the card’s Move menu. Columns can group stages from several
+    workflows. Counts include the full saved view.
+  </p>
+}
+<dialog
+  #previewDialog
+  class="issue-preview"
+  aria-label="Issue preview"
+  (cancel)="$event.preventDefault(); closePreview()"
+>
+  <header class="preview-heading">
+    <a [routerLink]="['/issues', previewId()]">Open full issue</a
+    ><button type="button" class="secondary" (click)="closePreview()" aria-label="Close issue">
+      <gg-icon name="close" />
+    </button>
+  </header>
+  @if (previewId(); as id) {
+    <gg-modern-issue-detail [embeddedIssueId]="id" />
+  }
+</dialog>
+<dialog
+  #stageDialog
+  class="create-dialog"
+  aria-labelledby="native-stage-heading"
+  (cancel)="closeDestination()"
+>
+  @if (destination(); as destination) {
+    <header>
+      <div>
+        <h2 id="native-stage-heading">Choose destination stage</h2>
+        <p>{{ destination.issue.key }} · This column contains several workflow stages.</p>
+      </div>
+      <button type="button" class="secondary" (click)="closeDestination()" aria-label="Cancel move">
+        <gg-icon name="close" />
+      </button>
+    </header>
+    @for (option of destination.choices; track option.transitionId) {
+      <button
+        type="button"
+        class="secondary"
+        (click)="selectStage(option.stage.id)"
+        [disabled]="!option.reviewSatisfied"
+      >
+        <bdi>{{ option.stage.name }}</bdi
+        >{{ option.requiresApproval ? " · Review required" : "" }}
+      </button>
+    }
+  }
+</dialog>
+<dialog
+  #createDialog
+  class="create-dialog"
+  aria-labelledby="native-create-heading"
+  (cancel)="$event.preventDefault(); cancelCreate()"
+>
+  <header>
+    <div>
+      <h2 id="native-create-heading">Create issue</h2>
+      <p>Uses the selected type’s workflow and its current project defaults.</p>
+    </div>
+    <button type="button" class="secondary" (click)="cancelCreate()" aria-label="Cancel create">
+      <gg-icon name="close" />
+    </button>
+  </header>
+  <gg-request-status [state]="createState" />
+  @if (creating()) {
+    @if (store.view(); as view) {
+      <gg-modern-issue-form
+        [projectId]="view.board.projectId"
+        [draftScope]="'board-native-' + boardId()"
+        [busy]="createState.busy()"
+        (create)="create($event)"
+        (cancel)="cancelCreate()"
+      />
+    }
+  }
+</dialog>

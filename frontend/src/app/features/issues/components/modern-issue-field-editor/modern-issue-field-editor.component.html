@@ -1,0 +1,235 @@
+@if (editing()) {
+  <div
+    class="inline-editor"
+    [class.field-popup]="isPopup()"
+    [attr.popover]="isPopup() ? 'manual' : null"
+    [class.prose-editor]="field() === 'description'"
+    role="group"
+    [attr.aria-label]="'Edit ' + label()"
+    [attr.aria-busy]="state.busy()"
+    (keydown)="keyboard($event)"
+    (focusout)="leavePopup($event)"
+  >
+    @if (autoSave() && state.busy()) {
+      <p class="search-hint" role="status">Saving {{ label() }}…</p>
+    } @else {
+      <gg-request-status [state]="state" />
+    }
+    @switch (field()) {
+      @case ('description') {
+        <gg-description-editor
+          [issueId]="issue().summary.id"
+          [issueRevision]="revision()"
+          [initial]="descriptionInitial()"
+          [initialFormat]="descriptionFormat()"
+          [disabled]="state.busy()"
+          (changed)="descriptionChanged($event)"
+          (uploadedRevision)="uploadedRevision($event)"
+        />
+      }
+      @case ('priorityId') {
+        <gg-request-status [state]="optionsState" />
+        @if (optionsState.message()) {
+          <button type="button" class="secondary" (click)="findPriorities()"
+            >Retry priorities</button
+          >
+        }
+      }
+      @case ('assigneeId') {
+        <gg-request-status [state]="optionsState" />
+        <div class="assignee-search"
+          ><gg-icon name="search" /><label [for]="controlId + '-search'" class="sr-only"
+            >Find teammate</label
+          ><input
+            data-assignee-query
+            [id]="controlId + '-search'"
+            [formControl]="query"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded="true"
+            [attr.aria-controls]="controlId + '-choices'"
+            placeholder="Find teammate"
+            type="search"
+            autocomplete="off"
+            [readOnly]="selectionLocked()"
+            [attr.aria-busy]="assigneeLoading()"
+            (keydown.enter)="$event.preventDefault(); findAssignees()"
+            (keydown)="choiceKey($event)"
+        /></div>
+        @if (assigneeLoading()) {
+          <p class="search-hint" role="status">Searching teammates…</p>
+        }
+        @if (!assigneeLoading() && query.value.trim() && !assignees().length) {
+          <p class="search-hint" role="status">No matching teammates.</p>
+        }
+        @if (optionsState.message()) {
+          <button
+            type="button"
+            class="secondary"
+            (click)="findAssignees()"
+            [disabled]="assigneeLoading()"
+            >Retry search</button
+          >
+        }
+      }
+      @case ('labelIds') {
+        <gg-date-label-fields
+          [projectId]="issue().summary.projectId"
+          [labelsControl]="labels"
+          [initialLabels]="base()?.summary?.labels ?? []"
+          [disabled]="state.busy()"
+        />
+      }
+      @case ('dueDate') {
+        <label [for]="controlId" class="sr-only">{{ label() }}</label
+        ><input
+          [id]="controlId"
+          type="date"
+          [formControl]="value"
+          [readOnly]="selectionLocked()"
+          (change)="dateChanged($event)"
+          (keydown)="dateKey($event)"
+          (pointerdown)="datePointer()"
+        />
+        <div class="date-actions"
+          ><span class="search-hint"
+            >Choose a date to save. Typed dates save on Enter or when you leave.</span
+          ><button
+            type="button"
+            class="secondary"
+            (click)="clearDueDate()"
+            [disabled]="selectionLocked() || (!value.value && !base()?.summary?.dueDate)"
+            >Clear date</button
+          ></div
+        >
+      }
+      @default {
+        <label [for]="controlId" class="sr-only">{{ label() }}</label
+        ><input
+          [id]="controlId"
+          type="text"
+          [formControl]="value"
+          dir="auto"
+          [readOnly]="state.busy()"
+        />
+      }
+    }
+    @if (isChoice()) {
+      <div
+        class="field-choices"
+        [id]="controlId + '-choices'"
+        role="listbox"
+        [attr.aria-label]="label()"
+        (keydown)="choiceKey($event)"
+      >
+        @for (choice of choices(); track choice.value) {
+          <button
+            type="button"
+            role="option"
+            [attr.aria-selected]="value.value === choice.value"
+            [tabIndex]="focusedChoice() === choice.value ? 0 : -1"
+            [disabled]="selectionLocked() || disabled()"
+            (focus)="focusedChoice.set(choice.value)"
+            (click)="choose(choice)"
+            ><bdi>{{ choice.label }}</bdi>
+            @if (value.value === choice.value) {
+              <gg-icon name="check" />
+            }
+          </button>
+        }
+      </div>
+      @if (field() === 'assigneeId' && cursor()) {
+        <button
+          type="button"
+          class="secondary"
+          (click)="findAssignees(true)"
+          [disabled]="assigneeLoading() || selectionLocked()"
+          >More teammates</button
+        >
+      }
+    }
+    @if (field() === 'priorityId' && priorityCursor()) {
+      <button
+        type="button"
+        class="secondary"
+        (click)="findPriorities(true)"
+        [disabled]="optionsState.busy() || selectionLocked()"
+        >More priorities</button
+      >
+    }
+    @if (!autoSave()) {
+      <div class="inline-editor-actions"
+        ><button type="button" (click)="save()" [disabled]="state.busy() || disabled()">{{
+          state.busy() ? 'Saving…' : 'Save'
+        }}</button
+        ><button type="button" class="secondary" (click)="cancel()" [disabled]="state.busy()"
+          >Cancel</button
+        ></div
+      >
+    } @else if (state.message() || reviewReady()) {
+      @if (reviewReady()) {
+        <p class="search-hint" role="status"
+          >Latest issue loaded. Apply your selected value to this version.</p
+        >
+      }
+      <div class="inline-editor-actions">
+        @if (!conflict()) {
+          <button
+            data-autosave-submit
+            type="button"
+            (click)="save()"
+            [disabled]="state.busy() || disabled()"
+            >{{
+              state.busy() ? 'Saving…' : reviewReady() ? 'Apply reviewed change' : 'Retry save'
+            }}</button
+          >
+        }
+        <button type="button" class="secondary" (click)="cancel()" [disabled]="state.busy()"
+          >Cancel</button
+        ></div
+      >
+    }
+    @if (conflict(); as current) {
+      <div class="notice warning"
+        ><p>This issue changed while you were editing. Your draft is still here.</p
+        ><button
+          type="button"
+          class="secondary"
+          (click)="review(current)"
+          [disabled]="!current.capabilities.includes('edit')"
+          >Review latest and keep my draft</button
+        ></div
+      >
+    }
+  </div>
+}
+@if (!editing() || isPopup()) {
+  <div
+    class="field-value"
+    [class.prose-value]="field() === 'description'"
+    [class.can-edit]="writable()"
+    [class.choice-value]="isChoice() && writable()"
+    (click)="descriptionClicked($event)"
+  >
+    <div class="value-content"><ng-content /></div>
+    @if (writable()) {
+      <button
+        type="button"
+        class="edit-trigger"
+        [attr.aria-haspopup]="isChoice() ? 'listbox' : null"
+        [attr.aria-expanded]="isPopup() ? editing() : null"
+        [attr.aria-label]="'Edit ' + label()"
+        [title]="'Edit ' + label()"
+        (click)="begin()"
+        [disabled]="disabled() || state.busy()"
+      >
+        @if (isChoice()) {
+          <gg-icon name="chevron-down" />
+        } @else {
+          <span aria-hidden="true">✎</span>
+        }
+        <span class="sr-only">Edit {{ label() }}</span></button
+      >
+    }
+  </div>
+}

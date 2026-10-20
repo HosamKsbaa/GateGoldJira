@@ -1,0 +1,155 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+.attachments-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.attachments-heading h2 {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 0;
+  font-size: 16px;
+}
+.count {
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 10px;
+  background: #f1f2f4;
+  color: #44546f;
+  padding: 2px 7px;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.attachment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.attachment-card {
+  border: 1px solid #dfe1e6;
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 0;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.attachment-card:hover {
+  border-color: #8590a2;
+  box-shadow: 0 2px 5px #091e4210;
+}
+.attachment-thumbnail {
+  height: 120px;
+  display: grid;
+  place-items: center;
+  background: #f7f8f9;
+  overflow: hidden;
+}
+.attachment-thumbnail gg-picture-image {
+  display: block;
+  max-width: 100%;
+  max-height: 120px;
+}
+.document-preview {
+  border: 0;
+  background: transparent;
+  color: #626f86;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 12px;
+}
+.document-preview:hover {
+  background: #e9f2ff;
+  color: #0055cc;
+}
+.document-preview gg-icon {
+  width: 32px;
+  height: 32px;
+}
+.attachment-info {
+  padding: 10px 12px;
+}
+.attachment-name {
+  display: block;
+  width: 100%;
+  padding: 2px 0;
+  background: transparent;
+  border: 0;
+  color: #172b4d;
+  font-weight: 600;
+  text-align: start;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.attachment-name:hover {
+  color: #0055cc;
+  text-decoration: underline;
+}
+.attachment-info p {
+  font-size: 11px;
+  color: #626f86;
+  margin: 4px 0 10px;
+}
+.attachment-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+.attachment-actions button {
+  min-height: 30px;
+  font-size: 11px;
+  padding: 5px 7px;
+}
+.attachment-actions gg-icon {
+  width: 14px;
+  height: 14px;
+}
+.attachment-actions .icon-button {
+  color: #626f86;
+}
+.attachment-actions .icon-button:hover {
+  color: #ae2a19;
+  background: #ffebe6;
+}
+.empty-attachments {
+  grid-column: 1/-1;
+  font-size: 13px;
+  color: #626f86;
+  padding: 8px 0;
+}
+.attachment-notice {
+  font-size: 12px;
+  color: #44546f;
+  overflow-wrap: anywhere;
+}
+.empty-section {
+  font-size: 13px;
+  color: var(--color-muted);
+  margin-top: 8px;
+}
+.empty-section summary {
+  cursor: pointer;
+  min-height: 32px;
+  line-height: 32px;
+}
+.empty-section p {
+  line-height: 1.6;
+  margin: 6px 0;
+}

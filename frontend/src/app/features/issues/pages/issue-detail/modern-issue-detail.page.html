@@ -1,0 +1,404 @@
+@if (!editing()) {
+  <gg-request-status [state]="state" />
+}
+@if (issue.isLoading()) {
+  <p role="status">Loading issue…</p>
+}
+@if (issue.error()) {
+  <div class="notice error" role="alert"
+    ><p>{{ errorMessage() }}</p
+    ><button type="button" (click)="issue.reload()">Reload issue</button></div
+  >
+}
+@if (notice()) {
+  <p class="notice" role="status">{{ notice() }}</p>
+}
+@if (issue.hasValue()) {
+  @let current = issue.value();
+  <nav class="issue-breadcrumb" aria-label="Breadcrumb"
+    ><a routerLink="/issues" [queryParams]="{ projectId: current.summary.projectId }">All issues</a
+    ><span aria-hidden="true">/</span
+    ><span
+      class="type-marker"
+      [class.bug]="current.summary.type.key === 'bug'"
+      [attr.title]="current.summary.type.name"
+      ><gg-icon
+        [name]="
+          current.summary.type.key === 'bug'
+            ? 'bug'
+            : current.summary.type.behavior === 'subtask'
+              ? 'subtask'
+              : 'check'
+        " /></span
+    ><bdi>{{ current.summary.key }}</bdi
+    ><a class="board-context-link" [routerLink]="['/boards/project', current.summary.projectId]"
+      >Kanban boards</a
+    ></nav
+  >
+  <header class="issue-detail-heading"
+    ><gg-modern-issue-field-editor
+      [issue]="current"
+      field="title"
+      label="title"
+      [disabled]="inlineUnavailable('title')"
+      (changed)="fieldSaved($event)"
+      ><h1 dir="auto">{{ current.summary.title }}</h1></gg-modern-issue-field-editor
+    >
+    @if (current.summary.parent) {
+      <p class="muted"
+        >Subtask of
+        <a [routerLink]="['/issues', current.summary.parent.id]"
+          ><bdi>{{ current.summary.parent.key }}</bdi></a
+        ></p
+      >
+    }
+  </header>
+  <gg-modern-issue-actions
+    [issue]="current"
+    [disabled]="!!editing() || inlineEditing()"
+    (changed)="issue.set($event)"
+  >
+    @if (current.capabilities.includes('edit')) {
+      <button
+        id="edit-issue"
+        type="button"
+        class="secondary"
+        (click)="edit()"
+        [disabled]="state.busy() || inlineEditing()"
+        ><gg-icon name="settings" />Edit issue</button
+      >
+    }
+    @if (current.capabilities.includes('comment')) {
+      <button
+        type="button"
+        class="secondary"
+        (click)="focusComments(true)"
+        [disabled]="discussion()?.state.busy() ?? false"
+        ><gg-icon name="comment" />Add comment</button
+      >
+    }
+    @if (current.capabilities.includes('upload_picture')) {
+      <button
+        type="button"
+        class="secondary"
+        (click)="focusAttachments(true)"
+        [disabled]="attachments()?.busy() ?? false"
+        ><gg-icon name="plus" />Attach files</button
+      >
+    }
+  </gg-modern-issue-actions>
+  @if (current.summary.blocked) {
+    <p class="notice warning"
+      >Blocked by {{ current.summary.unfinishedBlockerCount }} unfinished issue(s).
+      <span>Finish the blocking work before moving this issue to Done.</span></p
+    >
+  }
+  <div class="issue-detail-layout"
+    ><div class="issue-main">
+      <section class="issue-description" aria-labelledby="issue-details-heading"
+        ><h2 id="issue-details-heading">Description</h2
+        ><gg-modern-issue-field-editor
+          [issue]="current"
+          field="description"
+          label="description"
+          [disabled]="inlineUnavailable('description')"
+          (changed)="fieldSaved($event)"
+        >
+          @if (current.descriptionFormat === 'html' && current.description) {
+            <gg-comment-content [html]="current.description" />
+          } @else {
+            <p class="preserve-space" [class.empty-description]="!current.description" dir="auto">{{
+              current.description || 'No description yet.'
+            }}</p>
+          }
+        </gg-modern-issue-field-editor></section
+      >
+      <section class="issue-activity" aria-label="Discussion and history">
+        <h2>Activity</h2>
+        <div
+          class="activity-tabs"
+          role="tablist"
+          aria-label="Issue activity views"
+          (keydown)="activityKey($event)"
+        >
+          <button
+            type="button"
+            role="tab"
+            id="comments-tab"
+            aria-controls="comments-panel"
+            [attr.aria-selected]="activityTab() === 'comments'"
+            [tabIndex]="activityTab() === 'comments' ? 0 : -1"
+            (click)="activityTab.set('comments')"
+            >Comments</button
+          >
+          <button
+            type="button"
+            role="tab"
+            id="history-tab"
+            aria-controls="history-panel"
+            [attr.aria-selected]="activityTab() === 'history'"
+            [tabIndex]="activityTab() === 'history' ? 0 : -1"
+            (click)="activityTab.set('history')"
+            >History</button
+          >
+        </div>
+        <div
+          id="comments-panel"
+          role="tabpanel"
+          aria-labelledby="comments-tab"
+          [hidden]="activityTab() !== 'comments'"
+          ><gg-comment-thread [issue]="current" (changed)="filesAdded()"
+        /></div>
+        <div
+          id="history-panel"
+          role="tabpanel"
+          aria-labelledby="history-tab"
+          [hidden]="activityTab() !== 'history'"
+        >
+          @if (activityTab() === 'history') {
+            <gg-issue-history
+              [issueId]="current.summary.id"
+              [revision]="current.summary.revision"
+            />
+          }
+        </div>
+      </section>
+      <div class="issue-supporting-work" aria-label="Files and related work">
+        <section #attachmentSection id="issue-attachments" class="issue-attachments" tabindex="-1"
+          ><gg-issue-attachments [issue]="current" (changed)="issue.reload()"
+        /></section>
+        @if (!editing()) {
+          <gg-subtasks
+            [issue]="current"
+            (changed)="issue.reload()"
+            (modernCurrent)="issue.set($event)"
+          />
+        }
+        <gg-dependencies
+          [issue]="current"
+          (changed)="issue.reload()"
+          (modernCurrent)="issue.set($event)"
+        />
+        <gg-issue-review
+          [issue]="current"
+          [disabled]="!!editing() || inlineEditing()"
+          (changed)="issue.reload()"
+        /><gg-development-links
+          [issueId]="current.summary.id"
+          [canEdit]="current.capabilities.includes('edit') && !editing() && !inlineEditing()"
+        />
+      </div> </div
+    ><aside class="issue-metadata" aria-label="Issue metadata"
+      ><div class="metadata-heading"
+        ><h2>Details</h2>
+        @if (current.capabilities.includes('edit')) {
+          <button
+            type="button"
+            class="icon-button"
+            aria-label="Edit issue details"
+            (click)="edit()"
+            [disabled]="state.busy() || inlineEditing()"
+            ><gg-icon name="settings"
+          /></button>
+        }</div
+      ><dl>
+        <div
+          ><dt>Type</dt
+          ><dd
+            ><bdi>{{ current.summary.type.name }}</bdi>
+            @if (current.summary.type.retired) {
+              <span class="muted"> · Retired</span>
+            }
+          </dd></div
+        >
+        <div
+          ><dt>Workflow</dt
+          ><dd
+            ><bdi>{{ current.summary.workflow.name }}</bdi></dd
+          ></div
+        >
+        <div
+          ><dt>Assignee</dt
+          ><dd
+            ><gg-modern-issue-field-editor
+              [issue]="current"
+              field="assigneeId"
+              label="assignee"
+              [disabled]="inlineUnavailable('assigneeId')"
+              (changed)="fieldSaved($event)"
+              ><span class="person-value"
+                ><span class="avatar" aria-hidden="true">{{
+                  current.summary.assignee ? initials(current.summary.assignee.displayName) : '?'
+                }}</span
+                ><bdi>{{ current.summary.assignee?.displayName ?? 'Unassigned' }}</bdi></span
+              ></gg-modern-issue-field-editor
+            ></dd
+          ></div
+        >
+
+        <div
+          ><dt>Priority</dt
+          ><dd
+            ><gg-modern-issue-field-editor
+              [issue]="current"
+              field="priorityId"
+              label="priority"
+              [disabled]="inlineUnavailable('priorityId')"
+              (changed)="fieldSaved($event)"
+              ><span class="priority-value" [attr.data-priority]="current.summary.priority.key"
+                ><span aria-hidden="true">{{
+                  current.summary.priority.key === 'high'
+                    ? '↑'
+                    : current.summary.priority.key === 'low'
+                      ? '↓'
+                      : '='
+                }}</span>
+                {{ current.summary.priority.name }}</span
+              ></gg-modern-issue-field-editor
+            ></dd
+          ></div
+        >
+        <div
+          ><dt>Due date</dt
+          ><dd
+            ><gg-modern-issue-field-editor
+              [issue]="current"
+              field="dueDate"
+              label="due date"
+              [disabled]="inlineUnavailable('dueDate')"
+              (changed)="fieldSaved($event)"
+            >
+              @if (current.summary.dueDate) {
+                <span class="due-value" [class.overdue]="current.summary.overdue"
+                  >Due {{ current.summary.dueDate
+                  }}{{ current.summary.overdue ? ' · Overdue' : '' }}</span
+                >
+              } @else {
+                <span class="muted">None</span>
+              }
+            </gg-modern-issue-field-editor></dd
+          ></div
+        >
+        <div
+          ><dt>Labels</dt
+          ><dd class="label-values"
+            ><gg-modern-issue-field-editor
+              [issue]="current"
+              field="labelIds"
+              label="labels"
+              [disabled]="inlineUnavailable('labelIds')"
+              (changed)="fieldSaved($event)"
+            >
+              @for (label of current.summary.labels; track label.id) {
+                <span class="badge" dir="auto">{{ label.name }}</span>
+              } @empty {
+                <span class="muted">None</span>
+              }
+            </gg-modern-issue-field-editor></dd
+          ></div
+        >
+        @if (current.summary.subtaskProgress.total) {
+          <div
+            ><dt>Subtask progress</dt
+            ><dd
+              ><span
+                >{{ current.summary.subtaskProgress.done }} /
+                {{ current.summary.subtaskProgress.total }} subtasks done</span
+              ><progress
+                [value]="current.summary.subtaskProgress.done"
+                [max]="current.summary.subtaskProgress.total"
+                aria-label="Completed subtasks"
+              ></progress></dd
+          ></div>
+        }</dl
+      ><gg-custom-fields
+        [projectId]="current.summary.projectId"
+        [issue]="current"
+        [disabled]="!!editing() || inlineEditing()"
+        (saved)="issue.reload()" /><a
+        class="project-link"
+        [routerLink]="['/projects', current.summary.projectId]"
+        >Open project</a
+      ><details class="secondary-metadata"
+        ><summary>Reporter and dates</summary
+        ><dl>
+          <div
+            ><dt>Reporter</dt
+            ><dd class="person-value"
+              ><span class="avatar reporter" aria-hidden="true">{{
+                initials(current.reporter.displayName)
+              }}</span
+              ><bdi>{{ current.reporter.displayName }}</bdi></dd
+            ></div
+          ></dl
+        ><div class="issue-timestamps"
+          ><p
+            >Created
+            <time [attr.datetime]="current.summary.createdAt">{{
+              current.summary.createdAt | date: 'medium'
+            }}</time></p
+          ><p
+            >Updated
+            <time [attr.datetime]="current.summary.updatedAt">{{
+              current.summary.updatedAt | date: 'medium'
+            }}</time></p
+          ></div
+        ></details
+      ><gg-issue-planning
+        [issueId]="current.summary.id"
+        [projectId]="current.summary.projectId"
+        [canEdit]="
+          current.capabilities.includes('edit') && !editing() && !inlineEditing()
+        " /></aside
+  ></div>
+  @if (editing(); as fresh) {
+    <dialog
+      #editDialog
+      class="issue-dialog"
+      aria-labelledby="edit-issue-heading"
+      (cancel)="dialogCancel($event)"
+      ><header class="dialog-heading"
+        ><div
+          ><p class="eyebrow">Update work</p
+          ><h2 id="edit-issue-heading"
+            >Edit <bdi>{{ fresh.summary.key }}</bdi></h2
+          ></div
+        ><button
+          type="button"
+          class="secondary dialog-close"
+          aria-label="Close edit issue"
+          [disabled]="state.busy()"
+          (click)="cancel()"
+          >×</button
+        ></header
+      ><div class="dialog-body"
+        ><gg-request-status [state]="state" /><gg-modern-issue-form
+          [projectId]="fresh.summary.projectId"
+          [current]="fresh"
+          [restoredDraft]="rejectedDraft()"
+          [saveAllowed]="fresh.capabilities.includes('edit')"
+          (uploadedRevision)="ownUploadRevision.set($event)"
+          [busy]="state.busy()"
+          (save)="save($event)"
+          (cancel)="cancel()"
+        />
+        @if (!fresh.capabilities.includes('edit')) {
+          <p class="notice" role="status">Your write access changed. Your unsent draft remains available; saving is disabled.</p>
+        }
+        @if (currentConflict(); as current) {
+          <div class="notice"
+            ><p
+              >The current title is <bdi>{{ current.summary.title }}</bdi
+              >. Your unsaved form stays above.</p
+            ><button
+              type="button"
+              (click)="review(current)"
+              [disabled]="!current.capabilities.includes('edit')"
+              >Review current issue</button
+            ></div
+          >
+        }
+      </div></dialog
+    >
+  }
+}

@@ -1,0 +1,208 @@
+<div class="comment-editor rich-text-editor">
+  <div class="editor-surface">
+    <div class="editor-toolbar" role="toolbar" aria-label="Comment formatting">
+      <select
+        class="heading-select"
+        aria-label="Comment heading"
+        title="Text style"
+        (change)="heading($event)"
+        [disabled]="!ready() || busy() || sourceMode()"
+        ><option value="0">Paragraph</option>
+        @for (level of [1, 2, 3, 4, 5, 6]; track level) {
+          <option [value]="level">Heading {{ level }}</option>
+        }
+      </select>
+      <span class="toolbar-divider" aria-hidden="true"></span>
+      @for (action of actions; track action.format) {
+        <button
+          type="button"
+          class="format-button"
+          [class.format-active]="activeFormats().includes(action.format)"
+          [attr.aria-pressed]="activeFormats().includes(action.format)"
+          [attr.aria-label]="action.label"
+          [attr.title]="action.label"
+          [disabled]="!ready() || busy() || sourceMode()"
+          (click)="format(action.format)"
+        >
+          @if (action.icon; as icon) {
+            <gg-icon [name]="icon" />
+          } @else {
+            <span
+              [class.format-bold]="action.format === 'bold'"
+              [class.format-italic]="action.format === 'italic'"
+              [class.format-underline]="action.format === 'underline'"
+              >{{ action.text }}</span
+            >
+          }
+        </button>
+      }
+      <span class="toolbar-divider" aria-hidden="true"></span>
+      <details class="editor-table-tools"
+        ><summary aria-label="Comment table options" title="Table options"
+          ><gg-icon name="grid" /></summary
+        ><div role="group" aria-label="Comment table controls">
+          @for (item of tableActions; track item.action) {
+            <button
+              type="button"
+              class="secondary"
+              [disabled]="
+                !ready() || busy() || sourceMode() || (item.action !== 'insert' && !tableActive())
+              "
+              (click)="table(item.action)"
+              >{{ item.label }}</button
+            >
+          }
+        </div></details
+      >
+      <button
+        type="button"
+        class="format-button"
+        aria-label="Link options"
+        title="Insert a link"
+        [attr.aria-expanded]="showLinks()"
+        [disabled]="!ready() || busy() || sourceMode()"
+        (click)="showLinks.set(!showLinks())"
+        ><gg-icon name="link"
+      /></button>
+      <button
+        type="button"
+        class="format-button"
+        aria-label="Mention a teammate"
+        title="Mention a teammate (@)"
+        [disabled]="!ready() || busy() || sourceMode()"
+        (click)="beginMention()"
+        ><gg-icon name="at-sign"
+      /></button>
+      <button
+        type="button"
+        class="format-button"
+        aria-label="Attach files or pictures"
+        title="Attach files or pictures"
+        [disabled]="!ready() || busy() || sourceMode()"
+        (click)="attachFiles()"
+        ><gg-icon name="paperclip"
+      /></button>
+      <div class="editor-mode" role="group" aria-label="Comment editing mode">
+        @if (sourceMode()) {
+          <button
+            type="button"
+            class="format-button"
+            aria-label="Visual editor"
+            title="Return to visual editor"
+            [disabled]="!ready() || busy()"
+            (click)="showVisual()"
+            ><gg-icon name="comment"
+          /></button>
+        } @else {
+          <button
+            type="button"
+            class="format-button"
+            aria-label="HTML source"
+            title="Edit HTML source"
+            [disabled]="!ready() || busy()"
+            (click)="showSource()"
+            ><gg-icon name="code"
+          /></button>
+        }
+      </div>
+    </div>
+    @if (error()) {
+      <p class="notice error" role="alert">{{ error() }}</p>
+    }
+    @if (showLinks() && !sourceMode()) {
+      <div class="editor-links"
+        ><label [for]="controlId + '-link'" class="sr-only">Link address</label
+        ><input
+          [id]="controlId + '-link'"
+          [formControl]="link"
+          type="url"
+          placeholder="Paste a link, e.g. https://example.com"
+          (keydown.enter)="$event.preventDefault(); addLink()" /><button
+          type="button"
+          class="secondary"
+          (click)="addLink()"
+          [disabled]="!ready() || busy()"
+          >Add link to selection</button
+        ><button
+          type="button"
+          class="format-button"
+          (click)="removeLink()"
+          [disabled]="!ready() || busy()"
+          aria-label="Remove link"
+          title="Remove link"
+          ><gg-icon name="close" /></button
+      ></div>
+    }
+    @if (sourceMode()) {
+      <div class="source-editor"
+        ><label [for]="controlId + '-html'">HTML source</label
+        ><textarea
+          [id]="controlId + '-html'"
+          aria-label="Comment HTML"
+          class="html-source"
+          [formControl]="source"
+          rows="6"
+          dir="ltr"
+          spellcheck="false"
+          [readOnly]="busy()"
+        ></textarea
+        ><div class="source-footer"
+          ><p>Headings, code blocks, tables, checklists, links and Arabic text are supported.</p
+          ><button type="button" class="secondary" (click)="showVisual()" [disabled]="busy()"
+            >Preview HTML</button
+          ></div
+        ></div
+      >
+    }
+    <div #editorHost class="editor-host" [hidden]="sourceMode()"></div>
+    @if (!ready()) {
+      <p class="loading-editor" role="status">Loading comment editor…</p>
+    }
+    <gg-mention-picker
+      [projectId]="projectId()"
+      [active]="mentionQuery() !== null"
+      [triggerQuery]="mentionQuery() ?? ''"
+      [disabled]="busy()"
+      (selected)="insertMention($event)"
+      (closed)="closeMention()"
+    />
+    <div class="editor-attachments" [hidden]="!attachmentsOpen() && !fileQueue()?.files().length"
+      ><gg-file-queue
+        [issueId]="issueId()"
+        [queueScope]="'comment:' + (current()?.id ?? 'new')"
+        publication="comment_draft"
+        [disabled]="busy() || sourceMode()"
+        [pictureLimit]="5 - pictureCount()"
+        (pictureUploaded)="insertPicture($event)"
+        (documentUploaded)="insertAttachment($event)"
+    /></div>
+    <div class="editor-meta"
+      ><span class="paste-hint">Use @ to mention · Paste pictures here</span
+      ><select
+        aria-label="Comment direction"
+        title="Text direction"
+        (change)="direction($event)"
+        [disabled]="!ready() || busy() || sourceMode()"
+        ><option value="auto">Auto direction</option
+        ><option value="rtl">Arabic / RTL</option
+        ><option value="ltr">Left to right</option></select
+      ></div
+    >
+  </div>
+  <div class="editor-footer"
+    ><p class="editor-count"
+      >{{ characters() }} / 5,000 characters<span class="picture-count">
+        · {{ pictureCount() }} / 5 pictures</span
+      ></p
+    ><div class="submit-actions">
+      @if (current()) {
+        <button type="button" class="secondary" (click)="cancel.emit()" [disabled]="busy()"
+          >Cancel comment edit</button
+        >
+      }
+      <button type="button" (click)="submit()" [disabled]="!ready() || busy()">{{
+        busy() ? 'Saving comment…' : current() ? 'Save comment changes' : 'Post comment'
+      }}</button></div
+    ></div
+  >
+</div>

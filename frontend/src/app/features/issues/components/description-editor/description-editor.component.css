@@ -1,0 +1,10 @@
+.description-count {
+  margin-top: 8px;
+}
+input.new-attachment-input {
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+}

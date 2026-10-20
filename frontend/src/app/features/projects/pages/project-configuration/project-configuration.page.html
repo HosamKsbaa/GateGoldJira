@@ -1,0 +1,299 @@
+<nav class="breadcrumb" aria-label="Breadcrumb"
+  ><a [routerLink]="['/projects', projectId]">Project</a><span>/</span><span>Settings</span></nav
+>
+<header class="page-heading"
+  ><div
+    ><p class="eyebrow">Project settings</p><h1>Issue configuration</h1
+    ><p class="muted">Choose how your team names and organizes work.</p></div
+  ><a class="button secondary" [routerLink]="['/admin/projects', projectId, 'memberships']"
+    >Manage people</a
+  ></header
+>
+<gg-request-status [state]="state" />
+@if (notice()) {
+  <p class="notice" role="status">{{ notice() }}</p>
+}
+@if (reviewRequired()) {
+  <p class="notice"
+    >Another administrator changed this project.
+    <button type="button" (click)="review()" [disabled]="state.busy()"
+      >Review latest configuration</button
+    ></p
+  >
+}
+<div class="settings-layout">
+  <nav class="settings-nav" aria-label="Issue configuration sections"
+    ><a [routerLink]="['/projects', projectId, 'workflows']">Workflows</a
+    ><a [routerLink]="['/projects', projectId, 'fields']">Custom fields</a
+    ><button type="button" [class.active]="tab() === 'types'" (click)="tab.set('types')"
+      >Issue types</button
+    ><button type="button" [class.active]="tab() === 'priorities'" (click)="tab.set('priorities')"
+      >Priorities</button
+    ><button type="button" [class.active]="tab() === 'defaults'" (click)="tab.set('defaults')"
+      >Creation defaults</button
+    ></nav
+  >
+  <section class="settings-content">
+    @if (configuration(); as current) {
+      @if (current.canManage) {
+        <gg-project-activation
+          [projectId]="projectId"
+          [configuration]="current"
+          [disabled]="typeOpen() || priorityOpen() || state.busy() || reviewRequired()"
+          (activated)="activated($event)"
+        />
+      }
+      @if (!current.canManage) {
+        <p class="notice">You can view these choices. A project administrator can edit them.</p>
+      }
+      @if (tab() === 'types') {
+        <div class="section-heading"
+          ><div><h2>Issue types</h2><p>Keep existing types for history when retiring them.</p></div
+          ><button type="button" (click)="openType()" [disabled]="!writable()"
+            >Add issue type</button
+          ></div
+        >
+        <div class="table-scroll"
+          ><table
+            ><thead
+              ><tr
+                ><th>Name</th><th>Kind</th><th>Availability</th
+                ><th><span class="sr-only">Actions</span></th></tr
+              ></thead
+            ><tbody>
+              @for (type of types(); track type.id) {
+                <tr
+                  ><td
+                    ><strong dir="auto">{{ type.name }}</strong>
+                    @if (type.default) {
+                      <span class="badge">Default</span>
+                    }</td
+                  ><td>{{ type.behavior === 'subtask' ? 'Subtask' : 'Standard issue' }}</td
+                  ><td
+                    ><span class="state" [class.retired]="type.retired">{{
+                      type.retired ? 'Retired' : 'Active'
+                    }}</span></td
+                  ><td
+                    ><button
+                      type="button"
+                      class="secondary"
+                      (click)="openType(type)"
+                      [disabled]="!writable()"
+                      [attr.aria-label]="'Edit issue type ' + type.name"
+                      >Edit</button
+                    ></td
+                  ></tr
+                >
+              }
+            </tbody></table
+          ></div
+        >
+        @if (typeCursor()) {
+          <button
+            type="button"
+            class="secondary more"
+            (click)="moreTypes()"
+            [disabled]="state.busy()"
+            >More issue types</button
+          >
+        }
+        @if (typeOpen()) {
+          <form class="editor" [formGroup]="typeForm" (ngSubmit)="saveType()"
+            ><h3>{{ selectedType() ? 'Edit issue type' : 'New issue type' }}</h3
+            ><fieldset [disabled]="!writable() || typeFrozen()"
+              ><label
+                >Type name<input
+                  formControlName="name"
+                  autocomplete="off"
+                  dir="auto"
+                  autofocus /></label
+              ><label
+                >Kind<select formControlName="behavior"
+                  ><option value="standard">Standard issue</option
+                  ><option value="subtask">Subtask</option></select
+                ></label
+              >
+              @if (selectedType(); as selected) {
+                <label class="check"
+                  ><input type="checkbox" formControlName="retired" />Retire this type</label
+                ><p class="help">Retired types remain on existing issues.</p>
+                @if (selected.default && typeForm.controls.retired.value) {
+                  <label
+                    >Replacement default<select formControlName="replacement"
+                      ><option value="">Choose an active type</option>
+                      @for (type of typeReplacements(); track type.id) {
+                        <option [value]="type.id">{{ type.name }}</option>
+                      }
+                    </select></label
+                  >
+                }
+              }</fieldset
+            ><div class="actions"
+              ><button
+                type="submit"
+                [disabled]="!writable() || typeForm.invalid || reviewRequired()"
+                >{{ typeFrozen() ? 'Retry original save' : 'Save issue type' }}</button
+              ><button type="button" class="secondary" (click)="cancel()" [disabled]="state.busy()"
+                >Cancel</button
+              ></div
+            ></form
+          >
+        }
+      }
+      @if (tab() === 'priorities') {
+        <div class="section-heading"
+          ><div
+            ><h2>Priorities</h2
+            ><p>Higher order values appear first when work is sorted by priority.</p></div
+          ><button type="button" (click)="openPriority()" [disabled]="!writable()"
+            >Add priority</button
+          ></div
+        >
+        <div class="table-scroll"
+          ><table
+            ><thead
+              ><tr
+                ><th>Name</th><th>Order</th><th>Availability</th
+                ><th><span class="sr-only">Actions</span></th></tr
+              ></thead
+            ><tbody>
+              @for (priority of priorities(); track priority.id) {
+                <tr
+                  ><td
+                    ><strong dir="auto">{{ priority.name }}</strong>
+                    @if (priority.default) {
+                      <span class="badge">Default</span>
+                    }</td
+                  ><td>{{ priority.sortOrder }}</td
+                  ><td
+                    ><span class="state" [class.retired]="priority.retired">{{
+                      priority.retired ? 'Retired' : 'Active'
+                    }}</span></td
+                  ><td
+                    ><button
+                      type="button"
+                      class="secondary"
+                      (click)="openPriority(priority)"
+                      [disabled]="!writable()"
+                      [attr.aria-label]="'Edit priority ' + priority.name"
+                      >Edit</button
+                    ></td
+                  ></tr
+                >
+              }
+            </tbody></table
+          ></div
+        >
+        @if (priorityCursor()) {
+          <button
+            type="button"
+            class="secondary more"
+            (click)="morePriorities()"
+            [disabled]="state.busy()"
+            >More priorities</button
+          >
+        }
+        @if (priorityOpen()) {
+          <form class="editor" [formGroup]="priorityForm" (ngSubmit)="savePriority()"
+            ><h3>{{ selectedPriority() ? 'Edit priority' : 'New priority' }}</h3
+            ><fieldset [disabled]="!writable() || priorityFrozen()"
+              ><label
+                >Priority name<input
+                  formControlName="name"
+                  autocomplete="off"
+                  dir="auto"
+                  autofocus /></label
+              ><label
+                >Order<input formControlName="sortOrder" inputmode="numeric" pattern="[1-9][0-9]*"
+              /></label>
+              @if (selectedPriority(); as selected) {
+                <label class="check"
+                  ><input type="checkbox" formControlName="retired" />Retire this priority</label
+                ><p class="help">Retired priorities remain on existing issues.</p>
+                @if (selected.default && priorityForm.controls.retired.value) {
+                  <label
+                    >Replacement default<select formControlName="replacement"
+                      ><option value="">Choose an active priority</option>
+                      @for (priority of priorityReplacements(); track priority.id) {
+                        <option [value]="priority.id">{{ priority.name }}</option>
+                      }
+                    </select></label
+                  >
+                }
+              }</fieldset
+            ><div class="actions"
+              ><button
+                type="submit"
+                [disabled]="!writable() || priorityForm.invalid || reviewRequired()"
+                >{{ priorityFrozen() ? 'Retry original save' : 'Save priority' }}</button
+              ><button type="button" class="secondary" (click)="cancel()" [disabled]="state.busy()"
+                >Cancel</button
+              ></div
+            ></form
+          >
+        }
+      }
+      @if (tab() === 'defaults') {
+        <div class="section-heading"
+          ><div
+            ><h2>Creation defaults</h2
+            ><p>Defaults apply to new issues. Existing work keeps its current values.</p></div
+          ></div
+        >
+        <form class="defaults" [formGroup]="defaultsForm" (ngSubmit)="saveDefaults()"
+          ><fieldset [disabled]="!writable() || current.mode !== 'modern' || defaultFrozen()"
+            ><label
+              >Standard issue type<select formControlName="standardTypeId">
+                @if (!hasStandardDefault()) {
+                  <option [value]="current.defaults.standardTypeId">Current default</option>
+                }
+                @for (type of standardTypes(); track type.id) {
+                  <option [value]="type.id">{{ type.name }}</option>
+                }
+              </select></label
+            ><label
+              >Subtask type<select formControlName="subtaskTypeId">
+                @if (!hasSubtaskDefault()) {
+                  <option [value]="current.defaults.subtaskTypeId">Current default</option>
+                }
+                @for (type of subtaskTypes(); track type.id) {
+                  <option [value]="type.id">{{ type.name }}</option>
+                }
+              </select></label
+            ><label
+              >Priority<select formControlName="priorityId">
+                @if (!hasPriorityDefault()) {
+                  <option [value]="current.defaults.priorityId">Current default</option>
+                }
+                @for (priority of activePriorities(); track priority.id) {
+                  <option [value]="priority.id">{{ priority.name }}</option>
+                }
+              </select></label
+            ></fieldset
+          ><div class="actions"
+            ><button
+              type="submit"
+              [disabled]="
+                !writable() ||
+                current.mode !== 'modern' ||
+                defaultsForm.invalid ||
+                reviewRequired()
+              "
+              >{{ defaultFrozen() ? 'Retry original save' : 'Save defaults' }}</button
+            ></div
+          ></form
+        >
+        @if (typeCursor() || priorityCursor()) {
+          <p class="help"
+            >Load more choices in the issue types or priorities section to include them here.</p
+          >
+        }
+      }
+    } @else {
+      <p role="status">Loading project settings…</p
+      ><button type="button" class="secondary" (click)="reload()" [disabled]="state.busy()"
+        >Retry loading settings</button
+      >
+    }
+  </section>
+</div>

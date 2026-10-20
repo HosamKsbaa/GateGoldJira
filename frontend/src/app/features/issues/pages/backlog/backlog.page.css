@@ -1,0 +1,173 @@
+:host {
+  display: block;
+}
+.page-heading p {
+  color: var(--muted, #6b778c);
+}
+.planning-list {
+  border: 1px solid var(--border, #dfe1e6);
+  border-radius: 8px;
+  background: white;
+}
+.planning-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border, #dfe1e6);
+}
+.planning-toolbar h2 {
+  margin: 0 auto 0 0;
+  font-size: 16px;
+}
+.select-all {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.planned-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #edf0f3;
+  min-height: 80px;
+}
+.rank-number {
+  font-size: 12px;
+  color: #73819a;
+  width: 20px;
+}
+.planned-work {
+  min-width: 0;
+  flex: 1;
+}
+.planned-work a {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  text-decoration: none;
+}
+.planned-work small {
+  color: #6b778c;
+  white-space: nowrap;
+}
+.planned-work bdi {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.planned-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #6b778c;
+  font-size: 12px;
+  margin-top: 8px;
+}
+.row-actions {
+  display: flex;
+  gap: 4px;
+}
+.drag-handle {
+  cursor: grab;
+  min-width: 32px;
+}
+.blocked, .overdue {
+  color: #974f0c;
+}
+.more-items {
+  margin: 16px;
+}
+.planning-hint {
+  padding: 0 16px;
+  color: #6b778c;
+  font-size: 12px;
+}
+.cdk-drag-preview {
+  background: white;
+  box-shadow: 0 5px 20px #091e4233;
+  border-radius: 6px;
+}
+.cdk-drag-placeholder {
+  opacity: 0.25;
+}
+.empty-state {
+  padding: 40px;
+  text-align: center;
+}
+.issue-dialog {
+  max-width: 680px;
+  width: calc(100vw - 32px);
+  max-height: 90dvh;
+  border: 1px solid #dfe1e6;
+  border-radius: 10px;
+  padding: 20px;
+  overflow: auto;
+}
+.dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dialog-heading h2 {
+  margin: 0;
+}
+.dialog-heading p {
+  color: #6b778c;
+}
+.project-subnav {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+  border-bottom: 1px solid #dfe1e6;
+  padding-bottom: 14px;
+}
+.project-subnav a {
+  text-decoration: none;
+}
+.project-subnav .selected {
+  font-weight: 600;
+}
+.notice {
+  padding: 12px;
+  background: #e9f2ff;
+  border-radius: 6px;
+}
+@media (max-width: 700px) {
+  .planning-toolbar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .planning-toolbar h2 {
+    width: 100%;
+  }
+  .planned-row {
+    flex-wrap: wrap;
+    padding: 12px;
+    gap: 8px;
+  }
+  .planned-work {
+    flex-basis: calc(100% - 80px);
+  }
+  .planned-work a {
+    display: block;
+  }
+  .planned-work small {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .row-actions {
+    margin-left: auto;
+  }
+  .rank-number {
+    display: none;
+  }
+  .planning-hint {
+    font-size: 13px;
+  }
+  .issue-dialog {
+    padding: 14px;
+  }
+}

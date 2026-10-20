@@ -1,0 +1,192 @@
+<div class="description-editor rich-text-editor">
+  <div class="editor-surface">
+    <div
+      class="description-toolbar editor-toolbar"
+      role="toolbar"
+      aria-label="Description formatting"
+    >
+      <select
+        class="heading-select"
+        aria-label="Description heading"
+        title="Text style"
+        (change)="heading($event)"
+        [disabled]="!ready() || disabled() || sourceMode()"
+        ><option value="0">Paragraph</option
+        ><option value="2">Heading 2</option
+        ><option value="3">Heading 3</option></select
+      >
+      <span class="toolbar-divider" aria-hidden="true"></span>
+      @for (action of actions; track action.format) {
+        <button
+          type="button"
+          class="format-button"
+          [class.format-active]="active().includes(action.format)"
+          [attr.aria-label]="'Description ' + action.label"
+          [attr.title]="action.label"
+          [attr.aria-pressed]="active().includes(action.format)"
+          [disabled]="!ready() || disabled() || sourceMode()"
+          (click)="format(action.format)"
+        >
+          @if (action.icon; as icon) {
+            <gg-icon [name]="icon" />
+          } @else {
+            <span
+              [class.format-bold]="action.format === 'bold'"
+              [class.format-italic]="action.format === 'italic'"
+              [class.format-underline]="action.format === 'underline'"
+              >{{ action.text }}</span
+            >
+          }
+        </button>
+      }
+      <span class="toolbar-divider" aria-hidden="true"></span>
+      <details class="editor-table-tools"
+        ><summary aria-label="Description table options" title="Table options"
+          ><gg-icon name="grid" /></summary
+        ><div role="group" aria-label="Description table controls">
+          @for (item of tableActions; track item.action) {
+            <button
+              type="button"
+              class="secondary"
+              [disabled]="
+                !ready() ||
+                disabled() ||
+                sourceMode() ||
+                (item.action !== 'insert' && !tableActive())
+              "
+              (click)="table(item.action)"
+              >{{ item.label }}</button
+            >
+          }
+        </div></details
+      >
+      <button
+        type="button"
+        class="format-button"
+        aria-label="Description link options"
+        title="Insert a link"
+        [attr.aria-expanded]="showLinks()"
+        [disabled]="!ready() || disabled() || sourceMode()"
+        (click)="showLinks.set(!showLinks())"
+        ><gg-icon name="link"
+      /></button>
+      <button
+        type="button"
+        class="format-button"
+        aria-label="Attach files or pictures"
+        title="Attach files or pictures"
+        [disabled]="!ready() || disabled() || sourceMode()"
+        (click)="attachFiles()"
+        ><gg-icon name="paperclip"
+      /></button>
+      <div class="description-mode editor-mode" role="group" aria-label="Description editing mode">
+        @if (sourceMode()) {
+          <button
+            type="button"
+            class="format-button"
+            aria-label="Visual editor"
+            title="Return to visual editor"
+            [disabled]="!ready() || disabled()"
+            (click)="showVisual()"
+            ><gg-icon name="comment"
+          /></button>
+        } @else {
+          <button
+            type="button"
+            class="format-button"
+            aria-label="HTML source"
+            title="Edit HTML source"
+            [disabled]="!ready() || disabled() || uploadPending()"
+            (click)="showSource()"
+            ><gg-icon name="code"
+          /></button>
+        }
+      </div>
+    </div>
+    @if (error()) {
+      <p class="notice error" role="alert">{{ error() }}</p>
+    }
+    @if (showLinks() && !sourceMode()) {
+      <div class="editor-links"
+        ><label [for]="controlId + '-link'" class="sr-only">Link address</label
+        ><input
+          [id]="controlId + '-link'"
+          [formControl]="link"
+          type="url"
+          placeholder="Paste a link, e.g. https://example.com"
+          [readOnly]="disabled()"
+          (keydown.enter)="$event.preventDefault(); addLink()"
+        /><button
+          type="button"
+          class="secondary"
+          (click)="addLink()"
+          [disabled]="!ready() || disabled()"
+          >Link description selection</button
+        ></div
+      >
+    }
+    @if (sourceMode()) {
+      <div class="source-editor"
+        ><label [for]="controlId + '-html'">HTML source</label
+        ><textarea
+          [id]="controlId + '-html'"
+          aria-label="Description HTML"
+          class="html-source"
+          [formControl]="source"
+          rows="6"
+          dir="ltr"
+          spellcheck="false"
+          [readOnly]="disabled()"
+        ></textarea
+        ><div class="source-footer"
+          ><p>Headings, code blocks, tables, checklists, links and Arabic text are supported.</p
+          ><button type="button" class="secondary" (click)="showVisual()" [disabled]="disabled()"
+            >Preview HTML</button
+          ></div
+        ></div
+      >
+    }
+    <div #editorHost class="description-host editor-host" [hidden]="sourceMode()"></div>
+    @if (!ready()) {
+      <p class="loading-editor" role="status">Loading description editor…</p>
+    }
+    @if (issueId()) {
+      <div class="editor-attachments" [hidden]="!attachmentsOpen() && !fileQueue()?.files().length"
+        ><gg-file-queue
+          [issueId]="issueId()"
+          queueScope="description"
+          publication="comment_draft"
+          [trackIssueRevision]="true"
+          (uploadedRevision)="advanceRevision($event)"
+          [disabled]="disabled() || sourceMode()"
+          (pictureUploaded)="insertPicture($event)"
+          (documentUploaded)="insertAttachment($event)"
+      /></div>
+    } @else {
+      <input
+        #newFileInput
+        class="new-attachment-input sr-only"
+        type="file"
+        multiple
+        aria-label="Description attachments"
+        (change)="selectFiles($event)"
+        [disabled]="disabled() || sourceMode()"
+      />
+    }
+    <div class="editor-meta"
+      ><span class="paste-hint">{{
+        issueId() ? 'Paste pictures or attach files' : 'Files upload when you create this issue'
+      }}</span
+      ><select
+        aria-label="Description direction"
+        title="Text direction"
+        (change)="direction($event)"
+        [disabled]="!ready() || disabled() || sourceMode()"
+        ><option value="auto">Auto direction</option
+        ><option value="rtl">Arabic / RTL</option
+        ><option value="ltr">Left to right</option></select
+      ></div
+    >
+  </div>
+  <p class="editor-count description-count">{{ characters() }} characters</p>
+</div>

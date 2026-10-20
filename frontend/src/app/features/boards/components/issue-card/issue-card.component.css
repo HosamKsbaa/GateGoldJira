@@ -1,0 +1,228 @@
+:host {
+  display: block;
+}
+.issue-card {
+  position: relative;
+  background: var(--color-surface, white);
+  border: 1px solid #dfe1e6;
+  border-radius: 5px;
+  padding: 13px 12px 11px;
+  margin: 0;
+  overflow-wrap: anywhere;
+  box-shadow: 0 1px 2px #091e4221;
+  transition: background 120ms, box-shadow 120ms;
+}
+.issue-card:hover {
+  background: #fafbfc;
+  box-shadow: 0 2px 5px #091e4233;
+}
+.issue-card h3 {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0 22px 9px 0;
+}
+.issue-card h3 a {
+  color: var(--color-text, #172b4d);
+  text-decoration: none;
+}
+.issue-card h3 a:hover {
+  color: var(--color-brand, #0c66e4);
+  text-decoration: underline;
+}
+.card-open::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1;
+}
+.card-open:focus-visible {
+  outline: none;
+}
+.card-open:focus-visible::after {
+  outline: 2px solid var(--color-brand, #0c66e4);
+  outline-offset: 2px;
+}
+.issue-key, .subtask-parent a {
+  position: relative;
+  z-index: 2;
+}
+.card-labels, .card-signals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 9px 0;
+}
+.card-label {
+  background: #f1f2f4;
+  border-radius: 3px;
+  color: #44546f;
+  padding: 1px 6px;
+  font-size: 11px;
+  line-height: 1.7;
+  max-width: 100%;
+}
+.blocked-tag, .due-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  color: #626f86;
+  background: #f1f2f4;
+}
+.blocked-tag {
+  color: #974f0c;
+  background: #fff7d6;
+}
+.due-tag.overdue {
+  color: #ae2a19;
+  background: #ffebe6;
+}
+.card-signals gg-icon {
+  width: 12px;
+  height: 12px;
+}
+.card-footer {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 15px;
+}
+.issue-type {
+  width: 15px;
+  height: 15px;
+  display: grid;
+  place-items: center;
+  border-radius: 2px;
+  background: #2684ff;
+  color: white;
+}
+.issue-type.bug {
+  background: #e34935;
+}
+.issue-type gg-icon {
+  width: 12px;
+  height: 12px;
+}
+.issue-key {
+  color: var(--color-muted, #626f86);
+  font-size: 12px;
+  text-decoration: none;
+}
+.issue-key:hover {
+  text-decoration: underline;
+  color: var(--color-brand, #0c66e4);
+}
+.is-done .issue-key {
+  text-decoration: line-through;
+}
+.priority {
+  color: #e2b203;
+  margin-inline-start: auto;
+  display: flex;
+}
+.priority.high {
+  color: #e34935;
+}
+.priority.low {
+  color: #22a06b;
+}
+.priority gg-icon {
+  width: 15px;
+  height: 15px;
+}
+.assignee-avatar {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #deebff;
+  color: #0055cc;
+  font-weight: 600;
+  font-size: 10px;
+  flex: 0 0 auto;
+}
+.assignee-avatar.unassigned {
+  background: #dfe1e6;
+  color: #626f86;
+}
+.assignee-avatar gg-icon {
+  width: 16px;
+  height: 16px;
+}
+.subtask-parent, .subtask-progress {
+  color: #626f86;
+  font-size: 11px;
+  margin: 8px 0;
+}
+.subtask-progress {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.subtask-progress gg-icon {
+  width: 12px;
+  height: 12px;
+}
+.card-move > summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  list-style: none;
+  position: absolute;
+  z-index: 2;
+  top: 10px;
+  inset-inline-end: 8px;
+  border-radius: 3px;
+  width: 24px;
+  height: 24px;
+  color: #626f86;
+  cursor: pointer;
+}
+.card-move > summary::-webkit-details-marker {
+  display: none;
+}
+.card-move > summary > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.card-move > summary:hover, .card-move[open] > summary {
+  background: #dfe1e6;
+  color: #172b4d;
+}
+.card-move > summary gg-icon {
+  width: 17px;
+  height: 17px;
+}
+.move-controls {
+  position: relative;
+  z-index: 2;
+  margin-top: 12px;
+  padding-top: 4px;
+  border-top: 1px solid #dfe1e6;
+  cursor: default;
+}
+.move-controls label {
+  font-size: 12px;
+  margin-top: 8px;
+}
+.move-controls select {
+  font-size: 12px;
+  padding: 7px;
+}
+.move-controls button {
+  font-size: 11px;
+  padding: 6px 7px;
+  margin-top: 8px;
+}
+.move-controls .actions {
+  gap: 6px;
+}

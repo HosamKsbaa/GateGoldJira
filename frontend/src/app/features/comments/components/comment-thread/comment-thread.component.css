@@ -1,0 +1,133 @@
+:host {
+  display: block;
+}
+.discussion {
+  border: none;
+  border-top: 0;
+  border-radius: 0;
+  padding: 0;
+  margin-top: 0;
+  scroll-margin-top: 6rem;
+}
+.discussion-heading {
+  float: inline-end;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.discussion-heading h2 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.discussion-heading button {
+  width: 28px;
+  min-height: 28px;
+  background: transparent;
+  color: var(--color-muted);
+}
+.discussion-heading gg-icon {
+  width: 15px;
+  height: 15px;
+}
+.discussion-count {
+  font-size: 12px;
+  color: var(--color-muted);
+  margin: 5px 0 16px;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+}
+.comment-record {
+  display: flex;
+  align-items: start;
+  gap: 0.75rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.comment-avatar {
+  display: flex;
+  flex: 0 0 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  background: #eae6ff;
+  color: #5e4db2;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.comment-body {
+  flex: 1;
+  min-width: 0;
+}
+.comment-record header {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  margin-bottom: 0.65rem;
+}
+.comment-author {
+  font-weight: 600;
+  color: var(--color-text);
+}
+.comment-record time {
+  font-size: 0.6875rem;
+}
+.comment-record .actions {
+  gap: 0.7rem;
+  margin-top: 0.65rem;
+}
+.comment-action {
+  font-size: 0.6875rem;
+  border: 0;
+  padding: 0;
+  color: var(--color-muted);
+  background: none;
+}
+.comment-action:hover {
+  color: var(--color-brand);
+  text-decoration: underline;
+}
+.empty-discussion {
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+  padding: 0.75rem 0;
+}
+.editor-heading {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+.comment-compose {
+  padding-bottom: 16px;
+}
+.comment-history {
+  background: #f7f8f9;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+}
+.comment-history h3 {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+.comment-history h4 {
+  font-size: 0.8125rem;
+  margin: 0 0 0.3rem;
+}
+.editable-comment {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 4px 6px;
+  margin: 2px -7px;
+}
+.editable-comment.can-edit:hover {
+  border-color: #dfe1e6;
+  background: #fafbfc;
+  cursor: text;
+}
+.comment-body {
+  min-width: 0;
+}

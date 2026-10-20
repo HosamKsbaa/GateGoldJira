@@ -1,0 +1,248 @@
+:host {
+  display:block;
+  min-width:0;
+  max-width:100%
+}
+.field-value {
+  position:relative;
+  min-height:32px;
+  border:1px solid transparent;
+  border-radius:4px;
+  padding:5px 30px 5px 7px;
+  margin:-5px -7px;
+  color:inherit
+}
+.value-content {
+  overflow-wrap:anywhere;
+  min-width:0
+}
+.can-edit {
+  cursor:pointer
+}
+.can-edit:hover {
+  background:#f1f2f4
+}
+.can-edit:focus-within {
+  outline:2px solid #388bff;
+  outline-offset:1px
+}
+.edit-trigger {
+  position:absolute;
+  inset-inline-end:3px;
+  top:3px;
+  color:#626f86;
+  border:0;
+  background:transparent;
+  padding:4px 6px;
+  font-size:16px;
+  line-height:20px;
+  min-height:28px
+}
+.edit-trigger span[aria-hidden] {
+  opacity:0
+}
+.can-edit:hover .edit-trigger span,.edit-trigger:focus-visible span {
+  opacity:1
+}
+.prose-value {
+  padding:8px 34px 8px 8px;
+  margin:0 -8px;
+  min-height:70px
+}
+.prose-value.can-edit {
+  cursor:text
+}
+.prose-value.can-edit:hover {
+  background:#fafbfc;
+  border-color:#dfe1e6
+}
+.inline-editor {
+  border:1px solid #85b8ff;
+  box-shadow:0 0 0 1px #85b8ff;
+  border-radius:5px;
+  background:#fff;
+  padding:8px;
+  font-size:13px;
+  font-weight:400;
+  line-height:1.5;
+  color:#172b4d;
+  min-width:0
+}
+.inline-editor input,.inline-editor select {
+  width:100%;
+  min-width:0;
+  margin:0
+}
+.inline-editor-actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:8px
+}
+.inline-editor-actions button {
+  font-size:12px;
+  min-height:30px;
+  padding:5px 12px
+}
+.assignee-search {
+  display:flex;
+  gap:4px;
+  margin-bottom:8px
+}
+.assignee-search input {
+  flex:1;
+  min-width:0
+}
+.assignee-search button {
+  font-size:11px;
+  padding:5px
+}
+.prose-editor {
+  padding:0;
+  border:0;
+  box-shadow:none
+}
+.prose-editor .inline-editor-actions {
+  padding:0 1px
+}
+.notice {
+  font-size:12px
+}
+@media(hover:none) {
+  .edit-trigger span[aria-hidden] {
+    opacity:1
+  }
+}
+.choice-value {
+  background:#f7f8f9;
+  border-color:#dfe1e6
+}
+.choice-value .edit-trigger {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:4px;
+  top:50%;
+  transform:translateY(-50%)
+}
+.choice-value:hover {
+  background:#e9f2ff;
+  border-color:#85b8ff
+}
+.field-choices {
+  display:flex;
+  flex-direction:column;
+  max-height:220px;
+  overflow-y:auto;
+  gap:2px
+}
+.field-choices [role=option] {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  flex-shrink:0;
+  width:100%;
+  min-height:36px;
+  border:0;
+  border-radius:3px;
+  background:transparent;
+  color:#172b4d;
+  padding:8px 10px;
+  text-align:start;
+  font-size:13px;
+  font-weight:400
+}
+.field-choices [role=option]:hover {
+  background:#f1f2f4
+}
+.field-choices [role=option][aria-selected=true] {
+  background:#e9f2ff;
+  color:#0055cc;
+  font-weight:600
+}
+.field-choices [role=option]:focus-visible {
+  outline:2px solid #388bff;
+  outline-offset:-2px
+}
+.field-choices bdi {
+  overflow-wrap:anywhere;
+  min-width:0
+}
+.field-choices gg-icon {
+  width:16px;
+  height:16px
+}
+.field-popup {
+  position:fixed;
+  inset:auto;
+  margin:0;
+  box-sizing:border-box;
+  overflow:auto;
+  padding:10px;
+  border:1px solid #dfe1e6;
+  border-radius:8px;
+  box-shadow:0 8px 24px #091e4229,0 0 1px #091e4240;
+  z-index:1100
+}
+.field-popup .inline-editor-actions {
+  border-top:1px solid #dfe1e6;
+  padding-top:10px;
+  margin-top:10px
+}
+.assignee-search {
+  position:relative;
+  align-items:center
+}
+.assignee-search gg-icon {
+  position:absolute;
+  inset-inline-start:10px;
+  color:#626f86;
+  width:16px;
+  height:16px
+}
+.assignee-search input {
+  padding-inline-start:32px;
+  min-height:36px
+}
+.search-hint {
+  margin:4px 8px 8px;
+  color:#626f86;
+  font-size:12px
+}
+.field-popup .field-choices {
+  max-height:230px
+}
+.field-popup .notice {
+  margin:8px 0 0
+}
+.field-popup gg-request-status:empty {
+  display:none
+}
+.field-popup::backdrop {
+  background:transparent
+}
+@media(max-width:500px) {
+  .field-popup .field-choices [role=option] {
+    min-height:42px
+  }
+  .field-popup .inline-editor-actions button {
+    min-height:36px
+  }
+}
+.date-actions {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:8px
+}
+.date-actions .search-hint {
+  margin:0;
+  font-size:11px
+}
+.date-actions button {
+  font-size:12px;
+  min-height:30px;
+  padding:5px 8px
+}

@@ -1,0 +1,98 @@
+<header class="page-heading">
+  <div><p class="eyebrow">Your account</p><h1>MCP connections</h1>
+    <p class="page-description">Connect Antigravity or another AI assistant using your own account.</p></div>
+  <button type="button" class="secondary" (click)="load()" [disabled]="state.busy()">Refresh tokens</button>
+</header>
+<gg-request-status [state]="state" />
+@if (notice()) { <p class="notice" role="status">{{ notice() }}</p> }
+@if (created(); as credential) {
+  <section class="token-reveal" aria-labelledby="created-token-heading">
+    <h2 id="created-token-heading" tabindex="-1">Token created</h2>
+    <p>Copy this token now. You will not be able to see it again after leaving this page or selecting Done.</p>
+    <label for="new-mcp-token">Your new MCP token</label>
+    <input id="new-mcp-token" class="secret" [type]="showToken() ? 'text' : 'password'" [value]="credential.token" readonly autocomplete="off" spellcheck="false" />
+    <div class="actions">
+      <button type="button" class="secondary" (click)="showToken.set(!showToken())">{{ showToken() ? 'Hide token' : 'Show token' }}</button>
+      <button type="button" (click)="copy('token')">Copy token</button>
+      <button type="button" class="secondary" (click)="copy('config')">Copy Antigravity config</button>
+      <button type="button" class="secondary" (click)="dismiss()">Done</button>
+    </div>
+    <p class="muted">In Antigravity, open MCP Servers → Manage MCP Servers → View raw config. Merge the copied configuration and refresh the server.</p>
+  </section>
+}
+@if (listing()?.oauthClientId; as clientId) {
+  <section class="account-panel" aria-labelledby="browser-login-heading">
+    <h2 id="browser-login-heading">Connect Antigravity with browser login</h2>
+    <p>Install Node.js 22 or newer, copy the OAuth configuration into Antigravity’s MCP server settings, then reload the server. The mcp-remote proxy opens your browser; sign in to GateGoldJira and approve the connection.</p>
+    <button type="button" (click)="copyOAuthConfig()">Copy OAuth configuration</button>
+    <p class="endpoint muted">Server: <code>{{ listing()?.endpoint }}</code><br />Client ID: <code>{{ clientId }}</code></p>
+    <p class="muted">The proxy keeps your credentials on your computer and refreshes them automatically. If the browser does not open, use the authorization link in the server logs. You may be asked to sign in again after 30 days.</p>
+  </section>
+}
+<section class="account-panel" aria-labelledby="create-token-heading">
+  <h2 id="create-token-heading">Create a personal token instead</h2>
+  <p>For a client that supports remote HTTP servers with Authorization headers, generate your own token, then use Copy Antigravity config. Tokens never expire and remain valid until revoked; they use your current project permissions.</p>
+  <form [formGroup]="form" (ngSubmit)="create()">
+    <fieldset [disabled]="state.busy() || !!created() || !listing()">
+      <div class="token-fields">
+        <label>Token name<input formControlName="name" maxlength="80" placeholder="For example, Antigravity on my laptop" autocomplete="off" dir="auto" /></label>
+        <button type="submit" [disabled]="form.invalid || !form.controls.name.value.trim() || activeCount() >= (listing()?.activeLimit ?? 10)">Generate token</button>
+      </div>
+    </fieldset>
+  </form>
+  <p class="muted">{{ activeCount() }} of {{ listing()?.activeLimit ?? 10 }} active tokens. Revoke a token when you no longer use it.</p>
+</section>
+<section class="account-panel" aria-labelledby="your-tokens-heading">
+  <h2 id="your-tokens-heading">Your tokens and browser connections</h2>
+  <p class="muted">Only you can view or revoke these tokens. Showing active tokens and up to 100 recent records.</p>
+  @if (listing(); as list) {
+    @if (!list.items.length) { <p>No MCP connections yet. Connect with browser login or create a personal token above.</p> }
+    @else {
+      <div class="token-table" role="region" aria-label="Your MCP tokens" tabindex="0"><table>
+        <thead><tr><th scope="col">Name</th><th scope="col">Status</th><th scope="col">Expires</th><th scope="col">Last used</th><th scope="col">Action</th></tr></thead>
+        <tbody>@for (item of list.items; track item.id) {
+          <tr [attr.data-token-id]="item.id"><td><strong dir="auto">{{ item.name }}</strong><small>{{ item.kind === 'oauth' ? 'Browser OAuth' : item.prefix + '…' }}</small><small>Created {{ item.createdAt | date:'mediumDate' }}</small></td>
+            <td><span class="token-status" [class.active]="status(item) === 'Active'">{{ status(item) }}</span></td>
+            <td>{{ item.kind === 'oauth' ? 'Automatic refresh' : item.expiresAt ? (item.expiresAt | date:'medium') : 'Never' }}</td><td>{{ item.lastUsedAt ? (item.lastUsedAt | date:'medium') : 'Never' }}</td>
+            <td><div class="token-actions"><button type="button" class="secondary" [attr.aria-label]="'View activity for ' + item.name" (click)="openActivity(item)">View activity</button>
+            @if (status(item) === 'Active') {
+              @if (confirming() === item.id) {
+                <div class="actions"><button type="button" class="danger" [attr.aria-label]="'Confirm revoke ' + item.name" (click)="revoke(item)" [disabled]="state.busy()">Confirm revoke</button>
+                <button type="button" class="secondary" (click)="confirming.set(null)" [disabled]="state.busy()">Cancel</button></div>
+              } @else {
+                <button type="button" class="secondary" [attr.aria-label]="'Revoke ' + item.name" (click)="confirming.set(item.id)" [disabled]="state.busy()">Revoke</button>
+              }
+            } @else { <span class="muted">No longer usable</span> }</div></td></tr>
+        }</tbody>
+      </table></div>
+    }
+    <p class="endpoint">MCP server URL: <code>{{ list.endpoint }}</code></p>
+  }
+</section>
+
+@if (selectedToken(); as token) {
+  <section class="account-panel" aria-labelledby="token-activity-heading">
+    <div class="activity-heading"><h2 id="token-activity-heading" tabindex="-1">Activity for {{ token.name }}</h2>
+      <div class="actions"><button type="button" class="secondary" (click)="loadActivity()" [disabled]="activityState.busy()">Refresh activity</button>
+      <button type="button" class="secondary" (click)="closeActivity()">Close activity</button></div>
+    </div>
+    <p class="muted">Tool calls authenticated with this connection appear here. Completion unconfirmed means a call is still running or its final result could not be recorded.</p>
+    <gg-request-status [state]="activityState" />
+    @if (activity(); as log) {
+      @if (!log.items.length) { <p>No recorded calls yet. Use this token in your MCP client, then refresh activity.</p> }
+      @else {
+        <div class="token-table" role="region" aria-label="Token activity" tabindex="0"><table>
+          <thead><tr><th scope="col">Time</th><th scope="col">Tool</th><th scope="col">Outcome</th><th scope="col">Duration</th><th scope="col">Resource</th></tr></thead>
+          <tbody>@for (entry of log.items; track entry.id) {
+            <tr><td>{{ entry.startedAt | date:'medium' }}</td><td><code>{{ entry.toolName }}</code></td>
+              <td>{{ entry.outcome === 'succeeded' ? 'Succeeded' : entry.outcome === 'failed' ? 'Failed' : 'Completion unconfirmed' }}
+                @if (entry.errorCode) { <small>{{ entry.errorCode }}</small> }</td>
+              <td>{{ entry.durationMs === null ? '—' : entry.durationMs + ' ms' }}</td>
+              <td>@if (entry.resourceUrl) { <a [href]="entry.resourceUrl">Open resource</a> } @else { <span class="muted">—</span> }</td></tr>
+          }</tbody>
+        </table></div>
+      }
+      @if (log.nextCursor) { <button type="button" class="secondary" (click)="loadActivity(true)" [disabled]="activityState.busy()">Load older activity</button> }
+    }
+  </section>
+}

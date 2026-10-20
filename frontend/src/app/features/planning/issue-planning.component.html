@@ -1,0 +1,101 @@
+<section class="issue-planning" aria-label="Issue planning" [attr.aria-busy]="busy()">
+  <header
+    ><h3>Planning</h3
+    ><a [routerLink]="['/projects', projectId(), 'planning']">Project planning</a></header
+  >
+  <gg-request-status [state]="readState" />
+  @if (readState.message()) {
+    <button type="button" class="secondary" (click)="reload()" [disabled]="readState.busy()"
+      >Retry planning</button
+    >
+  }
+  @if (assignment(); as current) {
+    <div [formGroup]="form" class="planning-fields">
+      <label
+        >Epic<select
+          formControlName="epicId"
+          aria-label="Issue epic"
+          (change)="choose('epicId', $event)"
+        >
+          <option value="">None</option>
+          @if (form.controls.epicId.value && !hasChoice(form.controls.epicId.value)) {
+            <option [value]="form.controls.epicId.value">{{ selectedName('epicId') }}</option>
+          }
+          @for (item of epics(); track item.id) {
+            <option [value]="item.id">{{ item.name }}</option>
+          }
+        </select></label
+      >
+      <label
+        >Release<select
+          formControlName="releaseId"
+          aria-label="Issue release"
+          (change)="choose('releaseId', $event)"
+        >
+          <option value="">None</option>
+          @if (form.controls.releaseId.value && !hasChoice(form.controls.releaseId.value)) {
+            <option [value]="form.controls.releaseId.value">{{ selectedName('releaseId') }}</option>
+          }
+          @for (item of releases(); track item.id) {
+            <option [value]="item.id">{{ item.name }}</option>
+          }
+        </select></label
+      >
+    </div>
+    <gg-request-status [state]="choicesState" />
+    @if (choicesState.message()) {
+      <button
+        type="button"
+        class="secondary"
+        (click)="reload()"
+        [disabled]="choicesState.busy() || busy()"
+        >Retry choices</button
+      >
+    }
+    @if (cursor()) {
+      <button
+        type="button"
+        class="secondary"
+        (click)="more()"
+        [disabled]="choicesState.busy() || busy()"
+        >Load more epics and releases</button
+      >
+    }
+    @if (state.busy()) {
+      <p role="status">Saving planning…</p>
+    } @else {
+      <gg-request-status [state]="state" />
+    }
+    <gg-request-status [state]="reviewState" />
+    @if (pending() && !state.busy()) {
+      @if (reviewReady()) {
+        <p role="status">Latest planning loaded. Apply your selection to this version.</p>
+      }
+      <div class="planning-actions">
+        @if (conflict()) {
+          <button
+            type="button"
+            class="secondary"
+            (click)="review()"
+            [disabled]="busy() || !canEdit()"
+            >Review latest planning</button
+          >
+        } @else {
+          <button
+            data-planning-apply
+            type="button"
+            (click)="save()"
+            [disabled]="busy() || !canEdit()"
+            >{{ reviewReady() ? 'Apply reviewed change' : 'Retry save' }}</button
+          >
+        }
+        <button type="button" class="secondary" (click)="cancel()" [disabled]="busy()"
+          >Cancel</button
+        >
+      </div>
+    }
+    @if (notice()) {
+      <p role="status">{{ notice() }}</p>
+    }
+  }
+</section>

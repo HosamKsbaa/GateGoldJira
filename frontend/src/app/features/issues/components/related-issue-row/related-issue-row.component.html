@@ -1,0 +1,47 @@
+<div class="related-row">
+  <span
+    class="issue-type"
+    [class.bug]="typeKey(issue()) === 'bug'"
+    [attr.title]="typeName(issue())"
+    aria-hidden="true"
+    ><gg-icon
+      [name]="
+        typeKey(issue()) === 'bug' ? 'bug' : typeKey(issue()) === 'subtask' ? 'subtask' : 'check'
+      "
+  /></span>
+  <div class="issue-info">
+    <a class="issue-link" [routerLink]="['/issues', issue().id]"
+      ><bdi class="issue-key">{{ issue().key }}</bdi
+      ><span class="sr-only"> · </span><bdi class="issue-title">{{ issue().title }}</bdi></a
+    >
+    <div class="issue-facts">
+      <span class="assignee"
+        ><gg-icon name="users" /><bdi>{{
+          issue().assignee?.displayName ?? 'Unassigned'
+        }}</bdi></span
+      >
+      @if (showDetails() && issue().dueDate) {
+        <span class="due-date" [class.overdue]="issue().overdue"
+          ><gg-icon name="calendar" />Due {{ issue().dueDate
+          }}{{ issue().overdue ? ' · Overdue' : '' }}</span
+        >
+      }
+      @if (showDetails() && issue().blocked) {
+        <span class="blocked">Blocked · {{ issue().unfinishedBlockerCount }} unfinished</span>
+      }
+      @if (showDetails()) {
+        @for (label of issue().labels; track label.id) {
+          <span class="badge" dir="auto">{{ label.name }}</span>
+        }
+      }
+    </div>
+  </div>
+  <a
+    class="status-pill"
+    [routerLink]="['/issues', issue().id]"
+    [attr.aria-label]="'Open ' + issue().key + ' at ' + stageName(issue())"
+    [attr.data-status]="category(issue())"
+    >{{ stageName(issue()) }}</a
+  >
+  <ng-content />
+</div>

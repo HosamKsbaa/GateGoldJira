@@ -1,0 +1,277 @@
+<gg-request-status [state]="state" />
+@if (notice()) {
+  <p class="notice" role="status">{{ notice() }}</p>
+}
+@if (pending()) {
+  <p class="notice"
+    >Confirm the original request before making more changes.
+    <button type="button" (click)="retry()" [disabled]="state.busy()"
+      >Retry original request</button
+    ></p
+  >
+}
+@if (project(); as project) {
+  <nav class="board-breadcrumbs" aria-label="Breadcrumb"
+    ><a routerLink="/projects">Projects</a><span>/</span
+    ><a [routerLink]="['/projects', project.id]" dir="auto">{{ project.name }}</a
+    ><span>/</span><span>{{ current() ? 'Board settings' : 'Boards' }}</span></nav
+  >
+}
+<header class="page-heading settings-heading"
+  ><div
+    ><p class="eyebrow">{{ project()?.key }} · Project workspace</p
+    ><h1>{{ current() ? 'Board settings' : 'Project boards' }}</h1
+    ><p class="muted">Independent columns, grouped workflow stages and card ordering.</p></div
+  >
+  @if (current(); as view) {
+    <a class="button secondary" [routerLink]="['/boards', view.board.id]"
+      ><gg-icon name="board" />Open Kanban board</a
+    >
+  }
+</header>
+@if (current(); as view) {
+  <div class="settings-layout"
+    ><div class="settings-main">
+      <section class="panel general-settings"
+        ><h2 dir="auto">{{ view.board.name }}</h2
+        ><p class="muted"
+          >Created by <bdi>{{ view.board.creator.displayName }}</bdi
+          >{{ view.board.default ? ' · Default board' : ''
+          }}{{ view.board.archived ? ' · Archived' : '' }}</p
+        ><form [formGroup]="form"
+          ><fieldset [disabled]="!editable() || state.busy() || !!pending()"
+            ><label for="native-board-name">Board name</label
+            ><input
+              id="native-board-name"
+              formControlName="name"
+              [readOnly]="view.board.default"
+              dir="auto" /></fieldset></form
+      ></section>
+      <section class="panel workflow-settings"
+        ><div class="section-heading"
+          ><div
+            ><h2>Columns and stage grouping</h2
+            ><p class="muted"
+              >A stage appears in one column per board. Group stages from different workflows; their
+              allowed moves remain in project workflow settings.</p
+            ></div
+          >
+          @if (editable()) {
+            <button
+              type="button"
+              class="secondary"
+              (click)="addColumn()"
+              [disabled]="state.busy() || !!pending()"
+              ><gg-icon name="plus" />Add column</button
+            >
+          }
+        </div>
+        <div class="workflow-source"
+          ><label
+            >Workflow choices<select [formControl]="selectedWorkflow">
+              @for (workflow of workflows(); track workflow.id) {
+                <option [value]="workflow.id"
+                  >{{ workflow.name }}{{ workflow.retired ? ' · Retired' : '' }}</option
+                >
+              }
+            </select></label
+          >
+          @if (workflowCursor()) {
+            <button
+              type="button"
+              class="secondary"
+              (click)="loadWorkflows(true)"
+              [disabled]="choicesState.busy()"
+              >More workflows</button
+            >
+          }
+          @if (stageCursor()) {
+            <button
+              type="button"
+              class="secondary"
+              (click)="loadStages(true)"
+              [disabled]="choicesState.busy()"
+              >More stages</button
+            >
+          }</div
+        ><gg-request-status [state]="choicesState" />
+        <div class="native-columns">
+          @for (
+            column of form.controls.columns.controls;
+            track column.controls.id.value;
+            let index = $index
+          ) {
+            <section class="native-column" [formGroup]="column"
+              ><fieldset [disabled]="!editable() || state.busy() || !!pending()"
+                ><div class="native-column-heading"
+                  ><label [for]="'column-name-' + column.controls.id.value"
+                    >Column {{ index + 1
+                    }}<input
+                      [id]="'column-name-' + column.controls.id.value"
+                      formControlName="name"
+                      dir="auto" /></label
+                  ><div class="actions"
+                    ><button
+                      type="button"
+                      class="secondary"
+                      (click)="reorder(index, -1)"
+                      [disabled]="index === 0"
+                      aria-label="Move column left"
+                      ><gg-icon name="arrow-left" /></button
+                    ><button
+                      type="button"
+                      class="secondary"
+                      (click)="reorder(index, 1)"
+                      [disabled]="index === form.controls.columns.length - 1"
+                      aria-label="Move column right"
+                      ><gg-icon name="arrow-right" /></button
+                    ><button
+                      type="button"
+                      class="secondary"
+                      (click)="removeColumn(index)"
+                      [disabled]="form.controls.columns.length < 2"
+                      aria-label="Remove column"
+                      ><gg-icon name="close" /></button></div
+                ></div>
+                <gg-searchable-picker
+                  label="Mapped workflow stages"
+                  placeholder="Search stage names or workflows"
+                  [multiple]="true"
+                  [options]="stageOptions()"
+                  [selected]="stages()"
+                  [value]="column.controls.stageIds.value"
+                  [disabled]="!editable() || state.busy() || !!pending()"
+                  [loading]="choicesState.busy()"
+                  (searched)="query.set($event)"
+                  (changed)="chooseStages(column, $event)"
+                />
+                <div class="filter-grid"
+                  ><label
+                    >Work-in-progress limit<input
+                      type="number"
+                      formControlName="wipLimit"
+                      min="1"
+                      max="1000"
+                      placeholder="No limit" /></label
+                  ><label
+                    >Limit behavior<select formControlName="wipMode"
+                      ><option value="warn">Warn · Moves stay available</option
+                      ><option value="block">Hard limit · Prevent new entries</option></select
+                    ></label
+                  ></div
+                ></fieldset
+              ></section
+            >
+          }
+        </div>
+      </section>
+      @if (!view.board.default) {
+        <section class="panel saved-view"
+          ><h2>Saved view</h2
+          ><p class="muted"
+            >Hard limits count this entire shared view. Relative and dependent filters use warning
+            mode.</p
+          ><gg-native-board-filters
+            [projectId]="view.board.projectId"
+            [initial]="savedFilters()"
+            [disabled]="!editable() || state.busy() || !!pending()"
+            (changed)="filtersChanged($event)"
+        /></section>
+      }
+      @if (reviewRequired()) {
+        <p class="notice"
+          >Another editor changed this board. Your draft is retained.
+          <button type="button" (click)="reviewCurrent()" [disabled]="state.busy()"
+            >Review current board</button
+          ></p
+        >
+      }</div
+    ><aside class="settings-aside"
+      ><section class="panel"
+        ><h2>Board behavior</h2
+        ><p
+          >Columns group stages without changing an issue’s workflow. Card ordering belongs to this
+          board. Project workflows control allowed moves.</p
+        ><a [routerLink]="['/projects', view.board.projectId, 'workflows']"
+          >Edit project workflows</a
+        ><p class="field-hint"
+          >The default board must cover open intake and occupied stages. Relative and dependent
+          filters can use warning limits.</p
+        ><a [routerLink]="['/boards/project', view.board.projectId]">All project boards</a></section
+      >
+      @if (view.board.canManage && !view.board.default) {
+        <section class="panel archive-section"
+          ><h2>{{ view.board.archived ? 'Restore board' : 'Archive board' }}</h2
+          ><p>Retains issues, mappings and this board’s order.</p
+          ><button
+            type="button"
+            class="secondary"
+            (click)="setArchive(!view.board.archived)"
+            [disabled]="state.busy() || !!pending()"
+            >{{ view.board.archived ? 'Restore board' : 'Archive board' }}</button
+          ></section
+        >
+      }
+    </aside></div
+  >
+  @if (editable()) {
+    <footer class="settings-save-bar"
+      ><div
+        ><strong>{{ dirty() ? 'Unsaved changes' : 'All settings saved' }}</strong
+        ><p
+          >{{ form.controls.columns.length }} independent columns · Changes apply to this board.</p
+        ></div
+      ><button
+        type="button"
+        (click)="save()"
+        [disabled]="form.invalid || state.busy() || !!pending() || reviewRequired()"
+        >Save board settings</button
+      ></footer
+    >
+  }
+} @else {
+  @if (project(); as project) {
+    @if (!project.archived && project.effectiveRole !== 'viewer') {
+      <section class="panel board-create-panel"
+        ><div
+          ><h2>Create named board</h2><label for="native-new-board-name">New board name</label
+          ><input
+            id="native-new-board-name"
+            [formControl]="createName"
+            [readOnly]="!!pending()"
+            placeholder="Engineering delivery"
+            dir="auto"
+          /><button
+            type="button"
+            (click)="create()"
+            [disabled]="createName.invalid || state.busy() || !!pending()"
+            >Create board</button
+          ></div
+        ></section
+      >
+    }
+  }
+  <section class="panel boards-list"
+    ><h2>Boards</h2
+    ><ul class="records">
+      @for (board of boards(); track board.id) {
+        <li
+          ><div
+            ><a [routerLink]="['/boards', board.id]" dir="auto">{{ board.name }}</a
+            ><p
+              >Created by <bdi>{{ board.creator.displayName }}</bdi
+              >{{ board.archived ? ' · Archived' : '' }}</p
+            ></div
+          ><a [routerLink]="['/boards', board.id, 'settings']">Settings</a></li
+        >
+      } @empty {
+        <li>No accessible boards.</li>
+      }
+    </ul>
+    @if (boardCursor()) {
+      <button type="button" class="secondary" (click)="moreBoards()" [disabled]="state.busy()"
+        >More boards</button
+      >
+    }
+  </section>
+}

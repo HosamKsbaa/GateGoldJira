@@ -1,0 +1,84 @@
+input[type='file'] {
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+}
+.file-drop {
+  border: 1px dashed #b3b9c4;
+  border-radius: 6px;
+  padding: 12px;
+  background: #fafbfc;
+  margin: 0;
+  min-width: 0;
+}
+.drag-over {
+  background: #e9f2ff;
+  border-color: #0c66e4;
+}
+.drop-prompt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+.drop-icon {
+  color: #8590a2;
+  font-size: 22px;
+}
+.choose-button {
+  background: none;
+  color: #0055cc;
+  padding: 0;
+  min-height: 26px;
+  border: 0;
+  font-size: 12px;
+}
+.choose-button:hover {
+  text-decoration: underline;
+}
+.drop-hint {
+  color: #626f86;
+  font-size: 12px;
+}
+.field-hint {
+  font-size: 11px;
+  margin: 0;
+  color: #626f86;
+}
+.queue-items {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+.queue-items li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid #dfe1e6;
+  overflow-wrap: anywhere;
+}
+.queue-items li div {
+  min-width: 0;
+}
+.queue-items small {
+  display: block;
+  color: #626f86;
+  font-size: 11px;
+}
+.queue-error {
+  display: block;
+  color: #ae2a19;
+  font-size: 12px;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.actions button {
+  font-size: 12px;
+}

@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+form > .muted {
+  font-size: 11px;
+  margin: 0 0 14px;
+}
+.filter-grid {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 13px;
+}
+.filter-grid label {
+  font-size: 12px;
+  font-weight: 500;
+  margin: 0;
+}
+.filter-grid input, .filter-grid select {
+  font-size: 12px;
+  padding: 8px;
+  border-color: #dfe1e6;
+}
+.filter-grid select[multiple] {
+  min-height: 98px;
+  padding: 4px;
+}
+.filter-grid select[multiple] option {
+  padding: 3px 5px;
+  border-radius: 2px;
+}
+.actions > button {
+  font-size: 13px;
+}
+.notice {
+  font-size: 12px;
+}

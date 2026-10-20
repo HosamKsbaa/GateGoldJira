@@ -1,0 +1,125 @@
+<section class="attachments" aria-label="Attachments">
+  <div class="attachments-heading">
+    <h2
+      >Attachments <span class="count">{{ total() }}</span></h2
+    >
+    <div class="actions">
+      <button
+        type="button"
+        class="icon-button"
+        aria-label="Refresh attachments"
+        title="Refresh attachments"
+        (click)="load()"
+        [disabled]="busy()"
+        ><gg-icon name="refresh"
+      /></button>
+      @if (writable()) {
+        <button type="button" class="secondary" (click)="chooseFiles()" [disabled]="busy()"
+          ><gg-icon name="plus" /> Add files</button
+        >
+      }
+    </div>
+  </div>
+  <gg-request-status [state]="loading" />
+  <gg-request-status [state]="state" />
+  @if (notice()) {
+    <p class="attachment-notice" role="status">{{ notice() }}</p>
+  }
+  @if (conflict()) {
+    <div class="notice warning"
+      ><p
+        >This issue changed. Review the current attachments before removing
+        <bdi>{{ pendingDetach()?.file?.filename }}</bdi
+        >.</p
+      ><button
+        type="button"
+        class="secondary"
+        (click)="reviewDetach()"
+        [disabled]="busy() || !canRetryDetach()"
+        >Use current revision and retry detach</button
+      ></div
+    >
+  }
+  @if (writable()) {
+    <gg-file-queue [issueId]="issue().summary.id" (changed)="added()" />
+  }
+  <div class="attachment-grid">
+    @for (item of items(); track item.file.id) {
+      <article class="attachment-card" [attr.aria-label]="item.file.filename">
+        <div class="attachment-thumbnail">
+          @if (item.kind === 'picture') {
+            <gg-picture-image
+              [pictureId]="item.file.id"
+              [description]="item.file.description"
+              [externalPreview]="true"
+              (previewRequested)="preview.set(item.file)"
+            />
+          } @else {
+            <button
+              type="button"
+              class="document-preview"
+              (click)="preview.set(item.file)"
+              [attr.aria-label]="'Preview ' + item.file.filename"
+              ><gg-icon name="folder" /><span>{{
+                item.file.filename.split('.').pop()?.toUpperCase() || 'FILE'
+              }}</span></button
+            >
+          }
+        </div>
+        <div class="attachment-info">
+          <button
+            type="button"
+            class="attachment-name"
+            dir="auto"
+            (click)="preview.set(item.file)"
+            [title]="item.file.filename"
+            >{{ item.file.filename }}</button
+          >
+          <p
+            >{{ size(item.file.byteSize) }} <span aria-hidden="true">·</span>
+            {{ item.file.uploadedAt | date: 'mediumDate' }}</p
+          >
+          <div class="attachment-actions">
+            <button
+              type="button"
+              class="secondary"
+              (click)="download(item)"
+              [disabled]="state.busy()"
+              [attr.aria-label]="'Download ' + item.file.filename"
+              ><gg-icon name="arrow-down" />Download</button
+            >
+            @if (writable()) {
+              <button
+                type="button"
+                class="icon-button"
+                (click)="detach(item)"
+                [disabled]="busy()"
+                [attr.aria-label]="'Remove ' + item.file.filename"
+                title="Remove from attachments"
+                ><gg-icon name="close"
+              /></button>
+            }
+          </div>
+        </div>
+      </article>
+    } @empty {
+      @if (!loading.busy() && !loading.message()) {
+        <details class="empty-section"
+          ><summary>No attachments yet</summary
+          ><p class="empty-attachments"
+            >Add screenshots, PDFs, documents, or other files here. Pasted pictures in rich text
+            also appear in this shared gallery.</p
+          ></details
+        >
+      }
+    }
+  </div>
+  @if (hasMore()) {
+    <button type="button" class="secondary" (click)="load(true)" [disabled]="busy()"
+      >Load more attachments</button
+    >
+  }
+  @if (preview(); as file) {
+    <gg-file-preview [attachment]="file" (closed)="preview.set(null)" />
+  }
+</section>

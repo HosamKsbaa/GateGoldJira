@@ -1,9 +1,9 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Dialog, type Page } from '@playwright/test';
 import { test } from './support/browser-test';
 import { useCase } from './support/use-case';
 import { localFixturesAvailable, signIn } from './support/session';
 import { coverageBoard, coverageSwitchAccount, coverageConfiguration, coverageLayout, coverageLayoutDraft, coverageSaveLayout, coverageGet, coverageIssue, coverageProject, coverageReadIssue, coverageWrite } from './support/coverage-boards';
-import { zPagePriorityView, zPageTypeView, zSavedDependencyView, zSavedIssueView, zSavedModernIssueView, zSavedTypeSaved, zSavedPrioritySaved, zSavedWorkflowSaved, zSavedStageSaved, zSavedTransitionSaved, zSavedConfigurationView, zPageBoardSummary, zPageAssetView, zSavedLabelView } from '../src/app/api/generated/zod.gen';
+import { zPagePriorityView, zPageTypeView, zSavedDependencyView, zSavedIssueView, zSavedModernIssueView, zSavedTypeSaved, zSavedPrioritySaved, zSavedWorkflowSaved, zSavedStageSaved, zSavedTransitionSaved, zSavedConfigurationView, zPageBoardSummary, zPageAssetView, zSavedLabelView, zPageProjectView } from '../src/app/api/generated/zod.gen';
 import type { ModernIssueView } from '../src/app/api/generated/types.gen';
 test.skip(!localFixturesAvailable, 'Requires isolated PostgreSQL fixtures and real application services.');
 test.use({ trace: 'off' });
@@ -161,9 +161,44 @@ test('issue filter choices load actual next project, type, priority and teammate
         await page.route(`**/api/${prefix}/projects/${projectId}/${part}?*`, async (route) => { const url = new URL(route.request().url()); url.searchParams.set('limit', '1'); if (url.searchParams.has('cursor'))
             cursors[name].push(url.searchParams.get('cursor')!); await route.continue({ url: url.toString() }); });
     }
+    const firstProjects = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return response.request().method() === 'GET' && url.pathname === '/api/v1/projects' && url.searchParams.get('includeArchived') === 'true' && !url.searchParams.has('cursor');
+    });
     await signIn(page, 'member', `/issues?projectId=${projectId}`, /^Issues$/);
     await advanced(page);
-    await useCase('UC-ISS-0074', async () => { const select = page.getByRole('combobox', { name: 'Project', exact: true }); const before = await select.locator('option').count(); for(let attempt=0;attempt<2 && await select.locator('option').count()===before;attempt++){await page.getByRole('button', { name: 'More projects', exact: true }).click(); await expect.poll(()=>cursors.projects.length).toBe(attempt+1);} await expect.poll(async () => await select.locator('option').count()).toBeGreaterThan(before); expect(cursors.projects.length).toBeGreaterThan(0); await expect(select).toHaveValue(projectId); }, 'web');
+    await useCase('UC-ISS-0074', async () => {
+        const select = page.getByRole('combobox', { name: 'Project', exact: true });
+        const more = page.getByRole('main').getByRole('button', { name: 'More projects', exact: true });
+        const first = await firstProjects; expect(first.status()).toBe(200);
+        let cursor = zPageProjectView.parse(await first.json()).nextCursor;
+        await expect(more).toBeEnabled();
+        const before = await select.locator('option').count(), seen = new Set<string>();
+        // The selected project can already be retained in this selector. Its
+        // directory page may deduplicate it, so advance the real next cursor
+        // only after the preceding response and UI publication have finished.
+        for (let attempt = 0; attempt < 2 && await select.locator('option').count() === before; attempt++) {
+            if (!cursor) throw new Error('Missing the next real project directory page.');
+            const expectedCursor = cursor;
+            expect(seen.has(expectedCursor)).toBe(false); seen.add(expectedCursor);
+            const received = page.waitForResponse(response => {
+                const url = new URL(response.url());
+                return response.request().method() === 'GET' && url.pathname === '/api/v1/projects' && url.searchParams.get('includeArchived') === 'true' && url.searchParams.get('cursor') === expectedCursor;
+            });
+            await more.click();
+            const response = await received; expect(response.status()).toBe(200);
+            const next = zPageProjectView.parse(await response.json());
+            expect(await response.finished()).toBeNull();
+            for (const project of next.items) await expect(select.locator('option[value="' + project.id + '"]')).toHaveCount(1);
+            await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+            expect(cursors.projects.at(-1)).toBe(expectedCursor);
+            cursor = next.nextCursor;
+        }
+        await expect.poll(() => select.locator('option').count()).toBeGreaterThan(before);
+        expect(cursors.projects.length).toBeGreaterThan(0);
+        expect(new Set(cursors.projects).size).toBe(cursors.projects.length);
+        await expect(select).toHaveValue(projectId);
+    }, 'web');
     await useCase('UC-ISS-0075', async () => { const select = page.getByRole('combobox', { name: 'Type', exact: true }); await expect(select.locator('option')).toHaveCount(2); await page.getByRole('button', { name: 'More types', exact: true }).click(); await expect(select.locator('option')).toHaveCount(3); expect(cursors.types).toHaveLength(1); expect(new Set(await select.locator('option').evaluateAll(nodes => nodes.map(node => (node as HTMLOptionElement).value))).size).toBe(3); }, 'web');
     await useCase('UC-ISS-0076', async () => { const select = page.getByRole('combobox', { name: 'Priority', exact: true }); await expect(select.locator('option')).toHaveCount(2); await page.getByRole('button', { name: 'More priorities', exact: true }).click(); await expect(select.locator('option')).toHaveCount(3); expect(cursors.priorities).toHaveLength(1); }, 'web');
     await useCase('UC-ISS-0077', async () => { const select = page.getByRole('combobox', { name: 'Assigned to', exact: true }); await expect(select.locator('option')).toHaveCount(4); await page.getByRole('button', { name: 'More teammates', exact: true }).click(); await expect(select.locator('option')).toHaveCount(5); expect(cursors.people).toHaveLength(1); }, 'web');
@@ -194,8 +229,36 @@ test('detail lifecycle, history tabs and navigation expose the exact current iss
     await useCase('UC-ISS-0087', async () => { await page.getByRole('tab', { name: 'Comments', exact: true }).click(); await expect(page.getByRole('tabpanel', { name: 'Comments', exact: true })).toBeVisible(); await expect(page.getByRole('tabpanel', { name: 'History', exact: true })).not.toBeVisible(); }, 'web');
     await useCase('UC-ISS-0183', async () => { const comments = page.getByRole('tab', { name: 'Comments', exact: true }), history = page.getByRole('tab', { name: 'History', exact: true }); await comments.focus(); await comments.press('ArrowRight'); await expect(history).toBeFocused(); await expect(history).toHaveAttribute('aria-selected', 'true'); await history.press('Home'); await expect(comments).toBeFocused(); await expect(comments).toHaveAttribute('aria-selected', 'true'); }, 'web');
     await useCase('UC-ISS-0083', async () => { await page.getByRole('link', { name: 'All issues', exact: true }).click(); await expect(page.getByRole('heading', { name: 'Issues', exact: true })).toBeVisible(); await expect(page.getByRole('combobox', { name: 'Project', exact: true })).toHaveValue(projectId); await page.getByRole('list', { name: 'Issue results list' }).locator('.issue-link').click(); await expect(page.getByRole('heading', { name: issue.summary.title, exact: true })).toBeVisible(); }, 'web');
-    await useCase('UC-ISS-0084', async () => { await page.getByRole('link', { name: 'Open project', exact: true }).click(); await expect(page).toHaveURL(new RegExp('/projects/' + projectId + '$')); await page.goBack(); await expect(page.getByRole('heading', { name: issue.summary.title, exact: true })).toBeVisible(); }, 'web');
-    await useCase('UC-ISS-0085', async () => { await page.getByRole('link', { name: 'Kanban boards', exact: true }).click(); await expect(page).toHaveURL(new RegExp('/boards/project/' + projectId + '$')); await page.goBack(); await expect(page.getByRole('heading', { name: issue.summary.title, exact: true })).toBeVisible(); }, 'web');
+    const navigationDialogs: string[] = [];
+    const unexpectedDialog = (dialog: Dialog) => { navigationDialogs.push(dialog.message()); void dialog.dismiss(); };
+    page.on('dialog', unexpectedDialog);
+    try {
+        await useCase('UC-ISS-0084', async () => {
+            await page.getByRole('link', { name: 'Open project', exact: true }).click();
+            expect(navigationDialogs).toEqual([]);
+            await expect(page).toHaveURL(new RegExp('/projects/' + projectId + '$'));
+            // URL publication can precede lazy-route activation. Prove that we
+            // really left the issue before issuing a browser-back navigation.
+            await expect(page.getByRole('heading', { name: /^Isolated workflow/, level: 1 })).toBeVisible();
+            await expect(page.getByRole('navigation', { name: 'Project views', exact: true })).toBeVisible();
+            await page.goBack();
+            await expect(page).toHaveURL(new RegExp('/issues/' + issue.summary.id + '$'));
+            await expect(page.getByRole('heading', { name: issue.summary.title, exact: true })).toBeVisible();
+            await expect(page.getByRole('button', { name: 'Edit title', exact: true })).toBeEnabled();
+            expect(navigationDialogs).toEqual([]);
+        }, 'web');
+        await useCase('UC-ISS-0085', async () => {
+            await page.getByRole('link', { name: 'Kanban boards', exact: true }).click();
+            expect(navigationDialogs).toEqual([]);
+            await expect(page).toHaveURL(new RegExp('/boards/project/' + projectId + '$'));
+            await expect(page.getByRole('heading', { name: 'Project boards', exact: true })).toBeVisible();
+            await page.goBack();
+            await expect(page).toHaveURL(new RegExp('/issues/' + issue.summary.id + '$'));
+            await expect(page.getByRole('heading', { name: issue.summary.title, exact: true })).toBeVisible();
+            await expect(page.getByRole('button', { name: 'Edit title', exact: true })).toBeEnabled();
+            expect(navigationDialogs).toEqual([]);
+        }, 'web');
+    } finally { page.off('dialog', unexpectedDialog); }
     await useCase('UC-ISS-0116', async () => { await page.locator('gg-modern-issue-actions .more-actions > summary').click(); await page.getByRole('button', { name: 'Clone issue', exact: true }).click(); await expect(page.getByRole('heading', { name: 'Copy of ' + issue.summary.title, exact: true })).toBeVisible(); const id = new URL(page.url()).pathname.split('/').at(-1); if (!id)
         throw new Error('Missing cloned issue'); expect(id).not.toBe(issue.summary.id); const clone = await coverageReadIssue(request, id); expect(clone.summary.parent).toBeNull(); expect(clone.summary.subtaskProgress.total).toBe(0); expect(clone.links).toEqual([]);
       expect(clone.summary.type.id).toBe(type.id); expect(clone.summary.type.behavior).toBe('standard');

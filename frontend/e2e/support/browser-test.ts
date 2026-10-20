@@ -13,13 +13,29 @@ import { scriptMapReference } from '../../../scripts/lib/browser-source-map.mjs'
 export const test = base.extend<{ compatibilityDemo: void }>({
   page: async ({ page }, use, info) => {
     const runtimeErrors: string[] = [];
-    page.on('pageerror', () => runtimeErrors.push('uncaught_page_error'));
-    page.on('console', message => {
-      if (message.type() === 'error' && /^ERROR\b/.test(message.text())) runtimeErrors.push('angular_runtime_error');
+    const runtimeDetails: Array<{ kind: string; message: string; stack?: string }> = [];
+    page.on('pageerror', error => {
+      runtimeErrors.push('uncaught_page_error');
+      runtimeDetails.push({ kind: error.name, message: error.message, ...(error.stack ? { stack: error.stack } : {}) });
     });
+    page.on('console', message => {
+      if (message.type() === 'error' && /^ERROR\b/.test(message.text())) {
+        runtimeErrors.push('angular_runtime_error');
+        runtimeDetails.push({ kind: 'angular_runtime_error', message: message.text() });
+      }
+    });
+    const assertNoRuntimeErrors = async () => {
+      if (runtimeDetails.length) {
+        // Details can include private fixture data. Keep them in the owned test
+        // output; the public assertion and curated CI upload stay opaque.
+        await mkdir(info.outputDir, { recursive: true });
+        await writeFile(info.outputPath('runtime-errors.json'), JSON.stringify(runtimeDetails));
+      }
+      expect(runtimeErrors, 'Unexpected application runtime errors').toEqual([]);
+    };
     const directory = process.env['GATEGOLD_JS_COVERAGE_DIRECTORY'];
     if (!directory) {
-      try {await use(page);} finally {expect(runtimeErrors,'Unexpected application runtime errors').toEqual([]);}
+      try {await use(page);} finally {await assertNoRuntimeErrors();}
       return;
     }
     await page.coverage.startJSCoverage({ resetOnNavigation: false });
@@ -50,7 +66,7 @@ export const test = base.extend<{ compatibilityDemo: void }>({
         const id = createHash('sha256').update(info.testId + ':' + info.retry).digest('hex');
         await writeFile(resolve(directory, id + '.json.gz'), gzipSync(JSON.stringify(mappedEntries)));
       }
-      expect(runtimeErrors,'Unexpected application runtime errors').toEqual([]);
+      await assertNoRuntimeErrors();
     }
   },
   compatibilityDemo: [

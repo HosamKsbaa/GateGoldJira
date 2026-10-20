@@ -114,6 +114,28 @@ describe('application startup and safe configuration failures', () => {
     expect(injector.get(SIGN_IN).mode).toBe('production');
     expect(query).not.toHaveBeenCalled();
   });
+  it('installs the in-memory password adapter for hosted password authentication', async () => {
+    vi.stubGlobal('window', { location: { origin: 'https://jira.example.test' } });
+    const passwordConfig: PublicConfig = {
+      ...production, authentication: 'password', apiBaseUrl: '/api/v1',
+      issuer: 'https://jira.example.test/', audience: 'https://jira.example.test/api',
+    };
+    fetchConfig.mockResolvedValue(Response.json(passwordConfig));
+    await load(); const injector = await bootstrappedInjector();
+    const { SIGN_IN, LocalSignIn } = await import('./app/core/auth/sign-in.provider');
+    const { ConfigService } = await import('./app/core/config/config.service');
+    const provider = injector.get(SIGN_IN);
+    expect(provider).toBeInstanceOf(LocalSignIn);
+    expect(provider.mode).toBe('password');
+    expect(await provider.accessToken()).toBeUndefined();
+    provider.setLocalToken?.('test.payload.signature');
+    expect(await provider.accessToken()).toBe('test.payload.signature');
+    await provider.signOut();
+    expect(await provider.accessToken()).toBeUndefined();
+    expect(injector.get(ConfigService).value).toEqual(passwordConfig);
+    expect(ports.provideIdentity).not.toHaveBeenCalled();
+    expect(query).not.toHaveBeenCalled();
+  });
   it.each(['unavailable', 'malformed', 'transport'] as const)('stops startup and displays safe recovery guidance when configuration is %s', async kind => {
     if (kind === 'unavailable') fetchConfig.mockResolvedValue(new Response('private upstream error', { status: 503 }));
     else if (kind === 'malformed') fetchConfig.mockResolvedValue(Response.json({ ...development, mode: 'unknown' }));

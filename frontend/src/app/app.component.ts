@@ -468,6 +468,8 @@ export class AppComponent {
     if (key === this.contextKey) return;
     this.contextKey = key;
     const generation = ++this.contextGeneration;
+    const current = () =>
+      generation === this.contextGeneration && epoch === this.auth.sessionEpoch() && !!this.auth.me();
     let projectId = queryId.success ? queryId.data : undefined;
     let activeBoard: Pick<BoardSummary, 'id' | 'projectId' | 'name'> | undefined;
     try {
@@ -481,25 +483,22 @@ export class AppComponent {
       }
       if (segments[0] === 'issues' && segments[1])
         projectId = (await this.workspaceApi.issue(z.uuid().parse(segments[1]))).summary.projectId;
+      if (!current()) return;
       projectId ??= this.selectedProject()?.id ?? this.projects()[0]?.id;
       if (!projectId) return;
       const project = await this.workspaceApi.project(projectId);
+      if (!current()) return;
       let board = activeBoard;
       if (!board) {
         let cursor: string | undefined;
         do {
           const page = await this.workspaceApi.boards(projectId, cursor);
-          if (generation !== this.contextGeneration || epoch !== this.auth.sessionEpoch()) return;
+          if (!current()) return;
           board = page.items.find(item => item.default);
           cursor = page.nextCursor ?? undefined;
         } while (!board && cursor);
       }
-      if (
-        generation !== this.contextGeneration ||
-        epoch !== this.auth.sessionEpoch() ||
-        !this.auth.me()
-      )
-        return;
+      if (!current()) return;
       this.selectedProject.set(project);
       this.board.set(board ?? null);
       this.projects.update(items =>

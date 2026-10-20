@@ -28,31 +28,36 @@ export class AuthService {
     baseUrl: this.config.apiOrigin,
     fetch: (input, init) => fetch(input, { ...init, cache: 'no-store', credentials: 'omit' }),
   });
-  readonly client = createApiClient({
-    baseUrl: this.config.apiOrigin,
-    auth: () => this.provider.accessToken(),
-    fetch: async (input, init) => {
-      const epoch = this.epoch();
-      const response = await fetch(input, { ...init, cache: 'no-store', credentials: 'omit' });
-      if (epoch === this.epoch() && (response.status === 401 || response.status === 403)) {
-        const failure = parseFailure(
-          await response
-            .clone()
-            .json()
-            .catch(() => null),
-        );
-        if (response.status === 403 && failure.success && failure.data.error.code === 'forbidden') {
-          this.epoch.update(value => value + 1);
-          void this.refresh().catch(() => this.clearProtectedState());
-          return response;
+  get client() {
+    // Snapshot ownership before the generated SDK awaits auth or validation.
+    const epoch = this.epoch(), hadSession = this.current() !== null;
+    return createApiClient({
+      baseUrl: this.config.apiOrigin,
+      auth: () => this.provider.accessToken(),
+      fetch: async (input, init) => {
+        if (epoch !== this.epoch()) throw new DOMException('Your session changed.', 'AbortError');
+        const hadCredential = new Headers(init?.headers ?? (input instanceof Request ? input.headers : undefined)).has('Authorization');
+        const response = await fetch(input, { ...init, cache: 'no-store', credentials: 'omit' });
+        if (epoch === this.epoch() && (hadSession || hadCredential) && (response.status === 401 || response.status === 403)) {
+          const failure = parseFailure(
+            await response
+              .clone()
+              .json()
+              .catch(() => null),
+          );
+          if (epoch !== this.epoch()) return response;
+          if (response.status === 403 && failure.success && failure.data.error.code === 'forbidden') {
+            this.epoch.update(value => value + 1);
+            void this.refresh().catch(() => this.clearProtectedState());
+            return response;
+          }
+          this.clearProtectedState();
+          this.denied.set(hadSession);
         }
-        const hadSession = this.current() !== null;
-        this.clearProtectedState();
-        this.denied.set(hadSession);
-      }
-      return response;
-    },
-  });
+        return response;
+      },
+    });
+  }
 
   async refresh(): Promise<Me | null> {
     const epoch = this.epoch();

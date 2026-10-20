@@ -1,0 +1,8 @@
+.env*
+*.log*
+*.test
+*.out
+coverage
+vendor
+Dockerfile*
+.dockerignore

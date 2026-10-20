@@ -1,0 +1,64 @@
+version: "2"
+sql:
+  - engine: postgresql
+    schema: db/migrations
+    queries:
+      - internal/platform/database/queries.sql
+      - internal/platform/command/queries.sql
+      - internal/features/identity/queries.sql
+      - internal/features/mcptokens/queries.sql
+      - internal/features/projects/queries.sql
+      - internal/features/configuration/queries.sql
+      - internal/features/configuration/activation_queries.sql
+      - internal/features/configuration/field_queries.sql
+      - internal/features/configuration/workflow_queries.sql
+      - internal/features/issues/queries.sql
+      - internal/features/issues/canonical_queries.sql
+      - internal/features/issues/custom_field_queries.sql
+      - internal/features/issues/approval_queries.sql
+      - internal/features/issues/search_paths.sql
+      - internal/features/issues/prerequisites.sql
+      - internal/features/issues/order.sql
+      - internal/features/issues/dependencies.sql
+      - internal/features/issues/dates_labels.sql
+      - internal/features/issues/subtasks.sql
+      - internal/features/issues/organization.sql
+      - internal/features/issues/backlog.sql
+      - internal/features/issues/import_export.sql
+      - internal/features/boards/queries.sql
+      - internal/features/boards/layout_queries.sql
+      - internal/features/comments/queries.sql
+      - internal/features/pictures/queries.sql
+      - internal/features/attachments/queries.sql
+      - internal/features/attachments/asset_queries.sql
+      - internal/features/notifications/queries.sql
+      - internal/features/planning/queries.sql
+      - internal/features/integrations/queries.sql
+      - internal/features/activity/queries.sql
+    gen:
+      go:
+        package: dbgen
+        out: internal/platform/database/dbgen
+        sql_package: pgx/v5
+        emit_json_tags: true
+        emit_empty_slices: true
+        emit_pointers_for_null_types: true
+        overrides:
+          - column: boards.in_progress_limit
+            go_type:
+              type: int32
+              pointer: true
+          - column: boards.review_limit
+            go_type:
+              type: int32
+              pointer: true
+          - db_type: uuid
+            go_type:
+              import: github.com/google/uuid
+              type: UUID
+          - db_type: uuid
+            nullable: true
+            go_type:
+              import: github.com/google/uuid
+              type: UUID
+              pointer: true

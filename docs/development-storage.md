@@ -28,6 +28,8 @@ make storage-clean   # Remove eligible old runs and oversized rebuildable caches
 
 Maintenance is restricted to `.cache/go-build`, `.cache/test-backends`, `.local/browser-tests` and `.local/go-verification`, plus its own `.local/storage` metadata. It rejects symlink roots, unexpected run names and unsafe metadata. It never runs Docker pruning or deletes database volumes, backups or user data.
 
+An interrupted cohort can leave incomplete snapshots or recent unmerged shards protected. Once their runners have ended and the cohort is deliberately abandoned, use `python3 scripts/project-storage.py --root "$PWD" retire --path .local/browser-tests/RUN_ID --reason 'Superseded by retained verification; runner ended'`, repeating `--path` for each selected run, then run `make storage-clean`. Retirement refuses active jobs, pinned runs and dependencies of retained verification. It records an inode-bound audit under `.local/storage/retired-runs.json`; it never rewrites historical results or changes a failure into a pass.
+
 Go module downloads and installed Node/browser dependencies remain shared rather than copied into each source snapshot. Clear them only for a specific reason: removing them merely forces downloads on the next build.
 
 ## Preserve verification

@@ -141,6 +141,35 @@ class ProjectStorage(unittest.TestCase):
         self.manager.maintain()
         self.assertTrue(all((self.root / name).exists() for name in names))
 
+    def test_explicit_retirement_releases_abandoned_runs_without_rewriting_proofs(self):
+        shard = self.run_fixture(1, shard={'current': 1, 'total': 8})
+        incomplete = self.run_fixture(2, status='running')
+        before = (self.root / shard / 'use-case-results.json').read_bytes()
+        self.manager.retire([shard, incomplete], 'Superseded cohort; no active runner remains.')
+        self.assertEqual((self.root / shard / 'use-case-results.json').read_bytes(), before)
+        self.manager.maintain()
+        self.assertFalse((self.root / shard).exists())
+        self.assertFalse((self.root / incomplete).exists())
+
+    def test_retirement_refuses_pins_and_any_active_job(self):
+        shard = self.run_fixture(1, shard={'current': 1, 'total': 8})
+        self.pins(shard + '/artifact')
+        with self.assertRaises(storage.UnsafeStorage):
+            self.manager.retire([shard], 'Abandoned')
+        self.pins()
+        with self.lease():
+            with self.assertRaises(storage.UnsafeStorage):
+                self.manager.retire([shard], 'Abandoned')
+        self.assertTrue((self.root / shard).exists())
+
+    def test_retirement_cannot_remove_a_retained_verification_dependency(self):
+        shard = self.run_fixture(1, shard={'current': 1, 'total': 8})
+        merged = self.run_fixture(2)
+        self.json(merged + '/shards.json', {'inputs': [shard]})
+        with self.assertRaises(storage.UnsafeStorage):
+            self.manager.retire([shard], 'Abandoned')
+        self.assertTrue((self.root / shard).exists())
+
     def test_old_unmerged_shards_do_not_gain_permanent_retention(self):
         names = [self.run_fixture(number, age=90000+number, shard={'current': number, 'total': 8})
                  for number in range(1, 5)]

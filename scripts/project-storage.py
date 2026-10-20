@@ -339,6 +339,7 @@ class Storage:
 
     def inventory(self):
         runs, caches = [], []
+        retired = self.retired_runs()
         for base in RUN_ROOTS:
             parent = self.safe_directory(base)
             if not parent.exists():
@@ -364,7 +365,11 @@ class Storage:
                     pending_shard = (metadata.get('execution', {}).get('shard') is not None
                                      and status in ('passed', 'failed')
                                      and time.time() - modified < 24 * 60 * 60)
-                runs.append(Entry(base + '/' + child.name, size, identity, modified, status, pending_shard))
+                name = base + '/' + child.name
+                record = retired.get(name)
+                if record and identity == (record['device'], record['inode']):
+                    status, pending_shard = 'retired', False
+                runs.append(Entry(name, size, identity, modified, status, pending_shard))
         for base in CACHE_ROOTS:
             path = self.safe_directory(base)
             if path.exists():
@@ -386,7 +391,7 @@ class Storage:
                 (item for item in available if item.status == 'passed'), key=lambda item: item.modified, reverse=True)[:2])
             keep.update(entry.name for entry in sorted(
                 (item for item in available if item.status == 'failed'), key=lambda item: item.modified, reverse=True)[:1])
-        deletions = [entry for entry in runs if not unscoped and entry.status in ('passed', 'failed') and
+        deletions = [entry for entry in runs if not unscoped and entry.status in ('passed', 'failed', 'retired') and
                      not any(intersects(entry.name, pin) for pin in keep)]
         for entry in caches:
             cap = self.limits.go_cache if entry.name == CACHE_ROOTS[0] else self.limits.binaries
@@ -394,6 +399,46 @@ class Storage:
                 deletions.append(entry)
         return {'active': active, 'stale': stale, 'pins': pins, 'keep': keep,
                 'runs': runs, 'caches': caches, 'deletions': sorted(deletions, key=lambda item: item.modified)}
+
+    def retired_runs(self):
+        path = self.state / 'retired-runs.json'
+        if not path.exists() and not path.is_symlink():
+            return {}
+        data = regular_json(path, 1024 * 1024)
+        require(data.get('version') == 1 and isinstance(data.get('entries'), dict) and len(data['entries']) <= 1024,
+                'Retired runs require a bounded versioned audit record.')
+        for name, entry in data['entries'].items():
+            run_path(name)
+            require(isinstance(entry, dict) and type(entry.get('device')) is int and type(entry.get('inode')) is int
+                    and isinstance(entry.get('reason'), str) and 1 <= len(entry['reason']) <= 500,
+                    'Malformed retired-run audit record.')
+        return data['entries']
+
+    def retire(self, paths, reason):
+        """Record an explicit abandonment without rewriting historical results."""
+        require(isinstance(reason, str) and 1 <= len(reason.strip()) <= 500, 'A bounded retirement reason is required.')
+        selected = {run_path(name) for name in paths}
+        require(selected and len(selected) <= 1024, 'Choose explicit owned runs to retire.')
+        scan = self.scan()
+        require(not scan['active'], 'Run retirement requires no active heavy jobs.')
+        available = {entry.name: entry for entry in scan['runs']}
+        require(selected <= available.keys(), 'A selected run is missing.')
+        protected = set(scan['pins'])
+        for entry in scan['runs']:
+            if entry.name not in selected and any(intersects(entry.name, keep) for keep in scan['keep']):
+                protected |= self.closure(entry.name)
+        require(not any(intersects(name, pin) for name in selected for pin in protected),
+                'Cannot retire pinned verification or a dependency of a retained run.')
+        records = self.retired_runs()
+        for name in selected:
+            entry = available[name]
+            require(entry.status in ('unknown', 'running', 'retired') or entry.pending_shard,
+                    'Explicit retirement is limited to incomplete or unmerged shard runs.')
+            records[name] = {'device': entry.identity[0], 'inode': entry.identity[1],
+                             'reason': reason.strip(), 'retiredAt': time.time()}
+        require(len(records) <= 1024, 'Retirement audit is full.')
+        self.atomic_json(self.state / 'retired-runs.json', {'version': 1, 'entries': records})
+        return {'version': 1, 'retiredRuns': sorted(selected), 'reason': reason.strip(), 'deleted': False}
 
     def summary(self, scan):
         free = shutil.disk_usage(self.root).free
@@ -531,6 +576,9 @@ def main():
         command.add_argument('--lease', required=True)
         if name == 'protect':
             command.add_argument('--path', action='append', required=True)
+    retire = sub.add_parser('retire')
+    retire.add_argument('--path', action='append', required=True)
+    retire.add_argument('--reason', required=True)
     args = parser.parse_args()
     values = [args.go_cache_bytes, args.test_backends_bytes, args.runs_bytes,
               args.free_floor_bytes, args.reservation_bytes, args.runtime_free_bytes,
@@ -554,6 +602,8 @@ def main():
             result, code = storage.begin(args.lease or uuid.uuid4().hex, args.pid, args.kind, args.path)
         elif args.command == 'protect':
             result = storage.protect(args.lease, args.path)
+        elif args.command == 'retire':
+            result = storage.retire(args.path, args.reason)
         else:
             result = storage.end(args.lease)
     print(json.dumps(result, sort_keys=True))

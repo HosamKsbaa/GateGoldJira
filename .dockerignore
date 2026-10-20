@@ -1,0 +1,17 @@
+.git
+.agents
+.codex
+.workflow
+.aws
+.tools
+.cache
+.local
+tmp
+node_modules
+dist
+coverage
+.angular
+.env*
+*.log*
+Dockerfile*
+.dockerignore

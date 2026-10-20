@@ -1,0 +1,165 @@
+# =============================================================================
+# 1. Local Toolchains, Caches & Runtime Workspaces
+# =============================================================================
+.tools/
+.cache/
+.local/
+tmp/
+temp/
+
+# =============================================================================
+# 2. AI Agents & Workflow Scratchpads
+# =============================================================================
+.workflow/
+.codex/
+.claude/
+.cursor/
+.gemini/
+.windsurf/
+.aider*
+
+# =============================================================================
+# 3. Node.js, Angular & Frontend (frontend/, identity/auth0/, scripts/)
+# =============================================================================
+node_modules/
+dist/
+build/
+out-tsc/
+.angular/
+.npm/
+.eslintcache
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =============================================================================
+# 4. Testing, Coverage & E2E (Playwright / Vitest)
+# =============================================================================
+coverage/
+.nyc_output/
+playwright-report/
+blob-report/
+test-results/
+playwright/.cache/
+playwright/.auth/
+*.auth-state.json
+
+# =============================================================================
+# 5. Go Backend (backend/)
+# =============================================================================
+/backend/gategoldjira
+/backend/contract-fixture
+/backend/contracts
+/backend/mcp-contracts
+/backend/bin/
+vendor/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.prof
+coverage.txt
+coverage.html
+go.work
+go.work.sum
+
+# =============================================================================
+# 6. Infrastructure (Terraform, Firebase, Cloud)
+# =============================================================================
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+.aws/
+.gcloud/
+
+# =============================================================================
+# 7. Environment Variables, Runtime Configs & Secrets
+# =============================================================================
+.env
+.env.*
+!.env.example
+frontend/public/config.local.json
+frontend/public/config.production.json
+!frontend/public/config.example.json
+!frontend/public/config.production.example.json
+identity/auth0/tenant.local.json
+!identity/auth0/tenant.example.json
+*.pem
+*.key
+*.p12
+*.pfx
+*.p8
+*.jks
+*.keystore
+*service-account*.json
+*credentials*.json
+serviceAccountKey.json
+
+# Database files and exports are local data; commit migrations and schema docs.
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.dump
+*.sql.gz
+*.sql.zst
+*.backup
+/backups/
+/uploads/
+/storage/
+
+# =============================================================================
+# 8. Python & Tooling Scripts (scripts/)
+# =============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# =============================================================================
+# 9. IDEs, Editors & OS Artifacts
+# =============================================================================
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+*.log
+*.tmp
+*.bak
+*.pid
+*.seed
+*.pid.lock

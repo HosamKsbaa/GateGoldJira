@@ -1,0 +1,12 @@
+.git/
+.agents/
+.codex/
+.workflow/
+.tools/
+.cache/
+.local/
+tmp/
+node_modules/
+.env*
+*.tfstate*
+*.tfvars

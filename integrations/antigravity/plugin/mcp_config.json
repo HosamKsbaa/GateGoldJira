@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "gategoldjira": {
+      "command": "node",
+      "args": ["bridge.mjs"],
+      "cwd": "."
+    }
+  }
+}

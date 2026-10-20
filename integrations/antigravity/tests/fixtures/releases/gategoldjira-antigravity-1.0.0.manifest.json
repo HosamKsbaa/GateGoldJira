@@ -1,0 +1,79 @@
+{
+  "version": "1.0.0",
+  "archive": "gategoldjira-antigravity-1.0.0.zip",
+  "sha256": "951f6ac4fa2d55cbc52d3929f18f1b80ea15c673e993393732188246e3fb3d0c",
+  "provenance": "Original locally retained public1.0.0 distribution archive, matched against its retained SHA256 handout and embedded MCP client/server1.0.0 metadata. No private installation profiles or identities are present.",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "5130d6f3c6d7766df523fae04022cb8107fb7e0e2f5c0f4ca58e920b2eaa6c22",
+      "bytes": 4115
+    },
+    {
+      "path": "THIRD-PARTY-NOTICES.txt",
+      "sha256": "3064791ba8c32fc2c11763e8799b3bdf3752456fd2754e537dad99cf9faee230",
+      "bytes": 15190
+    },
+    {
+      "path": "assets/logo.svg",
+      "sha256": "ff0e4fd8d2538fb21809ef038ab731050317be5d85cdca81f8285f776b801b20",
+      "bytes": 234
+    },
+    {
+      "path": "bridge.mjs",
+      "sha256": "dc963ae9f6d2f02265cb489804a1c5c6d9dabaa309b7d6971e8289dcb4d075ec",
+      "bytes": 1325489
+    },
+    {
+      "path": "connection.json",
+      "sha256": "f034579509ecf851836954f9db39632da0683028cde23a2f0af24704ff7c51b7",
+      "bytes": 85
+    },
+    {
+      "path": "install.mjs",
+      "sha256": "6dbf93306affda854c110a9e1c0e2ca6f5fa5381062b0f60fdb13cabc5901de6",
+      "bytes": 764506
+    },
+    {
+      "path": "mcp-tools.json",
+      "sha256": "d44b6f93618ef1e507e39886c60dc53eb60aff96645e10fca27abb6fb0a8c7e1",
+      "bytes": 2151153
+    },
+    {
+      "path": "plugin.json",
+      "sha256": "887da38810bfebc74f07857dd824365a395f63de5fa72ece94d52a4a47055588",
+      "bytes": 193
+    },
+    {
+      "path": "sidecar.mjs",
+      "sha256": "f82f657bca78c65d1dad90b6ebb8e673e48253f448a7dc22ef3e571fadbfe860",
+      "bytes": 1301227
+    },
+    {
+      "path": "sidecars/studio/app.js",
+      "sha256": "72ed5c2a6b8cda270815d89f0828963c141099ed653869ea6d362927d50f31d3",
+      "bytes": 460052
+    },
+    {
+      "path": "sidecars/studio/index.html",
+      "sha256": "ef5247b4bce60f4c8e5d58322da123f46afabbd63e04b79beba7cf26c3799e5a",
+      "bytes": 3715
+    },
+    {
+      "path": "sidecars/studio/main.mjs",
+      "sha256": "e92a66e91284ca418c8c406142e728998d661cbae9dd28d17921f54abf9f0502",
+      "bytes": 89
+    },
+    {
+      "path": "sidecars/studio/sidecar.json",
+      "sha256": "f566e3773408d7aea330e9501c73dc5ba63e34de78feb02c6d3c06e70164f7dd",
+      "bytes": 381
+    },
+    {
+      "path": "sidecars/studio/styles.css",
+      "sha256": "b202f94ccd01b698c8cf2506edbb705759fb5c34d5f862796771b87042421c95",
+      "bytes": 4217
+    }
+  ],
+  "scope": "Backward-compatibility runtime fixture for owned-profile plugin upgrade. Actual Antigravity host discovery/reload is separate operator acceptance."
+}

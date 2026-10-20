@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GateGoldJira</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/preload.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header class="brand"><span class="mark" aria-hidden="true">G</span><div><h1>GateGoldJira</h1><p>Your workspace, connected.</p></div><span id="connection-badge" class="badge">Not connected</span></header>
+    <p id="notice" role="status" aria-live="polite" hidden></p>
+    <section class="card" aria-labelledby="account-heading">
+      <div class="section-heading"><h2 id="account-heading">Your connection</h2><button id="refresh" class="subtle" type="button">Refresh</button></div>
+      <div id="signed-out"><p class="lead">Bring your projects into the conversation.</p><p class="muted">Sign in with your GateGoldJira account. Your AI tools use the same project permissions as you.</p></div>
+      <p id="setup-hint" class="small muted">First, enter your server URL below and save it.</p>
+      <div id="signed-in" hidden><strong id="account-name"></strong><p id="account-email" class="muted"></p><p class="small">The panel and AI tools are connected to this account.</p></div>
+      <div class="actions"><button id="connect" class="primary" type="button">Sign in with browser</button><button id="disconnect" type="button" hidden>Disconnect</button><button id="cancel" type="button" hidden>Cancel sign-in</button></div>
+      <a id="authorization-link" class="browser-link" target="_blank" rel="noopener noreferrer" hidden>Continue sign-in in your browser ↗</a>
+      <a id="activity-link" class="browser-link" target="_blank" rel="noopener noreferrer" hidden>Connection activity &amp; access settings ↗</a>
+    </section>
+    <details id="server-settings" class="card" open>
+      <summary>Server settings</summary>
+      <form id="settings-form">
+        <label for="endpoint">Server URL</label><input id="endpoint" type="url" required spellcheck="false" placeholder="https://api.your-company.com">
+        <p class="small muted">Enter your GateGoldJira API address, with or without /mcp. Localhost connects to this computer.</p>
+        <details><summary>Advanced settings</summary><label for="website">Website URL override</label><input id="website" type="url" spellcheck="false" placeholder="Detected automatically"><p class="small muted">Only needed if your server does not advertise its website address.</p></details>
+        <button id="save-settings" type="submit">Save server settings</button>
+      </form>
+    </details>
+    <section id="workspace" hidden>
+      <nav class="tabs" aria-label="Workspace"><button id="projects-tab" type="button" aria-pressed="true">Projects</button><button id="issues-tab" type="button" aria-pressed="false">Issues</button></nav>
+      <section id="projects-view" class="card" aria-labelledby="projects-heading"><div class="section-heading"><h2 id="projects-heading">Your projects</h2><a id="all-projects" target="_blank" rel="noopener noreferrer">Open website ↗</a></div><div id="project-list" class="list"></div><button id="more-projects" type="button" hidden>Load more projects</button></section>
+      <section id="issues-view" class="card" aria-labelledby="issues-heading" hidden><h2 id="issues-heading">Find an issue</h2><form id="search-form"><label for="issue-query">Title, key or issue number</label><div class="search"><input id="issue-query" type="search" maxlength="200" placeholder="Search your issues"><button type="submit">Search</button></div></form><div id="issue-list" class="list"></div><button id="more-issues" type="button" hidden>Load more issues</button></section>
+      <p class="footnote">Ask your agent to create or update an issue. It will use this connection and return a link to the result.</p>
+    </section>
+  </main>
+</body>
+</html>

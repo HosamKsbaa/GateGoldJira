@@ -1,0 +1,12 @@
+{
+  "command": "node",
+  "args": ["main.mjs"],
+  "restart_policy": "on-failure",
+  "display_name": "GateGoldJira",
+  "description": "Connect your account and browse your GateGoldJira workspace.",
+  "has_web_ui": true,
+  "ui_config": {
+    "display_name": "GateGoldJira",
+    "views": [{ "path": "/", "entrypoint": "SIDECAR_UI_ENTRYPOINT_AUX_PANE", "title": "GateGoldJira" }]
+  }
+}

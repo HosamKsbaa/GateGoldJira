@@ -1,0 +1,510 @@
+GateGoldJira database V2 - proposed target after the limitation review
+===================================================================
+
+DESIGN ONLY. No application code, API or database has been changed.
+This is the latest conceptual target. It supersedes the choices in the first
+proposal where explicitly stated below. current-schema.* remains the applied
+migration-00010 snapshot; proposed-schema.* is the earlier V1 design.
+This document and the V2 diagrams are not executable migration DDL.
+
+Goal: preserve existing features, remove duplicated ownership, and support the
+specific extensions discussed. Simple means that each concept has one owner.
+The reviewed target has 44 application/operational tables plus goose_db_version.
+This is eleven more application tables than V1, because the requested flexibility
+needs real relationships. The overview groups them into seven understandable
+areas rather than disguising everything as a universal entity or JSON document.
+
+Read proposed-v2-overview.svg first; proposed-v2-core.svg shows the main tables.
+The scalability review and performance acceptance criteria are in
+proposed-v2-review.txt. Changes below are design requirements, not completed code.
+
+1. The central relationships
+---------------------------
+
+Project -> memberships, workflows, issue types, priorities, issues and boards.
+Issue type -> allowed workflows, with one default for new issues.
+Several types may share a workflow; existing issues retain their assigned workflow.
+Workflow -> stages, permitted transitions and rules for those transitions.
+Issue -> an allowed assigned workflow, one stage, comments, attachments and relationships.
+Board -> saved filters, independent columns and independent card ordering.
+Column -> one or more mapped stages, with an optional warning or hard WIP limit.
+
+Example:
+  Task workflow: To do -> Doing -> Review -> Done.
+  Bug workflow: Triage -> Fixing -> QA -> Done.
+  Team board columns: Ready / Working / Review / Finished.
+  Its Review column can contain both the Task Review stage and the Bug QA stage.
+  A QA board can show different column names, order and stage groupings.
+  Both boards display the SAME issues, assignments and comments.
+
+Workflows are reusable within their project. Custom stage rows remain data-driven;
+the model adds no fixed stage-count cap. Existing bounded lists and validation
+remain necessary for usable screens. No duplicate workflow JSON on each board.
+
+2. Main changed and added tables (selected columns)
+--------------------------------------------------
+
+Identifiers are uuid; ranks/revisions/counters are bigint; dates use date;
+timestamps use timestamptz; fixed value sets use checked text. Actual migrations
+must specify all defaults, checks, indexes, lifecycle columns and audit behavior.
+
+projects
+  Existing project metadata, issue number allocation, graph_revision and
+  backlog_revision remain. Add configuration_revision for changes to issue types,
+  priorities and field definitions. Workflow edits use workflows.revision.
+
+project_memberships
+  project_id, user_id, role, revision, removed_at, timestamps.
+  role = project_admin | member | viewer. Retain global administrators on users.
+  Keep one explicit permission matrix in Go, shared by REST/MCP; expose the same
+  capabilities to Angular. Project admins manage their project's members and
+  configuration, without gaining global account or other-project administration.
+  No configurable role/permission framework is required for these three roles.
+
+workflows
+  id, project_id, name, revision, retired, timestamps.
+  UNIQUE(project_id, id). Each project starts with one workflow migrated from its
+  current configuration. Add a second only when a type needs a different process.
+
+workflow_stages
+  id, project_id, workflow_id, name, category, legacy_status, position,
+  is_initial, accepts_entries, retired.
+  UNIQUE(project_id, id); UNIQUE(project_id, workflow_id, id);
+  UNIQUE(project_id, legacy_status). Scope workflow FK to the same project.
+  category = todo | in_progress | review | done; immutable once used.
+  A used stage's workflow/project ownership is immutable too; migrate issues to a
+  new stage when ownership must change rather than rewriting its historical meaning.
+  Keep stable legacy tokens and historical labels/categories. Position orders the
+  workflow editor; it does not control board columns. A partial unique index
+  permits at most one active initial stage per workflow. Transactional validation
+  requires exactly one, an active completion stage and paths to completion.
+  An active initial stage must accept entries. accepts_entries=false closes incoming
+  moves/new assignments while existing issues can still leave through valid edges.
+  Retire the stage only after its live issues have been migrated; keep its history.
+
+workflow_transitions
+  id, project_id, workflow_id, from_stage_id, to_stage_id,
+  required_permission nullable, approvals_required, approver_role nullable,
+  exclude_issue_reporter, retired.
+  UNIQUE(project_id, id); UNIQUE(project_id, workflow_id, id);
+  UNIQUE(workflow_id, from_stage_id, to_stage_id).
+  Both endpoint FKs include project_id and workflow_id. Reject self edges.
+  Permission names and approver roles are checked values understood by Go.
+  approvals_required = 0 disables approval; otherwise require a valid role and
+  distinct currently eligible approvers. Project admins may satisfy member-level
+  requirements according to the explicit permission matrix.
+
+transition_required_fields
+  id, project_id, workflow_id, transition_id,
+  system_field nullable, field_id nullable.
+  Exactly one of system_field or field_id must be set. System fields are checked
+  names such as assignee, due_date and description. Custom field references use
+  same-project FKs. Enforce one requirement per transition/selected field.
+  Required fields, permissions and approvals are explicit typed conditions.
+  No arbitrary expressions, SQL fragments or user-written scripts are stored.
+
+issue_approvals
+  project_id, issue_id, transition_id, issue_revision, workflow_revision, configuration_revision,
+  approver_id, decision, decided_at.
+  PK(issue_id, transition_id, issue_revision, workflow_revision, configuration_revision, approver_id).
+  decision = approve | reject. Same-project FKs to issue and transition; user FK.
+  Approvals cover a particular issue, workflow and project-configuration revision.
+  Editing any of these invalidates their use for a new transition; old records remain.
+  Count approvals only for the current revisions; a currently eligible rejection
+  blocks that transition until the issue is revised/resubmitted for new approval.
+  Recording an approval does not increment issue.revision, so multiple approvers
+  can approve the same revision. Recheck permissions at approval and movement.
+  Historical revision numbers are snapshots, not FKs to the current revision.
+  Custom-field writes and visible attachment changes increment issue.revision
+  atomically, even though their data lives in other tables. Comment discussion and
+  board-only ranking do not change the approved issue content. Rule edits increment
+  workflow.revision; field/type/priority configuration increments configuration_revision.
+  Configuration revisions are not updated by ordinary issue edits. Lock the issue
+  for approval and movement so a concurrent content edit cannot reuse old approvals.
+  Retain historical approvals if an issue later changes workflow/type; validate
+  the issue's current workflow at command time, not through a historical FK.
+
+issue_types
+  id, project_id, key, name, behavior, is_default, retired.
+  UNIQUE(project_id, id); UNIQUE(project_id, key).
+  behavior = standard | subtask. Seed Task, Bug and Subtask; users can add named
+  standard types such as Story. Existing subtask parent/completion rules remain.
+  A used type's standard/subtask behavior is immutable; conversion is an explicit
+  issue command that checks parent/completion rules, not a bulk configuration side effect.
+  Retire referenced types rather than deleting them.
+  CHECK(NOT is_default OR NOT retired); partial UNIQUE(project_id, behavior)
+  WHERE is_default. Configuration requires one active default for standard creation
+  and one for subtask creation. Seed Task and Subtask respectively. A default type
+  must have an eligible default workflow whose initial stage accepts entries.
+
+priorities
+  id, project_id, key, name, sort_order, is_default, retired.
+  UNIQUE(project_id, id); UNIQUE(project_id, key).
+  Seed Low, Medium and High; allow additional names and ordering.
+  Existing priority keys remain stable for filters, imports and compatibility.
+  CHECK(NOT is_default OR NOT retired); partial UNIQUE(project_id) WHERE is_default.
+  Require exactly one active default for each configured project; seed Medium.
+  Resolve omitted type/priority values within the guarded create transaction.
+  Replace defaults atomically when retiring them; explicit retired IDs are rejected
+  rather than silently substituted. Default changes affect new issues only.
+
+issue_type_workflows
+  project_id, type_id, workflow_id, is_default, accepts_new.
+  PK(project_id, type_id, workflow_id); scoped FKs to issue_types and workflows.
+  A partial unique index on (project_id, type_id) WHERE is_default permits at most
+  one default; configuration validation requires exactly one for each active type.
+  CHECK(NOT is_default OR accepts_new). Retain old bindings while referenced.
+  New issues use the default binding; moves to another binding must be explicit.
+  Changing the default affects new issues only. Migrate existing issues in bounded,
+  restartable batches with a stage mapping, revision checks and normal business
+  rules. Failed/conflicting issues stay on their valid old binding and are reported.
+  Do not require one transaction that rewrites every issue of a type.
+
+issues
+  Retain identity, project-local number, title, description/format, reporter,
+  assignee, due date, parent, archive/backlog state, timestamps and revision.
+  Replace type/priority/status text with type_id, priority_id, workflow_id, stage_id.
+  Retain UNIQUE(project_id, id), UNIQUE(project_id, number) and scoped parent FK.
+  FK(project_id, type_id, workflow_id) -> issue_type_workflows(project_id, type_id, workflow_id).
+  FK(project_id, workflow_id, stage_id) -> workflow_stages(project_id, workflow_id, id).
+  FK(project_id, priority_id) -> priorities(project_id, id).
+  workflow_id records the issue's assigned workflow. The binding FK limits it to
+  that type's allowed workflows; the stage FK enforces a stage in that workflow.
+  Keep backlog_rank; replace shared board rank with board_issue_ranks after rollout.
+  Type/workflow changes require an explicit valid stage mapping and transaction.
+  Changing the type's default does not invalidate existing issue bindings. Retire
+  an old binding only after moving its issues or deliberately keeping them readable.
+
+boards
+  Retain project_id, name, ownership, default/archive state, validated/versioned
+  saved filters and revision. No embedded workflow; no shared column ordering.
+
+board_columns
+  id, project_id, board_id, name, position, wip_limit nullable, wip_mode,
+  order_revision.
+  UNIQUE(project_id, board_id, id). Same-project board FK.
+  wip_limit NULL = unlimited; otherwise a positive integer.
+  wip_mode = warn | block. All existing limits migrate as warnings.
+  Column configuration uses boards.revision. order_revision guards card ordering.
+  V2 deliberately makes the column the sole owner of WIP configuration; it replaces
+  V1's board_stage_limits and inherited project defaults. Preserve every existing
+  effective limit at migration. Initially map each old stage to its own column.
+  Grouping columns later requires explicitly choosing the combined column's limit.
+
+board_column_stages
+  project_id, board_id, column_id, stage_id.
+  PK(board_id, stage_id). FKs to (project_id, board_id, column_id) and
+  (project_id, stage_id). A stage appears in at most one column per board.
+  Columns may group stages from multiple workflows in the same project.
+  Unmapped stages are an intentional board view exclusion, not lost issues;
+  settings show them and the default All Issues board must cover active stages.
+  Activate a workflow/stage only when the default board mapping is committed in
+  the same configuration transaction. Reject removal of that board's last mapping
+  for a stage still holding live issues. Archived historical stages stay accessible
+  through archived issue views; restore chooses an active mapped destination.
+  A drop with multiple eligible destination stages asks the user to choose; the
+  server validates the selected transition. Moving within a grouped column may be
+  rank-only. A UI column must never bypass workflow rules or guess a stage.
+
+board_issue_ranks
+  project_id, board_id, column_id, issue_id, rank.
+  PK(board_id, issue_id). Same-project issue and board-column FKs.
+  Rank is independent per board. A stored rank applies only while the issue's
+  current stage maps to its stored column. Otherwise use deterministic unranked
+  ordering (created_at, id) after explicitly ranked cards until a reorder/move
+  assigns a rank in that column. Filter exits retain the row for later re-entry.
+  Reorder checks the column's order_revision and current membership in a transaction.
+  Issue edits do not eagerly rewrite ranks for every board. Backlog ordering keeps
+  its existing independent project revision and rank.
+  Fetch ranked and unranked candidates through separate ordered, bounded query
+  branches. Skip the unranked branch entirely when ranked rows fill page_size+1;
+  otherwise merge bounded candidates. Do not COALESCE-sort every
+  matching issue. Include issue_id as the deterministic rank tie breaker. Page
+  cursors carry board configuration/order revisions, filter hash and ordering key;
+  they are live cursors, not frozen snapshots across concurrent issue mutations.
+  Include a cursor phase (ranked or unranked) and its matching key. After switching
+  to unranked, skip the exhausted ranked branch. Return a terminal page when neither
+  branch has another result; do not make the browser rediscover an empty tail.
+  Phase cursors avoid repeated work; the first ranked-to-unranked boundary can still
+  scan many eligible issues. Likewise a selective filter can scan many ranks.
+  Keep typed rank-driven and filter-driven query paths for measured supported cases;
+  choose a set-based fallback only where its measured cost improves that workload.
+  Revalidate move/reorder anchors against current stages and filters. Rank-gap
+  exhaustion uses a bounded rebalance with conflict detection, never a full-board
+  renumber on each drag. Measure dense-rank and stale-rank cases separately.
+
+field_definitions
+  id, project_id, key, name, value_kind, required, retired.
+  UNIQUE(project_id, id); UNIQUE(project_id, key);
+  UNIQUE(project_id, id, value_kind).
+  value_kind = text | number | date | choice | user. A used field's kind is immutable.
+  Configuration is project-wide initially; adding a required field needs a
+  backfill/default plan for existing issues. Core fields stay ordinary issue columns.
+
+field_options
+  id, project_id, field_id, value_kind, name, position, retired.
+  UNIQUE(project_id, field_id, id). CHECK(value_kind = 'choice'); composite FK
+  (project_id, field_id, value_kind) to field_definitions enforces a choice field.
+  Retired options remain readable for existing values; reject them for new choices.
+
+issue_field_values
+  project_id, issue_id, field_id, value_kind,
+  text_value nullable, number_value numeric nullable, date_value date nullable,
+  option_id nullable, user_id nullable.
+  PK(issue_id, field_id). Same-project issue FK; composite field/kind FK;
+  choice FK(project_id, field_id, option_id) and user FK.
+  CHECK: exactly the value column corresponding to value_kind is non-null.
+  Implement this as a complete, non-null Boolean predicate, using IS NOT NULL and
+  checking every other value slot IS NULL. SQL CHECK accepts NULL expressions.
+  Clear optional values by deleting the row. This is one controlled extension point,
+  not a replacement for typed issue columns or other domain tables.
+  Go/TypeScript expose a validated discriminated union; runtime configuration still
+  requires validation. Serialize decimal values without losing numeric precision.
+
+Configuration lifecycle:
+  Retirement prevents new use; it must not strand existing work. Used rows and stable
+  IDs remain for history. Existing unchanged retired type/priority/option values may
+  be preserved in an edit; newly selecting them is rejected. A retired workflow or
+  binding stops new assignments, while already bound issues keep their valid moves
+  until explicitly migrated. Do not retire a default binding without installing an
+  active replacement. Close stage intake, migrate in batches, then retire the empty
+  stage; do not rewrite a large project in one configuration transaction.
+  Before retiring a field/option/transition, validate active required-field rules,
+  assignment rules, completion paths, defaults and board coverage. Remap/remove
+  dependent rules atomically or reject retirement with the affected references.
+  Retired fields are excluded from new requirements and required-field validation,
+  but their old values remain readable. Restore/backfill commands use explicit
+  mappings and current permissions; they do not silently resurrect configuration.
+  These operations update existing configuration/workflow/board revisions and
+  audit snapshots, without requiring another configuration-history subsystem.
+
+3. Unified attachments and lifecycle
+------------------------------------
+
+Keep the V1 unified attachments and upload_reservations designs, their scoped FKs,
+original IDs, immutable published bytes, versions/checksums, actor/retry keys and
+lease-protected state machine. comment_version_attachments retains references.
+File content remains in private Cloud Storage; PostgreSQL stores metadata only.
+
+Extend private drafts to both images and files: a canceled comment should not
+immediately leave a publicly visible document attachment. Issue-panel uploads can
+publish immediately. Publish comment-linked drafts with the comment transaction;
+preserve old published file behavior through the old endpoint during compatibility.
+
+Add expected_bytes, maximum_bytes and upload_method to upload_reservations, plus
+upload_expires_at and a protected storage_session reference for resumable transfers.
+upload_method = backend | resumable. These are fields on the existing session table,
+not a second upload model. Keep the existing size default until a tested configured
+limit is selected; making it configurable is not an unlimited-upload promise.
+Snapshot the allowed limit at reservation and enforce it again on finalization.
+The client cannot choose a bucket, trusted MIME type, publication key or generation.
+
+Larger uploads transfer to private staging through a scoped resumable session.
+Finalization rechecks authorization, actual size, generation, checksum and content
+validation before publication. No client-only validation or public staging URL.
+Session capabilities must be protected, expire, and stay out of audit/log output.
+Object transfer/verification happens outside business row locks. PostgreSQL and
+object storage do not share a transaction: use durable reservation states and
+reconciliation, publish DB visibility only after the object is verified, and
+recheck authorization/revisions in a short final transaction. Published keys are
+private and cannot be read merely because an object copy exists before commit.
+Keep bounded image decoding and the inline-image safety/quantity rules; a larger
+file allowance does not automatically allow a larger decoded image workload.
+
+Cleanup reconciles abandoned transfers and expired drafts in bounded batches, with
+leases/generation checks. A retention policy cannot delete bytes still referenced
+by current descriptions, immutable comment versions or retained history. Account
+for those references explicitly. Detaching from the issue panel only changes
+visibility. Keep referenced published objects under the existing retention contract;
+purging retained history would require a separately specified product policy.
+Do not apply a blanket age-based bucket deletion rule to published objects.
+
+4. Fixes that do not require more database tables
+------------------------------------------------
+
+Concurrency:
+  Replace the current exclusive project row lock on every mutation. Keep a shared
+  project lifecycle/authorization guard for ordinary operations and an exclusive
+  guard for archive, membership/configuration and board-filter changes. Use a
+  namespaced transaction advisory guard separate from the mutable project row so
+  issue-number allocation does not collide with every reader's project row lock.
+  Lock issue/comment/column rows only when their invariants need it; retain an
+  exclusive graph guard for dependency/parent changes and completion/reopen checks.
+  Counters and order revisions are updated only by the commands they protect.
+  All guards must use a documented consistent order, bounded waits and retry rules.
+  Do not remove existing guards without replacing permission-revocation, graph,
+  archive and WIP race protection. This is a correctness-sensitive implementation
+  requirement with concurrent-write acceptance tests in proposed-v2-review.txt.
+  The initial acquisition order is: company guard -> actor/retry record -> project
+  lifecycle guards -> graph guards -> board/column guards -> issue rows -> child
+  resource rows. Sort all objects within each guard/row family by the actual stable
+  lock key; child rows use one documented (resource kind, ID) ordering. Never acquire
+  a project guard after an issue/column row. Configuration is protected by the
+  exclusive project guard, so a second ordinary workflow guard is unnecessary.
+  Every writer, maintenance command and migration must declare its subset before
+  execution. Discover optimistically, acquire, re-read, then restart if the required
+  set differs. PostgreSQL row/FK locks still need concurrency testing; this order
+  is a protocol to implement and verify, not proof that deadlocks are impossible.
+
+  Command                     Project  Additional resources
+  --------------------------  -------  ------------------------------------------
+  Metadata/custom-field patch  shared   affected hard columns; issue exclusive
+  Transition/parent/blocker    shared   graph; affected columns; affected issues
+  Card reorder                shared   order column; issue/anchor rows shared
+  Comment edit/create         shared   issue shared for lifecycle; comment/assets
+  Approval vote/resubmit      shared   issue exclusive; approval/audit resources
+  Attachment publication      shared   issue + assets; exclusive issue if content changes
+  Workflow/board/role/archive  exclusive relevant graph/columns/issues, only as needed
+
+  Pure field edits do not acquire a graph guard. Membership-affecting commands
+  acquire only hard-cap columns whose projected occupancy may change. Archive,
+  revoke, restore and maintenance commands participate in this same protocol.
+  Ordinary issue-number allocation remains a short counter update; it is not a
+  reason to hold an exclusive project lifecycle guard for the whole command.
+
+Autosave:
+  Retain issue.revision and shared transactions. Field-specific patch commands
+  include the field's prior typed value. Lock/read current data, compare that value,
+  and update only the requested field. Unrelated changed fields can merge safely;
+  a changed target field returns a clear conflict. Preserve no-blind-overwrite
+  behavior, idempotency, audit, notifications and dependent business checks.
+  Multi-field editing and workflow changes still use full revision checks. Planning
+  retains its separate revision. No per-field revision table is needed initially.
+  After authorization and prior-value/revision checks, an unchanged normalized
+  update returns its current typed result without a revision increment, change
+  event, invalidated approval or notification. Keep its idempotency result.
+  Approval resubmission is an explicit command with a reason: advance issue.revision
+  and record the resubmission, retaining previous votes. It is intentionally a
+  change even if issue fields are identical. No-op rules do not deduplicate new
+  comments/issues that the user intentionally creates with a fresh command.
+
+Search and larger boards:
+  Use bounded, cancelable requests and paginated/windowed rendering. Numeric IDs,
+  complete issue keys and title text have separate typed query paths as needed.
+  Parse numeric input with explicit overflow handling; use project/number indexes.
+  Match text predicates to their indexes; confirm plans on representative data.
+  For literal title substring search use escaped LIKE/ILIKE with a matching
+  pg_trgm index, not strpos on a different expression. Digits always use the number
+  path, including a single digit. Preserve short text search, but scope and bound
+  it; a one/two-character contains search may get little benefit from trigrams.
+  Active and archived query shapes keep literal NOT archived / archived predicates
+  where required for partial-index eligibility. Do not parameterize the predicate
+  away behind a generic archive Boolean and assume the same prepared plan will use
+  the active-only index. Test normal, custom and generic plans, then the actual
+  sqlc/pgx execution path, for skewed project sizes and common/rare inputs.
+  A LIMIT bounds output, not rows scanned. Measure rare/absent short queries too.
+  Typed live-search endpoints return a bounded page/hasMore without an exact full
+  count on every keystroke; version the contract before changing existing totals.
+  Batch related counts and avoid repeated per-card lookups. Candidate indexes cover
+  project/stage, board/column/rank, parent, due dates, blockers and typed field values.
+  Do not add every possible index: measure read benefit and write/storage cost.
+  Reports retain historical stage/category snapshots and current reporting views.
+  The design alone establishes no throughput or latency improvement.
+
+Hard WIP:
+  Count the full saved board view, not a loaded page or temporary filter. Lock
+  affected column guards in stable order and evaluate the projected result of the
+  command. Check every relevant active hard-limit board. Stage, filter-affecting
+  field, archive/restore, type and board configuration changes all need this path.
+  Serialize board/filter configuration with issue membership changes, so a concurrent
+  filter edit cannot evade enforcement. Reject commands that newly exceed a hard
+  cap; permit commands that reduce an existing excess. Lowering a cap below current
+  occupancy must report that excess and require a deliberate configuration decision.
+  Initially keep warning mode as the default. Approval and blocker checks remain
+  shared by REST/MCP and independent of what columns happen to be visible.
+  Hard mode initially permits only deterministic filters on issue-owned fields
+  with complete mutation coverage (stage/type/priority/assignee/labels/custom fields,
+  explicit date ranges and archive/backlog state). Reject activation with relative
+  dates, blocked/child-progress predicates or other derived/external membership;
+  those remain valid warning-board filters. Clock ticks and another issue's change
+  must not silently bypass a hard cap. Filter changes revalidate mode eligibility.
+  Every hard cap necessarily serializes competing entries to that capacity; expose
+  contention and test overlapping hard boards. No hard boards means no WIP write locks.
+
+Deployment and recovery:
+  Keep one Angular frontend, one Go backend, PostgreSQL and private Cloud Storage.
+  Real provider/client authentication, Cloud Run/Cloud SQL capacity, cost and
+  backup/object restore need measured acceptance in the intended environment.
+  Schema diagrams cannot close those existing acceptance gaps.
+
+5. Complete application table inventory
+---------------------------------------
+
+Accounts and projects (5):
+  company_settings, users, user_identities, projects, project_memberships.
+
+Workflows and types (7):
+  workflows, workflow_stages, workflow_transitions, issue_types, issue_type_workflows,
+  transition_required_fields, issue_approvals.
+
+Issues and organization (11):
+  issues, priorities, field_definitions, field_options, issue_field_values,
+  labels, issue_labels, issue_dependencies, issue_links, issue_watchers,
+  saved_issue_searches.
+
+Boards (4):
+  boards, board_columns, board_column_stages, board_issue_ranks.
+
+Discussion and files (6):
+  comments, comment_versions, comment_version_mentions,
+  comment_version_attachments, attachments, upload_reservations.
+
+Planning (2):
+  planning_items, planning_issue.
+
+Notifications (4):
+  notifications, notification_preferences, notification_due_events,
+  notification_deliveries.
+
+History and retries (2):
+  activity_events, idempotency_records.
+
+Imports and integrations (3):
+  issue_import_sources, development_links, project_assignment_rules.
+
+Total: 44 application tables, plus goose_db_version = 45 physical tables.
+Retain planning_status_events and planning_completion_cycles as reporting views.
+Operational tables are kept separate because they have different invariants,
+retention and retry behavior; grouping them visually does not merge their data.
+
+6. Preserved behavior, migration and scope
+-----------------------------------------
+
+Keep all V1 invariants not explicitly changed here: approval/disabled account
+checks; issue numbering; scoped labels and relationships; one-level subtasks;
+dependency cycle and completion checks; rich HTML sanitization; Arabic/RTL;
+immutable comment versions, mentions and file references; planning revisions;
+watchers, notifications, delivery/reminder deduplication; imports and manual
+development links; stage assignment rules; audit history and retry identity.
+project_assignment_rules now reference workflow_stages with a same-project FK.
+Retired referenced stages, workflows, types, fields and transitions must remain
+available for history. The transition editor disables rather than deletes used
+transitions; include retirement state in its final physical model.
+
+Reconcile old board workflows before creating one initial workflow per project.
+Seed types/priorities and one default binding per type; map every old status to a
+stable stage. Preserve old category
+filter semantics, labels, effective WIP limits and current card order on each board.
+Copy existing ranks to per-board rows for the relevant columns at cutover.
+Retain snapshot tokens in audit events; never reconstruct old meaning from renamed
+configuration. Evolve typed saved filters explicitly for the new identifiers.
+
+Use additive migrations, side-by-side reader comparisons and compatibility adapters.
+Old clients cannot understand arbitrary new type/priority values: enable that
+configuration only after supported web/MCP clients use the versioned new contracts.
+Do not silently coerce new types to Task or new priorities to Medium for old clients.
+Update ordering guards and all rule consumers before retiring legacy columns.
+
+Merge media with collision checks and preserved object paths/retry hashes. Validate
+constraints on real PostgreSQL and test permissions, concurrency, history, aborted
+uploads, data migration, REST/MCP parity and rollback/forward-repair procedures.
+Record before/after latency and load measurements; complete cloud authentication
+and restore acceptance separately. Update the feature spec, plan and tasks before
+implementation, as required by the constitution.
+
+Scope remains one company. Multi-company SaaS tenancy is a separate requirement,
+not implicitly implemented by project_id. The new flexibility is also bounded:
+three project roles, five custom-field kinds, explicit transition conditions,
+project-local workflows, existing subtask depth and existing same-project links.
+Further arbitrary scripting, role builders, nested portfolio hierarchies or a
+universal entity framework would add requirements beyond this reviewed design.

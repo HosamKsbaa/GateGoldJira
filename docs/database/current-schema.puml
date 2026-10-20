@@ -1,0 +1,555 @@
+@startuml GateGoldJira_Current_Schema
+title GateGoldJira canonical storage\nMigration 19 | 44 application tables
+hide circle
+hide methods
+skinparam linetype ortho
+skinparam shadowing false
+skinparam defaultFontSize 11
+entity "activity_events" as activity_events {
+  * id : uuid <<PK>>
+  * actor_id : uuid
+  * channel : text
+  * action : text
+  * resource_kind : text
+  * resource_id : uuid
+    project_id : uuid
+    issue_id : uuid
+  * changes : jsonb
+  * created_at : timestamp with time zone
+}
+entity "assignment_rule_records" as assignment_rule_records {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * name : text
+  * assignee_id : uuid
+  * enabled : boolean
+  * revision : bigint
+  * created_by : uuid
+  * created_at : timestamp with time zone
+  * updated_at : timestamp with time zone
+    stage_id : uuid
+}
+entity "attachments" as attachments {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * issue_id : uuid
+  * uploaded_by : uuid
+  * kind : text
+  * filename : text
+  * description : text
+  * mime_type : text
+  * byte_size : bigint
+  * checksum : text
+  * staging_key : text
+  * staging_generation : bigint
+    published_key : text
+    published_generation : bigint
+  * state : text
+  * in_panel : boolean
+  * uploaded_at : timestamp with time zone
+    expires_at : timestamp with time zone
+    published_at : timestamp with time zone
+}
+entity "board_column_stages" as board_column_stages {
+  * project_id : uuid
+  * board_id : uuid <<PK>>
+  * column_id : uuid
+  * stage_id : uuid <<PK>>
+}
+entity "board_columns" as board_columns {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * board_id : uuid
+  * name : text
+  * position : bigint
+    wip_limit : integer
+  * wip_mode : text
+  * order_revision : bigint
+    legacy_status : text
+  * legacy_backfill_pending : boolean
+}
+entity "board_issue_ranks" as board_issue_ranks {
+  * project_id : uuid
+  * board_id : uuid <<PK>>
+  * column_id : uuid
+  * issue_id : uuid <<PK>>
+  * rank : bigint
+}
+entity "board_records" as board_records {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * name : text
+  * name_key : text
+  * created_by : uuid
+  * is_default : boolean
+  * saved_filters : jsonb
+  * filters_version : integer
+  * revision : bigint
+    archived_at : timestamp with time zone
+  * created_at : timestamp with time zone
+  * updated_at : timestamp with time zone
+    legacy_snapshot : jsonb
+}
+entity "comment_version_attachments" as comment_version_attachments {
+  * comment_id : uuid <<PK>>
+  * version : bigint <<PK>>
+  * issue_id : uuid
+  * attachment_id : uuid <<PK>>
+}
+entity "comment_version_mentions" as comment_version_mentions {
+  * comment_id : uuid <<PK>>
+  * version : bigint <<PK>>
+  * user_id : uuid <<PK>>
+  * display_label_snapshot : text
+}
+entity "comment_versions" as comment_versions {
+  * comment_id : uuid <<PK>>
+  * revision : bigint <<PK>>
+  * issue_id : uuid
+  * safe_html : text
+  * plain_text : text
+  * created_at : timestamp with time zone
+}
+entity "comments" as comments {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * issue_id : uuid
+  * author_id : uuid
+  * revision : bigint
+  * created_at : timestamp with time zone
+    edited_at : timestamp with time zone
+}
+entity "company_settings" as company_settings {
+  * singleton : boolean <<PK>>
+  * time_zone : text
+  * cleanup_paused : boolean
+}
+entity "development_links" as development_links {
+  * id : uuid <<PK>>
+  * issue_id : uuid
+  * url : text
+  * title : text
+  * kind : text
+  * revision : bigint
+  * removed : boolean
+  * created_by : uuid
+  * created_at : timestamp with time zone
+  * updated_at : timestamp with time zone
+}
+entity "field_definitions" as field_definitions {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * key : text
+  * name : text
+  * value_kind : text
+  * required : boolean
+  * retired : boolean
+    default_text : text
+    default_number : numeric
+    default_date : date
+    default_option_id : uuid
+    default_user_id : uuid
+}
+entity "field_options" as field_options {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * field_id : uuid
+  * value_kind : text
+  * name : text
+  * position : bigint
+  * retired : boolean
+}
+entity "idempotency_records" as idempotency_records {
+  * actor_id : uuid <<PK>>
+  * retry_reference : uuid <<PK>>
+  * operation : text
+  * canonical_input_hash : text
+    result : jsonb
+  * result_version : integer
+  * created_at : timestamp with time zone
+  * expires_at : timestamp with time zone
+}
+entity "issue_approvals" as issue_approvals {
+  * project_id : uuid
+  * issue_id : uuid <<PK>>
+  * transition_id : uuid <<PK>>
+  * issue_revision : bigint <<PK>>
+  * workflow_revision : bigint <<PK>>
+  * configuration_revision : bigint <<PK>>
+  * approver_id : uuid <<PK>>
+  * decision : text
+  * decided_at : timestamp with time zone
+}
+entity "issue_dependencies" as issue_dependencies {
+  * project_id : uuid
+  * dependent_id : uuid <<PK>>
+  * blocker_id : uuid <<PK>>
+  * revision : bigint
+  * created_by : uuid
+  * created_at : timestamp with time zone
+    removed_by : uuid
+    removed_at : timestamp with time zone
+}
+entity "issue_field_values" as issue_field_values {
+  * project_id : uuid
+  * issue_id : uuid <<PK>>
+  * field_id : uuid <<PK>>
+  * value_kind : text
+    text_value : text
+    number_value : numeric
+    date_value : date
+    option_id : uuid
+    user_id : uuid
+}
+entity "issue_import_sources" as issue_import_sources {
+  * project_id : uuid <<PK>>
+  * source_key : text <<PK>>
+  * issue_id : uuid
+  * created_at : timestamp with time zone
+}
+entity "issue_labels" as issue_labels {
+  * project_id : uuid
+  * issue_id : uuid <<PK>>
+  * label_id : uuid <<PK>>
+}
+entity "issue_links" as issue_links {
+  * issue_id : uuid <<PK>>
+  * target_id : uuid <<PK>>
+  * kind : text <<PK>>
+  * created_by : uuid
+  * created_at : timestamp with time zone
+    removed_at : timestamp with time zone
+}
+entity "issue_records" as issue_records {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * number : bigint
+  * title : text
+  * description : text
+  * reporter_id : uuid
+    assignee_id : uuid
+    due_date : date
+    parent_id : uuid
+  * revision : bigint
+  * created_at : timestamp with time zone
+  * updated_at : timestamp with time zone
+  * description_format : text
+  * archived : boolean
+  * backlog : boolean
+  * backlog_rank : bigint
+    type_id : uuid
+    priority_id : uuid
+    workflow_id : uuid
+    stage_id : uuid
+    legacy_rank : bigint
+}
+entity "issue_type_workflows" as issue_type_workflows {
+  * project_id : uuid <<PK>>
+  * type_id : uuid <<PK>>
+  * workflow_id : uuid <<PK>>
+  * is_default : boolean
+  * accepts_new : boolean
+}
+entity "issue_types" as issue_types {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * key : text
+  * name : text
+  * behavior : text
+  * is_default : boolean
+  * retired : boolean
+}
+entity "issue_watchers" as issue_watchers {
+  * issue_id : uuid <<PK>>
+  * user_id : uuid <<PK>>
+  * watching : boolean
+  * updated_at : timestamp with time zone
+}
+entity "labels" as labels {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * name : text
+  * name_key : text
+  * created_by : uuid
+  * created_at : timestamp with time zone
+}
+entity "notification_deliveries" as notification_deliveries {
+  * id : uuid <<PK>>
+  * recipient_id : uuid
+  * issue_id : uuid
+  * notification_id : uuid
+  * dedup_key : text
+  * state : text
+  * attempts : integer
+  * available_at : timestamp with time zone
+  * created_at : timestamp with time zone
+    completed_at : timestamp with time zone
+}
+entity "notification_due_events" as notification_due_events {
+  * issue_id : uuid <<PK>>
+  * due_date : date <<PK>>
+  * event_id : uuid
+}
+entity "notification_preferences" as notification_preferences {
+  * user_id : uuid <<PK>>
+  * in_app_enabled : boolean
+  * events : text[]
+  * email_mode : text
+  * due_reminders : boolean
+  * revision : bigint
+  * updated_at : timestamp with time zone
+}
+entity "notifications" as notifications {
+  * id : uuid <<PK>>
+  * recipient_id : uuid
+  * event_id : uuid
+  * project_id : uuid
+  * issue_id : uuid
+  * actor_id : uuid
+  * reasons : text[]
+  * plain_text_summary : text
+  * created_at : timestamp with time zone
+    read_at : timestamp with time zone
+  * revision : bigint
+  * show_in_app : boolean
+}
+entity "planning_issue" as planning_issue {
+  * issue_id : uuid <<PK>>
+  * project_id : uuid
+    epic_id : uuid
+    release_id : uuid
+  * revision : bigint
+}
+entity "planning_items" as planning_items {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * kind : text
+  * name : text
+  * description : text
+    target_date : date
+  * status : text
+  * revision : bigint
+  * created_by : uuid
+  * created_at : timestamp with time zone
+  * updated_at : timestamp with time zone
+}
+entity "priorities" as priorities {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * key : text
+  * name : text
+  * sort_order : bigint
+  * is_default : boolean
+  * retired : boolean
+}
+entity "project_memberships" as project_memberships {
+  * project_id : uuid <<PK>>
+  * user_id : uuid <<PK>>
+  * role : text
+  * revision : bigint
+    removed_at : timestamp with time zone
+  * created_at : timestamp with time zone
+  * updated_at : timestamp with time zone
+}
+entity "projects" as projects {
+  * id : uuid <<PK>>
+  * key : text
+  * name : text
+  * description : text
+  * created_by : uuid
+  * next_issue_number : bigint
+  * revision : bigint
+  * graph_revision : bigint
+    archived_at : timestamp with time zone
+  * created_at : timestamp with time zone
+  * updated_at : timestamp with time zone
+  * backlog_revision : bigint
+  * configuration_revision : bigint
+  * core_mode : text
+}
+entity "saved_issue_searches" as saved_issue_searches {
+  * id : uuid <<PK>>
+  * user_id : uuid
+  * name : text
+  * filters : jsonb
+  * revision : bigint
+  * removed : boolean
+  * updated_at : timestamp with time zone
+}
+entity "transition_required_fields" as transition_required_fields {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * workflow_id : uuid
+  * transition_id : uuid
+    system_field : text
+    field_id : uuid
+}
+entity "upload_reservations" as upload_reservations {
+  * actor_id : uuid <<PK>>
+  * retry_reference : uuid <<PK>>
+  * operation : text
+  * command_hash : text
+  * asset_id : uuid
+  * project_id : uuid
+  * issue_id : uuid
+  * kind : text
+  * staging_key : text
+    staging_generation : bigint
+    published_key : text
+    published_generation : bigint
+    checksum : text
+  * lease_until : timestamp with time zone
+  * state : text
+    expected_bytes : bigint
+  * maximum_bytes : bigint
+  * upload_method : text
+  * upload_expires_at : timestamp with time zone
+    storage_session : text
+  * received_bytes : bigint
+    filename : text
+    description : text
+    mime_type : text
+    publication : text
+    last_chunk_hash : text
+  * created_at : timestamp with time zone
+  * updated_at : timestamp with time zone
+}
+entity "user_identities" as user_identities {
+  * issuer : text <<PK>>
+  * subject : text <<PK>>
+  * user_id : uuid
+  * bound_at : timestamp with time zone
+}
+entity "users" as users {
+  * id : uuid <<PK>>
+  * email : text
+  * email_key : text
+  * display_name : text
+    approved_at : timestamp with time zone
+    disabled_at : timestamp with time zone
+  * is_administrator : boolean
+  * revision : bigint
+  * created_at : timestamp with time zone
+  * updated_at : timestamp with time zone
+}
+entity "workflow_stages" as workflow_stages {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * workflow_id : uuid
+  * name : text
+  * category : text
+  * legacy_status : text
+  * position : bigint
+  * is_initial : boolean
+  * accepts_entries : boolean
+  * retired : boolean
+  * legacy_order_revision : bigint
+}
+entity "workflow_transitions" as workflow_transitions {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * workflow_id : uuid
+  * from_stage_id : uuid
+  * to_stage_id : uuid
+    required_permission : text
+  * approvals_required : smallint
+    approver_role : text
+  * exclude_issue_reporter : boolean
+  * retired : boolean
+}
+entity "workflows" as workflows {
+  * id : uuid <<PK>>
+  * project_id : uuid
+  * name : text
+  * revision : bigint
+  * retired : boolean
+  * legacy_default : boolean
+  * created_at : timestamp with time zone
+  * updated_at : timestamp with time zone
+}
+users ||--o{ activity_events
+projects |o--o{ activity_events
+issue_records |o--o{ activity_events
+workflow_stages |o--o{ assignment_rule_records
+users ||--o{ assignment_rule_records
+projects ||--o{ assignment_rule_records
+issue_records ||--o{ attachments
+users ||--o{ attachments
+board_columns ||--o{ board_column_stages
+workflow_stages ||--o{ board_column_stages
+board_records ||--o{ board_columns
+board_columns ||--o{ board_issue_ranks
+issue_records ||--o{ board_issue_ranks
+users ||--o{ board_records
+projects ||--o{ board_records
+comment_versions ||--o{ comment_version_attachments
+attachments ||--o{ comment_version_attachments
+comment_versions ||--o{ comment_version_mentions
+users ||--o{ comment_version_mentions
+comments ||--o{ comment_versions
+users ||--o{ comments
+comment_versions ||--o{ comments
+issue_records ||--o{ comments
+users ||--o{ development_links
+issue_records ||--o{ development_links
+field_options |o--o{ field_definitions
+users |o--o{ field_definitions
+projects ||--o{ field_definitions
+field_definitions ||--o{ field_options
+users ||--o{ idempotency_records
+users ||--o{ issue_approvals
+issue_records ||--o{ issue_approvals
+workflow_transitions ||--o{ issue_approvals
+users ||--o{ issue_dependencies
+issue_records ||--o{ issue_dependencies
+field_options |o--o{ issue_field_values
+field_definitions ||--o{ issue_field_values
+issue_records ||--o{ issue_field_values
+users |o--o{ issue_field_values
+issue_records ||--o{ issue_import_sources
+projects ||--o{ issue_import_sources
+issue_records ||--o{ issue_labels
+labels ||--o{ issue_labels
+users ||--o{ issue_links
+issue_records ||--o{ issue_links
+priorities |o--o{ issue_records
+issue_type_workflows |o--o{ issue_records
+workflow_stages |o--o{ issue_records
+users |o--o{ issue_records
+projects ||--o{ issue_records
+issue_records |o--o{ issue_records
+issue_types ||--o{ issue_type_workflows
+workflows ||--o{ issue_type_workflows
+projects ||--o{ issue_types
+issue_records ||--o{ issue_watchers
+users ||--o{ issue_watchers
+users ||--o{ labels
+projects ||--o{ labels
+issue_records ||--o{ notification_deliveries
+notifications ||--o{ notification_deliveries
+users ||--o{ notification_deliveries
+activity_events ||--o{ notification_due_events
+issue_records ||--o{ notification_due_events
+users ||--o{ notification_preferences
+users ||--o{ notifications
+activity_events ||--o{ notifications
+issue_records ||--o{ notifications
+planning_items |o--o{ planning_issue
+issue_records ||--o{ planning_issue
+users ||--o{ planning_items
+projects ||--o{ planning_items
+projects ||--o{ priorities
+projects ||--o{ project_memberships
+users ||--o{ project_memberships
+users ||--o{ projects
+users ||--o{ saved_issue_searches
+field_definitions |o--o{ transition_required_fields
+workflow_transitions ||--o{ transition_required_fields
+users ||--o{ upload_reservations
+issue_records ||--o{ upload_reservations
+users ||--o{ user_identities
+workflows ||--o{ workflow_stages
+workflow_stages ||--o{ workflow_transitions
+projects ||--o{ workflows
+note "Older API names are compatibility views.\nFiles stay in private object storage.\nHistorical versions, events and receipts remain retained." as Compatibility
+@enduml

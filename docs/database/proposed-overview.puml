@@ -1,0 +1,72 @@
+@startuml proposed-overview
+title
+GateGoldJira - Proposed Architecture
+Same features, clearer ownership | DESIGN ONLY
+end title
+left to right direction
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 14
+skinparam ArrowColor #64748B
+skinparam componentBackgroundColor #F8FAFC
+skinparam componentBorderColor #475569
+
+component "Angular web app\nStrict TypeScript\nGenerated API client\nFirebase Hosting" as web #DBEAFE
+component "MCP clients\nTyped tools" as clients #DBEAFE
+
+package "One Go backend / one Cloud Run service" {
+  component "REST adapter\nHuma / OpenAPI" as rest
+  component "MCP adapter\nOfficial Go SDK" as mcp
+  component "Shared command handling\nAuthorization + validation\nRevisions + idempotency\nTransactional audit + notification creation" as commands #DCFCE7
+
+  package "Feature packages inside the same application" {
+    component "Accounts and projects\nIdentity, roles, memberships" as accounts
+    component "Issues and workflow\nStages, transitions, boards\nBlockers, subtasks, labels, backlog\nAssignments, due dates, drag and drop" as work #DBEAFE
+    component "Collaboration and attachments\nRich text, Arabic, mentions, history\nOne image/file model\nOne typed upload pipeline" as collaboration #DBEAFE
+    component "Planning and integrations\nEpics, releases, reports\nImports, development links, rules" as planning
+    component "Notifications\nInbox, preferences, due reminders\nDurable email delivery records" as notifications
+  }
+
+  component "Typed persistence and object access\nsqlc + pgx\nBounded reads, transactions, leases" as persistence
+}
+
+database "One PostgreSQL database\nCloud SQL\n33 application tables\n2 reporting views" as database #FEF3C7
+storage "Private file storage\nGoogle Cloud Storage\nImmutable published objects" as objects #FEF3C7
+
+web --> rest : HTTPS
+clients --> mcp : HTTPS
+rest --> commands
+mcp --> commands
+commands --> accounts
+commands --> work
+commands --> collaboration
+commands --> planning
+commands --> notifications
+accounts --> persistence
+work --> persistence
+collaboration --> persistence
+planning --> persistence
+notifications --> persistence
+persistence --> database
+persistence --> objects
+
+note bottom of work
+One project owns its stages and allowed moves.
+Boards keep filters and per-stage WIP overrides.
+Metadata, workflow and ordering have separate revisions.
+end note
+
+note bottom of collaboration
+Image drafts and published files have explicit typed states.
+Detach keeps historical comment references readable.
+end note
+
+legend bottom left
+  These boxes are feature responsibilities within one backend.
+  Supporting history, retry and delivery tables are retained.
+  Database details: proposed-schema.puml
+endlegend
+@enduml

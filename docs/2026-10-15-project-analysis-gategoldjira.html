@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GateGoldJira — Architecture &amp; Systems Visual Guide (2026-10-15)</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-subtle: #64748b;
+      --primary: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --primary-border: #bfdbfe;
+      --accent: #b45309;
+      --accent-soft: #fffbeb;
+      --accent-border: #fde68a;
+      --success: #15803d;
+      --success-soft: #f0fdf4;
+      --success-border: #bbf7d0;
+      --danger: #b91c1c;
+      --danger-soft: #fef2f2;
+      --danger-border: #fecaca;
+      --purple: #6d28d9;
+      --purple-soft: #f5f3ff;
+      --purple-border: #ddd6fe;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.07);
+      --radius: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Ubuntu, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.68;
+      font-size: 16px;
+    }
+
+    /* Header Banner */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a8a 100%);
+      color: #f8fafc;
+      padding: 3.2rem 2rem 2.6rem;
+      border-bottom: 1px solid #334155;
+    }
+
+    .hero-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .badge {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .badge.gold {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fde68a;
+      border-color: rgba(245, 158, 11, 0.45);
+    }
+
+    .badge.green {
+      background: rgba(34, 197, 94, 0.2);
+      color: #bbf7d0;
+      border-color: rgba(34, 197, 94, 0.45);
+    }
+
+    .hero h1 {
+      margin: 0 0 0.75rem;
+      font-size: 2.35rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p.subtitle {
+      margin: 0;
+      max-width: 880px;
+      color: #cbd5e1;
+      font-size: 1.1rem;
+    }
+
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 0.85rem;
+      margin-top: 1.8rem;
+    }
+
+    .stat-card {
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+    }
+
+    .stat-card .val {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #ffffff;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-card .lbl {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 0.15rem;
+    }
+
+    /* Main Layout */
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 2.25rem;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .toc {
+        position: static !important;
+      }
+    }
+
+    /* Sticky Sidebar TOC */
+    .toc {
+      position: sticky;
+      top: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.15rem 1rem;
+      box-shadow: var(--shadow-sm);
+      max-height: calc(100vh - 3rem);
+      overflow-y: auto;
+    }
+
+    .toc-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-subtle);
+      margin: 0 0 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc li {
+      margin: 0.2rem 0;
+    }
+
+    .toc a {
+      display: block;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 6px;
+      border-left: 3px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .toc a:hover {
+      background: var(--surface-alt);
+      color: var(--text);
+    }
+
+    .toc a.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-left-color: var(--primary);
+      font-weight: 600;
+    }
+
+    .toc .toc-sub {
+      padding-left: 0.85rem;
+      font-size: 0.82rem;
+    }
+
+    /* Content Sections */
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 2.25rem;
+    }
+
+    section.card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 2.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    @media (max-width: 640px) {
+      section.card {
+        padding: 1.35rem 1.15rem;
+      }
+    }
+
+    .section-eyebrow {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      margin-bottom: 0.3rem;
+    }
+
+    h2.section-title {
+      margin: 0 0 1rem;
+      font-size: 1.65rem;
+      letter-spacing: -0.015em;
+      color: var(--text);
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h3 {
+      margin: 1.75rem 0 0.65rem;
+      font-size: 1.22rem;
+      color: var(--text);
+    }
+
+    h4 {
+      margin: 1.25rem 0 0.45rem;
+      font-size: 1.02rem;
+      color: var(--text);
+    }
+
+    p {
+      margin: 0 0 1rem;
+      color: #1e293b;
+    }
+
+    code {
+      font-family: "JetBrains Mono", "Fira Code", Consolas, Monaco, monospace;
+      font-size: 0.87em;
+      background: var(--surface-alt);
+      color: #0f172a;
+      padding: 0.15em 0.4em;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1.1rem 1.25rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "JetBrains Mono", "Fira Code", Consolas, Monaco, monospace;
+      font-size: 0.85rem;
+      line-height: 1.55;
+      margin: 1rem 0 1.25rem;
+      border: 1px solid #1e293b;
+    }
+
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      border: none;
+      font-size: inherit;
+    }
+
+    /* Collapsible Details for Beginner Background */
+    details.primer {
+      background: var(--surface-alt);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 0.9rem 1.15rem;
+      margin: 1rem 0 1.35rem;
+    }
+
+    details.primer summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      list-style: none;
+    }
+
+    details.primer summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.primer summary::after {
+      content: "Expand Primer +";
+      font-size: 0.78rem;
+      background: var(--primary-soft);
+      border: 1px solid var(--primary-border);
+      padding: 0.2rem 0.55rem;
+      border-radius: 99px;
+    }
+
+    details.primer[open] summary::after {
+      content: "Collapse −";
+    }
+
+    details.primer .primer-body {
+      margin-top: 0.9rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Callouts */
+    .callout {
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      margin: 1.15rem 0;
+      border-left: 4px solid var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .callout.tradeoff {
+      border-left-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .callout.security {
+      border-left-color: var(--purple);
+      background: var(--purple-soft);
+    }
+
+    .callout.perf {
+      border-left-color: var(--success);
+      background: var(--success-soft);
+    }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1rem 0 1.35rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.7rem 0.95rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--surface-alt);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Visual Diagram Containers */
+    .diagram-box {
+      background: #f8fafc;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 1.35rem;
+      margin: 1.25rem 0;
+    }
+
+    .diagram-caption {
+      font-size: 0.82rem;
+      color: var(--text-subtle);
+      text-align: center;
+      margin-top: 0.75rem;
+      font-style: italic;
+    }
+
+    /* Interactive Pipeline Step Cards */
+    .pipeline-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 0.85rem;
+      margin: 1rem 0;
+    }
+
+    .pipe-step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pipe-step .step-num {
+      display: inline-block;
+      font-size: 0.73rem;
+      font-weight: 700;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1px solid var(--primary-border);
+      border-radius: 99px;
+      padding: 0.1rem 0.55rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .pipe-step h4 {
+      margin: 0.15rem 0 0.35rem;
+      font-size: 0.96rem;
+    }
+
+    .pipe-step p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Toy Payload Comparison Grid */
+    .toy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    @media (max-width: 780px) {
+      .toy-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .toy-panel {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface-alt);
+      padding: 1rem;
+    }
+
+    .toy-panel h4 {
+      margin-top: 0;
+      font-size: 0.92rem;
+      color: var(--primary);
+    }
+
+    /* Quiz Styling */
+    .quiz-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1.1rem;
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+      font-weight: 600;
+    }
+
+    .quiz-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      background: #ffffff;
+    }
+
+    .quiz-question {
+      font-weight: 600;
+      font-size: 1.02rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .quiz-btn {
+      text-align: left;
+      background: var(--surface-alt);
+      border: 1px solid var(--border-strong);
+      border-radius: 7px;
+      padding: 0.7rem 0.95rem;
+      font-size: 0.92rem;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+      line-height: 1.45;
+    }
+
+    .quiz-btn:hover:not(:disabled) {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+    }
+
+    .quiz-btn.correct {
+      background: var(--success-soft);
+      border-color: var(--success);
+      color: #14532d;
+      font-weight: 600;
+    }
+
+    .quiz-btn.incorrect {
+      background: var(--danger-soft);
+      border-color: var(--danger);
+      color: #7f1d1d;
+    }
+
+    .quiz-feedback {
+      display: none;
+      margin-top: 0.85rem;
+      padding: 0.85rem 1rem;
+      border-radius: 7px;
+      font-size: 0.9rem;
+    }
+
+    .quiz-feedback.show {
+      display: block;
+    }
+
+    .quiz-feedback.pass {
+      background: var(--success-soft);
+      border: 1px solid var(--success-border);
+      color: #14532d;
+    }
+
+    .quiz-feedback.fail {
+      background: var(--danger-soft);
+      border: 1px solid var(--danger-border);
+      color: #7f1d1d;
+    }
+
+    .reset-btn {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.4rem 0.85rem;
+      font-size: 0.83rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .reset-btn:hover {
+      opacity: 0.92;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="badge-row">
+        <span class="badge gold">Architecture &amp; Systems Analysis</span>
+        <span class="badge">Go 1.27.2 + Huma v2 + MCP SDK 1.8</span>
+        <span class="badge">Angular 22.2.2 + Signals + Zod 4</span>
+        <span class="badge green">PostgreSQL 18.6 · Migration 00019 Verified</span>
+      </div>
+      <h1>GateGoldJira: Inside a Dual-Transport, High-Concurrency Work Engine</h1>
+      <p class="subtitle">
+        How a single feature-sliced Go monolith serves both human browsers (REST OpenAPI 3.1) and autonomous AI agents (Model Context Protocol) over a 44-table normalized PostgreSQL core—engineered for 200,000-issue scale without sacrificing strict serializability, idempotent retries, or zero-downtime backward compatibility.
+      </p>
+
+      <div class="stat-strip">
+        <div class="stat-card">
+          <div class="val">44 + 14</div>
+          <div class="lbl">Physical Tables + Updatable Views</div>
+        </div>
+        <div class="stat-card">
+          <div class="val">133</div>
+          <div class="lbl">Dual REST &amp; MCP Operations</div>
+        </div>
+        <div class="stat-card">
+          <div class="val">12</div>
+          <div class="lbl">Vertical Domain Feature Slices</div>
+        </div>
+        <div class="stat-card">
+          <div class="val">405 ms</div>
+          <div class="lbl">200k-Issue Board p95 Latency</div>
+        </div>
+        <div class="stat-card">
+          <div class="val">153 / 153</div>
+          <div class="lbl">Playwright E2E Browser Suites Passing</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="toc" aria-label="Table of Contents">
+      <div class="toc-title">Contents</div>
+      <ul>
+        <li><a href="#sec-background">1. Background &amp; Context</a></li>
+        <li class="toc-sub"><a href="#sec-bg-primer">1.1 Foundational Concepts</a></li>
+        <li class="toc-sub"><a href="#sec-bg-evolution">1.2 From MVP (001) to Scalable Core (002)</a></li>
+        <li><a href="#sec-intuition">2. Core Architectural Intuition</a></li>
+        <li class="toc-sub"><a href="#sec-int-dual">2.1 One Engine, Two Transports</a></li>
+        <li class="toc-sub"><a href="#sec-int-views">2.2 Zero-Copy Schema Evolution</a></li>
+        <li class="toc-sub"><a href="#sec-int-locks">2.3 Concurrency: Why Locks Deadlock &amp; How GateGoldJira Fixes It</a></li>
+        <li class="toc-sub"><a href="#sec-int-200k">2.4 Solving the 200k Board Count Bottleneck</a></li>
+        <li><a href="#sec-walkthrough">3. Code &amp; System Walkthrough</a></li>
+        <li class="toc-sub"><a href="#sec-walk-layers">3.1 Layer Topology &amp; Import Firewall</a></li>
+        <li class="toc-sub"><a href="#sec-walk-runner">3.2 The 11-Phase Command Runner</a></li>
+        <li class="toc-sub"><a href="#sec-walk-ranking">3.3 64-Bit Midpoint Ranking &amp; Lazy Tails</a></li>
+        <li class="toc-sub"><a href="#sec-walk-media">3.4 Lock-Free 2-Phase Private Media</a></li>
+        <li class="toc-sub"><a href="#sec-walk-approvals">3.5 5-Tuple Contextual Approvals &amp; WIP</a></li>
+        <li class="toc-sub"><a href="#sec-walk-frontend">3.6 Angular 22 Signals &amp; Epoch State</a></li>
+        <li><a href="#sec-quiz">4. Comprehension Quiz (5 Questions)</a></li>
+      </ul>
+    </nav>
+
+    <main class="content">
+
+      <!-- ================================================================ -->
+      <!-- SECTION 1: BACKGROUND                                            -->
+      <!-- ================================================================ -->
+      <section class="card" id="sec-background">
+        <div class="section-eyebrow">Section 1 · Context &amp; Foundations</div>
+        <h2 class="section-title">Background: Why Issue Trackers Are Deceptively Hard</h2>
+
+        <p>
+          At first glance, an issue tracker looks like a textbook CRUD application: users create tickets, assign them to teammates, and drag cards across columns on a Kanban board. Yet as soon as an organization scales to hundreds of concurrent engineers, automated CI/CD integrations, and AI coding assistants all mutating the same project simultaneously, naive CRUD architectures collapse under four subtle failure modes:
+        </p>
+        <ul>
+          <li><strong>Lost Updates &amp; Stale Overwrites:</strong> Alice edits an issue's priority while Bob updates its due date. If the client sends a full-record <code>PUT</code>, whoever clicks save second silently erases the other's change.</li>
+          <li><strong>Workflow &amp; WIP Race Conditions:</strong> A column has a hard Work-In-Progress (WIP) limit of 5 cards, and currently holds 4. Two engineers simultaneously drag different cards into that column. Under PostgreSQL's default <code>READ COMMITTED</code> isolation, both transactions see count = 4, both succeed, and the column ends up with 6 cards—violating the invariant.</li>
+          <li><strong>Phantom Duplicate Mutations:</strong> A mobile or browser client submits a "Create Issue" or "Add Comment" request over an unstable connection. The server commits the transaction, but the HTTP response drops. When the client retries, a naive API creates a duplicate ticket.</li>
+          <li><strong>Cross-Transport Drift:</strong> Modern engineering teams interact with work items through both a web UI (REST) and AI assistants (Model Context Protocol / MCP). When REST handlers and MCP tools contain separate validation or SQL logic, security boundaries and workflow rules inevitably diverge.</li>
+        </ul>
+
+        <details class="primer" id="sec-bg-primer">
+          <summary>Deep Background Primer (Skip if familiar with MVCC, Advisory Locks, and Expand/Contract Migrations)</summary>
+          <div class="primer-body">
+            <h4>1. Snapshot Isolation (MVCC) vs. Write Skew</h4>
+            <p>
+              PostgreSQL uses Multi-Version Concurrency Control (MVCC). Readers never block writers, and writers never block readers. However, when a business rule depends on a <em>predicate across multiple rows</em> (such as "the total number of active cards in stage X must not exceed 5" or "adding edge A &rarr; B must not create a cycle in the dependency graph"), simply locking the single row being updated is insufficient. Two concurrent transactions can read the same snapshot, validate the multi-row invariant, and write disjoint rows that together break the invariant—an anomaly known as <strong>write skew</strong>. Preventing write skew requires either explicit lock coordination (such as PostgreSQL transaction-scoped advisory locks, <code>pg_advisory_xact_lock</code>) or <code>REPEATABLE READ</code> / <code>SERIALIZABLE</code> retry loops.
+            </p>
+            <h4>2. Idempotency Keys &amp; Deterministic Command Receipts</h4>
+            <p>
+              To make network retries safe, mutations attach a client-generated UUID (an <code>Idempotency-Key</code>) along with a cryptographic hash (SHA-256) of the request payload. Inside the same database transaction that modifies domain tables, the server writes a row to a <code>command_receipts</code> table. If the client retries with the same key and payload hash, the server short-circuits execution and replays the stored JSON response. If the client reuses the same key with a <em>different</em> payload hash, the server rejects it with <code>409 Conflict</code>.
+            </p>
+            <h4>3. Expand &rarr; Bridge &rarr; Backfill &rarr; Switch &rarr; Retire</h4>
+            <p>
+              When refactoring a live database schema (for example, replacing hardcoded status strings like <code>'in_progress'</code> with foreign keys to a customizable <code>workflow_stages</code> table), dropping and recreating columns breaks running code. Instead, production systems use a 5-step choreography: (1) <strong>Expand</strong> new normalized tables alongside old ones; (2) <strong>Bridge</strong> writes via SQL triggers so old and new columns stay synchronized; (3) <strong>Backfill</strong> historical rows in bounded batches; (4) <strong>Switch</strong> application readers and writers to the new schema; and (5) <strong>Retire</strong> the old physical tables—optionally leaving behind updatable SQL views (<code>INSTEAD OF</code> triggers) so legacy API consumers continue working without data duplication.
+            </p>
+          </div>
+        </details>
+
+        <h3 id="sec-bg-evolution">1.2 Narrow Background: GateGoldJira's Two Architectural Epochs</h3>
+        <p>
+          GateGoldJira's repository history and specification tree (<code>specs/</code>) capture two distinct architectural epochs executed against a pinned, zero-drift toolchain:
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Epoch</th>
+                <th>Migrations</th>
+                <th>Core Capabilities &amp; Architectural Shift</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Epoch 1: MVP Core</strong><br/><code>specs/001-gategoldjira-mvp</code></td>
+                <td><code>00001</code> &ndash; <code>00010</code></td>
+                <td>
+                  Established company/project RBAC, initial issues &amp; Kanban boards, rich-text comments (Tiptap + Bluemonday HTML sanitization), private picture/attachment storage, planning/velocity reports, assignment rules, notifications outbox, and full REST + MCP parity. In Epoch 1, issue types/priorities/statuses were fixed strings and boards shared a single project-wide rank.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Epoch 2: Scalable Core V2</strong><br/><code>specs/002-scalable-core</code></td>
+                <td><code>00011</code> &ndash; <code>00019</code></td>
+                <td>
+                  Refactored the storage and concurrency engine to pass <strong>100,000- to 200,000-issue / 100-concurrent-user</strong> workloads (`p95 &lt; 500ms` reads, `&lt; 750ms` writes). Introduced 4-way search routing (<code>00011</code>), customizable per-project workflows/stages/types/priorities (<code>00012</code>), shared-vs-exclusive project lifecycle advisory locks (<code>00013</code>), atomic prior-value CAS field patches (<code>00014</code>), independent multi-board layouts &amp; ranks (<code>00015</code>), typed custom fields &amp; 5-tuple contextual approvals (<code>00016</code>), unified media assets &amp; chunked upload reservations (<code>00017</code>), legacy bridge retirement into 14 updatable SQL compatibility views (<code>00018</code>), and a partial active-stage count index (<code>00019</code>).
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <div class="callout-title">Pinned Toolchain &amp; Zero-Drift Contract Guarantee</div>
+          <p>
+            Every layer of GateGoldJira is strictly pinned and verified by <code>scripts/check-generated.sh</code> and <code>scripts/check-architecture.py</code>: <strong>Go 1.27.2</strong>, <strong>Huma v2.39.1</strong> (OpenAPI 3.1), <strong>pgx v5.11.0 + sqlc v1.31.1</strong>, <strong>Goose v3.28.0</strong>, <strong>Official MCP Go SDK v1.8.0</strong>, <strong>PostgreSQL 18.6</strong>, <strong>Angular 22.2.2</strong>, <strong>TypeScript 6.0.3</strong>, <strong>Tiptap 3.31.4</strong>, and <strong>Zod 4.6.5</strong>. Neither REST OpenAPI specs nor TypeScript SDK clients are hand-edited; they are deterministically exported from Go's runtime adapter registration.
+          </p>
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- SECTION 2: CORE ARCHITECTURAL INTUITION                          -->
+      <!-- ================================================================ -->
+      <section class="card" id="sec-intuition">
+        <div class="section-eyebrow">Section 2 · Mental Models &amp; Design Essence</div>
+        <h2 class="section-title">Core Architectural Intuition</h2>
+
+        <p>
+          To understand GateGoldJira deeply, you only need four mental models. Almost every file in <code>backend/</code> and <code>frontend/</code> is a direct consequence of these four design choices.
+        </p>
+
+        <h3 id="sec-int-dual">2.1 Mental Model 1: One Domain Engine, Two Equal Citizens (REST &amp; MCP)</h3>
+        <p>
+          In many applications, AI assistant support (MCP) is bolted on as a secondary wrapper that makes HTTP calls back to the REST API or duplicates SQL queries. GateGoldJira rejects both approaches. Instead, every domain package in <code>backend/internal/features/&lt;feature&gt;/</code> exposes a transport-agnostic <code>Service</code> struct, flanked by two thin adapter files: <code>http.go</code> (Huma v2 REST routes) and <code>mcp.go</code> (MCP JSON-RPC 2.0 tool definitions).
+        </p>
+
+        <div class="diagram-box">
+          <svg viewBox="0 0 880 310" width="100%" height="auto" role="img" aria-label="Dual-Transport Architecture Diagram">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
+              </marker>
+            </defs>
+            <!-- Clients -->
+            <rect x="20" y="35" width="190" height="85" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+            <text x="115" y="65" text-anchor="middle" font-weight="700" font-size="13" fill="#1e3a8a">Angular 22.2.2 SPA</text>
+            <text x="115" y="85" text-anchor="middle" font-size="11" fill="#475569">@hey-api SDK + Zod 4</text>
+            <text x="115" y="103" text-anchor="middle" font-size="10" fill="#64748b">Audience: /api · Idempotency-Key</text>
+
+            <rect x="20" y="180" width="190" height="85" rx="8" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+            <text x="115" y="210" text-anchor="middle" font-weight="700" font-size="13" fill="#4c1d95">AI Assistant (MCP Client)</text>
+            <text x="115" y="230" text-anchor="middle" font-size="11" fill="#475569">Streamable HTTP JSON-RPC</text>
+            <text x="115" y="248" text-anchor="middle" font-size="10" fill="#64748b">Audience: /mcp · _meta.idempotencyKey</text>
+
+            <!-- Adapters -->
+            <rect x="275" y="35" width="175" height="85" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+            <text x="362" y="63" text-anchor="middle" font-weight="700" font-size="12.5" fill="#0f172a">Huma v2 REST Adapter</text>
+            <text x="362" y="82" text-anchor="middle" font-size="11" fill="#475569">features/*/http.go</text>
+            <text x="362" y="100" text-anchor="middle" font-size="10" fill="#64748b">119 OpenAPI Paths (v1 + v2)</text>
+
+            <rect x="275" y="180" width="175" height="85" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+            <text x="362" y="208" text-anchor="middle" font-weight="700" font-size="12.5" fill="#0f172a">MCP Tool Adapter</text>
+            <text x="362" y="227" text-anchor="middle" font-size="11" fill="#475569">features/*/mcp.go</text>
+            <text x="362" y="245" text-anchor="middle" font-size="10" fill="#64748b">133 Typed MCP Tools</text>
+
+            <!-- Shared Runner & Service -->
+            <rect x="515" y="55" width="175" height="190" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+            <text x="602" y="85" text-anchor="middle" font-weight="700" font-size="13" fill="#92400e">Domain Service</text>
+            <text x="602" y="103" text-anchor="middle" font-size="11" fill="#78350f">+ command.Runner</text>
+            <line x1="530" y1="115" x2="675" y2="115" stroke="#fcd34d" stroke-width="1"/>
+            <text x="602" y="135" text-anchor="middle" font-size="10.5" fill="#475569">1. Canonical SHA-256 Hash</text>
+            <text x="602" y="153" text-anchor="middle" font-size="10.5" fill="#475569">2. Advisory Lifecycle Lock</text>
+            <text x="602" y="171" text-anchor="middle" font-size="10.5" fill="#475569">3. Receipt Replay Check</text>
+            <text x="602" y="189" text-anchor="middle" font-size="10.5" fill="#475569">4. GuardWIP WriteGuard</text>
+            <text x="602" y="207" text-anchor="middle" font-size="10.5" fill="#475569">5. Activity + Outbox Emit</text>
+            <text x="602" y="225" text-anchor="middle" font-size="10.5" fill="#475569">6. Commit &amp; Save Receipt</text>
+
+            <!-- Database -->
+            <rect x="740" y="75" width="125" height="150" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+            <text x="802" y="115" text-anchor="middle" font-weight="700" font-size="12.5" fill="#14532d">PostgreSQL 18</text>
+            <text x="802" y="135" text-anchor="middle" font-size="11" fill="#166534">44 Tables</text>
+            <text x="802" y="153" text-anchor="middle" font-size="11" fill="#166534">14 Views</text>
+            <text x="802" y="175" text-anchor="middle" font-size="10" fill="#475569">sqlc + pgx/v5</text>
+
+            <!-- Arrows -->
+            <line x1="210" y1="77" x2="270" y2="77" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+            <line x1="210" y1="222" x2="270" y2="222" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+            <line x1="450" y1="77" x2="510" y2="120" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+            <line x1="450" y1="222" x2="510" y2="180" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+            <line x1="690" y1="150" x2="735" y2="150" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+          </svg>
+          <div class="diagram-caption">
+            Figure 1: Both Huma v2 REST and MCP Streamable HTTP adapters normalize inputs into the same <code>command.Runner</code> pipeline. However, JWT audience claims (<code>/api</code> vs <code>/mcp</code>) and command receipts (<code>transport = 'rest' | 'mcp'</code>) remain strictly isolated.
+          </div>
+        </div>
+
+        <p>
+          Look at what happens when an engineer patches an issue's priority via the Angular web UI versus when Claude/Cursor invokes the <code>issues_patch_modern_field</code> MCP tool with toy data for issue <code>GATE-42</code>:
+        </p>
+
+        <div class="toy-grid">
+          <div class="toy-panel">
+            <h4>Human Browser (REST <code>PATCH /api/v2/projects/{id}/issues/42/fields</code>)</h4>
+            <pre><code>Headers:
+  Authorization: Bearer &lt;JWT aud="https://.../api"&gt;
+  Idempotency-Key: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+
+Body:
+{
+  "field": "priorityId",
+  "expectedPriorityId": "11111111-1111-1111-1111-111111111111",
+  "priorityId": "22222222-2222-2222-2222-222222222222"
+}</code></pre>
+          </div>
+          <div class="toy-panel">
+            <h4>AI Assistant (MCP <code>POST /mcp</code> &rarr; <code>issues_patch_modern_field</code>)</h4>
+            <pre><code>Headers:
+  Authorization: Bearer &lt;JWT aud="https://.../mcp"&gt;
+
+JSON-RPC Params:
+{
+  "name": "issues_patch_modern_field",
+  "_meta": { "idempotencyKey": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d" },
+  "arguments": {
+    "projectId": "...", "issueNumber": 42, "field": "priorityId",
+    "expectedPriorityId": "11111111-1111-1111-1111-111111111111",
+    "priorityId": "22222222-2222-2222-2222-222222222222"
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <p>
+          Both adapters strip transport wrappers, merge path and body parameters into a canonical JSON map, compute the identical SHA-256 payload hash, and call <code>issueService.PatchModernField(...)</code>. Yet because <code>command_receipts</code> keys on <code>(actor_user_id, transport, operation_id, idempotency_key)</code>, an MCP client can never replay or collide with a REST client's receipt, and a REST Bearer token is cryptographically rejected by the <code>/mcp</code> verifier due to audience mismatch.
+        </p>
+
+        <h3 id="sec-int-views">2.2 Mental Model 2: Zero-Copy Compatibility via Updatable SQL Views (<code>00018</code>)</h3>
+        <p>
+          During the transition from V1 (where <code>issues.status</code> was a string like <code>'in_progress'</code> and <code>issues.priority</code> was <code>'high'</code>) to V2 (where <code>issue_records</code> stores UUID foreign keys <code>stage_id</code>, <code>priority_id</code>, <code>type_id</code>, and <code>workflow_id</code>), how do you keep all 100+ legacy v1 REST/MCP operations working without maintaining two synchronized tables forever?
+        </p>
+        <p>
+          In migration <a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/db/migrations/00018_retire_legacy_core.sql"><code>00018_retire_legacy_core.sql</code></a>, GateGoldJira renamed the physical V2 tables to <code>issue_records</code>, <code>board_records</code>, <code>assignment_rule_records</code>, and <code>attachments</code>, and replaced the old table names (<code>issues</code>, <code>boards</code>, <code>pictures</code>, <code>project_status_order</code>, <code>project_assignment_rules</code>) with <strong>14 updatable SQL compatibility views</strong> backed by PL/pgSQL <code>INSTEAD OF INSERT OR UPDATE OR DELETE</code> triggers:
+        </p>
+
+        <pre><code>-- Simplified intuition of migration 00018_retire_legacy_core.sql:
+-- 1. Legacy sqlc query runs: SELECT id, status, priority FROM issues WHERE project_id = $1;
+-- 2. The `issues` VIEW joins `issue_records` with `workflow_stages` and `priority_definitions`
+--    to project the legacy string columns (`status`, `priority`, `issue_type`) on the fly!
+-- 3. When a legacy v1 endpoint runs: UPDATE issues SET status = 'done' WHERE id = $1;
+--    The `write_issue_contract()` INSTEAD OF trigger intercepts the write, resolves 'done'
+--    to the canonical `stage_id` UUID in `workflow_stages`, and updates `issue_records`!</code></pre>
+
+        <div class="callout tradeoff">
+          <div class="callout-title">Architectural Trade-Off: Why Refuse Lossy Legacy Writes in Modern Mode?</div>
+          <p>
+            Once a project administrator activates <strong>Modern Mode</strong> (<code>projects.core_mode = 'modern'</code>) and configures custom workflow stages or grouped board columns that cannot be represented in the 4-stage legacy vocabulary (<code>todo</code>, <code>in_progress</code>, <code>code_review</code>, <code>done</code>), legacy v1 write endpoints do <em>not</em> guess or silently coerce values. Instead, <code>requireLegacyProjectMode</code> returns an explicit upgrade error guiding the caller to the v2 identifier-based contract. Data integrity always wins over lossy backward compatibility.
+          </p>
+        </div>
+
+        <h3 id="sec-int-locks">2.3 Mental Model 3: The 6-Level Lock Hierarchy &amp; Shared vs. Exclusive Lifecycle</h3>
+        <p>
+          In Epoch 1, every mutation on a project acquired an exclusive PostgreSQL advisory lock on the project UUID. That guaranteed zero deadlocks and trivial serializability—but under a 100-concurrent-user load test, 99 engineers editing issue descriptions or toggling priorities queued behind one another on the project lock.
+        </p>
+        <p>
+          In Epoch 2 (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/platform/command/locks.go"><code>backend/internal/platform/command/locks.go</code></a>), GateGoldJira introduced a <strong>Two-Tier Project Lifecycle Lock</strong> combined with a strict <strong>6-Level Lock Acquisition Hierarchy</strong>:
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Lock Mode</th>
+                <th>PostgreSQL Primitive</th>
+                <th>Who Uses It</th>
+                <th>Concurrency Behavior</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Shared Lifecycle</strong><br/>(<code>SharedMetadata: true</code>)</td>
+                <td><code>pg_advisory_xact_lock_shared(class=1, key=fnv64a(project_id))</code> + targeted <code>SELECT ... FOR UPDATE</code> on the single issue/board row</td>
+                <td>Whitelisted high-frequency operations: <code>PatchIssueField</code>, <code>PatchModernIssueField</code>, <code>ReorderBoardCard</code>, <code>SaveCustomFields</code>, <code>VoteApproval</code>, <code>ResubmitApproval</code></td>
+                <td><strong>100+ concurrent writers run in parallel</strong> across different issues in the same project, while preventing project archival/deletion or workflow schema changes underneath them.</td>
+              </tr>
+              <tr>
+                <td><strong>Exclusive Lifecycle</strong><br/>(<code>ExclusiveLifecycle: true</code>)</td>
+                <td><code>pg_advisory_xact_lock(class=1, key=fnv64a(project_id))</code></td>
+                <td>Structural mutations: workflow/stage edits, stage retirement, modern-mode activation, dependency graph mutations, stage transitions affecting hard WIP</td>
+                <td>Drains active shared metadata writers, executes the structural change atomically against a stable project snapshot, and releases on commit.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          To guarantee that concurrent transactions acquiring multiple locks can <strong>never deadlock</strong>, <code>command.AcquireLocks</code> sorts all lock requests deterministically by a 6-level hierarchy before issuing a single SQL lock statement:
+        </p>
+        <pre><code>Level 1: ProjectLifecycle  (class 1)  — Shared or Exclusive per-project barrier
+Level 2: Configuration     (class 2)  — Workflow / taxonomy / field definition changes
+Level 3: BoardLayout       (class 3)  — Board columns, stage mappings, and WIP settings
+Level 4: IssueGraph        (class 4)  — Dependency &amp; subtask DAG cycle checks
+Level 5: BoardOrder        (class 5)  — Per-board lexicographical/integer card ranking
+Level 6: IssueRow          (class 6)  — Individual issue row mutations (sorted by UUID)</code></pre>
+
+        <h3 id="sec-int-200k">2.4 Mental Model 4: How Migration <code>00019</code> Solved the 200k-Issue Board Bottleneck</h3>
+        <p>
+          During the 200,000-issue / 100-concurrent-user scale verification (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/specs/002-scalable-core/validation/modern-completion-performance.md"><code>modern-completion-performance.md</code></a>), board loading p95 latency initially spiked to <strong>~630 ms</strong>—exceeding the 500 ms SLA budget.
+        </p>
+        <p>
+          Profiling with <code>EXPLAIN (ANALYZE, BUFFERS)</code> revealed a classic database insight: <strong>fetching the first 50 cards per column via keyset pagination was fast, but computing exact total card counts per column across 200,000 issues was scanning tens of thousands of heap pages.</strong> Worse, if a board mapped two workflow stages to the same column, naive joins double-counted or spilled to disk.
+        </p>
+
+        <div class="callout perf">
+          <div class="callout-title">The Migration 00019 Fix: Index-Only Partial Stage Counting (630 ms &rarr; 405 ms)</div>
+          <p>
+            Instead of adding denormalized counter columns (which would turn every issue transition into a hot-row lock bottleneck!), migration <a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/db/migrations/00019_active_stage_count.sql"><code>00019_active_stage_count.sql</code></a> added a compact partial B-tree index on <code>issue_records (project_id, stage_id) WHERE archived_at IS NULL AND backlog_Entered_at IS NULL</code>, paired with a deduplicated stage-array query (<code>CountProjectIssuesByStages</code>). PostgreSQL satisfies exact column totals via pure <strong>Index-Only Scans</strong> in a single <code>REPEATABLE READ</code> snapshot, dropping 200k-issue board p95 latency from <strong>630 ms down to 405.00 ms</strong> with zero write amplification.
+          </p>
+        </div>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- SECTION 3: CODE & SYSTEM WALKTHROUGH                             -->
+      <!-- ================================================================ -->
+      <section class="card" id="sec-walkthrough">
+        <div class="section-eyebrow">Section 3 · Deep Codebase Walkthrough</div>
+        <h2 class="section-title">Code &amp; System Walkthrough</h2>
+
+        <h3 id="sec-walk-layers">3.1 Layer Topology &amp; CI-Enforced Import Firewall</h3>
+        <p>
+          The backend (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/"><code>backend/</code></a>) is organized into three strict rings enforced on every build by <a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/scripts/check-architecture.py"><code>scripts/check-architecture.py</code></a> and <a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/tests/contracts/boundaries_test.go"><code>backend/tests/contracts/boundaries_test.go</code></a>:
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Ring</th>
+                <th>Packages</th>
+                <th>Import Rules &amp; Responsibilities</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. Platform Kernel</strong><br/><code>internal/platform/*</code></td>
+                <td><code>auth</code>, <code>command</code>, <code>config</code>, <code>database</code>, <code>httpapi</code>, <code>mcpapi</code>, <code>objectstore</code></td>
+                <td><strong>Zero domain knowledge.</strong> Cannot import <code>internal/features/*</code> or <code>internal/app</code>. Provides JWT verification, transactional command execution, sqlc database models, Huma/MCP server wrappers, and GCS/local storage primitives.</td>
+              </tr>
+              <tr>
+                <td><strong>2. Vertical Feature Slices</strong><br/><code>internal/features/*</code></td>
+                <td><code>identity</code>, <code>projects</code>, <code>configuration</code>, <code>issues</code>, <code>boards</code>, <code>comments</code>, <code>attachments</code>, <code>pictures</code>, <code>planning</code>, <code>integrations</code>, <code>notifications</code>, <code>activity</code></td>
+                <td>Cannot import <code>internal/app</code> or peer features (except whitelisted cross-cutting sinks: <code>activity</code>, <code>notifications</code>, and media helpers <code>attachments</code>/<code>pictures</code>). Each feature owns its own <code>*.sql</code> queries, <code>Service</code>, <code>http.go</code>, and <code>mcp.go</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>3. Composition Root</strong><br/><code>internal/app</code> &amp; <code>cmd/*</code></td>
+                <td><code>internal/app/app.go</code>, <code>cmd/gategoldjira</code>, <code>cmd/contracts</code>, <code>cmd/mcp-contracts</code>, <code>cmd/contract-fixture</code></td>
+                <td>Wires all 12 feature services together, injects cross-feature callbacks to break circular dependencies, registers REST &amp; MCP routes, and manages background worker lifecycles.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          How do <code>issues</code>, <code>boards</code>, <code>configuration</code>, and <code>integrations</code> collaborate when <code>check-architecture.py</code> forbids them from importing each other? Look at lines 89–103 of <a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/app/app.go#L89-L103"><code>backend/internal/app/app.go</code></a>:
+        </p>
+        <pre><code>// Functional dependency inversion in backend/internal/app/app.go:
+application.Runner.WriteGuard = boards.GuardWIP
+issueService := issues.New(application.Runner, application.Cursors)
+boardService := boards.New(application.Runner, application.Cursors, issues.Summary)
+boardService.WithModernSummaries(issues.ModernSummaries)
+boardService.WithNativeMover(issueService.MoveStageForBoard)
+issueService.WithBoards(boardService.Access())
+issueService.WithStageRule(integrations.ApplyStageRule)
+boardService.WithStageMover(issueService.RetireStage)
+configurationService := configuration.New(application.Runner, application.Cursors).
+    WithStageMigrator(issueService.MigrateWorkflowStage).
+    WithFieldBackfiller(issueService.BackfillFieldDefault)</code></pre>
+
+        <h3 id="sec-walk-runner">3.2 Inside the 11-Phase Transactional Command Pipeline</h3>
+        <p>
+          Every state-changing operation across all 12 features executes through <a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/platform/command/command.go"><code>command.Execute</code></a> / <a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/platform/command/runner.go"><code>Runner.ExecuteWithAccess</code></a>. Here is the exact 11-phase lifecycle of a mutation:
+        </p>
+
+        <div class="pipeline-grid">
+          <div class="pipe-step">
+            <span class="step-num">Phase 1 &ndash; 2</span>
+            <h4>Envelope &amp; SHA-256 Digest</h4>
+            <p>Validates <code>Actor.UserID</code>, <code>Operation</code> (1 of 134 typed IDs), and <code>IdempotencyKey</code>. Computes canonical transport-neutral SHA-256 hash of the request payload.</p>
+          </div>
+          <div class="pipe-step">
+            <span class="step-num">Phase 3 &ndash; 4</span>
+            <h4>Tx Open &amp; Lock Ordering</h4>
+            <p>Opens a <code>pgx.Tx</code> (<code>ReadCommitted</code> or <code>RepeatableRead</code>) and acquires sorted advisory locks (<code>SharedMetadata</code> or <code>ExclusiveLifecycle</code>).</p>
+          </div>
+          <div class="pipe-step">
+            <span class="step-num">Phase 5 &ndash; 6</span>
+            <h4>Pre-Replay Auth &amp; Receipt Check</h4>
+            <p>Runs <code>Authorize(ctx, queries)</code> <em>before</em> checking <code>command_receipts</code> so a revoked user cannot replay cached responses. Replays stored JSON on hash match.</p>
+          </div>
+          <div class="pipe-step">
+            <span class="step-num">Phase 7 &ndash; 8</span>
+            <h4>Domain Work &amp; GuardWIP</h4>
+            <p>Executes the feature's mutation closure, then invokes <code>Runner.WriteGuard</code> (<code>boards.GuardWIP</code>) to verify no hard-capped board column exceeded its WIP limit.</p>
+          </div>
+          <div class="pipe-step">
+            <span class="step-num">Phase 9 &ndash; 11</span>
+            <h4>Audit, Outbox &amp; Commit</h4>
+            <p>Appends immutable <code>activity_events</code>, enqueues deduplicated <code>notification_events</code>, persists the <code>command_receipts</code> row, and commits (retrying <code>40001</code> up to 4&times;).</p>
+          </div>
+        </div>
+
+        <h3 id="sec-walk-ranking">3.3 64-Bit Midpoint Ranking, Rebalancing &amp; Lazy Unranked Tails</h3>
+        <p>
+          Kanban boards and backlogs require arbitrary drag-and-drop reordering without renumbering thousands of rows on every move. GateGoldJira implements a hybrid <strong>64-bit integer gap ranking + lazy unranked tail</strong> algorithm in <a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/features/issues/order.go"><code>issues/order.go</code></a> and <a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/features/boards/movement.go"><code>boards/movement.go</code></a>:
+        </p>
+        <ul>
+          <li><strong>Midpoint Bisection (<code>RankGap = 1024</code>):</strong> Adjacent ranked cards are spaced by <code>1024</code>. Inserting a card between rank $A$ and rank $B$ assigns $\lfloor(A + B) / 2\rfloor$ in $O(1)$ time (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/features/issues/order.go#L19-L41"><code>RankBetween</code></a>), supporting $\log_2(1024) = 10$ consecutive insertions into the exact same slot before gap exhaustion.</li>
+          <li><strong>Bounded Rebalancing (<code>MaximumRebalance = 2000</code>):</strong> When $B - A \le 1$, <code>RebalanceRanks</code> re-spaces the active ranked prefix in multiples of <code>1024</code>, capped at 2,000 items so rebalancing never causes unbounded transaction latency.</li>
+          <li><strong>Lazy Unranked Tails:</strong> In a 200,000-issue project, pre-populating <code>board_issue_ranks</code> for every board would multiply storage and write costs. Instead, newly created issues have <em>no row</em> in <code>board_issue_ranks</code> until explicitly dragged! Board queries (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/features/boards/reads.go"><code>boards/reads.go</code></a>) read Phase 1 (explicitly ranked cards ordered by <code>rank ASC</code>) followed seamlessly by Phase 2 (unranked cards ordered by <code>issue_number ASC</code>), encoded into an HMAC-SHA256 signed cursor (<code>Section: "ranked" | "unranked"</code>).</li>
+        </ul>
+
+        <h3 id="sec-walk-media">3.4 Lock-Free Two-Phase Private Media Storage</h3>
+        <p>
+          Holding a PostgreSQL transaction open while streaming a 10 MiB file to Google Cloud Storage would exhaust the database connection pool and stall advisory locks. GateGoldJira's media pipeline (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/features/attachments/"><code>features/attachments/</code></a> and <a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/platform/objectstore/"><code>platform/objectstore/</code></a>) strictly separates network I/O from database transactions:
+        </p>
+        <ol>
+          <li><strong>Concurrency Gate:</strong> Middleware (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/platform/objectstore/gate.go"><code>objectstore.TransferGate</code></a>) limits each backend instance to at most <strong>2 concurrent binary transfers</strong>, returning <code>429 Too Many Requests</code> if saturated.</li>
+          <li><strong>Phase 1 — Session &amp; Chunked Staging (Outside Domain Locks):</strong> The client creates an <code>upload_reservations</code> row and uploads chunks (`256 KiB`–`8 MiB`) to the private <strong>Staging Bucket</strong>. Magic-byte sniffing (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/features/attachments/validation/validation.go"><code>validation.go</code></a>) verifies PNG/JPEG/WebP/PDF/CSV/Office headers and explicitly blocks SVG/HTML/executable script payloads.</li>
+          <li><strong>Phase 2 — Content Promotion &amp; Reference Binding:</strong> When the issue description or comment is saved, <code>PrepareAssets</code> copies verified staging objects to the immutable <strong>Published Bucket</strong> (where the runtime IAM service account has <em>no delete permission</em>) and records SHA-256 + GCS generation numbers before opening the short SQL transaction that binds <code>issue_asset_references</code>.</li>
+        </ol>
+
+        <h3 id="sec-walk-approvals">3.5 Contextual 5-Tuple Approvals &amp; Cross-Command <code>GuardWIP</code></h3>
+        <p>
+          Two pieces of domain logic in <code>issues</code> and <code>boards</code> stand out for their rigor:
+        </p>
+        <ul>
+          <li>
+            <strong>5-Tuple Contextual Approvals (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/features/issues/canonical_transitions.go"><code>canonical_transitions.go</code></a>):</strong> When a workflow transition requires approval, an approval vote in <code>issue_approvals</code> is cryptographically bound to the 5-tuple <code>(issue_id, transition_id, issue_revision, workflow_revision, configuration_revision)</code>. If someone modifies the issue's content, edits the workflow graph, or alters project configuration <em>after</em> an approver votes "Approved" but <em>before</em> the transition executes, the revision tuple no longer matches and the stale approval is automatically invalidated!
+          </li>
+          <li>
+            <strong>Cross-Command Hard WIP Enforcement (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/backend/internal/features/boards/wip.go"><code>boards/wip.go</code></a>):</strong> A board column can configure a hard WIP maximum. Because cards can enter a stage not only via board drag-and-drop, but also via issue creation, bulk stage edits, backlog promotion, CSV import, or stage retirement, <code>boards.GuardWIP</code> is wired into <code>Runner.WriteGuard</code> and inspects <strong>all 18 occupancy-changing operations</strong> before transaction commit. Furthermore, to ensure WIP counts are deterministic for all users, hard-capped boards prohibit viewer-relative or time-relative saved search filters (such as <code>AssigneeMe</code> or <code>Overdue</code>).
+          </li>
+        </ul>
+
+        <h3 id="sec-walk-frontend">3.6 Angular 22.2.2 Signal State, <code>sessionEpoch</code> &amp; Deterministic Retries</h3>
+        <p>
+          The Angular frontend (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/frontend/src/app/"><code>frontend/src/app/</code></a>) uses standalone components with <code>ChangeDetectionStrategy.OnPush</code> and native Angular Signals (<code>signal</code>, <code>computed</code>, <code>effect</code>), backed by three resilience primitives in <code>src/app/core/</code>:
+        </p>
+        <ul>
+          <li><strong><code>AuthService.sessionEpoch</code> (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/frontend/src/app/core/auth/auth.service.ts"><code>auth.service.ts</code></a>):</strong> A monotonically increasing counter incremented on sign-out or <code>401/403</code> responses. Every in-flight <code>RequestState</code> captures the epoch before awaiting a promise and discards late responses if the epoch changed—preventing stale data from a previous user or project from polluting the UI.</li>
+          <li><strong><code>RetryIntent</code> (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/frontend/src/app/core/api/retry-intent.ts"><code>retry-intent.ts</code></a>):</strong> Memoizes a generated UUIDv4 <code>Idempotency-Key</code> per <code>(operationKey, JSON.stringify(payload))</code>. If a save fails due to a transient network drop and the user clicks "Retry" without changing the form, the exact same <code>Idempotency-Key</code> is sent; if the user edits a field, a fresh UUIDv4 is generated automatically.</li>
+          <li><strong><code>DraftsService</code> (<a href="file:///home/mr-h/Documents/basher/New/GateGoldJira/frontend/src/app/core/drafts/drafts.service.ts"><code>drafts.service.ts</code></a>):</strong> Persists unsaved edits and multi-step issue creation state (<code>createdIssueId</code> + resumable attachment upload session IDs) in <code>sessionStorage</code>, guarded by <code>draftGuard</code> on route navigation.</li>
+        </ul>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- SECTION 4: INTERACTIVE COMPREHENSION QUIZ                        -->
+      <!-- ================================================================ -->
+      <section class="card" id="sec-quiz">
+        <div class="section-eyebrow">Section 4 · Active Recall &amp; Verification</div>
+        <h2 class="section-title">Interactive Architecture Quiz</h2>
+        <p>
+          Test your understanding of GateGoldJira's architecture, concurrency model, and schema design. Select an answer for each question to see immediate feedback and code citations.
+        </p>
+
+        <div class="quiz-header-bar">
+          <span id="quiz-score">Score: 0 / 5 answered</span>
+          <button class="reset-btn" onclick="resetQuiz()">Reset Quiz</button>
+        </div>
+
+        <!-- Question 1 -->
+        <div class="quiz-card" data-correct="1">
+          <div class="quiz-question">
+            1. When an engineer updates an issue's priority via the Angular UI (<code>PatchModernIssueField</code>) while 99 other users are editing other issues in the same project, what locks does <code>command.Runner</code> acquire?
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">
+              A. An exclusive project advisory lock (<code>pg_advisory_xact_lock</code>) on the project ID so all mutations in the project serialize one by one.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">
+              B. A shared project lifecycle advisory lock (<code>pg_advisory_xact_lock_shared</code>) plus a targeted row lock on the single issue, allowing concurrent metadata edits across different issues while blocking structural project/workflow changes.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">
+              C. No database locks at all; it relies solely on client-side local storage timestamps.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 3)">
+              D. A table-level <code>LOCK TABLE issue_records IN ACCESS EXCLUSIVE MODE</code> statement.
+            </button>
+          </div>
+          <div class="quiz-feedback">
+            <strong>Explanation:</strong> <code>PatchModernIssueField</code> is one of the 6 whitelisted high-concurrency operations that opt into <code>Access{SharedMetadata: true}</code> (<code>backend/internal/platform/command/locks.go</code>). It acquires <code>pg_advisory_xact_lock_shared</code> on the project lifecycle lock so 100+ users can patch issue fields concurrently, while still preventing an admin from archiving the project or mutating the workflow schema mid-transaction.
+          </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="quiz-card" data-correct="2">
+          <div class="quiz-question">
+            2. How does GateGoldJira support legacy v1 endpoints that read and write the old <code>issues</code> and <code>boards</code> tables after migration <code>00018_retire_legacy_core.sql</code> retired those physical tables?
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">
+              A. It runs a background cron job every 60 seconds that copies rows between <code>issues</code> and <code>issue_records</code>.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">
+              B. Legacy v1 endpoints were deleted in migration 00018 and return <code>410 Gone</code>.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">
+              C. <code>00018_retire_legacy_core.sql</code> replaced <code>issues</code>, <code>boards</code>, and <code>pictures</code> with 14 updatable SQL compatibility views backed by <code>INSTEAD OF</code> triggers that project and write directly to canonical physical tables (<code>issue_records</code>, <code>board_records</code>, <code>attachments</code>).
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 3)">
+              D. It stores every issue twice in PostgreSQL using JSONB blobs.
+            </button>
+          </div>
+          <div class="quiz-feedback">
+            <strong>Explanation:</strong> Migration <code>00018_retire_legacy_core.sql</code> renamed the canonical tables to <code>issue_records</code>, <code>board_records</code>, <code>assignment_rule_records</code>, and <code>attachments</code>, and created 14 SQL views with PL/pgSQL <code>INSTEAD OF INSERT OR UPDATE OR DELETE</code> triggers (such as <code>write_issue_contract()</code>). Legacy <code>sqlc</code> queries continue working with zero data duplication.
+          </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="quiz-card" data-correct="0">
+          <div class="quiz-question">
+            3. Why does <code>command.Runner</code> execute the feature's <code>Authorize(ctx, queries)</code> callback <em>before</em> checking <code>command_receipts</code> for an idempotent replay?
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">
+              A. To prevent an actor whose project membership or role was revoked after the original request from replaying a cached mutation response using a known <code>Idempotency-Key</code>.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">
+              B. Because PostgreSQL does not allow reading <code>command_receipts</code> before reading the <code>users</code> table.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">
+              C. Because <code>Authorize</code> generates the SHA-256 hash of the request body.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 3)">
+              D. To automatically delete old receipts whenever an admin signs in.
+            </button>
+          </div>
+          <div class="quiz-feedback">
+            <strong>Explanation:</strong> In <code>backend/internal/platform/command/command.go</code>, pre-replay authorization ensures that security boundaries are always evaluated against the actor's <em>current</em> permissions inside the transaction before any cached receipt payload can be returned.
+          </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="quiz-card" data-correct="3">
+          <div class="quiz-question">
+            4. What caused the ~630 ms p95 board load bottleneck in the 200,000-issue workload, and how did migration <code>00019_active_stage_count.sql</code> bring it down to ~405 ms?
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">
+              A. Angular was rendering all 200,000 DOM nodes at once; migration 00019 enabled server-side HTML rendering.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">
+              B. JSON serialization was slow; migration 00019 switched REST responses to Protocol Buffers.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">
+              C. Migration 00019 added a mutable <code>card_count</code> integer column to <code>board_columns</code> updated by triggers on every issue write.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 3)">
+              D. Exact per-column card counting was scanning active issue heap rows; migration 00019 added a partial B-tree index on <code>issue_records (project_id, stage_id) WHERE archived_at IS NULL AND backlog_entered_at IS NULL</code> paired with deduplicated stage-array Index-Only Scans.
+            </button>
+          </div>
+          <div class="quiz-feedback">
+            <strong>Explanation:</strong> Adding mutable counter columns would have created severe lock contention on every issue transition. Instead, <code>00019_active_stage_count.sql</code> introduced a compact partial index on <code>(project_id, stage_id)</code> for active non-backlog issues so PostgreSQL computes exact same-snapshot stage counts via fast Index-Only Scans.
+          </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="quiz-card" data-correct="1">
+          <div class="quiz-question">
+            5. When a workflow transition requires contextual approval, what happens if an approver votes "Approved" on Issue #12, and then another user edits Issue #12's description before the transition is executed?
+          </div>
+          <div class="quiz-options">
+            <button class="quiz-btn" onclick="answerQuiz(this, 0)">
+              A. The transition still proceeds because approvals only check <code>(issue_id, transition_id)</code>.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 1)">
+              B. The approval is automatically invalidated for the new state because <code>issue_approvals</code> binds each approval to the 5-tuple <code>(issue_id, transition_id, issue_revision, workflow_revision, configuration_revision)</code>.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 2)">
+              C. Editing an issue description is permanently blocked once any approval vote exists.
+            </button>
+            <button class="quiz-btn" onclick="answerQuiz(this, 3)">
+              D. The issue is automatically moved back to the backlog.
+            </button>
+          </div>
+          <div class="quiz-feedback">
+            <strong>Explanation:</strong> Contextual approvals in <code>backend/internal/features/issues/canonical_transitions.go</code> bind to the exact 5-tuple <code>(issue_id, transition_id, issue_revision, workflow_revision, configuration_revision)</code>. Modifying the issue increments <code>issue_records.revision</code>, ensuring that an approval granted for version $N$ cannot be used to rubber-stamp altered content in version $N+1$.
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Quiz interaction logic
+    let answeredCount = 0;
+    let correctCount = 0;
+
+    function updateScoreDisplay() {
+      const el = document.getElementById('quiz-score');
+      el.textContent = `Score: ${correctCount} / 5 correct (${answeredCount} / 5 answered)`;
+    }
+
+    function answerQuiz(button, selectedIndex) {
+      const card = button.closest('.quiz-card');
+      if (card.dataset.answered === 'true') return;
+      card.dataset.answered = 'true';
+
+      const correctIndex = parseInt(card.dataset.correct, 10);
+      const buttons = card.querySelectorAll('.quiz-btn');
+      const feedback = card.querySelector('.quiz-feedback');
+
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === correctIndex) {
+          btn.classList.add('correct');
+        } else if (idx === selectedIndex) {
+          btn.classList.add('incorrect');
+        }
+      });
+
+      answeredCount++;
+      if (selectedIndex === correctIndex) {
+        correctCount++;
+        feedback.classList.add('show', 'pass');
+      } else {
+        feedback.classList.add('show', 'fail');
+      }
+      updateScoreDisplay();
+    }
+
+    function resetQuiz() {
+      answeredCount = 0;
+      correctCount = 0;
+      document.querySelectorAll('.quiz-card').forEach(card => {
+        card.dataset.answered = 'false';
+        card.querySelectorAll('.quiz-btn').forEach(btn => {
+          btn.disabled = false;
+          btn.classList.remove('correct', 'incorrect');
+        });
+        const fb = card.querySelector('.quiz-feedback');
+        fb.classList.remove('show', 'pass', 'fail');
+      });
+      updateScoreDisplay();
+    }
+
+    // Sticky TOC scroll-spy
+    const tocLinks = Array.from(document.querySelectorAll('.toc a'));
+    const targets = tocLinks
+      .map(link => document.querySelector(link.getAttribute('href')))
+      .filter(Boolean);
+
+    function onScroll() {
+      const scrollPos = window.scrollY + 140;
+      let activeIndex = 0;
+      targets.forEach((target, idx) => {
+        if (target.offsetTop <= scrollPos) {
+          activeIndex = idx;
+        }
+      });
+      tocLinks.forEach((link, idx) => {
+        link.classList.toggle('active', idx === activeIndex);
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  </script>
+</body>
+</html>

@@ -1,0 +1,307 @@
+GateGoldJira: proposed simplification
+===================================
+
+Status: DESIGN ONLY. No application code, API contract or database migration is
+changed by this proposal. The baseline is schema-catalog.json, captured on
+2026-10-13 at migration 00010. current-schema.* continues to describe that baseline.
+The older specs/001-gategoldjira-mvp/schema-proposal.sql is a different historical
+proposal and is not the source of this design.
+
+Start with proposed-core.puml / proposed-core.svg for the focused data model.
+Use proposed-overview.puml / proposed-overview.svg for the application architecture.
+Use proposed-schema.puml / proposed-schema.svg for the proposed database model.
+
+Decision
+--------
+
+Keep one separately deployed Angular frontend, one Go backend serving REST and
+MCP, one PostgreSQL database and private object storage. Keep the feature-first
+code organization and generated contracts. Introduce shared abstractions only
+where two existing implementations perform the same work.
+
+The target has 33 application tables plus goose_db_version, the same table count
+as the current schema. It has 272 table columns and 69 proposed foreign keys.
+Two reporting views remain. These counts describe the proposed final structure,
+not the temporary compatibility columns/tables used during migration.
+
+The simplification comes from a single owner for workflow definitions, one
+attachment model, one upload state machine and stronger project-scoped references.
+Four media/upload tables become two. Two explicit workflow configuration tables
+are added. There is no universal entity table, generic field-value framework,
+new microservice, external queue, cache, or search service in this design.
+
+1. Project-owned workflows
+--------------------------
+
+projects.workflow_revision guards all stage definitions, transitions, shared
+column ordering and project default WIP limits. It is independent of project
+metadata revision, graph_revision and backlog_revision.
+
+project_stages replaces project_status_order. It owns stage identity, display
+name, category, display position, retirement state and the existing per-stage
+card-order revision. The category is one of todo, in_progress, review or done.
+The number of configured stages remains data-driven; this design adds no fixed
+stage-count restriction. Existing minimum-stage and completion-path rules remain.
+
+Each stage has a UUID plus UNIQUE(project_id, id). An issue stores stage_id with
+a FOREIGN KEY(project_id, stage_id). Assignment rules and transition endpoints
+use the same project-scoped key. Keep legacy_status as a unique, stable token
+within the project to serve existing REST/MCP clients and interpret history.
+Stage category and legacy token become immutable once the stage is used.
+
+project_stage_transitions stores from_stage_id and to_stage_id, both in the same
+project. Duplicate/self edges are rejected. Service validation ensures active
+endpoints, an initial stage, a completed stage, and a path to completion for
+unfinished stages. Structural FKs do not replace these transactional rules.
+Retain current stage-name normalization, uniqueness, length and numeric bounds
+under the same workflow revision guard. Active assignment rules must target an
+active stage; retirement must explicitly remap or disable affected active rules
+while keeping their history and any disabled references to retained stage rows.
+
+Board settings stop containing copies of stage names and transitions. All boards
+continue sharing project stages, stage order and issue rank within each stage.
+Boards retain their own names, filters, archive/default behavior and revision.
+Card reorder operations retain order_revision and optimistic concurrency checks.
+
+Saved filters retain the distinction between an entire category and an exact
+custom stage. A legacy bare token such as todo still matches all To-do-category
+stages; it must not be narrowed to one stage UUID during migration. Keep existing
+filter JSON readable through a typed adapter, including saved searches and quick
+filters. Stage retirement continues remapping exact-stage filters transactionally.
+
+Replace affected status-based indexes with their stage_id equivalents, including
+project/stage/rank and parent-stage lookups. The due-reminder query can use a
+partial index on active, dated issues and join the stage category. Do not attempt
+a cross-table category lookup inside a PostgreSQL CHECK or partial-index predicate.
+Measure the resulting board, search, reminder and reporting queries before cutover.
+
+2. Explicit WIP defaults and board overrides
+-------------------------------------------
+
+project_stages.default_wip_limit is an integer: 0 means unlimited; a positive
+value means a warning threshold. board_stage_limits stores a board-specific
+warning_limit for a stage. A missing row inherits the project stage default;
+an explicit 0 makes that board/stage unlimited. The board revision guards changes
+to its overrides. Warning counts continue using the full saved board filter,
+not temporary quick filters or the currently loaded page of cards.
+
+The proposed precedence is:
+  board-stage override -> project stage default
+
+This is a deliberate configuration change. Today a workflow column warningLimit,
+including explicit 0, wins over a board's in_progress_limit/review_limit fallback.
+The migration must calculate the old effective limit for EVERY board/stage pair,
+including archived boards, and reproduce that result at cutover. A null old stage
+limit must not be treated as an explicit zero. Keep the old configuration for
+rollback and record latent category fallback values even when currently shadowed.
+
+After cutover, an explicit board override remains in force when a project default
+changes. The UI must show Inherit, Unlimited and a numeric limit distinctly. This
+supports a separate WIP threshold for any custom stage on any board. No warning
+becomes a hard movement block merely because the storage model changes.
+
+3. One attachment model and one upload pipeline
+----------------------------------------------
+
+pictures and attachments merge into attachments. The existing UUIDs, original
+object keys/generations, checksums, upload attribution and timestamps are retained.
+kind distinguishes image/file. state distinguishes draft/published/expired.
+visible_on_issue replaces image in_gallery and file attached for panel visibility.
+description retains image alternative text and may describe other files.
+
+Required invariants:
+  - Draft and expired assets are images with an expiry time. A live draft is
+    accessible only to its uploader, after normal project authorization.
+  - Images pasted into comments can remain private drafts until the comment
+    publishes them. Images uploaded to the issue panel may publish immediately.
+  - General files publish on upload. Existing MIME validation, download-only
+    treatment of arbitrary bytes, nosniff headers and size limits remain.
+  - Published rows require published_key, published_generation and published_at.
+    Keys are unique and generations positive. Published bytes and attribution
+    remain immutable. visible_on_issue may be true only for published assets.
+  - Detach hides an asset from the issue panel. It does not delete content that
+    a historical comment, description or audit record may still reference.
+  - Inline rendering requires a structurally validated image, even if the same
+    attachment API can also return generic file metadata.
+
+upload_reservations and attachment_upload_reservations merge into one table.
+Keep the actor/retry primary key, immutable command hash, reserved asset UUID,
+unique staging key, lease, checksum, storage generations, and state machine.
+Add explicit operation, kind and publication_mode fields. publication_mode is
+inline_draft or publish_now; file uploads require publish_now. The operation is
+part of retry identity, including during compatibility with old endpoints.
+
+The reserved attachment_id intentionally has no immediate foreign key: the
+reservation is committed before the final asset row exists. The shared upload
+service enforces identity when it commits the asset and reservation together.
+An inline draft may become ready with only a verified staging object; publish_now
+also requires verified publication. A committed reservation must agree with the
+retained asset. Recheck current authorization before any stored result is replayed.
+
+Share the mechanics of reserve -> claim -> transfer -> verify -> commit through
+concrete typed inputs and an explicit mode switch. Image decoding and document
+validation remain small, specific functions. This does not require a plugin
+registry, generic repository interface or reflection-based workflow engine.
+
+comment_version_pictures becomes comment_version_attachments, with the same
+immutable comment-version and same-issue composite foreign keys. Existing image
+references are retained; the relation can also retain file links in comments.
+Rendering still distinguishes inline images from downloadable files. Preserve
+the current inline-image limit independently of the number of linked files.
+
+Descriptions continue validating every attachment reference against the same
+issue and publication state. Retain support for existing data-picture-id markup
+through an adapter. Do not rewrite immutable comment versions or historical
+HTML simply to rename the storage table or API field.
+
+Add bounded reconciliation for abandoned ready/uploading reservations as well
+as failed transfers and expired drafts. Respect current leases and the retry
+retention window. Verify asset references and object generations before removing
+staging data; retain published objects and historical content. A shared cleanup
+routine must not infer that every detached attachment is safe to delete.
+
+4. Existing capabilities and concurrency boundaries retained
+------------------------------------------------------------
+
+Accounts and permissions:
+  users, user_identities, project_memberships, company_settings; current global
+  administrator plus member/viewer rules, disabled accounts and approval checks.
+
+Issues and boards:
+  Project-local issue numbers, Task/Bug/Subtask types, priority, assignee, reporter,
+  due dates, labels, backlog, archive/restore, saved searches, quick filters,
+  swimlanes, drag/drop, rank and bounded pagination remain. The web UI can continue
+  autosaving individual metadata fields with the issue's revision.
+
+Blockers and relationships:
+  issue_dependencies remains separate from issue_links. Preserve edge and project
+  graph revisions, removed attribution, cycle checks including parent/subtask
+  edges, and completion prerequisites. Related/duplicate links do not acquire
+  blocking behavior. Add project_id and composite issue FKs to issue_links.
+
+Comments and history:
+  comments, immutable comment_versions, mention snapshots, edit attribution and
+  the deferred current-version FK remain. Keep rich HTML sanitization, Unicode,
+  Arabic/RTL, code blocks, tables, checklists, mentions and attachment validation.
+
+Planning:
+  planning_items continues holding epics and releases. planning_issue retains its
+  own revision so a planning autosave does not unnecessarily conflict with an
+  issue metadata autosave. Services still validate the expected planning kind.
+
+Notifications:
+  Keep inbox rows, preferences, due-event deduplication and delivery attempts
+  separately. These are distinct lifecycles. Preserve watcher/mention/assignment
+  reasons, read/unread state, instant/daily/off email preferences, reminders,
+  recipient access rechecks and bounded retry scheduling.
+
+History and retries:
+  Keep activity_events and idempotency_records. Issue status audit entries must
+  continue recording stable category-qualified tokens/snapshots during rollout,
+  even though issues internally use stage_id. Existing completion/reopen reports
+  must not begin interpreting old events through mutable current stage names.
+  Do not change historical event payloads or replay results without versioned
+  readers. Preserve generated API contracts and exact retry semantics.
+
+Imports, development links and rules:
+  Keep source-key deduplication, exports, PR/commit/other links and assignment
+  rules. Give issue_import_sources a same-project composite issue FK. Rules
+  reference retained stage IDs and still validate eligible assignees.
+
+5. Table migration map
+----------------------
+
+project_status_order         -> project_stages
+boards.workflow columns      -> project_stages + project_stage_transitions
+boards.workflow metadata     -> guarded by projects.workflow_revision
+boards fixed WIP fields      -> project defaults + board_stage_limits
+issues.status                -> issues.stage_id; compatibility via legacy_status
+project_assignment_rules.stage -> stage_id
+pictures + attachments       -> attachments
+both upload reservation tables -> upload_reservations
+comment_version_pictures     -> comment_version_attachments
+issue_links                  -> same table with project-scoped foreign keys
+issue_import_sources         -> same table with project-scoped foreign key
+all other current tables     -> retained, including their constraints and history
+
+Primary/unique keys and structural FKs appear in the detailed diagram. Existing
+checks, default-board uniqueness, enabled-rule uniqueness, filtered indexes,
+retention triggers and other constraints remain requirements for implementation.
+The diagram is a design model, not executable SQL or a migration substitute.
+
+6. Static typing and deployment
+-------------------------------
+
+Use named Go identifiers for StageID, IssueID, AttachmentID and other resources.
+Use named, validated values for StageCategory, AttachmentKind, AssetState,
+PublicationMode and UploadState. Keep SQL CHECK constraints aligned with these
+fixed values. Custom stage names/instances are rows, not a database enum.
+
+Use sqlc/pgx for typed queries, Huma-generated OpenAPI, a generated strict
+TypeScript client and typed MCP tools calling the same feature services.
+The persistence box summarizes existing database/object-store adapters. Each
+feature continues owning its SQL and domain decisions; it is not a new generic
+repository layer or a shared service that owns every feature's business logic.
+Keep JSONB for validated/versioned saved filters, audit changes and retry results.
+It no longer stores a second mutable copy of workflow relationships on each board.
+
+Google Cloud deployment remains Firebase Hosting + one Cloud Run backend +
+Cloud SQL + private Cloud Storage, with the existing secrets and scheduled-job
+arrangements. Architecture boxes group feature code; they do not add separately
+deployed services or networking between packages.
+
+7. Migration sequence and acceptance criteria
+---------------------------------------------
+
+Phase 1: Share upload orchestration behind existing tables and endpoints. Verify
+both transports, duplicate retries, interruptions and permission revocation.
+
+Phase 2: Add project stages/transitions and workflow_revision. Preflight all boards
+for divergent workflows, including archived boards; resolve differences explicitly
+instead of selecting an arbitrary copy. Assign stable UUIDs and preserve a unique
+mapping from every existing project/status token. Backfill issues and rules,
+retired stages, column order, allowed moves, order revisions and effective limits.
+Compare old and proposed readers before switching command logic.
+
+Phase 3: Move workflow reads/writes to the canonical project model. Preserve old
+board revision invalidation while supported clients only submit board revisions.
+Add explicit workflowRevision to updated REST and MCP contracts. Stop the legacy
+revision propagation only after supported clients use the new concurrency guard.
+Retain safe stage retirement/migration, filter remapping and immutable audit data.
+
+Phase 4: Consolidate reservations and assets. Check for cross-table UUID, object-key
+and actor/retry collisions before copying anything; resolve them with a documented
+compatibility mapping rather than silently discarding or renumbering records.
+Backfill rows and references while retaining private draft behavior, old object
+paths, old API responses and old canonical retry hashes. Switch both transports
+through shared compatibility adapters. General files map to published assets;
+image state/expiry/gallery flags map without losing information.
+For existing general files, published_at is backfilled from uploaded_at, the
+retained upload timestamp; it does not claim to reconstruct the object-copy time.
+
+Phase 5: Validate and enable new foreign keys after checking existing data. Deploy
+the regenerated frontend/MCP contracts, verify behavior and workload measurements,
+then remove duplicate legacy storage only when the compatibility window is over.
+Keep a verified backup and migration mapping. Before final cutover, rollback can
+use legacy readers over transactionally synchronized data; after new-only writes,
+use a forward repair or tested reverse migration. Do not drop retained history.
+
+Acceptance coverage before any actual implementation is considered complete:
+  - Same project/role permissions through REST and MCP, including revoked access.
+  - Every old issue number, assignment, date, label, parent, blocker and link.
+  - Custom/retired stages, allowed moves, completion guards and drag/drop order.
+  - Concurrent workflow edits, metadata autosaves and independent planning saves.
+  - Exact effective WIP values at cutover and explicit inheritance afterward.
+  - Arabic and rich-text rendering; old/new pasted images; all supported files.
+  - Image draft expiry/privacy, comment edit history, detach and old asset URLs.
+  - Retry collisions, lost responses, expired leases and incomplete uploads.
+  - Notification preferences, reminders, deduplication and email delivery retries.
+  - Imports/exports, automation, saved searches and historical report equivalence.
+  - Real PostgreSQL migration/constraint checks and generated-contract drift checks.
+  - Existing latency budgets measured on the same dataset/concurrency before/after.
+
+Expected benefits are less duplicated workflow/upload logic, fewer multi-board
+configuration writes after compatibility rollout, stronger same-project integrity,
+and configurable WIP per board/custom stage. No speed or throughput increase has
+been benchmarked for this proposal. Search query tuning remains a separate measured
+change; the schema redesign is not assumed to explain current UI latency.

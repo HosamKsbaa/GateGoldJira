@@ -1,0 +1,325 @@
+GateGoldJira V2 - scalability, extensibility and speed review
+===========================================================
+Date: 2026-10-13
+Scope: proposed-v2-design.txt, both V2 diagrams, current SQL/transaction code,
+existing local performance evidence, and isolated SQL prototypes.
+
+Verdict
+-------
+The revised design is a reasonable foundation for the company's tracker. The
+initial V2 needed corrections before implementation: project-wide write locking,
+large workflow migrations, board-query fallback work, hard-cap filter semantics,
+and approval invalidation were underspecified. Those design requirements are now
+corrected. Production speed, concurrency and full migration correctness are NOT
+certified by a schema review or by the small SQL probes in this review.
+
+Keep one feature-organized Go service, one PostgreSQL database, a separate Angular
+app and private object storage. Future features can extend these boundaries, but
+each still needs a migration, authorization review and performance tests. No schema
+can guarantee arbitrary future functionality at zero cost or unlimited throughput.
+
+Findings and required changes
+-----------------------------
+
+1. HIGH: unrelated writes currently wait on an exclusive project row lock.
+   Evidence: backend/internal/platform/command/transaction.go, lockAndAuthorize
+   called from Execute with shared=false; database/queries.sql, LockProject uses
+   SELECT ... FOR UPDATE. Reads may also wait on the same row's shared lock.
+   This is a source-confirmed serialization point, not a measured throughput ceiling.
+
+   V2 correction: use shared project lifecycle/authorization guards for ordinary
+   commands, exclusive guards for lifecycle/access/configuration changes, and
+   focused issue/comment/column locks. Keep a separate graph guard for completion
+   and dependency invariants. A shared advisory lifecycle guard must not itself
+   lock the mutable project counter row; otherwise number allocation still queues
+   otherwise unrelated work. The actor/retry record continues serializing only
+   identical retry references. Do not introduce a project revision increment on
+   every autosave as a replacement bottleneck.
+
+   Before implementation, define one lock acquisition order for every command,
+   including admin actions, jobs and MCP. Discover locks before acquiring them;
+   if a re-read changes the required lock set, roll back and retry from the start.
+   Do not upgrade shared guards in arbitrary order. Apply bounded deadlines and
+   replay-safe retries. Ordinary reads need no lock on each issue row.
+   Existing graph-cycle, completion, disable/revoke and archive race protection
+   must pass before the old exclusive project lock can be removed.
+
+2. HIGH: changing a type's workflow required one potentially huge transaction.
+   V2 correction: add issue_type_workflows. New issues use one default binding;
+   existing issues retain their valid assigned binding. Switching the default is
+   small; migrating old issues is explicit and restartable in bounded batches.
+   Composite FKs enforce allowed bindings and matching stages throughout rollout.
+   Old bindings/stages remain referenced until migrated or deliberately retained.
+   This increases the target to 44 app tables (+ one Goose table), not 43.
+   Stage ownership and used field/type behavior cannot be silently reinterpreted.
+   Workflow/rule audit records retain typed before/after snapshots and schema
+   versions so historical approvals remain explainable after configuration edits.
+
+3. HIGH: sparse board ranks can hide an expensive fallback scan.
+   V2 correction: separate ranked/unranked access paths with stable tie breakers.
+   Fetch page_size+1 ranked candidates first. If enough qualify, do not execute the
+   unranked scan. Otherwise fetch bounded fallback candidates and merge. Scoping,
+   archive state and saved filters must be applied before deciding the page is full.
+   A LIMIT alone does not bound the scan work, especially when all cards are ranked.
+   The SQL probe reproduces the difference; evidence is summarized below.
+   Also measure stale rank rows, highly selective filters, deep cursors and rank
+   gap exhaustion. Rare rebalances must be bounded/conflict-safe. No global rank
+   rewrites or board fan-out on every issue edit. Live cursors do not promise a
+   snapshot while users concurrently change the underlying issues.
+
+4. HIGH: arbitrary filters make hard WIP enforcement incomplete or costly.
+   Example: a relative 'overdue' filter changes at midnight without an issue save;
+   a 'blocked' filter changes when another issue finishes.
+   V2 correction: warnings remain available for all existing filters. Hard mode
+   initially accepts only deterministic, issue-owned predicates with complete
+   mutation coverage; unsupported filters are explicitly rejected for hard mode.
+   Check all relevant hard boards, not just the board initiating the move. Hold
+   column capacity guards and re-count under a fresh transaction snapshot after
+   acquiring them. Include simultaneous REST/MCP writes and configuration changes.
+   Exact hard capacity introduces necessary contention when users compete for the
+   same slots. Measure overlapping hard boards; warning-only projects avoid these
+   capacity locks. Do not claim an arbitrary number of overlapping hard boards is free.
+
+5. HIGH: approval context must include data outside the issues row.
+   V2 correction: approvals bind issue, workflow and configuration revisions.
+   Custom-field and visible-attachment changes increment issue revision atomically;
+   rule/configuration changes invalidate the appropriate revision. Comment chatter
+   and board-only reordering do not invalidate issue-content approval. Recording
+   approval locks/rechecks current content and access without incrementing that
+   revision, so multiple approvers can approve the same content. Movement validates
+   eligible approvers and all current requirements again. Votes retain history.
+
+6. MEDIUM: indexes must match actual search/filter predicates.
+   Current numeric search casts issues.number to text; title search uses strpos
+   on lower(title). These predicates do not get the intended direct number lookup
+   or trigram substring lookup simply because indexes exist.
+   V2 correction: parse numeric IDs safely and query numeric equality; parse full
+   keys to project/number; use escaped literal LIKE/ILIKE matched to the text index.
+   Keep Arabic input unchanged unless a separately specified normalization policy
+   is introduced. Index expressions/collations must match query semantics.
+   One/two-character contains patterns can still scan a lot of data. They continue
+   returning live results, with scoped queries, cancellation and bounded response
+   sizes; measure no-match cases. Do not silently replace contains with prefix search.
+   Exact full result counts are optional/deferred on the new live-search contract,
+   not repeated with every keystroke. Keep any old contract behavior until versioned.
+
+7. MEDIUM: custom-field constraints and indexes need precision.
+   V2 correction: a field/value-kind composite FK, explicit mutually exclusive
+   non-null value slots, and a choice-only FK for field_options. A nullable CHECK
+   expression must not accidentally allow an empty/incorrectly typed value.
+   Use EXISTS/semijoins for multiple field filters to avoid multiplying issue rows.
+   Fetch values only for requested fields on the returned page. Common core fields
+   stay on issues. A custom field becoming heavily used may later justify a typed
+   projection; it does not justify moving every core field into a generic value table.
+
+8. MEDIUM: external I/O and unbounded background work can slow normal saves.
+   V2 correction: transfer and verify objects outside business row locks; finalize
+   metadata/visibility in a short transaction with authorization rechecked. Storage
+   and database cannot be committed atomically; durable reservations/reconciliation
+   are mandatory. Email and provider HTTP calls run outside the save transaction.
+   Preserve existing immediate-inbox guarantees with bounded set-based DB writes.
+   Cleanup/reminders/delivery retries use indexed due-work batches and bounded
+   concurrent workers; retain idempotency and never delete referenced history.
+
+Required query/index contracts
+-------------------------------
+Exact DDL remains part of implementation. These are access paths to verify with
+EXPLAIN (ANALYZE, BUFFERS), not a request to create every conceivable index.
+Existing indexes whose leading columns already satisfy a path need not be duplicated.
+
+  issues: UNIQUE(project_id,number); project/stage/created_at/id for active pages;
+          project/created_at/id where that order supports merged-stage fallback;
+          project/assignee/updated_at/id for measured assignment views;
+          project/parent_id for children; project/due_date/id for dated active work.
+  title: GIN(title gin_trgm_ops) for matching ILIKE predicates, or an exactly
+         matching normalized expression when a deliberate normalization is used.
+  board_issue_ranks: (board_id,column_id,rank,issue_id), plus its uniqueness key.
+  board_column_stages: lookup by board/column and by project/stage for affected views.
+  issue_type_workflows: PK plus partial unique default per type; index referencing
+                       issue columns needed by migration/retirement checks.
+  issue_dependencies: active indexes for both dependent and blocker traversal.
+  issue_labels: both issue -> labels and project/label -> issues.
+  issue_field_values: typed partial indexes (project_id,field_id,value,issue_id)
+                      only for field kinds whose filter/sort paths are supported.
+  comments/activity: (issue_id,created_at,id); notifications: recipient/time/id and
+                     measured unread path; deliveries/reservations: due-state indexes.
+
+Foreign keys do not automatically index their referencing columns. Audit reference
+checks and deletion/retirement paths too. Do not put another table's current stage
+category into a CHECK or partial-index predicate. Use joins, or introduce a derived
+projection only with explicit transactional ownership and measured justification.
+Due-today changes with time: use stored date bounds in the query, not a time-varying
+index predicate. Status history keeps category snapshots for accurate old reports.
+
+API/rendering and connection budget
+-----------------------------------
+Card/list responses contain summaries and explicitly requested custom fields.
+Fetch descriptions, comments, attachment content and history only when needed.
+Avoid a query per card and avoid mandatory exact counts before first card paint.
+All list requests stay bounded; use keyset pagination, cancellation and a capped
+rendered-card window. HTML sanitization and decimal/bigint boundaries remain typed.
+
+Cap total database connections across simultaneous Cloud Run instances/revisions,
+scheduled workers and migrations; reserve administrative/recovery headroom:
+  peak_instance_count * pool_limit + worker/migration_connections + headroom
+  <= database connection budget.
+Measure acquisition wait and query/lock time separately. More Go instances do not
+create more PostgreSQL write capacity. Keep Cloud Run and SQL in the same region.
+Cold-start latency is a separate measurement from warm requests; instance settings
+and any larger SQL tier need the existing cost/performance decision, not a guess.
+
+Evidence and acceptance boundaries
+-----------------------------------
+Existing application evidence (validation/performance.md) is for the CURRENT app:
+10,000 issues, 2,000 in the largest project, 50 identities, and local loopback HTTP.
+The 2026-10-13 recorded p95s include 43.51 ms Arabic/label search, 21.40 ms board page,
+and 9.17 ms issue update. The 50-user round is concurrent board READS; write timings
+are sequential. Zero waiting locks sampled at completion does not prove no lock
+contention during requests. These results are not a V2 or cloud certification.
+
+The review's proposed-v2-query-probe.sql uses only session-local temporary tables
+inside a rolled-back transaction; application tables are neither read nor mutated.
+It uses UUID references, 100,000 synthetic issues (90,000 in one project), 90,000
+numeric custom-field values, and 30 measured warm sequential EXPLAIN ANALYZE trials
+per query after three warmups. Every query has a captured plan. Five negative
+constraint checks pass; switching a default preserves 90,000 old issue bindings.
+This is a deliberately narrow query/constraint prototype, not all 44 tables, all
+permissions, concurrent application commands, deployment latency or a load test.
+It omits normal authentication, audit, notifications, network and UI costs. A timing
+is server execution time, not request latency; no throughput figure is inferred.
+
+Raw reproducible evidence: proposed-v2-query-probe-results.jsonl.
+Re-run only on a local test server; pg_trgm must already exist. The result summaries
+are appended below after inspecting the recorded plans and output counts.
+
+Required implementation acceptance (NOT RUN for V2)
+--------------------------------------------------
+1. Real migration constraints and REST/MCP/browser parity, including old clients,
+   history, attachments, Arabic, duplicate retries and permission revocation.
+2. Same-project concurrent writers on different issues, then intentionally hot
+   single issues/columns. Race archive/revoke with saves, graph edits with Done,
+   last-slot WIP moves, approvals with field edits and workflow default switching.
+3. Suggested initial capacity test: 100,000 issues / 1,000,000 audit events,
+   100 active users with realistic think time and mixed reads/writes (e.g. 70/30).
+   Include a hot project, mixed Arabic searches, custom fields and upload traffic.
+   Then test growth toward 1,000,000 issues to identify the next bottleneck.
+   These are proposed test loads, NOT supported-capacity promises or cheap-tier claims.
+4. At least 100 samples/action under each meaningful mix; report p50/p95/p99,
+   throughput, error/conflict rates, query counts, buffer reads, lock/pool waits,
+   CPU/RSS, row growth and worker backlog. Include rare/absent short search strings,
+   0%/partial/100% ranks, selective filters, stale ranks and overlapping hard boards.
+5. Preserve release budgets: warm API reads p95 <= 500 ms, writes <= 750 ms,
+   warm web <= 2 s, idle-start web <= 5 s, max-picture upload <= 30 s and required
+   notification visibility <= 5 s. Stretch goals of 200 ms common reads and 300 ms
+   autosaves are tuning targets, not claims or amendments to the existing release gate.
+6. Repeat on the actual selected Google Cloud configuration/network, including
+   cold starts, worker competition, autoscaling/revision overlap and restore drills.
+   If a budget fails, identify/tune the owning query or lock before adding services.
+
+Future-feature extension rules
+-------------------------------
+New names/stages/choices are configuration rows; new domain behavior still needs
+code. Sprints, work logs or releases with more detail can add feature-owned typed
+tables referencing issues/projects without rewriting attachments or authentication.
+No such feature tables are added until requested. Saved-filter and event payloads
+are versioned; breaking client contracts get a migration window. Background
+integrations need durable delivery state, not HTTP calls inside issue saves.
+Core tables keep stable IDs, scoped FKs and explicit business ownership. Use additive
+DDL, bounded backfills and contract checks; future schema changes are expected.
+Avoid premature sharding, caching, microservices and universal entity tables.
+One company and existing same-project relationships/subtask depth remain deliberate
+scope boundaries, not hidden claims of multi-tenant or arbitrary-hierarchy support.
+
+Primary technical references checked during this review
+-------------------------------------------------------
+PostgreSQL constraints: https://www.postgresql.org/docs/18/ddl-constraints.html
+PostgreSQL trigram indexes: https://www.postgresql.org/docs/18/pgtrgm.html
+PostgreSQL lock ordering: https://www.postgresql.org/docs/18/explicit-locking.html
+Cloud SQL pooling: https://docs.cloud.google.com/sql/docs/postgres/manage-connections
+
+Recorded SQL probe results
+--------------------------
+Warm server execution p95 in ms; 30 measured trials per case.
+  number-cast-predicate: 24.451
+  number-index-predicate: 0.008
+  title-strpos-predicate: 63.268
+  title-trigram-predicate: 0.241
+  arabic-trigram-predicate: 0.209
+  numeric-custom-field: 0.109
+  board-ranked-and-unranked: 0.328
+  board-all-ranked-unconditional-fallback: 129.270
+  board-all-ranked-conditional-fallback: 0.174
+  absent-single-arabic-character: 88.957
+
+All expected output counts matched (one ID match, 25-page results, zero absent
+character results). The conditional fallback plan leaves the unranked branch
+unexecuted when ranked rows fill the page. These comparisons isolate query shape;
+they are not end-to-end website speedups. Ordinary title matches, absent short
+queries and filtered board variations still need the workload matrix above.
+The common Arabic match used a B-tree access path with filtering rather than the
+trigram index; the planner found enough matching rows quickly. Its low timing must
+not be generalized to rare Arabic terms or used as proof of trigram index use.
+
+Further refinement - same 44-table model
+----------------------------------------
+The additional pass improves lifecycle and query contracts without adding tables.
+
+1. Configuration can be retired safely. Stages have accepts_entries so intake can
+   close before a large occupied stage is migrated in batches. Used workflow/type
+   bindings remain valid for existing issues. Active rules/defaults cannot point
+   into unusable configuration; remap them atomically or reject retirement.
+   Default-board coverage is validated with stage activation and mapping changes.
+   Types and priorities now have explicit default flags and partial unique indexes,
+   so retiring Task or Medium does not leave omitted create inputs ambiguous.
+
+2. A command lock matrix and total acquisition order replace the vague instruction
+   to use smaller locks. This remains a protocol requiring real concurrent tests.
+   Already-held project lifecycle guards protect configuration; duplicate ordinary
+   workflow guards are unnecessary. Every writer and job participates.
+
+3. Unchanged authorized autosaves preserve revisions, approvals and notifications.
+   Approval resubmission is a separate explicit action advancing the existing issue
+   revision, with a reason and retained old votes. This avoids a new approval-round
+   subsystem while preserving its defined behavior.
+
+4. Board cursors identify ranked/unranked phase and its corresponding ordering key.
+   An unranked cursor does not rescan exhausted ranked pages. The first transition
+   between phases still needs to discover fallback membership: it is not O(page size)
+   in every dataset. A highly selective filter can likewise inspect many ranked rows.
+   Keep measured rank-driven/filter-driven/set-based query alternatives, and test
+   first/deep/final pages with identical result semantics. No automatic per-board
+   issue copy or background membership cache has been introduced.
+
+5. Active-only SQL keeps its literal NOT archived predicate. Generic prepared plans
+   cannot assume a Boolean archive parameter is false, so an active-only partial
+   index may become unavailable. Separate active/archived named queries expose the
+   correct predicate. This preserves the API filter meaning; it does not globally
+   disable prepared statements or force custom plans for every request.
+
+Additional local evidence
+--------------------------
+Source: proposed-v2-query-probe.sql (now includes the added cases).
+Retained original report: proposed-v2-query-probe-results.jsonl.
+Extended report: proposed-v2-query-probe-extended-results.jsonl.
+Same temporary fixture, rollback and 30 warm sequential execution trials per case.
+The new checks use PREPARE with forced generic/custom plan selection to expose a
+particular risk. Normal automatic selection and the actual sqlc/pgx path remain
+required implementation acceptance; these SQL timings omit planning/network/UI.
+
+Observed execution p95, milliseconds:
+  Generic plan, archive Boolean parameter: 39.673
+  Generic plan, fixed active-only predicate: 0.034
+  Custom plan, archive Boolean parameter: 0.040
+  Empty fallback, per-candidate anti-lookup: 134.775
+  Empty fallback, set difference: 71.164
+
+Both prepared page forms return the same 25-row fixture page, and both fallback
+forms return zero rows. The set-based comparison improves this full-scan case but
+still scans substantial data; it is not a universal replacement for early-return
+lookup plans. Existing results for first pages must not be generalized to the tail.
+Use each shape only after checking its plan for the intended query and data mix.
+
+PostgreSQL ordering/index guidance:
+  https://www.postgresql.org/docs/18/indexes-ordering.html
+PostgreSQL partial-index eligibility and parameterization:
+  https://www.postgresql.org/docs/18/indexes-partial.html

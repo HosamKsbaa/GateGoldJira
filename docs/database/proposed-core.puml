@@ -1,0 +1,143 @@
+@startuml proposed-core
+title
+GateGoldJira - Proposed Core Data Model
+Shared workflow and unified attachments | DESIGN ONLY
+end title
+hide circle
+hide methods
+skinparam shadowing false
+skinparam linetype ortho
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam packageStyle rectangle
+skinparam classBackgroundColor #F8FAFC
+skinparam classBorderColor #475569
+skinparam ArrowColor #64748B
+
+entity projects #DBEAFE {
+  * id : uuid <<PK>>
+  --
+  * workflow_revision : bigint
+}
+
+package "One project workflow" {
+  entity project_stages #DBEAFE {
+    * id : uuid <<PK>>
+    --
+    * project_id : uuid <<FK>>
+    * name : text
+    * category : text
+    * position : bigint
+    * order_revision : bigint
+    * default_wip_limit : integer
+  }
+  entity project_stage_transitions #DCFCE7 {
+    * project_id : uuid <<PK,FK>>
+    * from_stage_id : uuid <<PK,FK>>
+    * to_stage_id : uuid <<PK,FK>>
+  }
+}
+
+package "Board views" {
+  entity boards #DBEAFE {
+    * id : uuid <<PK>>
+    --
+    * project_id : uuid <<FK>>
+    * saved_filters : jsonb
+    * revision : bigint
+  }
+  entity board_stage_limits #DCFCE7 {
+    * board_id : uuid <<PK,FK>>
+    * stage_id : uuid <<PK,FK>>
+    --
+    * project_id : uuid <<FK>>
+    * warning_limit : integer
+  }
+}
+
+entity issues #DBEAFE {
+  * id : uuid <<PK>>
+  --
+  * project_id : uuid <<FK>>
+  * stage_id : uuid <<FK>>
+  * revision : bigint
+  * rank : bigint
+  * backlog_rank : bigint
+}
+
+package "Comments and shared attachments" {
+  entity comments {
+    * id : uuid <<PK>>
+    --
+    * issue_id : uuid <<FK>>
+    * revision : bigint
+  }
+  entity comment_versions {
+    * comment_id : uuid <<PK,FK>>
+    * revision : bigint <<PK>>
+    --
+    * issue_id : uuid <<FK>>
+    * safe_html : text
+  }
+  entity comment_version_attachments #DBEAFE {
+    * comment_id : uuid <<PK,FK>>
+    * version : bigint <<PK,FK>>
+    * attachment_id : uuid <<PK,FK>>
+    --
+    * issue_id : uuid <<FK>>
+  }
+  entity attachments #DBEAFE {
+    * id : uuid <<PK>>
+    --
+    * project_id : uuid <<FK>>
+    * issue_id : uuid <<FK>>
+    * kind : image / file
+    * state : draft / published / expired
+    * visible_on_issue : boolean
+    published_key : text
+  }
+  entity upload_reservations #DBEAFE {
+    * actor_id : uuid <<PK,FK>>
+    * retry_reference : uuid <<PK>>
+    --
+    * attachment_id : uuid
+    * operation : text
+    * publication_mode : inline_draft / publish_now
+    * state : uploading / ready / failed / committed
+    * lease_until : timestamptz
+  }
+}
+
+projects ||--o{ project_stages
+projects ||--o{ boards
+projects ||--o{ issues
+project_stages ||--o{ project_stage_transitions : from stage
+project_stages ||--o{ project_stage_transitions : to stage
+project_stages ||--o{ issues : current stage
+boards ||--o{ board_stage_limits
+project_stages ||--o{ board_stage_limits
+issues ||--o{ comments
+comments ||--o{ comment_versions : retained history
+comment_versions ||--o{ comment_version_attachments
+issues ||--o{ attachments
+attachments ||--o{ comment_version_attachments
+upload_reservations ..> attachments : reserves identity before asset exists
+
+note bottom of board_stage_limits
+No row: inherit project default.
+0: explicitly unlimited.
+Positive value: WIP warning.
+end note
+
+legend bottom left
+  FOCUSED VIEW: selected columns and relationships only.
+  All 33 application tables remain in the full proposed schema.
+  Retained: roles, blockers, subtasks, labels, watchers, planning,
+  notifications, activity, retries, imports and automation.
+  Boards filter project issues; they do not own issue rows.
+  Solid links summarize same-project database FKs.
+  Dotted link is a reservation association, not a database FK.
+  Detailed types, constraints and compatibility: proposed-schema.puml / proposed-design.txt.
+endlegend
+@enduml

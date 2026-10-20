@@ -1,0 +1,38 @@
+@startuml proposed-v2-overview
+title GateGoldJira - A simple view of the proposed database
+top to bottom direction
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 12
+skinparam linetype ortho
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 15
+skinparam ArrowColor #64748B
+skinparam rectangleBorderColor #CBD5E1
+skinparam rectangleBackgroundColor #F8FAFC
+skinparam nodesep 45
+skinparam ranksep 45
+
+rectangle "<b>Projects and people</b>\nProjects, accounts and membership\nProject admin / member / viewer" as access #DBEAFE
+rectangle "<b>Workflows</b>\nStages, allowed moves and approvals\nTypes choose defaults; issues keep their flow" as workflow #EDE9FE
+rectangle "<b>Issues</b>\nTitle, type, priority, assignee and dates\nSubtasks, blockers and typed custom fields" as work #DBEAFE
+rectangle "<b>Boards</b>\nFiltered views of the same issues\nIndependent columns, order and WIP limits" as boards #DCFCE7
+rectangle "<b>Discussion and files</b>\nComments and retained edit history\nOne attachment model for every file" as discussion #FEF3C7
+rectangle "<b>Planning</b>\nEpics and releases\nIssue assignments to each" as planning #FCE7F3
+rectangle "<b>Reliable operations</b>\nNotifications, audit and safe retries\nUpload sessions and cleanup" as operations #F1F5F9
+
+access -down-> work : owns
+workflow -right-> work
+work -right-> boards
+work -down-> discussion : has
+work -down-> planning : belongs to
+discussion -down-> operations
+planning -down-> operations
+
+legend bottom
+  DESIGN V2 - not applied to the app or database.
+  Boxes are logical groups, not individual tables or services.
+  One PostgreSQL database; file bytes remain in private Cloud Storage.
+  Full table inventory and rules: proposed-v2-design.txt.
+endlegend
+@enduml

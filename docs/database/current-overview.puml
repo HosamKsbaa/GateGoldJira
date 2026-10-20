@@ -1,0 +1,91 @@
+@startuml GateGoldJira_Core
+!theme plain
+left to right direction
+hide circle
+hide methods
+skinparam linetype ortho
+skinparam shadowing false
+title GateGoldJira - Simple core\nCanonical PostgreSQL ownership
+entity "Users" as users {
+  * id : UUID
+}
+entity "Projects" as projects {
+  * id : UUID
+}
+entity "Workflows" as workflows {
+  * id : UUID
+}
+entity "Stages" as stages {
+  * id : UUID
+  category : checked value
+}
+entity "Issue types" as types {
+  * id : UUID
+  behavior : standard / subtask
+}
+entity "Priorities" as priorities {
+  * id : UUID
+}
+entity "Issues" as issues {
+  * id : UUID
+  type / priority / workflow / stage IDs
+  parent / assignee / due date
+}
+entity "Boards" as boards {
+  * id : UUID
+  saved filters
+}
+entity "Columns" as columns {
+  * id : UUID
+  mapped stages / WIP limit
+}
+entity "Board ranks" as ranks {
+  * board + issue
+  column / rank
+}
+entity "Comments" as comments {
+  * id : UUID
+  immutable versions
+}
+entity "Attachments" as assets {
+  * id : UUID
+  image / file
+  draft / published
+}
+entity "Upload sessions" as sessions {
+  * actor + retry
+  offset / checksum / lease
+}
+entity "Custom fields" as fields {
+  * id : UUID
+  checked kind / typed values
+}
+entity "Approvals" as approvals {
+  * issue + transition + user
+  revision context
+}
+users ||--o{ projects
+projects ||--o{ workflows
+workflows ||--o{ stages
+projects ||--o{ types
+projects ||--o{ priorities
+projects ||--o{ issues
+types ||--o{ issues
+priorities ||--o{ issues
+stages ||--o{ issues
+issues |o--o{ issues : parent
+projects ||--o{ boards
+boards ||--o{ columns
+columns ||--o{ ranks
+issues ||--o{ ranks
+issues ||--o{ comments
+issues ||--o{ assets
+issues ||--o{ sessions
+projects ||--o{ fields
+issues ||--o{ approvals
+note bottom
+44 physical tables retain supporting relationships and history.
+Compatibility API views do not duplicate mutable storage.
+REST and MCP share the same typed Go business services.
+end note
+@enduml

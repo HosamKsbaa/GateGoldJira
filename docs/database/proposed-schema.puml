@@ -1,0 +1,618 @@
+@startuml proposed-schema
+' DESIGN PROPOSAL ONLY - not applied, not migration SQL.
+' Source baseline: schema-catalog.json, migration 00010, 2026-10-13.
+' Existing checks/indexes/triggers remain required unless explicitly replaced in proposed-design.txt.
+title
+GateGoldJira - Proposed Schema
+33 application tables | shared workflow + unified attachments | NOT APPLIED
+end title
+hide circle
+hide methods
+skinparam linetype ortho
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam packageStyle rectangle
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 11
+skinparam classBackgroundColor #F8FAFC
+skinparam classBorderColor #475569
+skinparam classBackgroundColor<<refactored>> #DBEAFE
+skinparam classBackgroundColor<<new>> #DCFCE7
+skinparam ArrowColor #64748B
+skinparam packageBorderColor #94A3B8
+
+package "Accounts and projects" {
+  entity "company_settings" as company_settings {
+    * singleton : boolean <<PK>>
+    --
+    * time_zone : text
+    * cleanup_paused : boolean
+  }
+
+  entity "users" as users {
+    * id : uuid <<PK>>
+    --
+    * email : text
+    * email_key : text <<UK>>
+    * display_name : text
+    approved_at : timestamptz
+    disabled_at : timestamptz
+    * is_administrator : boolean
+    * revision : bigint
+    * created_at : timestamptz
+    * updated_at : timestamptz
+    --
+    {field} UNIQUE (email_key)
+  }
+
+  entity "user_identities" as user_identities {
+    * issuer : text <<PK>>
+    * subject : text <<PK>>
+    --
+    * user_id : uuid <<FK,UK>>
+    * bound_at : timestamptz
+    --
+    {field} UNIQUE (user_id)
+  }
+
+  entity "projects" as projects <<refactored>> {
+    * id : uuid <<PK>>
+    --
+    * key : text <<UK>>
+    * name : text
+    * description : text
+    * created_by : uuid <<FK>>
+    * next_issue_number : bigint
+    * revision : bigint
+    * graph_revision : bigint
+    archived_at : timestamptz
+    * created_at : timestamptz
+    * updated_at : timestamptz
+    * backlog_revision : bigint
+    * workflow_revision : bigint
+    --
+    {field} UNIQUE (key)
+  }
+
+  ' workflow_revision guards stage/transition/default-limit edits.
+  ' Metadata, graph and backlog revisions remain independent.
+  entity "project_memberships" as project_memberships {
+    * project_id : uuid <<PK,FK>>
+    * user_id : uuid <<PK,FK>>
+    --
+    * role : text
+    * revision : bigint
+    removed_at : timestamptz
+    * created_at : timestamptz
+    * updated_at : timestamptz
+  }
+
+}
+
+package "Workflow and boards" {
+  entity "project_stages" as project_stages <<refactored>> {
+    * id : uuid <<PK>>
+    --
+    * project_id : uuid <<FK>>
+    * legacy_status : text
+    * name : text
+    * category : text
+    * position : bigint
+    * order_revision : bigint
+    * retired : boolean
+    * default_wip_limit : integer
+    --
+    {field} UNIQUE (project_id, id)
+    {field} UNIQUE (project_id, legacy_status)
+  }
+
+  ' Replaces project_status_order and stage definitions in board JSON.
+  ' category: todo | in_progress | review | done; immutable once used.
+  ' default_wip_limit: 0 = unlimited; positive = warning threshold.
+  ' legacy_status preserves existing API tokens and audit meaning.
+  ' Retired rows stay; order_revision protects shared card ordering.
+  entity "project_stage_transitions" as project_stage_transitions <<new>> {
+    * project_id : uuid <<PK,FK>>
+    * from_stage_id : uuid <<PK,FK>>
+    * to_stage_id : uuid <<PK,FK>>
+  }
+
+  ' One set of allowed moves per project; guarded by workflow_revision.
+  ' Service validates active endpoints and paths to completion.
+  entity "boards" as boards <<refactored>> {
+    * id : uuid <<PK>>
+    --
+    * project_id : uuid <<FK>>
+    * name : text
+    * name_key : text
+    * created_by : uuid <<FK>>
+    * is_default : boolean
+    * saved_filters : jsonb
+    * filters_version : integer
+    * revision : bigint
+    archived_at : timestamptz
+    * created_at : timestamptz
+    * updated_at : timestamptz
+    --
+    {field} UNIQUE (project_id, id)
+    {field} UNIQUE (project_id, name_key)
+  }
+
+  ' Board owns filters and local WIP overrides.
+  ' All boards share project stages, transitions and column order.
+  ' revision guards board settings; workflow_revision is returned separately.
+  entity "board_stage_limits" as board_stage_limits <<new>> {
+    * board_id : uuid <<PK,FK>>
+    * stage_id : uuid <<PK,FK>>
+    --
+    * project_id : uuid <<FK>>
+    * warning_limit : integer
+  }
+
+  ' Missing row = inherit project stage default.
+  ' 0 = explicitly unlimited; positive = warning threshold.
+  ' Effective limit: board override, then stage default.
+  ' Changed transactionally with boards.revision.
+}
+
+package "Issues" {
+  entity "issues" as issues <<refactored>> {
+    * id : uuid <<PK>>
+    --
+    * project_id : uuid <<FK>>
+    * number : bigint
+    * title : text
+    * description : text
+    * type : text
+    * priority : text
+    * stage_id : uuid <<FK>>
+    * reporter_id : uuid <<FK>>
+    assignee_id : uuid <<FK>>
+    due_date : date
+    parent_id : uuid <<FK>>
+    * rank : bigint
+    * revision : bigint
+    * created_at : timestamptz
+    * updated_at : timestamptz
+    * description_format : text
+    * archived : boolean
+    * backlog : boolean
+    * backlog_rank : bigint
+    --
+    {field} UNIQUE (project_id, id)
+    {field} UNIQUE (project_id, number)
+  }
+
+  ' Typed StageID replaces encoded status in the core model.
+  ' Legacy API status is resolved through project_stages.legacy_status.
+  ' Parent, blockers, rank, backlog and metadata revisions are retained.
+  entity "labels" as labels {
+    * id : uuid <<PK>>
+    --
+    * project_id : uuid <<FK>>
+    * name : text
+    * name_key : text
+    * created_by : uuid <<FK>>
+    * created_at : timestamptz
+    --
+    {field} UNIQUE (project_id, id)
+    {field} UNIQUE (project_id, name_key)
+  }
+
+  entity "issue_labels" as issue_labels {
+    * issue_id : uuid <<PK,FK>>
+    * label_id : uuid <<PK,FK>>
+    --
+    * project_id : uuid <<FK>>
+  }
+
+  entity "issue_dependencies" as issue_dependencies {
+    * dependent_id : uuid <<PK,FK>>
+    * blocker_id : uuid <<PK,FK>>
+    --
+    * project_id : uuid <<FK>>
+    * revision : bigint
+    * created_by : uuid <<FK>>
+    * created_at : timestamptz
+    removed_by : uuid <<FK>>
+    removed_at : timestamptz
+  }
+
+  entity "issue_links" as issue_links <<refactored>> {
+    * issue_id : uuid <<PK,FK>>
+    * target_id : uuid <<PK,FK>>
+    * kind : text <<PK>>
+    --
+    * project_id : uuid <<FK>>
+    * created_by : uuid <<FK>>
+    * created_at : timestamptz
+    removed_at : timestamptz
+  }
+
+  ' Same-project links enforced with composite foreign keys.
+  ' Keep relates_to and duplicates distinct from completion blockers.
+  entity "issue_watchers" as issue_watchers {
+    * issue_id : uuid <<PK,FK>>
+    * user_id : uuid <<PK,FK>>
+    --
+    * watching : boolean
+    * updated_at : timestamptz
+  }
+
+  entity "saved_issue_searches" as saved_issue_searches {
+    * id : uuid <<PK>>
+    --
+    * user_id : uuid <<FK>>
+    * name : text
+    * filters : jsonb
+    * revision : bigint
+    * removed : boolean
+    * updated_at : timestamptz
+  }
+
+}
+
+package "Collaboration and files" {
+  entity "comments" as comments {
+    * id : uuid <<PK,FK>>
+    --
+    * project_id : uuid <<FK>>
+    * issue_id : uuid <<FK>>
+    * author_id : uuid <<FK>>
+    * revision : bigint <<FK>>
+    * created_at : timestamptz
+    edited_at : timestamptz
+    --
+    {field} UNIQUE (issue_id, id)
+  }
+
+  entity "comment_versions" as comment_versions {
+    * comment_id : uuid <<PK,FK>>
+    * revision : bigint <<PK>>
+    --
+    * issue_id : uuid <<FK>>
+    * safe_html : text
+    * plain_text : text
+    * created_at : timestamptz
+    --
+    {field} UNIQUE (comment_id, revision, issue_id)
+  }
+
+  entity "comment_version_mentions" as comment_version_mentions {
+    * comment_id : uuid <<PK,FK>>
+    * version : bigint <<PK,FK>>
+    * user_id : uuid <<PK,FK>>
+    --
+    * display_label_snapshot : text
+  }
+
+  entity "comment_version_attachments" as comment_version_attachments <<refactored>> {
+    * comment_id : uuid <<PK,FK>>
+    * version : bigint <<PK,FK>>
+    * attachment_id : uuid <<PK,FK>>
+    --
+    * issue_id : uuid <<FK>>
+  }
+
+  ' Retains immutable version-to-asset references within the same issue.
+  ' Supports inline images and retained file links; renderer checks asset kind.
+  entity "attachments" as attachments <<refactored>> {
+    * id : uuid <<PK>>
+    --
+    * project_id : uuid <<FK>>
+    * issue_id : uuid <<FK>>
+    * uploaded_by : uuid <<FK>>
+    * kind : text
+    * filename : text
+    * description : text
+    * mime_type : text
+    * byte_size : bigint
+    * checksum : text
+    * staging_key : text <<UK>>
+    * staging_generation : bigint
+    published_key : text <<UK>>
+    published_generation : bigint
+    * state : text
+    * visible_on_issue : boolean
+    * uploaded_at : timestamptz
+    expires_at : timestamptz
+    published_at : timestamptz
+    --
+    {field} UNIQUE (issue_id, id)
+    {field} UNIQUE (published_key)
+    {field} UNIQUE (staging_key)
+  }
+
+  ' Unifies pictures and files; retain original UUIDs and object keys.
+  ' kind: image | file; state: draft | published | expired.
+  ' Draft/expired assets are images with an expiry; drafts are uploader-only.
+  ' Published requires object key, generation and published_at.
+  ' visible_on_issue requires published; detach preserves history.
+  ' Only validated images render inline; files use download disposition.
+  entity "upload_reservations" as upload_reservations <<refactored>> {
+    * actor_id : uuid <<PK,FK>>
+    * retry_reference : uuid <<PK>>
+    --
+    * operation : text
+    * kind : text
+    * publication_mode : text
+    * command_hash : text
+    * attachment_id : uuid <<UK>>
+    * project_id : uuid <<FK>>
+    * issue_id : uuid <<FK>>
+    * staging_key : text <<UK>>
+    staging_generation : bigint
+    published_key : text
+    published_generation : bigint
+    * lease_until : timestamptz
+    checksum : text
+    * state : text
+    * created_at : timestamptz
+    * updated_at : timestamptz
+    --
+    {field} UNIQUE (attachment_id)
+    {field} UNIQUE (staging_key)
+  }
+
+  ' Unifies both reservation tables and upload state machines.
+  ' publication_mode: inline_draft | publish_now; file requires publish_now.
+  ' Keep operation, canonical hash, actor/retry key, leases and generations.
+  ' attachment_id is reserved before asset insertion: intentionally no FK.
+  ' ready draft requires staged bytes; ready publish_now also requires published bytes.
+}
+
+package "History and reliable commands" {
+  entity "activity_events" as activity_events {
+    * id : uuid <<PK>>
+    --
+    * actor_id : uuid <<FK>>
+    * channel : text
+    * action : text
+    * resource_kind : text
+    * resource_id : uuid
+    project_id : uuid <<FK>>
+    issue_id : uuid <<FK>>
+    * changes : jsonb
+    * created_at : timestamptz
+  }
+
+  entity "idempotency_records" as idempotency_records {
+    * actor_id : uuid <<PK,FK>>
+    * retry_reference : uuid <<PK>>
+    --
+    * operation : text
+    * canonical_input_hash : text
+    result : jsonb
+    * result_version : integer
+    * created_at : timestamptz
+    * expires_at : timestamptz
+  }
+
+}
+
+package "Planning" {
+  entity "planning_items" as planning_items {
+    * id : uuid <<PK>>
+    --
+    * project_id : uuid <<FK>>
+    * kind : text
+    * name : text
+    * description : text
+    target_date : date
+    * status : text
+    * revision : bigint
+    * created_by : uuid <<FK>>
+    * created_at : timestamptz
+    * updated_at : timestamptz
+    --
+    {field} UNIQUE (project_id, id)
+  }
+
+  entity "planning_issue" as planning_issue {
+    * issue_id : uuid <<PK,FK>>
+    --
+    * project_id : uuid <<FK>>
+    epic_id : uuid <<FK>>
+    release_id : uuid <<FK>>
+    * revision : bigint
+  }
+
+}
+
+package "Notifications" {
+  entity "notifications" as notifications {
+    * id : uuid <<PK>>
+    --
+    * recipient_id : uuid <<FK>>
+    * event_id : uuid <<FK>>
+    * project_id : uuid <<FK>>
+    * issue_id : uuid <<FK>>
+    * actor_id : uuid <<FK>>
+    * reasons : text[]
+    * plain_text_summary : text
+    * created_at : timestamptz
+    read_at : timestamptz
+    * revision : bigint
+    * show_in_app : boolean
+    --
+    {field} UNIQUE (event_id, issue_id, recipient_id)
+  }
+
+  entity "notification_preferences" as notification_preferences {
+    * user_id : uuid <<PK,FK>>
+    --
+    * in_app_enabled : boolean
+    * events : text[]
+    * email_mode : text
+    * due_reminders : boolean
+    * revision : bigint
+    * updated_at : timestamptz
+  }
+
+  entity "notification_due_events" as notification_due_events {
+    * issue_id : uuid <<PK,FK>>
+    * due_date : date <<PK>>
+    --
+    * event_id : uuid <<FK,UK>>
+    --
+    {field} UNIQUE (event_id)
+  }
+
+  entity "notification_deliveries" as notification_deliveries {
+    * id : uuid <<PK>>
+    --
+    * recipient_id : uuid <<FK>>
+    * issue_id : uuid <<FK>>
+    * notification_id : uuid <<FK,UK>>
+    * dedup_key : text <<UK>>
+    * state : text
+    * attempts : integer
+    * available_at : timestamptz
+    * created_at : timestamptz
+    completed_at : timestamptz
+    --
+    {field} UNIQUE (dedup_key)
+    {field} UNIQUE (notification_id)
+  }
+
+}
+
+package "Imports and automation" {
+  entity "issue_import_sources" as issue_import_sources <<refactored>> {
+    * project_id : uuid <<PK,FK>>
+    * source_key : text <<PK>>
+    --
+    * issue_id : uuid <<FK>>
+    * created_at : timestamptz
+  }
+
+  ' Import source mapping cannot point at another project.
+  entity "development_links" as development_links {
+    * id : uuid <<PK>>
+    --
+    * issue_id : uuid <<FK>>
+    * url : text
+    * title : text
+    * kind : text
+    * revision : bigint
+    * removed : boolean
+    * created_by : uuid <<FK>>
+    * created_at : timestamptz
+    * updated_at : timestamptz
+  }
+
+  entity "project_assignment_rules" as project_assignment_rules <<refactored>> {
+    * id : uuid <<PK>>
+    --
+    * project_id : uuid <<FK>>
+    * name : text
+    * stage_id : uuid <<FK>>
+    * assignee_id : uuid <<FK>>
+    * enabled : boolean
+    * revision : bigint
+    * created_by : uuid <<FK>>
+    * created_at : timestamptz
+    * updated_at : timestamptz
+  }
+
+  ' Retain unique enabled rule per project/stage and eligibility checks.
+}
+
+package "Migration tracking" {
+  entity "goose_db_version" as goose_db_version {
+    * id : integer <<PK>>
+    --
+    * version_id : bigint
+    * is_applied : boolean
+    * tstamp : timestamp
+  }
+
+}
+
+package "Reporting views (retained)" {
+  entity "planning_status_events" as planning_status_events <<view>>
+  entity "planning_completion_cycles" as planning_completion_cycles <<view>>
+}
+
+users ||--o{ activity_events : actor_id -> id
+projects |o--o{ activity_events : project_id -> id
+issues |o--o{ activity_events : project_id, issue_id -> project_id, id
+issues ||--o{ attachments : project_id, issue_id -> project_id, id
+users ||--o{ attachments : uploaded_by -> id
+users ||--o{ boards : created_by -> id
+projects ||--o{ boards : project_id -> id
+comment_versions ||--o{ comment_version_mentions : comment_id, version -> comment_id, revision
+users ||--o{ comment_version_mentions : user_id -> id
+comments ||--o{ comment_versions : issue_id, comment_id -> issue_id, id
+users ||--o{ comments : author_id -> id
+comment_versions ||--o| comments : id, revision -> comment_id, revision [deferred current version]
+issues ||--o{ comments : project_id, issue_id -> project_id, id
+users ||--o{ development_links : created_by -> id
+issues ||--o{ development_links : issue_id -> id
+users ||--o{ idempotency_records : actor_id -> id
+users ||--o{ issue_dependencies : created_by -> id
+issues ||--o{ issue_dependencies : project_id, blocker_id -> project_id, id
+issues ||--o{ issue_dependencies : project_id, dependent_id -> project_id, id
+users |o--o{ issue_dependencies : removed_by -> id
+projects ||--o{ issue_import_sources : project_id -> id
+issues ||--o{ issue_import_sources : project_id, issue_id -> project_id, id
+issues ||--o{ issue_labels : project_id, issue_id -> project_id, id
+labels ||--o{ issue_labels : project_id, label_id -> project_id, id
+users ||--o{ issue_links : created_by -> id
+issues ||--o{ issue_links : project_id, issue_id -> project_id, id
+issues ||--o{ issue_links : project_id, target_id -> project_id, id
+issues ||--o{ issue_watchers : issue_id -> id
+users ||--o{ issue_watchers : user_id -> id
+users |o--o{ issues : assignee_id -> id
+projects ||--o{ issues : project_id -> id
+issues |o--o{ issues : project_id, parent_id -> project_id, id
+users ||--o{ issues : reporter_id -> id
+project_stages ||--o{ issues : project_id, stage_id -> project_id, id
+users ||--o{ labels : created_by -> id
+projects ||--o{ labels : project_id -> id
+issues ||--o{ notification_deliveries : issue_id -> id
+notifications ||--o| notification_deliveries : notification_id -> id
+users ||--o{ notification_deliveries : recipient_id -> id
+activity_events ||--o| notification_due_events : event_id -> id
+issues ||--o{ notification_due_events : issue_id -> id
+users ||--o| notification_preferences : user_id -> id
+users ||--o{ notifications : actor_id -> id
+activity_events ||--o{ notifications : event_id -> id
+issues ||--o{ notifications : project_id, issue_id -> project_id, id
+users ||--o{ notifications : recipient_id -> id
+planning_items |o--o{ planning_issue : project_id, epic_id -> project_id, id
+issues ||--o| planning_issue : project_id, issue_id -> project_id, id
+planning_items |o--o{ planning_issue : project_id, release_id -> project_id, id
+users ||--o{ planning_items : created_by -> id
+projects ||--o{ planning_items : project_id -> id
+users ||--o{ project_assignment_rules : assignee_id -> id
+users ||--o{ project_assignment_rules : created_by -> id
+projects ||--o{ project_assignment_rules : project_id -> id
+project_stages ||--o{ project_assignment_rules : project_id, stage_id -> project_id, id
+projects ||--o{ project_memberships : project_id -> id
+users ||--o{ project_memberships : user_id -> id
+users ||--o{ projects : created_by -> id
+users ||--o{ saved_issue_searches : user_id -> id
+users ||--o{ upload_reservations : actor_id -> id
+issues ||--o{ upload_reservations : project_id, issue_id -> project_id, id
+users ||--o| user_identities : user_id -> id
+projects ||--o{ project_stages : project_id -> id
+project_stages ||--o{ project_stage_transitions : project_id, from_stage_id -> project_id, id
+project_stages ||--o{ project_stage_transitions : project_id, to_stage_id -> project_id, id
+boards ||--o{ board_stage_limits : project_id, board_id -> project_id, id
+project_stages ||--o{ board_stage_limits : project_id, stage_id -> project_id, id
+comment_versions ||--o{ comment_version_attachments : comment_id, version, issue_id -> comment_id, revision, issue_id
+attachments ||--o{ comment_version_attachments : issue_id, attachment_id -> issue_id, id
+
+planning_status_events ..> activity_events : historical category snapshots
+planning_completion_cycles ..> planning_status_events : completion cycles
+
+legend bottom left
+  DESIGN PROPOSAL ONLY - no schema change has been applied
+  Blue = refactored; green = new; gray = retained
+  * = required table column; unmarked = nullable
+  PK / FK / UK = primary / foreign / unique key
+  Solid lines = proposed database FKs; dotted lines = view dependencies
+  Service rules and migration details: proposed-design.txt
+endlegend
+@enduml

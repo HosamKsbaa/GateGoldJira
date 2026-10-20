@@ -1,0 +1,122 @@
+@startuml proposed-v2-core
+title GateGoldJira - Proposed database V2: main tables
+hide circle
+hide methods
+top to bottom direction
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam linetype ortho
+skinparam defaultFontName SansSerif
+skinparam defaultFontSize 13
+skinparam classBorderColor #94A3B8
+skinparam classBackgroundColor #F8FAFC
+skinparam ArrowColor #64748B
+skinparam nodesep 35
+skinparam ranksep 45
+
+entity projects #DBEAFE {
+  * id : uuid <<PK>>
+  * key : text
+  * name : text
+}
+entity workflows #EDE9FE {
+  * id : uuid <<PK>>
+  * project_id : uuid <<FK>>
+  * name : text
+  * revision : bigint
+}
+entity workflow_stages #EDE9FE {
+  * id : uuid <<PK>>
+  * workflow_id : uuid <<FK>>
+  * name : text
+  * category : checked text
+}
+entity workflow_transitions #EDE9FE {
+  * id : uuid <<PK>>
+  * from_stage_id : uuid <<FK>>
+  * to_stage_id : uuid <<FK>>
+  * approvals_required : smallint
+}
+entity issue_types #EDE9FE {
+  * id : uuid <<PK>>
+  * name : text
+}
+entity issue_type_workflows #EDE9FE {
+  * project_id : uuid <<PK,FK>>
+  * type_id : uuid <<PK,FK>>
+  * workflow_id : uuid <<PK,FK>>
+  * is_default : boolean
+  * accepts_new : boolean
+}
+entity issues #DBEAFE {
+  * id : uuid <<PK>>
+  * project_id : uuid <<FK>>
+  * type_id : uuid <<FK>>
+  * workflow_id : uuid <<FK>>
+  * stage_id : uuid <<FK>>
+  * title : text
+  * priority_id : uuid <<FK>>
+  assignee_id : uuid <<FK>>
+  due_date : date
+  parent_id : uuid <<FK>>
+  * revision : bigint
+}
+entity boards #DCFCE7 {
+  * id : uuid <<PK>>
+  * project_id : uuid <<FK>>
+  * name : text
+  * saved_filters : validated jsonb
+}
+entity board_columns #DCFCE7 {
+  * id : uuid <<PK>>
+  * board_id : uuid <<FK>>
+  * name : text
+  * position : bigint
+  wip_limit : integer
+  * wip_mode : warn / block
+}
+entity board_column_stages #DCFCE7 {
+  * board_id : uuid <<PK,FK>>
+  * stage_id : uuid <<PK,FK>>
+  * column_id : uuid <<FK>>
+}
+entity comments #FEF3C7 {
+  * id : uuid <<PK>>
+  * issue_id : uuid <<FK>>
+  * author_id : uuid <<FK>>
+  * revision : bigint
+}
+entity attachments #FEF3C7 {
+  * id : uuid <<PK>>
+  * issue_id : uuid <<FK>>
+  * kind : image / file
+  * filename : text
+  * state : draft / published / expired
+}
+
+projects ||--o{ workflows
+projects ||--o{ issues
+projects ||--o{ boards
+workflows ||--o{ issue_type_workflows
+issue_types ||--o{ issue_type_workflows
+workflows ||--o{ workflow_stages
+workflow_stages ||--o{ workflow_transitions : from
+workflow_stages ||--o{ workflow_transitions : to
+issue_type_workflows ||--o{ issues : assigned workflow
+workflow_stages ||--o{ issues : current stage
+boards ||--o{ board_columns
+board_columns ||--o{ board_column_stages
+workflow_stages ||--o{ board_column_stages
+issues ||--o{ comments
+issues ||--o{ attachments
+
+legend bottom left
+  DESIGN V2 - selected tables and columns, not executable DDL.
+  All 44 application tables are listed in proposed-v2-design.txt.
+  Composite project/workflow FKs are simplified here for readability.
+  Users, priorities, custom fields, approvals, ranks and history are in the notes.
+  A board shows existing issues; it does not hold a second copy.
+  A column can group stages, including stages from different issue-type workflows.
+  Each stage maps to at most one column on a given board.
+endlegend
+@enduml

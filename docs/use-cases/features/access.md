@@ -11,7 +11,7 @@ Source-inspected use cases. Runtime verification in this documentation run: **no
 - `login`: [frontend/src/app/core/auth/sign-in.page.ts:16](../../../frontend/src/app/core/auth/sign-in.page.ts#L16)
 - `loginSubmit`: [frontend/src/app/core/auth/sign-in.page.ts:67](../../../frontend/src/app/core/auth/sign-in.page.ts#L67)
 - `session`: [frontend/src/app/core/auth/auth.service.ts:31](../../../frontend/src/app/core/auth/auth.service.ts#L31)
-- `credentials`: [frontend/src/app/core/auth/auth.service.ts:78](../../../frontend/src/app/core/auth/auth.service.ts#L78)
+- `credentials`: [frontend/src/app/core/auth/auth.service.ts:83](../../../frontend/src/app/core/auth/auth.service.ts#L83)
 - `provider`: [frontend/src/app/core/auth/sign-in.provider.ts:17](../../../frontend/src/app/core/auth/sign-in.provider.ts#L17)
 - `oidc`: [frontend/src/app/core/auth/sign-in.provider.ts:41](../../../frontend/src/app/core/auth/sign-in.provider.ts#L41)
 - `guards`: [frontend/src/app/core/auth/auth.guards.ts:6](../../../frontend/src/app/core/auth/auth.guards.ts#L6)
@@ -24,6 +24,12 @@ Source-inspected use cases. Runtime verification in this documentation run: **no
 - `usersUi`: [frontend/src/app/features/administration/pages/users/users.page.ts:159](../../../frontend/src/app/features/administration/pages/users/users.page.ts#L159)
 - `onboarding`: [identity/auth0/README.md:13](../../../identity/auth0/README.md#L13)
 - `tenant`: [identity/auth0/README.md:3](../../../identity/auth0/README.md#L3)
+- `passwordRoute`: [backend/internal/platform/httpapi/local_login.go:20](../../../backend/internal/platform/httpapi/local_login.go#L20)
+- `passwordBoundary`: [backend/internal/platform/auth/local_login.go:90](../../../backend/internal/platform/auth/local_login.go#L90)
+- `passwordBootstrap`: [frontend/src/main.ts:13](../../../frontend/src/main.ts#L13)
+- `passwordConfig`: [frontend/src/app/core/config/config.service.ts:55](../../../frontend/src/app/core/config/config.service.ts#L55)
+- `requestOwnership`: [frontend/src/app/core/auth/auth.service.ts:34](../../../frontend/src/app/core/auth/auth.service.ts#L34)
+- `projectContextOwnership`: [frontend/src/app/app.component.ts:462](../../../frontend/src/app/app.component.ts#L462)
 
 ## Cases
 
@@ -65,7 +71,7 @@ Actor: `anonymous` · Kind: `happy_path` · Implementation: `implemented` · Sur
 
 - The approved identity is installed and the requested safe route opens.
 
-Sources: [frontend/src/app/core/auth/sign-in.page.ts:67](../../../frontend/src/app/core/auth/sign-in.page.ts#L67), [frontend/src/app/core/auth/auth.service.ts:78](../../../frontend/src/app/core/auth/auth.service.ts#L78), [backend/internal/platform/auth/local_login.go:134](../../../backend/internal/platform/auth/local_login.go#L134).
+Sources: [frontend/src/app/core/auth/sign-in.page.ts:67](../../../frontend/src/app/core/auth/sign-in.page.ts#L67), [frontend/src/app/core/auth/auth.service.ts:83](../../../frontend/src/app/core/auth/auth.service.ts#L83), [backend/internal/platform/auth/local_login.go:134](../../../backend/internal/platform/auth/local_login.go#L134).
 
 Browser-only HTTP operations: `localSignIn`.
 
@@ -308,7 +314,7 @@ Actor: `anonymous` · Kind: `permission` · Implementation: `implemented` · Sur
 
 - Access is denied before an account session is installed.
 
-Sources: [frontend/src/app/core/auth/auth.service.ts:78](../../../frontend/src/app/core/auth/auth.service.ts#L78), [backend/internal/features/identity/binding.go:25](../../../backend/internal/features/identity/binding.go#L25).
+Sources: [frontend/src/app/core/auth/auth.service.ts:83](../../../frontend/src/app/core/auth/auth.service.ts#L83), [backend/internal/features/identity/binding.go:25](../../../backend/internal/features/identity/binding.go#L25).
 
 Browser-only HTTP operations: `localSignIn`.
 
@@ -352,7 +358,7 @@ Actor: `anonymous` · Kind: `failure` · Implementation: `implemented` · Surfac
 
 - An unavailable-service message appears and another attempt remains possible.
 
-Sources: [frontend/src/app/core/auth/auth.service.ts:78](../../../frontend/src/app/core/auth/auth.service.ts#L78), [frontend/src/app/core/auth/sign-in.page.ts:67](../../../frontend/src/app/core/auth/sign-in.page.ts#L67).
+Sources: [frontend/src/app/core/auth/auth.service.ts:83](../../../frontend/src/app/core/auth/auth.service.ts#L83), [frontend/src/app/core/auth/sign-in.page.ts:67](../../../frontend/src/app/core/auth/sign-in.page.ts#L67).
 
 Browser-only HTTP operations: `localSignIn`.
 
@@ -463,7 +469,7 @@ Actor: `anonymous` · Kind: `concurrency` · Implementation: `implemented` · Su
 
 - The older result returns superseded and cannot install the old account.
 
-Sources: [frontend/src/app/core/auth/auth.service.ts:78](../../../frontend/src/app/core/auth/auth.service.ts#L78).
+Sources: [frontend/src/app/core/auth/auth.service.ts:83](../../../frontend/src/app/core/auth/auth.service.ts#L83).
 
 Related test files: [access.spec.ts](../../../frontend/e2e/access.spec.ts), [auth.service.spec.ts](../../../frontend/src/app/core/auth/auth.service.spec.ts), [service_test.go](../../../backend/internal/features/identity/service_test.go).
 
@@ -486,7 +492,7 @@ Actor: `user` · Kind: `concurrency` · Implementation: `implemented` · Surface
 
 - The older reply cannot clear or replace the newer session.
 
-Sources: [frontend/src/app/core/auth/auth.service.ts:78](../../../frontend/src/app/core/auth/auth.service.ts#L78).
+Sources: [frontend/src/app/core/auth/auth.service.ts:83](../../../frontend/src/app/core/auth/auth.service.ts#L83).
 
 Related test files: [access.spec.ts](../../../frontend/e2e/access.spec.ts), [auth.service.spec.ts](../../../frontend/src/app/core/auth/auth.service.spec.ts), [service_test.go](../../../backend/internal/features/identity/service_test.go).
 
@@ -1348,7 +1354,7 @@ Actor: `anonymous` · Kind: `happy_path` · Implementation: `implemented` · Sur
 
 - The server returns a bearer token for the active approved caller without a password or other account identity.
 
-Sources: [frontend/src/app/core/auth/sign-in.page.ts:67](../../../frontend/src/app/core/auth/sign-in.page.ts#L67), [frontend/src/app/core/auth/auth.service.ts:78](../../../frontend/src/app/core/auth/auth.service.ts#L78), [backend/internal/platform/auth/local_login.go:134](../../../backend/internal/platform/auth/local_login.go#L134).
+Sources: [frontend/src/app/core/auth/sign-in.page.ts:67](../../../frontend/src/app/core/auth/sign-in.page.ts#L67), [frontend/src/app/core/auth/auth.service.ts:83](../../../frontend/src/app/core/auth/auth.service.ts#L83), [backend/internal/platform/auth/local_login.go:134](../../../backend/internal/platform/auth/local_login.go#L134).
 
 Browser-only HTTP operations: `localSignIn`.
 
@@ -1455,3 +1461,177 @@ Shared business operations: `update_user`.
 Related test files: [access.spec.ts](../../../frontend/e2e/access.spec.ts), [auth.service.spec.ts](../../../frontend/src/app/core/auth/auth.service.spec.ts), [service_test.go](../../../backend/internal/features/identity/service_test.go).
 
 Note: Atomic service counterpart split from UC-ACC-0053; it does not claim browser rendering, form state, session epochs or download assembly.
+
+<a id="uc-acc-0064"></a>
+### UC-ACC-0064 — Sign in with an approved provisioned hosted-password account
+
+Actor: `anonymous` · Kind: `happy_path` · Implementation: `implemented` · Surfaces: `web`, `rest`
+
+**Preconditions**
+
+- The isolated service uses production VM password mode with its own provisioned credentials, a canonical HTTPS application origin and PostgreSQL verify-full TLS.
+
+**Steps**
+
+1. Submit the provisioned username and exact password from the hosted password screen and through the password HTTP operation.
+
+**Expected results**
+
+- A short-lived REST token is installed only after current company approval is verified; the web app opens the approved account.
+
+Sources: [backend/internal/platform/httpapi/local_login.go:20](../../../backend/internal/platform/httpapi/local_login.go#L20), [frontend/src/app/core/auth/auth.service.ts:83](../../../frontend/src/app/core/auth/auth.service.ts#L83), [frontend/src/main.ts:13](../../../frontend/src/main.ts#L13).
+
+Browser-only HTTP operations: `passwordSignIn`.
+
+Related test files: [password_route_boundaries_test.go](../../../backend/internal/platform/httpapi/password_route_boundaries_test.go), [password_boundaries_test.go](../../../backend/internal/platform/auth/password_boundaries_test.go), [main.spec.ts](../../../frontend/src/main.spec.ts), [coverage-password-mode.spec.ts](../../../frontend/e2e/coverage-password-mode.spec.ts).
+
+Note: Local integration exercises the actual password mode. It does not establish a deployed VM, public TLS certificate or cloud-provider acceptance.
+
+<a id="uc-acc-0065"></a>
+### UC-ACC-0065 — Reject an incorrect hosted password without exposing credentials
+
+Actor: `anonymous` · Kind: `permission` · Implementation: `implemented` · Surfaces: `rest`
+
+**Preconditions**
+
+- The isolated service uses production VM password mode with its own provisioned credentials, a canonical HTTPS application origin and PostgreSQL verify-full TLS.
+
+**Steps**
+
+1. Submit an incorrect password to the hosted password operation.
+
+**Expected results**
+
+- The service returns authentication_required with HTTP401 and no token, password, hash or private file data.
+
+Sources: [backend/internal/platform/httpapi/local_login.go:20](../../../backend/internal/platform/httpapi/local_login.go#L20), [backend/internal/platform/auth/local_login.go:90](../../../backend/internal/platform/auth/local_login.go#L90).
+
+Browser-only HTTP operations: `passwordSignIn`.
+
+Related test files: [password_route_boundaries_test.go](../../../backend/internal/platform/httpapi/password_route_boundaries_test.go), [password_boundaries_test.go](../../../backend/internal/platform/auth/password_boundaries_test.go), [main.spec.ts](../../../frontend/src/main.spec.ts), [coverage-password-mode.spec.ts](../../../frontend/e2e/coverage-password-mode.spec.ts).
+
+Note: Local integration exercises the actual password mode. It does not establish a deployed VM, public TLS certificate or cloud-provider acceptance.
+
+<a id="uc-acc-0066"></a>
+### UC-ACC-0066 — Reject a provisioned hosted identity without current company approval
+
+Actor: `anonymous` · Kind: `permission` · Implementation: `implemented` · Surfaces: `rest`
+
+**Preconditions**
+
+- The isolated service uses production VM password mode with its own provisioned credentials, a canonical HTTPS application origin and PostgreSQL verify-full TLS.
+
+**Steps**
+
+1. Submit valid provisioned credentials whose email has no approved company user.
+
+**Expected results**
+
+- The service denies access without installing a session or implicitly approving the user.
+
+Sources: [backend/internal/platform/httpapi/local_login.go:20](../../../backend/internal/platform/httpapi/local_login.go#L20), [backend/internal/features/identity/binding.go:25](../../../backend/internal/features/identity/binding.go#L25).
+
+Browser-only HTTP operations: `passwordSignIn`.
+
+Related test files: [password_route_boundaries_test.go](../../../backend/internal/platform/httpapi/password_route_boundaries_test.go), [password_boundaries_test.go](../../../backend/internal/platform/auth/password_boundaries_test.go), [main.spec.ts](../../../frontend/src/main.spec.ts), [coverage-password-mode.spec.ts](../../../frontend/e2e/coverage-password-mode.spec.ts).
+
+Note: Local integration exercises the actual password mode. It does not establish a deployed VM, public TLS certificate or cloud-provider acceptance.
+
+<a id="uc-acc-0067"></a>
+### UC-ACC-0067 — Keep the hosted password endpoint absent from the development identity service
+
+Actor: `user` · Kind: `permission` · Implementation: `implemented` · Surfaces: `rest`
+
+**Preconditions**
+
+- The ordinary isolated development service is running with development authentication and the approved user has a valid development REST token.
+
+**Steps**
+
+1. Post credentials with the approved development bearer token to the hosted password endpoint.
+
+**Expected results**
+
+- The endpoint is absent and issues no token; the development login endpoint remains usable.
+
+Sources: [backend/internal/platform/httpapi/local_login.go:20](../../../backend/internal/platform/httpapi/local_login.go#L20), [backend/internal/platform/auth/local_login.go:60](../../../backend/internal/platform/auth/local_login.go#L60).
+
+Browser-only HTTP operations: `passwordSignIn`.
+
+Related test files: [password_route_boundaries_test.go](../../../backend/internal/platform/httpapi/password_route_boundaries_test.go), [password_boundaries_test.go](../../../backend/internal/platform/auth/password_boundaries_test.go), [main.spec.ts](../../../frontend/src/main.spec.ts), [coverage-password-mode.spec.ts](../../../frontend/e2e/coverage-password-mode.spec.ts).
+
+<a id="uc-acc-0068"></a>
+### UC-ACC-0068 — Clear the hosted password session on sign-out and document reload
+
+Actor: `user` · Kind: `lifecycle` · Implementation: `implemented` · Surfaces: `web`
+
+**Preconditions**
+
+- The isolated service uses production VM password mode with its own provisioned credentials, a canonical HTTPS application origin and PostgreSQL verify-full TLS.
+- The approved user has signed in with hosted password authentication.
+
+**Steps**
+
+1. Sign out and sign in again, then reload the document.
+
+**Expected results**
+
+- Both sign-out and document reload remove the in-memory session and require credentials again.
+
+Sources: [frontend/src/app/core/auth/sign-in.provider.ts:17](../../../frontend/src/app/core/auth/sign-in.provider.ts#L17), [frontend/src/main.ts:13](../../../frontend/src/main.ts#L13), [frontend/src/app/core/auth/auth.service.ts:31](../../../frontend/src/app/core/auth/auth.service.ts#L31).
+
+Related test files: [password_route_boundaries_test.go](../../../backend/internal/platform/httpapi/password_route_boundaries_test.go), [password_boundaries_test.go](../../../backend/internal/platform/auth/password_boundaries_test.go), [main.spec.ts](../../../frontend/src/main.spec.ts), [coverage-password-mode.spec.ts](../../../frontend/e2e/coverage-password-mode.spec.ts).
+
+Note: Local integration exercises the actual password mode. It does not establish a deployed VM, public TLS certificate or cloud-provider acceptance.
+
+<a id="uc-acc-0069"></a>
+### UC-ACC-0069 — Reject a hosted REST token used directly as an MCP credential
+
+Actor: `mcp_client` · Kind: `permission` · Implementation: `implemented` · Surfaces: `rest`, `mcp`
+
+**Preconditions**
+
+- The isolated service uses production VM password mode with its own provisioned credentials, a canonical HTTPS application origin and PostgreSQL verify-full TLS.
+- The approved account has a newly issued hosted password REST token.
+
+**Steps**
+
+1. Read the REST identity with that token, then submit the same token directly to MCP.
+
+**Expected results**
+
+- The REST identity succeeds and the MCP boundary rejects the mismatched audience.
+
+Sources: [backend/internal/platform/auth/local_login.go:90](../../../backend/internal/platform/auth/local_login.go#L90), [frontend/src/app/core/auth/auth.service.ts:31](../../../frontend/src/app/core/auth/auth.service.ts#L31).
+
+Shared business operations: `get_me`.
+
+Related test files: [password_route_boundaries_test.go](../../../backend/internal/platform/httpapi/password_route_boundaries_test.go), [password_boundaries_test.go](../../../backend/internal/platform/auth/password_boundaries_test.go), [main.spec.ts](../../../frontend/src/main.spec.ts), [coverage-password-mode.spec.ts](../../../frontend/e2e/coverage-password-mode.spec.ts).
+
+Note: Local integration exercises the actual password mode. It does not establish a deployed VM, public TLS certificate or cloud-provider acceptance.
+
+<a id="uc-acc-0070"></a>
+### UC-ACC-0070 — Keep delayed previous-session project replies from canceling a replacement login
+
+Actor: `user` · Kind: `lifecycle` · Implementation: `implemented` · Surfaces: `web`
+
+**Preconditions**
+
+- An approved owner has an accepted project read whose response is delayed in the browser.
+- A different approved member is signing in on the same page after sign-out.
+
+**Steps**
+
+1. Sign out and begin the member login while its successful credential response is delayed.
+2. Deliver the previous owner project response, then deliver the member credential response.
+
+**Expected results**
+
+- The obsolete project response starts no unsigned board discovery and cannot invalidate the pending login.
+- The replacement member identity and board directory load with authenticated requests and the correct project role, without a document reload.
+
+Sources: [frontend/src/app/core/auth/auth.service.ts:34](../../../frontend/src/app/core/auth/auth.service.ts#L34), [frontend/src/app/app.component.ts:462](../../../frontend/src/app/app.component.ts#L462), [frontend/src/app/core/auth/auth.service.ts:83](../../../frontend/src/app/core/auth/auth.service.ts#L83).
+
+Related test files: [session-login-request-ownership.spec.ts](../../../frontend/e2e/session-login-request-ownership.spec.ts), [auth-session-request-ownership.spec.ts](../../../frontend/src/app/core/auth/auth-session-request-ownership.spec.ts).
+
+Note: The browser story delays actual accepted service responses; it does not replace identity or project service responses with invented fixtures.

@@ -7,36 +7,36 @@
   "runtimeVerification": "not_run",
   "testReferences": "Related files only. No scenario/assertion coverage or current passing result is inferred.",
   "summary": {
-    "cases": 1772,
+    "cases": 1781,
     "areas": 20,
     "implementation": {
       "external_pending": 13,
-      "implemented": 1602,
+      "implemented": 1611,
       "not_implemented": 11,
       "service_only": 146
     },
     "kinds": {
       "accessibility": 31,
-      "concurrency": 137,
+      "concurrency": 139,
       "failure": 48,
-      "happy_path": 891,
-      "lifecycle": 120,
+      "happy_path": 892,
+      "lifecycle": 122,
       "localization": 30,
       "performance": 21,
-      "permission": 165,
+      "permission": 169,
       "validation": 329
     },
     "surfaces": {
       "background": 23,
       "frontend_service": 2,
-      "mcp": 975,
+      "mcp": 976,
       "operator": 17,
       "plugin": 29,
-      "rest": 1022,
-      "web": 1320
+      "rest": 1027,
+      "web": 1325
     },
     "routeDeclarations": 28,
-    "httpOperations": 140,
+    "httpOperations": 141,
     "mcpTools": 133,
     "uiEventBindings": 548,
     "gaps": 27
@@ -109,7 +109,14 @@
         "UC-ACC-0059",
         "UC-ACC-0060",
         "UC-ACC-0063",
-        "UC-ACC-0061"
+        "UC-ACC-0061",
+        "UC-ACC-0064",
+        "UC-ACC-0065",
+        "UC-ACC-0066",
+        "UC-ACC-0067",
+        "UC-ACC-0068",
+        "UC-ACC-0069",
+        "UC-ACC-0070"
       ]
     },
     {
@@ -241,7 +248,8 @@
         "UC-AST-0083",
         "UC-AST-0084",
         "UC-AST-0085",
-        "UC-AST-0086"
+        "UC-AST-0086",
+        "UC-AST-0087"
       ]
     },
     {
@@ -876,7 +884,8 @@
         "UC-FLD-0086",
         "UC-APR-0068",
         "UC-APR-0069",
-        "UC-LBL-0028"
+        "UC-LBL-0028",
+        "UC-LBL-0029"
       ]
     },
     {
@@ -1962,7 +1971,7 @@
     },
     {
       "path": "backend/api/openapi.json",
-      "sha256": "3e3b8dfd50a760db20175e70befc1bfc0263135b7025d13869df3c03e38a0cf8"
+      "sha256": "60307bf8e68cc7ac85a782f83ff002eb08be9569d27aded6aae720fe40ec3102"
     },
     {
       "path": "backend/internal/features/activity/mcp.go",
@@ -2290,7 +2299,7 @@
     },
     {
       "path": "backend/internal/features/mcptokens/oauth.go",
-      "sha256": "3280072b62b9c5b4c5dae18677bbe74147c42b880795a10b319f673edf665f58"
+      "sha256": "646c7ffe00167a829a4ae5e0375a62c31b03f9a90de2222c7f873e284dfd604c"
     },
     {
       "path": "backend/internal/features/mcptokens/service.go",
@@ -2366,7 +2375,11 @@
     },
     {
       "path": "backend/internal/platform/auth/local_login.go",
-      "sha256": "50b4bfa1269e50f6cc4647f2385ae6a2c35ca2c2b6b3deedae249188feafa221"
+      "sha256": "72fd68163bde79c086c73ff36b025bffa01db45e7bf1369d62fcf25bc0e01856"
+    },
+    {
+      "path": "backend/internal/platform/auth/password_boundaries_test.go",
+      "sha256": "7778063e7d94db1d308d9bb69e3b39edbd8415b758a683e0b94b6f35bf1f4d06"
     },
     {
       "path": "backend/internal/platform/command/field_values.go",
@@ -2386,15 +2399,23 @@
     },
     {
       "path": "backend/internal/platform/config/config.go",
-      "sha256": "6167c8f5fd77d1b3192d197d79050d21e1c31ba252c6f6713bec0007fc786844"
+      "sha256": "4a082fc7be637ab941572cc6d9066734e4737d9127b7949cc876d555dd4fc584"
     },
     {
       "path": "backend/internal/platform/httpapi/errors.go",
       "sha256": "daedad333f3ad5da2d3fc2a1007e17b5dccfb0ee97241bcc623f1bc997107f3f"
     },
     {
+      "path": "backend/internal/platform/httpapi/local_login.go",
+      "sha256": "3f778e225216759bfc41828d1d708bc37eb35d8a93181d997cdd0f1d40191d2c"
+    },
+    {
       "path": "backend/internal/platform/httpapi/maintenance.go",
       "sha256": "2b3a2d5ca2329c75cda627f9f5d5bd49c5805ac990b1b5af85f9e68b5506a004"
+    },
+    {
+      "path": "backend/internal/platform/httpapi/password_route_boundaries_test.go",
+      "sha256": "f655813d9e05eb3253e0f7a79056a787f094d30e9a64f82d4eb5e6414cd9c638"
     },
     {
       "path": "backend/internal/platform/httpapi/server.go",
@@ -2570,7 +2591,7 @@
     },
     {
       "path": "frontend/e2e/coverage-issue-discovery.spec.ts",
-      "sha256": "84e92c5fd6689447c597370c04ea69dad20921906d36316970f6c24b8417b44d"
+      "sha256": "2834b4979a51e84e7fe794d613fab2d89d892df70ef59e2192ecab1f7a9d1c25"
     },
     {
       "path": "frontend/e2e/coverage-issue-native-criteria.spec.ts",
@@ -2619,6 +2640,10 @@
     {
       "path": "frontend/e2e/coverage-notification-worker.spec.ts",
       "sha256": "8d5722a5af852339adc7292a4d5e4c3d9ac2b6d5de9baec34375c99730867ffa"
+    },
+    {
+      "path": "frontend/e2e/coverage-password-mode.spec.ts",
+      "sha256": "614a0a97c97aa012048b155d164c6cf8fa3829ce035951bac3169fe847da9cad"
     },
     {
       "path": "frontend/e2e/coverage-planning.spec.ts",
@@ -2737,6 +2762,10 @@
       "sha256": "2907e8348c1118b1dfcd9ab688d6639ed0d3fe1e8213e598376bafe8b52ebb2f"
     },
     {
+      "path": "frontend/e2e/label-create-draft-ownership.spec.ts",
+      "sha256": "ccd8ef9aa50da288e50985145d9e213318ae5de6e5ab1cbdfe92d928b518728a"
+    },
+    {
       "path": "frontend/e2e/mcp-oauth.spec.ts",
       "sha256": "d1398945761ffcd5ca01d0fa6cf7cfca8ee276963890a8659dbdb0d0e6d1f9c3"
     },
@@ -2793,6 +2822,10 @@
       "sha256": "60a5480cff20f7e9191db6df9f5570cdc565fcb912013e550fb59c99b1673d0c"
     },
     {
+      "path": "frontend/e2e/session-login-request-ownership.spec.ts",
+      "sha256": "ce8e090de1ba60296bff957b17656ee62e78c32e5f4f3ccaf67beb54076969b1"
+    },
+    {
       "path": "frontend/e2e/subtasks.spec.ts",
       "sha256": "3c28db2d23cccce631a9ea4667c2397402c42be3310769d9328b65fdeb5d2939"
     },
@@ -2805,16 +2838,24 @@
       "sha256": "8b461b21e07ccec15ae0b40f93f54fa7343f05e0a65eaff4ab6014aa6410bf24"
     },
     {
+      "path": "frontend/e2e/upload-cancellation-ownership.spec.ts",
+      "sha256": "ea40c468e66c064603c4a9fffaa5abf50a77f3f865b6dabd7d9ba1ff3deacf86"
+    },
+    {
       "path": "frontend/e2e/workspace-ux.spec.ts",
       "sha256": "fea58fb38f8c73051b275f7233dfbab60a52052dbbc3c269168ced4d54d75327"
     },
     {
       "path": "frontend/src/app/app.component.ts",
-      "sha256": "8339c77e67153ec80fd3a6efaf7eb843d50b69eb470ab0caa67b033a983cdf87"
+      "sha256": "e20d40279bb8375961d27b73ac8953fd477986999e72a4364ec3179024b77165"
     },
     {
       "path": "frontend/src/app/app.routes.ts",
       "sha256": "64d2c8f7519f665068c8ec9be2d3c7a7d19f830ae94ab97365a3cf1f16f93d1e"
+    },
+    {
+      "path": "frontend/src/app/core/auth/auth-session-request-ownership.spec.ts",
+      "sha256": "7f5703c3bdfc1d7e51b0a59a1276c806f59c674099aa645644ff9f5ee9fbb9eb"
     },
     {
       "path": "frontend/src/app/core/auth/auth.guards.ts",
@@ -2822,19 +2863,23 @@
     },
     {
       "path": "frontend/src/app/core/auth/auth.service.spec.ts",
-      "sha256": "6ec660f7fd6b57604f937c818110c134c82ac98723eb5af29076b3c5ccf92da0"
+      "sha256": "71652e8f7fa612177fbc2c0f4904d74dd1e89f7e7720d0cf0f154e040ac617f4"
     },
     {
       "path": "frontend/src/app/core/auth/auth.service.ts",
-      "sha256": "838cbd9a00f101c42550bf44c0a63d0328a83b0f5880f04ba4bffb660136d67d"
+      "sha256": "b21579afd6a17e132f8b7cb40c22b832f8b54ad261578ec97eaf03776834c799"
     },
     {
       "path": "frontend/src/app/core/auth/sign-in.page.ts",
-      "sha256": "ca649236d90cd52f0523a6430f8cc1a87c7ab2155191d704025b870bf36d5e9c"
+      "sha256": "16b5c83b595588deb0e4b9fe90ff1892377f63c8e40fc24a1e16c4449d067e8d"
     },
     {
       "path": "frontend/src/app/core/auth/sign-in.provider.ts",
-      "sha256": "ede94400de4101db1305be8d9b6f3d372583a2ae69886af3c2406cc5e49da2b1"
+      "sha256": "e2bf99e55af372f6db4d57ec5464fef24d6765e83b6bab6eca61153dfb0bdd39"
+    },
+    {
+      "path": "frontend/src/app/core/config/config.service.ts",
+      "sha256": "b44002d4bff01d0a9e1d7ea7e82d7c35e38ede5a8749dd47f84607c9c3afa052"
     },
     {
       "path": "frontend/src/app/core/drafts/drafts.service.ts",
@@ -2874,7 +2919,7 @@
     },
     {
       "path": "frontend/src/app/features/administration/pages/users/users.page.ts",
-      "sha256": "f02b9f26a826f6291c1c358506ee3214a96bc51fdbc0afe492b837076f171186"
+      "sha256": "0d3fbcc078c7c25dae0078e5f8ed2276a78efe4fe6d6410bbd62e6bfdde77616"
     },
     {
       "path": "frontend/src/app/features/attachments/attachment-files.ts",
@@ -2894,7 +2939,11 @@
     },
     {
       "path": "frontend/src/app/features/attachments/components/file-queue/file-queue.component.ts",
-      "sha256": "9ad386dad4669475a59583be0eabe70b55b789a4e06054378ccd8632b70f6561"
+      "sha256": "f1b928e75725a3017497d31fa802ded233cb09946d45e7499a243240ab8e2ef6"
+    },
+    {
+      "path": "frontend/src/app/features/attachments/components/file-queue/file-queue.state.spec.ts",
+      "sha256": "15b06307d69effee65e175e659dba36c0a8a49ec7b8d44674843b2a1b5fb5360"
     },
     {
       "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
@@ -3010,7 +3059,11 @@
     },
     {
       "path": "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts",
-      "sha256": "121bb9cf50703f9b6fa3c86a1c1cc21c3d3d3220fd9c4ef9fd125bf271ff6afc"
+      "sha256": "92d94f71a6cfdb37cd15273b2eba7b1c9bf14ea8088f869bad5328e1c7f4af6b"
+    },
+    {
+      "path": "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.state.spec.ts",
+      "sha256": "2ce8537bd6c05d1b6f6053c496c00fa9391b0f537ec4534c03cc3a2f65cf5ad0"
     },
     {
       "path": "frontend/src/app/features/issues/components/dependencies/dependencies.component.html",
@@ -3169,6 +3222,14 @@
       "sha256": "bedd907bfb508f41fcdaffbefb713d7756569edb694a882cd31582772d06c217"
     },
     {
+      "path": "frontend/src/main.spec.ts",
+      "sha256": "d8fb7eb77c142be407f44cb091436c8229f663d19f14931923973320a7bc4739"
+    },
+    {
+      "path": "frontend/src/main.ts",
+      "sha256": "b25d8a607b8c0023efd4317e3c65fce78edd37e27fccc1076efa8614d1ab4367"
+    },
+    {
       "path": "identity/auth0/README.md",
       "sha256": "c7de13d95b62ba03678c1ed126d2b6d14c085a19902d48d1d7e9dd14fc023ec0"
     },
@@ -3301,7 +3362,7 @@
         },
         {
           "path": "frontend/src/app/core/auth/auth.service.ts",
-          "line": 78
+          "line": 83
         },
         {
           "path": "backend/internal/platform/auth/local_login.go",
@@ -3763,7 +3824,7 @@
       "sourceReferences": [
         {
           "path": "frontend/src/app/core/auth/auth.service.ts",
-          "line": 78
+          "line": 83
         },
         {
           "path": "backend/internal/features/identity/binding.go",
@@ -3848,7 +3909,7 @@
       "sourceReferences": [
         {
           "path": "frontend/src/app/core/auth/auth.service.ts",
-          "line": 78
+          "line": 83
         },
         {
           "path": "frontend/src/app/core/auth/sign-in.page.ts",
@@ -4060,7 +4121,7 @@
       "sourceReferences": [
         {
           "path": "frontend/src/app/core/auth/auth.service.ts",
-          "line": 78
+          "line": 83
         }
       ]
     },
@@ -4100,7 +4161,7 @@
       "sourceReferences": [
         {
           "path": "frontend/src/app/core/auth/auth.service.ts",
-          "line": 78
+          "line": 83
         }
       ]
     },
@@ -5727,7 +5788,7 @@
         },
         {
           "path": "frontend/src/app/core/auth/auth.service.ts",
-          "line": 78
+          "line": 83
         },
         {
           "path": "backend/internal/platform/auth/local_login.go",
@@ -5920,6 +5981,360 @@
         {
           "path": "frontend/src/app/features/administration/pages/users/users.page.ts",
           "line": 159
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0064",
+      "title": "Sign in with an approved provisioned hosted-password account",
+      "actor": "anonymous",
+      "preconditions": [
+        "The isolated service uses production VM password mode with its own provisioned credentials, a canonical HTTPS application origin and PostgreSQL verify-full TLS."
+      ],
+      "steps": [
+        "Submit the provisioned username and exact password from the hosted password screen and through the password HTTP operation."
+      ],
+      "expected": [
+        "A short-lived REST token is installed only after current company approval is verified; the web app opens the approved account."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "passwordRoute",
+        "credentials",
+        "passwordBootstrap"
+      ],
+      "operations": [],
+      "existingTests": [
+        "backend/internal/platform/httpapi/password_route_boundaries_test.go",
+        "backend/internal/platform/auth/password_boundaries_test.go",
+        "frontend/src/main.spec.ts",
+        "frontend/e2e/coverage-password-mode.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Local integration exercises the actual password mode. It does not establish a deployed VM, public TLS certificate or cloud-provider acceptance."
+      ],
+      "httpOperations": [
+        "passwordSignIn"
+      ],
+      "area": "access",
+      "runtimeVerification": "not_run",
+      "sourceReferences": [
+        {
+          "path": "backend/internal/platform/httpapi/local_login.go",
+          "line": 20
+        },
+        {
+          "path": "frontend/src/app/core/auth/auth.service.ts",
+          "line": 83
+        },
+        {
+          "path": "frontend/src/main.ts",
+          "line": 13
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0065",
+      "title": "Reject an incorrect hosted password without exposing credentials",
+      "actor": "anonymous",
+      "preconditions": [
+        "The isolated service uses production VM password mode with its own provisioned credentials, a canonical HTTPS application origin and PostgreSQL verify-full TLS."
+      ],
+      "steps": [
+        "Submit an incorrect password to the hosted password operation."
+      ],
+      "expected": [
+        "The service returns authentication_required with HTTP401 and no token, password, hash or private file data."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "passwordRoute",
+        "passwordBoundary"
+      ],
+      "operations": [],
+      "existingTests": [
+        "backend/internal/platform/httpapi/password_route_boundaries_test.go",
+        "backend/internal/platform/auth/password_boundaries_test.go",
+        "frontend/src/main.spec.ts",
+        "frontend/e2e/coverage-password-mode.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Local integration exercises the actual password mode. It does not establish a deployed VM, public TLS certificate or cloud-provider acceptance."
+      ],
+      "httpOperations": [
+        "passwordSignIn"
+      ],
+      "area": "access",
+      "runtimeVerification": "not_run",
+      "sourceReferences": [
+        {
+          "path": "backend/internal/platform/httpapi/local_login.go",
+          "line": 20
+        },
+        {
+          "path": "backend/internal/platform/auth/local_login.go",
+          "line": 90
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0066",
+      "title": "Reject a provisioned hosted identity without current company approval",
+      "actor": "anonymous",
+      "preconditions": [
+        "The isolated service uses production VM password mode with its own provisioned credentials, a canonical HTTPS application origin and PostgreSQL verify-full TLS."
+      ],
+      "steps": [
+        "Submit valid provisioned credentials whose email has no approved company user."
+      ],
+      "expected": [
+        "The service denies access without installing a session or implicitly approving the user."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "passwordRoute",
+        "binding"
+      ],
+      "operations": [],
+      "existingTests": [
+        "backend/internal/platform/httpapi/password_route_boundaries_test.go",
+        "backend/internal/platform/auth/password_boundaries_test.go",
+        "frontend/src/main.spec.ts",
+        "frontend/e2e/coverage-password-mode.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Local integration exercises the actual password mode. It does not establish a deployed VM, public TLS certificate or cloud-provider acceptance."
+      ],
+      "httpOperations": [
+        "passwordSignIn"
+      ],
+      "area": "access",
+      "runtimeVerification": "not_run",
+      "sourceReferences": [
+        {
+          "path": "backend/internal/platform/httpapi/local_login.go",
+          "line": 20
+        },
+        {
+          "path": "backend/internal/features/identity/binding.go",
+          "line": 25
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0067",
+      "title": "Keep the hosted password endpoint absent from the development identity service",
+      "actor": "user",
+      "preconditions": [
+        "The ordinary isolated development service is running with development authentication and the approved user has a valid development REST token."
+      ],
+      "steps": [
+        "Post credentials with the approved development bearer token to the hosted password endpoint."
+      ],
+      "expected": [
+        "The endpoint is absent and issues no token; the development login endpoint remains usable."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "passwordRoute",
+        "localBoundary"
+      ],
+      "operations": [],
+      "existingTests": [
+        "backend/internal/platform/httpapi/password_route_boundaries_test.go",
+        "backend/internal/platform/auth/password_boundaries_test.go",
+        "frontend/src/main.spec.ts",
+        "frontend/e2e/coverage-password-mode.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "passwordSignIn"
+      ],
+      "area": "access",
+      "runtimeVerification": "not_run",
+      "sourceReferences": [
+        {
+          "path": "backend/internal/platform/httpapi/local_login.go",
+          "line": 20
+        },
+        {
+          "path": "backend/internal/platform/auth/local_login.go",
+          "line": 60
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0068",
+      "title": "Clear the hosted password session on sign-out and document reload",
+      "actor": "user",
+      "preconditions": [
+        "The isolated service uses production VM password mode with its own provisioned credentials, a canonical HTTPS application origin and PostgreSQL verify-full TLS.",
+        "The approved user has signed in with hosted password authentication."
+      ],
+      "steps": [
+        "Sign out and sign in again, then reload the document."
+      ],
+      "expected": [
+        "Both sign-out and document reload remove the in-memory session and require credentials again."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "provider",
+        "passwordBootstrap",
+        "session"
+      ],
+      "operations": [],
+      "existingTests": [
+        "backend/internal/platform/httpapi/password_route_boundaries_test.go",
+        "backend/internal/platform/auth/password_boundaries_test.go",
+        "frontend/src/main.spec.ts",
+        "frontend/e2e/coverage-password-mode.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Local integration exercises the actual password mode. It does not establish a deployed VM, public TLS certificate or cloud-provider acceptance."
+      ],
+      "area": "access",
+      "runtimeVerification": "not_run",
+      "sourceReferences": [
+        {
+          "path": "frontend/src/app/core/auth/sign-in.provider.ts",
+          "line": 17
+        },
+        {
+          "path": "frontend/src/main.ts",
+          "line": 13
+        },
+        {
+          "path": "frontend/src/app/core/auth/auth.service.ts",
+          "line": 31
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0069",
+      "title": "Reject a hosted REST token used directly as an MCP credential",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The isolated service uses production VM password mode with its own provisioned credentials, a canonical HTTPS application origin and PostgreSQL verify-full TLS.",
+        "The approved account has a newly issued hosted password REST token."
+      ],
+      "steps": [
+        "Read the REST identity with that token, then submit the same token directly to MCP."
+      ],
+      "expected": [
+        "The REST identity succeeds and the MCP boundary rejects the mismatched audience."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "passwordBoundary",
+        "session"
+      ],
+      "operations": [
+        "get_me"
+      ],
+      "existingTests": [
+        "backend/internal/platform/httpapi/password_route_boundaries_test.go",
+        "backend/internal/platform/auth/password_boundaries_test.go",
+        "frontend/src/main.spec.ts",
+        "frontend/e2e/coverage-password-mode.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Local integration exercises the actual password mode. It does not establish a deployed VM, public TLS certificate or cloud-provider acceptance."
+      ],
+      "area": "access",
+      "runtimeVerification": "not_run",
+      "sourceReferences": [
+        {
+          "path": "backend/internal/platform/auth/local_login.go",
+          "line": 90
+        },
+        {
+          "path": "frontend/src/app/core/auth/auth.service.ts",
+          "line": 31
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0070",
+      "title": "Keep delayed previous-session project replies from canceling a replacement login",
+      "actor": "user",
+      "preconditions": [
+        "An approved owner has an accepted project read whose response is delayed in the browser.",
+        "A different approved member is signing in on the same page after sign-out."
+      ],
+      "steps": [
+        "Sign out and begin the member login while its successful credential response is delayed.",
+        "Deliver the previous owner project response, then deliver the member credential response."
+      ],
+      "expected": [
+        "The obsolete project response starts no unsigned board discovery and cannot invalidate the pending login.",
+        "The replacement member identity and board directory load with authenticated requests and the correct project role, without a document reload."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "requestOwnership",
+        "projectContextOwnership",
+        "credentials"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/session-login-request-ownership.spec.ts",
+        "frontend/src/app/core/auth/auth-session-request-ownership.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "The browser story delays actual accepted service responses; it does not replace identity or project service responses with invented fixtures."
+      ],
+      "area": "access",
+      "runtimeVerification": "not_run",
+      "sourceReferences": [
+        {
+          "path": "frontend/src/app/core/auth/auth.service.ts",
+          "line": 34
+        },
+        {
+          "path": "frontend/src/app/app.component.ts",
+          "line": 462
+        },
+        {
+          "path": "frontend/src/app/core/auth/auth.service.ts",
+          "line": 83
         }
       ]
     },
@@ -11509,6 +11924,48 @@
         {
           "path": "frontend/src/app/features/attachments/components/file-queue/file-queue.component.ts",
           "line": 90
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0087",
+      "title": "Ignore accepted cancellation after queue destruction and account replacement",
+      "actor": "writer",
+      "preconditions": [
+        "An unfinished resumable upload and another private queued file belong to the current signed-in account."
+      ],
+      "steps": [
+        "Cancel the resumable upload, hold its accepted response, leave the issue, sign out, sign in as another account in the same SPA, release the old reply, and reopen the issue."
+      ],
+      "expected": [
+        "The old reply restores neither private files nor dirty state or errors, starts no upload, and does not prevent the new account from canceling its own queue."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/upload-cancellation-ownership.spec.ts",
+        "frontend/src/app/features/attachments/components/file-queue/file-queue.state.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "area": "assets",
+      "runtimeVerification": "not_run",
+      "sourceReferences": [
+        {
+          "path": "frontend/src/app/features/attachments/components/file-queue/file-queue.component.ts",
+          "line": 90
+        },
+        {
+          "path": "frontend/src/app/features/attachments/resumable-upload.ts",
+          "line": 18
         }
       ]
     },
@@ -37536,6 +37993,48 @@
         {
           "path": "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts",
           "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-LBL-0029",
+      "title": "Preserve the next label name while an earlier creation acknowledgement arrives",
+      "actor": "writer",
+      "preconditions": [
+        "The writer has opened a writable issue editor and the New label name input remains editable during an accepted create request."
+      ],
+      "steps": [
+        "Create one label, hold its accepted acknowledgement, enter a different next label name, and then release the earlier reply."
+      ],
+      "expected": [
+        "The accepted first label becomes selected while the different next unsent name remains available; an unchanged submitted name is cleared normally."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.state.spec.ts",
+        "frontend/e2e/label-create-draft-ownership.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "area": "fields-review-labels",
+      "runtimeVerification": "not_run",
+      "sourceReferences": [
+        {
+          "path": "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts",
+          "line": 27
+        },
+        {
+          "path": "backend/internal/features/issues/dates_labels.go",
+          "line": 48
         }
       ]
     },

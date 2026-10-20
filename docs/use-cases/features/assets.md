@@ -2101,3 +2101,24 @@ Related test files: [coverage-native-assets-extra.spec.ts](../../../frontend/e2e
 Related cases: [UC-AST-0062](../features/assets.md#uc-ast-0062).
 
 Note: Atomic native resume flow distinct from exact same-reference service replay.
+
+<a id="uc-ast-0087"></a>
+### UC-AST-0087 — Ignore accepted cancellation after queue destruction and account replacement
+
+Actor: `writer` · Kind: `concurrency` · Implementation: `implemented` · Surfaces: `web`
+
+**Preconditions**
+
+- An unfinished resumable upload and another private queued file belong to the current signed-in account.
+
+**Steps**
+
+1. Cancel the resumable upload, hold its accepted response, leave the issue, sign out, sign in as another account in the same SPA, release the old reply, and reopen the issue.
+
+**Expected results**
+
+- The old reply restores neither private files nor dirty state or errors, starts no upload, and does not prevent the new account from canceling its own queue.
+
+Sources: [frontend/src/app/features/attachments/components/file-queue/file-queue.component.ts:90](../../../frontend/src/app/features/attachments/components/file-queue/file-queue.component.ts#L90), [frontend/src/app/features/attachments/resumable-upload.ts:18](../../../frontend/src/app/features/attachments/resumable-upload.ts#L18).
+
+Related test files: [upload-cancellation-ownership.spec.ts](../../../frontend/e2e/upload-cancellation-ownership.spec.ts), [file-queue.state.spec.ts](../../../frontend/src/app/features/attachments/components/file-queue/file-queue.state.spec.ts).

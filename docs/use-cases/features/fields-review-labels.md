@@ -4476,3 +4476,24 @@ Related test files: [coverage-native-label-extra.spec.ts](../../../frontend/e2e/
 Related cases: [UC-LBL-0017](../features/fields-review-labels.md#uc-lbl-0017).
 
 Note: Atomic native scoped-choice boundary distinct from direct raw assignment validation.
+
+<a id="uc-lbl-0029"></a>
+### UC-LBL-0029 — Preserve the next label name while an earlier creation acknowledgement arrives
+
+Actor: `writer` · Kind: `concurrency` · Implementation: `implemented` · Surfaces: `web`
+
+**Preconditions**
+
+- The writer has opened a writable issue editor and the New label name input remains editable during an accepted create request.
+
+**Steps**
+
+1. Create one label, hold its accepted acknowledgement, enter a different next label name, and then release the earlier reply.
+
+**Expected results**
+
+- The accepted first label becomes selected while the different next unsent name remains available; an unchanged submitted name is cleared normally.
+
+Sources: [frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts:27](../../../frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts#L27), [backend/internal/features/issues/dates_labels.go:48](../../../backend/internal/features/issues/dates_labels.go#L48).
+
+Related test files: [date-label-fields.state.spec.ts](../../../frontend/src/app/features/issues/components/date-label-fields/date-label-fields.state.spec.ts), [label-create-draft-ownership.spec.ts](../../../frontend/e2e/label-create-draft-ownership.spec.ts).

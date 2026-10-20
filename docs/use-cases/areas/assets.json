@@ -3108,6 +3108,36 @@
       "relatedCases": [
         "UC-AST-0062"
       ]
+    },
+    {
+      "id": "UC-AST-0087",
+      "title": "Ignore accepted cancellation after queue destruction and account replacement",
+      "actor": "writer",
+      "preconditions": [
+        "An unfinished resumable upload and another private queued file belong to the current signed-in account."
+      ],
+      "steps": [
+        "Cancel the resumable upload, hold its accepted response, leave the issue, sign out, sign in as another account in the same SPA, release the old reply, and reopen the issue."
+      ],
+      "expected": [
+        "The old reply restores neither private files nor dirty state or errors, starts no upload, and does not prevent the new account from canceling its own queue."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/upload-cancellation-ownership.spec.ts",
+        "frontend/src/app/features/attachments/components/file-queue/file-queue.state.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
     }
   ]
 }

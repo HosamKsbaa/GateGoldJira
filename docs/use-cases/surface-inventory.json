@@ -479,6 +479,18 @@
       "mcpTool": null
     },
     {
+      "operationId": "passwordSignIn",
+      "method": "POST",
+      "path": "/api/v1/auth/password-sign-in",
+      "caseIds": [
+        "UC-ACC-0064",
+        "UC-ACC-0065",
+        "UC-ACC-0066",
+        "UC-ACC-0067"
+      ],
+      "mcpTool": null
+    },
+    {
       "operationId": "get_board",
       "method": "GET",
       "path": "/api/v1/boards/{boardId}",
@@ -1011,6 +1023,7 @@
         "UC-ACC-0029",
         "UC-ACC-0031",
         "UC-ACC-0059",
+        "UC-ACC-0069",
         "UC-MCP-0026",
         "UC-MCP-0035",
         "UC-MCP-0080"
@@ -3283,6 +3296,7 @@
         "UC-ACC-0029",
         "UC-ACC-0031",
         "UC-ACC-0059",
+        "UC-ACC-0069",
         "UC-MCP-0026",
         "UC-MCP-0035",
         "UC-MCP-0080"
@@ -4999,7 +5013,7 @@
     },
     {
       "source": "frontend/src/app/core/auth/sign-in.page.ts",
-      "line": 21,
+      "line": 23,
       "event": "ngSubmit",
       "expression": "localSignIn()",
       "ownerAreas": [
@@ -5010,7 +5024,7 @@
     },
     {
       "source": "frontend/src/app/core/auth/sign-in.page.ts",
-      "line": 53,
+      "line": 55,
       "event": "click",
       "expression": "googleSignIn()",
       "ownerAreas": [
@@ -5412,7 +5426,7 @@
     },
     {
       "source": "frontend/src/app/features/administration/pages/users/users.page.ts",
-      "line": 134,
+      "line": 136,
       "event": "ngSubmit",
       "expression": "approve()",
       "ownerAreas": [

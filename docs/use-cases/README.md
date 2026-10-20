@@ -4,21 +4,21 @@ Catalog date: **2026-10-20**, Africa/Cairo. Scope: **current application**. Thre
 
 This catalog defines the current expectations. Its `runtimeVerification: not_run` fields describe source-only catalog evidence; actual execution is recorded separately by the source-stamped coverage reports. Existing test links and source references never count as a passing test. The [test strategy](test-strategy.json) describes execution, coverage gates and external boundaries.
 
-**1772 individually identified cases** across **20 areas**, with **28 route declarations**, **140 OpenAPI operations** and **133 published MCP tools** reconciled to catalog ownership/references. Counts include explicitly unavailable and externally pending cases; they are not counts of passing tests. Route declarations include lazy parents and fallback routes, not just screens.
+**1781 individually identified cases** across **20 areas**, with **28 route declarations**, **141 OpenAPI operations** and **133 published MCP tools** reconciled to catalog ownership/references. Counts include explicitly unavailable and externally pending cases; they are not counts of passing tests. Route declarations include lazy parents and fallback routes, not just screens.
 
 ## Read the catalog
 
 | Area | Cases | Detailed document |
 |---|---:|---|
-| Authentication, sessions and company accounts | 63 | [access](features/access.md) |
+| Authentication, sessions and company accounts | 70 | [access](features/access.md) |
 | Company and issue activity history | 32 | [activity](features/activity.md) |
-| Unified attachments, private previews and recoverable uploads | 86 | [assets](features/assets.md) |
+| Unified attachments, private previews and recoverable uploads | 87 | [assets](features/assets.md) |
 | Backlog planning, ranking and activation | 41 | [backlog](features/backlog.md) |
 | Boards, columns, card movement and filters | 112 | [boards](features/boards.md) |
 | Rich descriptions, discussion and selected mentions | 137 | [collaboration](features/collaboration.md) |
 | Compatibility clients and retained data | 30 | [compatibility](features/compatibility.md) |
 | Project taxonomy, typed custom fields and safe activation | 90 | [configuration](features/configuration.md) |
-| Issue custom values, approval execution and reusable labels | 183 | [fields-review-labels](features/fields-review-labels.md) |
+| Issue custom values, approval execution and reusable labels | 184 | [fields-review-labels](features/fields-review-labels.md) |
 | Manual development links and stage assignment rules | 65 | [integrations](features/integrations.md) |
 | Issues, discovery, editing, bulk actions and saved searches | 203 | [issues](features/issues.md) |
 | MCP protocol, account connections and native Antigravity plugin | 113 | [mcp](features/mcp.md) |

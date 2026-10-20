@@ -6558,6 +6558,36 @@
       "relatedCases": [
         "UC-LBL-0017"
       ]
+    },
+    {
+      "id": "UC-LBL-0029",
+      "title": "Preserve the next label name while an earlier creation acknowledgement arrives",
+      "actor": "writer",
+      "preconditions": [
+        "The writer has opened a writable issue editor and the New label name input remains editable during an accepted create request."
+      ],
+      "steps": [
+        "Create one label, hold its accepted acknowledgement, enter a different next label name, and then release the earlier reply."
+      ],
+      "expected": [
+        "The accepted first label becomes selected while the different next unsent name remains available; an unchanged submitted name is cleared normally."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.state.spec.ts",
+        "frontend/e2e/label-create-draft-ownership.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
     }
   ]
 }

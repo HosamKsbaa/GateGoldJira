@@ -2,6 +2,7 @@ import * as z from 'zod';
 
 const publicConfigSchema = z.strictObject({
   mode: z.enum(['development', 'production']),
+  authentication: z.enum(['oidc', 'password']).optional(),
   apiBaseUrl: z.string().min(1),
   issuer: z.url(),
   clientId: z.string().min(1).max(200),
@@ -46,6 +47,10 @@ export function parsePublicConfig(input: unknown, appOrigin: string): PublicConf
     issuer.pathname !== '/'
   ) {
     throw new Error('Production requires HTTPS and a canonical identity issuer.');
+  }
+  if (config.authentication === 'password' &&
+      (config.mode !== 'production' || app.origin !== api.origin || issuer.origin !== api.origin)) {
+    throw new Error('Hosted password sign-in requires one HTTPS application and service origin.');
   }
   return config;
 }

@@ -82,16 +82,45 @@ func NewLocalLogin(settings config.Config, resolve ResolveIdentity) (*LocalLogin
 	if err := ValidateLocalLoginSettings(settings); err != nil {
 		return nil, err
 	}
+	return newPasswordLogin(settings, resolve, LocalCredentialsPath(settings.DevSigningKeyFile), settings.DevSigningKeyFile, "local|")
+}
+
+// Hosted password accounts are provisioned by an operator, independently of
+// development fixtures. Only the production VM target may expose this adapter.
+func ValidatePasswordLoginSettings(settings config.Config) error {
+	if settings.Environment != config.Production || settings.DeploymentTarget != config.VM || settings.AuthMode != config.PasswordAuth || os.Getenv("K_SERVICE") != "" {
+		return errors.New("hosted password login requires explicit production VM configuration")
+	}
+	issuer, err := url.Parse(settings.Issuer)
+	if err != nil || issuer.Scheme != "https" || issuer.Host == "" || issuer.Path != "/" || issuer.User != nil || issuer.RawQuery != "" || issuer.Fragment != "" {
+		return errors.New("hosted password login requires its canonical HTTPS issuer")
+	}
+	origin := strings.TrimSuffix(settings.Issuer, "/")
+	if settings.RESTAudience != origin+"/api" || settings.MCPAudience != origin+"/mcp" || len(settings.AllowedOrigins) != 1 || settings.AllowedOrigins[0] != origin {
+		return errors.New("hosted password login requires one exact HTTPS application and service origin")
+	}
+	if !filepath.IsAbs(settings.PasswordSigningKeyFile) || !filepath.IsAbs(settings.PasswordCredentialsFile) || settings.PasswordSigningKeyFile == settings.DevSigningKeyFile || settings.PasswordCredentialsFile == LocalCredentialsPath(settings.DevSigningKeyFile) {
+		return errors.New("hosted password login requires independent absolute private credential paths")
+	}
+	return nil
+}
+
+func NewPasswordLogin(settings config.Config, resolve ResolveIdentity) (*LocalLogin, error) {
+	if err := ValidatePasswordLoginSettings(settings); err != nil {
+		return nil, err
+	}
+	return newPasswordLogin(settings, resolve, settings.PasswordCredentialsFile, settings.PasswordSigningKeyFile, "password|")
+}
+
+func newPasswordLogin(settings config.Config, resolve ResolveIdentity, path, keyPath, subjectPrefix string) (*LocalLogin, error) {
 	if resolve == nil {
 		return nil, errors.New("local sign-in requires current identity authorization")
 	}
-	path := LocalCredentialsPath(settings.DevSigningKeyFile)
-	info, err := os.Lstat(path)
-	if err != nil || !info.Mode().IsRegular() || info.Mode().Perm()&0077 != 0 || info.Size() > 64*1024 {
+	if !privateLoginFile(path, 64*1024) {
 		return nil, errors.New("private local password fixtures are missing; run make db-seed")
 	}
-	directory, err := os.Stat(filepath.Dir(path))
-	if err != nil || !directory.IsDir() || directory.Mode().Perm()&0077 != 0 {
+	directory, err := os.Lstat(filepath.Dir(path))
+	if err != nil || !directory.IsDir() || directory.Mode().Perm()&0077 != 0 && !systemdCredentialDirectory(filepath.Dir(path), directory) {
 		return nil, errors.New("local password directory must be private")
 	}
 	file, err := os.Open(path)
@@ -109,12 +138,16 @@ func NewLocalLogin(settings config.Config, resolve ResolveIdentity) (*LocalLogin
 	for _, account := range records.Accounts {
 		cost, err := bcrypt.Cost([]byte(account.PasswordHash))
 		address, mailErr := mail.ParseAddress(account.Email)
-		if !localUsername.MatchString(account.Username) || seen[account.Username] || account.Subject != "local|"+account.Username || err != nil || cost < bcrypt.DefaultCost || cost > 14 || mailErr != nil || address.Address != account.Email {
+		if !localUsername.MatchString(account.Username) || seen[account.Username] || account.Subject != subjectPrefix+account.Username || err != nil || cost < bcrypt.DefaultCost || cost > 14 || mailErr != nil || address.Address != account.Email {
 			return nil, errors.New("invalid local password fixture record")
 		}
 		seen[account.Username] = true
 	}
-	key, err := developmentKey(settings.DevSigningKeyFile)
+	readKey := developmentKey
+	if settings.AuthMode == config.PasswordAuth {
+		readKey = passwordSigningKey
+	}
+	key, err := readKey(keyPath)
 	if err != nil {
 		return nil, err
 	}

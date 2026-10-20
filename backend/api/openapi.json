@@ -11077,7 +11077,106 @@
         "security": [],
         "summary": "Sign in to local development with a test username and password",
         "tags": [
-          "Local development authentication"
+          "Password authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/password-sign-in": {
+      "post": {
+        "operationId": "passwordSignIn",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocalCredentials"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocalSession"
+                }
+              }
+            },
+            "description": "OK",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureBody"
+                }
+              }
+            },
+            "description": "Safe sign-in failure"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureBody"
+                }
+              }
+            },
+            "description": "Safe sign-in failure"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureBody"
+                }
+              }
+            },
+            "description": "Safe sign-in failure"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureBody"
+                }
+              }
+            },
+            "description": "Safe sign-in failure"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureBody"
+                }
+              }
+            },
+            "description": "Safe sign-in failure"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FailureBody"
+                }
+              }
+            },
+            "description": "Safe sign-in failure"
+          }
+        },
+        "security": [],
+        "summary": "Sign in with an operator-provisioned company username and password",
+        "tags": [
+          "Password authentication"
         ]
       }
     },

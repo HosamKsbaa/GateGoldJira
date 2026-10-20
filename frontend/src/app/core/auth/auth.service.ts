@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { createApiClient } from '../api/client';
-import { getMe, localSignIn } from '../../api/generated/sdk.gen';
+import { getMe, localSignIn, passwordSignIn } from '../../api/generated/sdk.gen';
 import type { Me } from '../../api/generated/types.gen';
 import { ConfigService } from '../config/config.service';
 import { SIGN_IN } from './sign-in.provider';
@@ -76,12 +76,13 @@ export class AuthService {
     await this.provider.signIn();
   }
   async signInLocalCredentials(username: string, password: string): Promise<LocalSignInResult> {
-    if (this.mode !== 'development' || !this.provider.setLocalToken)
+    if ((this.mode !== 'development' && this.mode !== 'password') || !this.provider.setLocalToken)
       throw new Error('Local sign-in is unavailable.');
     this.clearProtectedState();
     const epoch = this.epoch();
     try {
-      const result = await localSignIn({
+      const signIn = this.mode === 'password' ? passwordSignIn : localSignIn;
+      const result = await signIn({
         client: this.localClient,
         body: { username: username.trim(), password },
       });

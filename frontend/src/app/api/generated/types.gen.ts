@@ -2923,6 +2923,51 @@ export type LocalSignInResponses = {
 
 export type LocalSignInResponse = LocalSignInResponses[keyof LocalSignInResponses];
 
+export type PasswordSignInData = {
+    body: LocalCredentialsWritable;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/password-sign-in';
+};
+
+export type PasswordSignInErrors = {
+    /**
+     * Safe sign-in failure
+     */
+    400: FailureBody;
+    /**
+     * Safe sign-in failure
+     */
+    401: FailureBody;
+    /**
+     * Safe sign-in failure
+     */
+    403: FailureBody;
+    /**
+     * Safe sign-in failure
+     */
+    413: FailureBody;
+    /**
+     * Safe sign-in failure
+     */
+    422: FailureBody;
+    /**
+     * Safe sign-in failure
+     */
+    503: FailureBody;
+};
+
+export type PasswordSignInError = PasswordSignInErrors[keyof PasswordSignInErrors];
+
+export type PasswordSignInResponses = {
+    /**
+     * OK
+     */
+    200: LocalSession;
+};
+
+export type PasswordSignInResponse = PasswordSignInResponses[keyof PasswordSignInResponses];
+
 export type GetBoardData = {
     body?: never;
     path: {

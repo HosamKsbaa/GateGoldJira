@@ -36,8 +36,15 @@ func (service *Service) WithBrowserOAuth(settings config.Config) error {
 		if err := auth.ValidateLocalLoginSettings(settings); err != nil {
 			return err
 		}
-	} else if !settings.MCPBrowserOAuthEnabled || settings.AuthMode != config.OIDC {
-		return errors.New("shared browser OAuth requires explicit enablement and verified OIDC browser identities")
+	} else {
+		if !settings.MCPBrowserOAuthEnabled || settings.AuthMode != config.OIDC && settings.AuthMode != config.PasswordAuth {
+			return errors.New("shared browser OAuth requires explicit enablement and verified browser identities")
+		}
+		if settings.AuthMode == config.PasswordAuth {
+			if err := auth.ValidatePasswordLoginSettings(settings); err != nil {
+				return err
+			}
+		}
 	}
 	frontend := settings.NotificationAppURL
 	if frontend == "" && len(settings.AllowedOrigins) > 0 {

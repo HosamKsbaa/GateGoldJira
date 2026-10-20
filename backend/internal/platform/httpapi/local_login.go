@@ -11,16 +11,25 @@ import (
 )
 
 const LocalLoginPath = "/api/v1/auth/local-sign-in"
+const PasswordLoginPath = "/api/v1/auth/password-sign-in"
 
 func RegisterLocalLogin(api huma.API, login *auth.LocalLogin) {
+	registerPasswordLogin(api, login, "localSignIn", LocalLoginPath, "Sign in to local development with a test username and password")
+}
+
+func RegisterPasswordLogin(api huma.API, login *auth.LocalLogin) {
+	registerPasswordLogin(api, login, "passwordSignIn", PasswordLoginPath, "Sign in with an operator-provisioned company username and password")
+}
+
+func registerPasswordLogin(api huma.API, login *auth.LocalLogin, operation, path, summary string) {
 	responses := map[string]*huma.Response{}
 	for _, status := range []int{400, 401, 403, 413, 422, 503} {
 		responses[strconv.Itoa(status)] = &huma.Response{Description: "Safe sign-in failure", Content: map[string]*huma.MediaType{"application/json": {
 			Schema: api.OpenAPI().Components.Schemas.Schema(reflect.TypeFor[FailureBody](), true, ""),
 		}}}
 	}
-	huma.Register(api, huma.Operation{OperationID: "localSignIn", Method: http.MethodPost, Path: LocalLoginPath,
-		Summary: "Sign in to local development with a test username and password", Tags: []string{"Local development authentication"},
+	huma.Register(api, huma.Operation{OperationID: operation, Method: http.MethodPost, Path: path,
+		Summary: summary, Tags: []string{"Password authentication"},
 		Security: []map[string][]string{}, Responses: responses, MaxBodyBytes: 16 * 1024},
 		func(ctx context.Context, input *struct{ Body auth.LocalCredentials }) (*struct {
 			CacheControl string `header:"Cache-Control"`

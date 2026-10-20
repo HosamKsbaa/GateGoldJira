@@ -53,6 +53,22 @@ const login = (accessToken = 'new.token.signature'): Response =>
   Response.json({ accessToken, expiresAt: '2026-10-12T14:00:00Z' });
 
 describe('local username and password sign-in', () => {
+  it('uses the production password endpoint and verifies access before installing the session', async () => {
+    const fetch = vi.fn<typeof globalThis.fetch>()
+      .mockResolvedValueOnce(login()).mockResolvedValueOnce(Response.json(owner));
+    vi.stubGlobal('fetch', fetch);
+    const provider = new LocalSignIn('password');
+    const auth = makeAuth(provider);
+    expect(await auth.signInLocalCredentials('owner', 'a-production-password')).toBe('signed-in');
+    const request = fetch.mock.calls[0]?.[0];
+    expect(request).toBeInstanceOf(Request);
+    if (!(request instanceof Request)) throw new Error('Missing password request.');
+    expect(request.url).toBe('http://localhost:4200/api/v1/auth/password-sign-in');
+    expect(auth.me()).toEqual(owner);
+    expect(await provider.accessToken()).toBe('new.token.signature');
+    await auth.signOut();
+    expect(await provider.accessToken()).toBeUndefined();
+  });
   it('keeps production sign-in with the configured provider and refuses local credentials', async () => {
     const provider: SignInProvider = {
       mode: 'production',

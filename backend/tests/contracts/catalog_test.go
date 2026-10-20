@@ -36,6 +36,15 @@ func assertLocalSignInContract(t *testing.T, api huma.API) {
 	if path.Post.Security == nil || len(path.Post.Security) != 0 {
 		t.Fatal("local sign-in must explicitly override the global bearer requirement")
 	}
+	hosted := api.OpenAPI().Paths["/api/v1/auth/password-sign-in"]
+	if hosted == nil || hosted.Post == nil || hosted.Post.OperationID != "passwordSignIn" || hosted.Post.Security == nil || len(hosted.Post.Security) != 0 {
+		t.Fatal("typed hosted password sign-in contract is missing")
+	}
+}
+
+func isPasswordSignIn(id, path string) bool {
+	return id == "localSignIn" && path == "/api/v1/auth/local-sign-in" ||
+		id == "passwordSignIn" && path == "/api/v1/auth/password-sign-in"
 }
 
 // Account credentials are deliberately outside the assistant business catalog:
@@ -119,7 +128,7 @@ func TestRegisteredAPIAndPayloadsMatchDesignCatalog(t *testing.T) {
 			if isAccountTokenOperation(item.Post.OperationID, path) {
 				continue
 			}
-			if item.Post.OperationID == "localSignIn" && path == "/api/v1/auth/local-sign-in" {
+			if isPasswordSignIn(item.Post.OperationID, path) {
 				continue
 			}
 			registered[item.Post.OperationID] = "POST " + path
@@ -477,7 +486,7 @@ func TestConcreteMCPSubsetSchemasAndAnnotationsMatchCatalog(t *testing.T) {
 	for route, path := range api.OpenAPI().Paths {
 		for _, op := range []*huma.Operation{path.Get, path.Post, path.Put, path.Patch} {
 			if op != nil {
-				if isAccountTokenOperation(op.OperationID, route) || op == path.Post && op.OperationID == "localSignIn" && route == "/api/v1/auth/local-sign-in" {
+				if isAccountTokenOperation(op.OperationID, route) || op == path.Post && isPasswordSignIn(op.OperationID, route) {
 					continue
 				}
 				names[op.OperationID] = true

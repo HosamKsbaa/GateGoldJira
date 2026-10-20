@@ -83,8 +83,19 @@ func developmentKey(path string) (*rsa.PrivateKey, error) {
 
 func New(settings config.Config) (*Verifier, error) {
 	var keyFunc func(context.Context) (any, error)
-	if settings.AuthMode == config.DevelopmentAuth {
-		rsaKey, err := developmentKey(settings.DevSigningKeyFile)
+	if settings.AuthMode == config.DevelopmentAuth || settings.AuthMode == config.PasswordAuth {
+		path := settings.DevSigningKeyFile
+		if settings.AuthMode == config.PasswordAuth {
+			if err := ValidatePasswordLoginSettings(settings); err != nil {
+				return nil, err
+			}
+			path = settings.PasswordSigningKeyFile
+		}
+		readKey := developmentKey
+		if settings.AuthMode == config.PasswordAuth {
+			readKey = passwordSigningKey
+		}
+		rsaKey, err := readKey(path)
 		if err != nil {
 			return nil, err
 		}
@@ -101,6 +112,13 @@ func New(settings config.Config) (*Verifier, error) {
 		keyFunc = provider.KeyFunc
 	}
 	return newVerifier(settings, keyFunc)
+}
+
+func passwordSigningKey(path string) (*rsa.PrivateKey, error) {
+	if !privateLoginFile(path, 16384) {
+		return nil, errors.New("hosted password signing key must be a private regular file")
+	}
+	return developmentKey(path)
 }
 
 func newVerifier(settings config.Config, keyFunc func(context.Context) (any, error)) (*Verifier, error) {

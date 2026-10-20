@@ -25,7 +25,15 @@ type AuthMode string
 
 const (
 	DevelopmentAuth AuthMode = "development"
+	PasswordAuth    AuthMode = "password"
 	OIDC            AuthMode = "oidc"
+)
+
+type DeploymentTarget string
+
+const (
+	CloudRun DeploymentTarget = "cloud-run"
+	VM       DeploymentTarget = "vm"
 )
 
 type StorageMode string
@@ -40,6 +48,7 @@ type Config struct {
 	Port                       uint16
 	DatabaseURL                string
 	CloudSQLInstance           string
+	DeploymentTarget           DeploymentTarget
 	CompanyLocation            *time.Location
 	AuthMode                   AuthMode
 	Issuer                     string
@@ -48,6 +57,8 @@ type Config struct {
 	RequiredScope              string
 	MCPBrowserOAuthEnabled     bool
 	DevSigningKeyFile          string
+	PasswordSigningKeyFile     string
+	PasswordCredentialsFile    string
 	MaximumAttachmentBytes     int64
 	StorageMode                StorageMode
 	LocalPictureDirectory      string
@@ -94,16 +105,16 @@ func Load() (Config, error) {
 		return result, errors.New("DATABASE_URL must be a PostgreSQL connection URL")
 	}
 	result.CloudSQLInstance = os.Getenv("CLOUD_SQL_INSTANCE")
+	result.DeploymentTarget = DeploymentTarget(value("DEPLOYMENT_TARGET", "cloud-run"))
+	if result.DeploymentTarget != CloudRun && result.DeploymentTarget != VM {
+		return result, errors.New("DEPLOYMENT_TARGET must be cloud-run or vm")
+	}
+	if os.Getenv("K_SERVICE") != "" && result.DeploymentTarget != CloudRun {
+		return result, errors.New("Cloud Run requires its managed deployment target")
+	}
 	if production {
-		parts := strings.Split(result.CloudSQLInstance, ":")
-		if len(parts) != 3 || parts[0] == "" || parts[1] == "" || parts[2] == "" {
-			return result, errors.New("production requires a Cloud SQL instance connection name")
-		}
-		if databaseURL.User == nil || databaseURL.User.Username() == "" {
-			return result, errors.New("production requires the IAM database user")
-		}
-		if _, present := databaseURL.User.Password(); present {
-			return result, errors.New("production database URL uses IAM authentication without a password")
+		if err := validateProductionDatabase(result, databaseURL); err != nil {
+			return result, err
 		}
 	}
 	result.CompanyLocation, err = time.LoadLocation(value("COMPANY_TIMEZONE", "Africa/Cairo"))
@@ -111,11 +122,28 @@ func Load() (Config, error) {
 		return result, errors.New("COMPANY_TIMEZONE must be a valid IANA zone")
 	}
 	result.AuthMode = AuthMode(value("AUTH_MODE", "oidc"))
-	if result.AuthMode != OIDC && result.AuthMode != DevelopmentAuth {
+	if result.AuthMode != OIDC && result.AuthMode != DevelopmentAuth && result.AuthMode != PasswordAuth {
 		return result, errors.New("unsupported AUTH_MODE")
 	}
-	if production && result.AuthMode != OIDC {
+	if production && result.AuthMode == DevelopmentAuth {
 		return result, errors.New("development authentication is forbidden in production")
+	}
+	if result.AuthMode == PasswordAuth && (!production || result.DeploymentTarget != VM) {
+		return result, errors.New("hosted password authentication requires the production VM target")
+	}
+	result.PasswordSigningKeyFile = os.Getenv("PASSWORD_SIGNING_KEY_FILE")
+	result.PasswordCredentialsFile = os.Getenv("PASSWORD_CREDENTIALS_FILE")
+	credentialsDirectory := os.Getenv("CREDENTIALS_DIRECTORY")
+	if result.AuthMode == PasswordAuth && credentialsDirectory != "" {
+		if result.PasswordSigningKeyFile == "" {
+			result.PasswordSigningKeyFile = filepath.Join(credentialsDirectory, "signing-key.pem")
+		}
+		if result.PasswordCredentialsFile == "" {
+			result.PasswordCredentialsFile = filepath.Join(credentialsDirectory, "accounts.json")
+		}
+	}
+	if result.AuthMode == PasswordAuth && (!filepath.IsAbs(result.PasswordSigningKeyFile) || !filepath.IsAbs(result.PasswordCredentialsFile)) {
+		return result, errors.New("hosted password authentication requires absolute private key and credential paths")
 	}
 	result.MCPBrowserOAuthEnabled, err = strconv.ParseBool(value("MCP_BROWSER_OAUTH_ENABLED", "false"))
 	if err != nil {
@@ -156,12 +184,12 @@ func Load() (Config, error) {
 	if result.StorageMode != GCS && result.StorageMode != LocalStorage {
 		return result, errors.New("unsupported STORAGE_MODE")
 	}
-	if production && result.StorageMode != GCS {
-		return result, errors.New("local storage is forbidden in production")
+	if production && result.StorageMode != GCS && result.DeploymentTarget != VM {
+		return result, errors.New("local storage requires the persistent VM deployment target")
 	}
 	result.LocalPictureDirectory = os.Getenv("LOCAL_PICTURE_DIRECTORY")
 	if result.StorageMode == LocalStorage {
-		if result.LocalPictureDirectory == "" {
+		if result.LocalPictureDirectory == "" || production && !filepath.IsAbs(result.LocalPictureDirectory) {
 			return result, errors.New("local picture storage requires a persistent directory")
 		}
 		result.LocalPictureDirectory, err = filepath.Abs(result.LocalPictureDirectory)
@@ -173,7 +201,11 @@ func Load() (Config, error) {
 	if result.StorageMode == GCS && (result.StagingBucket == "" || result.PublishedBucket == "" || result.StagingBucket == result.PublishedBucket) {
 		return result, errors.New("GCS requires separate staging and published buckets")
 	}
-	result.CursorSecret, err = os.ReadFile(os.Getenv("CURSOR_SECRET_FILE"))
+	cursorPath := os.Getenv("CURSOR_SECRET_FILE")
+	if cursorPath == "" && result.AuthMode == PasswordAuth && credentialsDirectory != "" {
+		cursorPath = filepath.Join(credentialsDirectory, "cursor-secret")
+	}
+	result.CursorSecret, err = os.ReadFile(cursorPath)
 	if err != nil || len(result.CursorSecret) < 32 {
 		return result, errors.New("CURSOR_SECRET_FILE must contain at least 32 secret bytes")
 	}
@@ -232,12 +264,44 @@ func Load() (Config, error) {
 			result.MaintenanceEmails = append(result.MaintenanceEmails, email)
 		}
 	}
-	if result.MaintenanceAudience != "" || len(result.MaintenanceEmails) > 0 || production {
+	if result.MaintenanceAudience != "" || len(result.MaintenanceEmails) > 0 || production && result.DeploymentTarget != VM {
 		if result.MaintenanceAudience != strings.TrimSuffix(result.RESTAudience, "/api")+"/internal/maintenance/pictures" || len(result.MaintenanceEmails) == 0 {
 			return result, errors.New("maintenance requires the exact service URL audience and allowed service-account identities")
 		}
 	}
 	return result, nil
+}
+
+func validateProductionDatabase(settings Config, databaseURL *url.URL) error {
+	if settings.DeploymentTarget == VM {
+		if databaseURL.User == nil {
+			return errors.New("VM PostgreSQL requires a dedicated database user")
+		}
+		password, present := databaseURL.User.Password()
+		query := databaseURL.Query()
+		if settings.CloudSQLInstance != "" || databaseURL.User.Username() == "" || !present || password == "" ||
+			len(query["sslmode"]) != 1 || query.Get("sslmode") != "verify-full" ||
+			len(query["sslrootcert"]) != 1 || !filepath.IsAbs(query.Get("sslrootcert")) {
+			return errors.New("VM PostgreSQL requires its own user, password, verify-full TLS and an absolute CA file")
+		}
+		for name := range query {
+			if name != "sslmode" && name != "sslrootcert" && name != "application_name" && name != "connect_timeout" {
+				return errors.New("unsupported VM PostgreSQL connection option")
+			}
+		}
+		return nil
+	}
+	parts := strings.Split(settings.CloudSQLInstance, ":")
+	if len(parts) != 3 || parts[0] == "" || parts[1] == "" || parts[2] == "" {
+		return errors.New("production requires a Cloud SQL instance connection name")
+	}
+	if databaseURL.User == nil || databaseURL.User.Username() == "" {
+		return errors.New("production requires the IAM database user")
+	}
+	if _, present := databaseURL.User.Password(); present {
+		return errors.New("production database URL uses IAM authentication without a password")
+	}
+	return nil
 }
 
 func validateURL(text string, httpsOnly bool) error {

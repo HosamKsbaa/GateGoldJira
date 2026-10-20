@@ -10,7 +10,7 @@ import { LocalSignIn, OidcSignIn, SIGN_IN } from './app/core/auth/sign-in.provid
 async function start(): Promise<void> {
   const config = await loadPublicConfig(window.location.origin);
   const identityProviders: (Provider | EnvironmentProviders)[] = [];
-  if (config.mode === 'production') {
+  if (config.mode === 'production' && config.authentication !== 'password') {
     const { provideAuth0, AuthService: Auth0Service } = await import('@auth0/auth0-angular');
     identityProviders.push(
       provideAuth0({
@@ -26,7 +26,7 @@ async function start(): Promise<void> {
       }),
       { provide: SIGN_IN, useFactory: () => new OidcSignIn(inject(Auth0Service), config) },
     );
-  } else identityProviders.push({ provide: SIGN_IN, useFactory: () => new LocalSignIn() });
+  } else identityProviders.push({ provide: SIGN_IN, useFactory: () => new LocalSignIn(config.authentication === 'password' ? 'password' : 'development') });
   await bootstrapApplication(AppComponent, {
     providers: [
       provideRouter(routes),

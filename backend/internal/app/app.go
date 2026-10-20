@@ -52,6 +52,7 @@ type Application struct {
 	workerInterval     time.Duration
 	companyLocation    *time.Location
 	logger             *slog.Logger
+	vmMaintenance      func(context.Context) error
 }
 
 func New(ctx context.Context, settings config.Config, logger *slog.Logger) (*Application, error) {
@@ -112,6 +113,12 @@ func New(ctx context.Context, settings config.Config, logger *slog.Logger) (*App
 	boardService.WithStageMover(issueService.RetireStage)
 	configurationService := configuration.New(application.Runner, application.Cursors).WithStageMigrator(issueService.MigrateWorkflowStage).WithFieldBackfiller(issueService.BackfillFieldDefault)
 	attachmentService := attachments.New(application.Runner, application.Cursors, application.Storage).WithMaximumBytes(settings.MaximumAttachmentBytes)
+	if settings.Environment == config.Production && settings.DeploymentTarget == config.VM {
+		application.vmMaintenance = func(ctx context.Context) error {
+			_, err := attachmentService.MaintainAssets(ctx)
+			return err
+		}
+	}
 	pictureService := pictures.New(application.Runner, application.Cursors, application.Storage).WithAssets(attachmentService)
 	issueService.WithAssets(attachmentService)
 	commentService := comments.New(application.Runner, application.Cursors, pictureService)
@@ -161,6 +168,14 @@ func New(ctx context.Context, settings config.Config, logger *slog.Logger) (*App
 		}
 		httpapi.RegisterLocalLogin(application.API, login)
 		root.Handle("POST "+httpapi.LocalLoginPath, httpapi.LocalLoginHandler(apiMux))
+	}
+	if settings.AuthMode == config.PasswordAuth {
+		login, err := auth.NewPasswordLogin(settings, identityService.Resolve)
+		if err != nil {
+			return nil, err
+		}
+		httpapi.RegisterPasswordLogin(application.API, login)
+		root.Handle("POST "+httpapi.PasswordLoginPath, httpapi.LocalLoginHandler(apiMux))
 	}
 	httpapi.PublicRoutes(root, db.Pool.Ping)
 	mcpapi.Metadata(root, settings, tokenService.OAuthIssuer(settings.Issuer))
@@ -267,6 +282,7 @@ func contractAdapters() (huma.API, *mcp.Server, error) {
 	api := httpapi.New(http.NewServeMux())
 	mcptokens.RegisterHTTP(api, mcptokens.New(command.Runner{}, "https://api.example.com/mcp"))
 	httpapi.RegisterLocalLogin(api, nil)
+	httpapi.RegisterPasswordLogin(api, nil)
 	server := mcpapi.New()
 	service := identity.New(command.Runner{}, nil, time.UTC, "")
 	err := register(api, server, service, projects.New(command.Runner{}, nil), issues.New(command.Runner{}, nil), boards.New(command.Runner{}, nil, issues.Summary), activity.New(command.Runner{}, nil), pictures.New(command.Runner{}, nil, nil), attachments.New(command.Runner{}, nil, nil), comments.New(command.Runner{}, nil, nil), notifications.New(command.Runner{}, nil), planning.New(command.Runner{}, nil), integrations.New(command.Runner{}, nil), configuration.New(command.Runner{}, nil))
@@ -298,7 +314,7 @@ type maintenanceResult struct {
 // timeout. Production runs work through authenticated scheduled maintenance;
 // test runtimes remain deterministic and use explicit job calls.
 func (application *Application) StartBackground(parent context.Context) {
-	if application.environment != config.Development || application.NotificationWorker == nil {
+	if application.environment != config.Development && application.vmMaintenance == nil || application.NotificationWorker == nil {
 		return
 	}
 	application.backgroundOnce.Do(func() {
@@ -314,10 +330,17 @@ func (application *Application) StartBackground(parent context.Context) {
 			ticker := time.NewTicker(interval)
 			defer ticker.Stop()
 			for {
-				_, err := application.NotificationWorker.RunOnce(ctx, command.Today(time.Now(), application.companyLocation))
+				work, cancel := context.WithTimeout(ctx, 30*time.Second)
+				_, err := application.NotificationWorker.RunOnce(work, command.Today(time.Now(), application.companyLocation))
 				if err != nil && ctx.Err() == nil {
 					application.logger.Warn("notification maintenance will retry on the next interval")
 				}
+				if application.vmMaintenance != nil {
+					if err := application.vmMaintenance(work); err != nil && ctx.Err() == nil {
+						application.logger.Warn("private file maintenance will retry on the next interval")
+					}
+				}
+				cancel()
 				select {
 				case <-ctx.Done():
 					return

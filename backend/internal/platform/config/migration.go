@@ -4,7 +4,6 @@ import (
 	"errors"
 	"net/url"
 	"os"
-	"strings"
 )
 
 func LoadMigration() (Config, error) {
@@ -12,6 +11,7 @@ func LoadMigration() (Config, error) {
 		Environment:      Environment(os.Getenv("APP_ENV")),
 		DatabaseURL:      os.Getenv("DATABASE_URL"),
 		CloudSQLInstance: os.Getenv("CLOUD_SQL_INSTANCE"),
+		DeploymentTarget: DeploymentTarget(value("DEPLOYMENT_TARGET", "cloud-run")),
 	}
 	u, err := url.Parse(c.DatabaseURL)
 	if err != nil || u.Host == "" || u.Path == "" || (u.Scheme != "postgres" && u.Scheme != "postgresql") {
@@ -19,12 +19,11 @@ func LoadMigration() (Config, error) {
 	}
 	switch c.Environment {
 	case Production:
-		parts := strings.Split(c.CloudSQLInstance, ":")
-		if len(parts) != 3 || parts[0] == "" || parts[1] == "" || parts[2] == "" || u.User == nil || u.User.Username() == "" {
-			return c, errors.New("production migration requires the Cloud SQL connector and IAM schema-owner identity")
+		if c.DeploymentTarget != VM && c.DeploymentTarget != CloudRun || os.Getenv("K_SERVICE") != "" && c.DeploymentTarget != CloudRun {
+			return c, errors.New("invalid production migration target")
 		}
-		if _, ok := u.User.Password(); ok {
-			return c, errors.New("production migration must use password-free IAM authentication")
+		if err := validateProductionDatabase(c, u); err != nil {
+			return c, err
 		}
 	case Development, Test:
 		if os.Getenv("K_SERVICE") != "" || c.CloudSQLInstance != "" {

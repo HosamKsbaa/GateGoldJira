@@ -17,6 +17,14 @@ import (
 )
 
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "password-account" {
+		if err := savePasswordAccount(os.Args[2:], os.Stdin); err != nil {
+			slog.Error("password account provisioning failed", "reason", err.Error())
+			os.Exit(1)
+		}
+		slog.Info("password account saved; company approval and project permissions still apply")
+		return
+	}
 	if len(os.Args) > 1 && os.Args[1] == "migrate" {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 		defer cancel()
@@ -93,7 +101,7 @@ func main() {
 		WriteTimeout:      30 * time.Second,
 		IdleTimeout:       60 * time.Second,
 	}
-	if settings.Environment != config.Production {
+	if settings.Environment != config.Production || settings.DeploymentTarget == config.VM {
 		server.Addr = "127.0.0.1:" + strconv.Itoa(int(settings.Port))
 	}
 	go func() {

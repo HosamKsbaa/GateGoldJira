@@ -13,11 +13,13 @@ import { RequestStatusComponent } from '../../shared/ui/request-status.component
       <p class="eyebrow">Your team workspace</p><h1>Welcome to GateGoldJira</h1>
       <p>Sign in with your approved company account.</p>
       <gg-request-status [state]="state" />
-      @if (auth.mode === 'development') {
+      @if (auth.mode !== 'production') {
+        @if (auth.mode === 'development') {
         <div class="notice"
           >Local development · Test accounts only. Your session ends when you reload or sign
           out.</div
         >
+        }
         <form [formGroup]="form" (ngSubmit)="localSignIn()">
           <label for="local-username">Username</label>
           <input
@@ -47,7 +49,7 @@ import { RequestStatusComponent } from '../../shared/ui/request-status.component
           @if (form.controls.password.hasError('maxlength')) {
             <p id="local-password-error" class="field-hint error" role="alert">Password must be 72 characters or fewer.</p>
           }
-          <button type="submit" [disabled]="form.invalid || state.busy()">Sign in locally</button>
+          <button type="submit" [disabled]="form.invalid || state.busy()">{{ auth.mode === 'development' ? 'Sign in locally' : 'Sign in' }}</button>
         </form>
       } @else {
         <button type="button" (click)="googleSignIn()" [disabled]="state.busy()"
@@ -91,7 +93,7 @@ export class SignInPage {
       }
       if (result === 'unavailable') {
         this.state.message.set(
-          'The local sign-in service is unavailable. Check that the backend is running and try again.',
+          this.auth.mode === 'development' ? 'The local sign-in service is unavailable. Check that the backend is running and try again.' : 'Sign-in is unavailable. Please try again shortly.',
         );
         return;
       }

@@ -2496,6 +2496,13 @@ export const zLocalSignInBody = zLocalCredentialsWritable;
  */
 export const zLocalSignInResponse = zLocalSession;
 
+export const zPasswordSignInBody = zLocalCredentialsWritable;
+
+/**
+ * OK
+ */
+export const zPasswordSignInResponse = zLocalSession;
+
 export const zGetBoardPath = /* @__PURE__ */ (() => z.object({
     boardId: z.uuid()
 }))();

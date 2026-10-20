@@ -124,6 +124,8 @@ const emailControl = () =>
               >This workspace uses local test accounts. Approval grants company access; it does not
               create a local username or password.</p
             >
+          } @else if (passwordSignIn) {
+            <p class="notice">Approve the employee's email and grant a project role. Ask the workspace operator to create a username and password for that approved email, then share their sign-in details privately.</p>
           } @else {
             <p class="notice"
               >Approve their company Google email, grant a project role, then share the workspace
@@ -160,6 +162,7 @@ export class UsersPage {
   private readonly api = inject(AdministrationApi);
   private readonly auth = inject(AuthService);
   readonly localDevelopment = this.auth.mode === 'development';
+  readonly passwordSignIn = this.auth.mode === 'password';
   private readonly injector = inject(Injector);
   readonly state = new RequestState();
   readonly users = signal<UserView[]>([]);

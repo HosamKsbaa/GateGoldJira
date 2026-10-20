@@ -68,7 +68,7 @@ func openPool(ctx context.Context, settings config.Config) (*Database, error) {
 		return nil
 	}
 	database := &Database{}
-	if settings.Environment == config.Production {
+	if settings.Environment == config.Production && settings.DeploymentTarget != config.VM {
 		dialer, err := cloudsqlconn.NewDialer(ctx, cloudsqlconn.WithIAMAuthN(), cloudsqlconn.WithLazyRefresh())
 		if err != nil {
 			return nil, errors.New("Cloud SQL connector initialization failed")

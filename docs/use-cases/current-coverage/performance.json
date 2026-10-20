@@ -7,7 +7,7 @@
       "name": "Warmed project journey p95",
       "operation": "project",
       "trials": 100,
-      "milliseconds": 146.8927819999999,
+      "milliseconds": 150.72248599999875,
       "budgetMilliseconds": 2000,
       "passed": true
     },
@@ -15,7 +15,7 @@
       "name": "Warmed board journey p95",
       "operation": "board",
       "trials": 100,
-      "milliseconds": 407.8278810000047,
+      "milliseconds": 392.30058700000154,
       "budgetMilliseconds": 2000,
       "passed": true
     }

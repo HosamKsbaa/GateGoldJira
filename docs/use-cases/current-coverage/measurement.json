@@ -4,28 +4,28 @@
   "unitScope": "All handwritten frontend/src/**/*.ts, including src/main.ts; specs and the two generated API client directories are excluded",
   "combinedCoverage": {
     "lines": {
-      "total": 8639,
-      "covered": 7915,
+      "total": 8653,
+      "covered": 8067,
       "skipped": 0,
-      "pct": 91.61
+      "pct": 93.22
     },
     "statements": {
-      "total": 9764,
-      "covered": 8697,
+      "total": 9788,
+      "covered": 8930,
       "skipped": 0,
-      "pct": 89.07
+      "pct": 91.23
     },
     "functions": {
-      "total": 2067,
-      "covered": 882,
+      "total": 2071,
+      "covered": 1118,
       "skipped": 0,
-      "pct": 42.67
+      "pct": 53.98
     },
     "branches": {
-      "total": 5576,
-      "covered": 4630,
+      "total": 5612,
+      "covered": 4826,
       "skipped": 0,
-      "pct": 83.03
+      "pct": 85.99
     },
     "branchesTrue": {
       "total": 0,
@@ -38,15 +38,15 @@
     "version": 1,
     "kind": "validated_full_frontend_typescript_denominator",
     "sources": {
-      "src/app/app.component.ts": "8339c77e67153ec80fd3a6efaf7eb843d50b69eb470ab0caa67b033a983cdf87",
+      "src/app/app.component.ts": "e20d40279bb8375961d27b73ac8953fd477986999e72a4364ec3179024b77165",
       "src/app/app.routes.ts": "64d2c8f7519f665068c8ec9be2d3c7a7d19f830ae94ab97365a3cf1f16f93d1e",
       "src/app/core/api/api-result.ts": "f4f0fb1f68a27aabde4eb4aefbdd00185823c32193db5fe5e1e35d96a8f6c763",
       "src/app/core/api/client.ts": "ca2042d258e16abc89c8a3c4d108334a2cab077ca590d36d8c9369bff46c726f",
       "src/app/core/auth/auth.guards.ts": "3b4e103f44ead948eac3c7a7e52ea60443e9a6d8d4b347080cf4e322dea467b4",
-      "src/app/core/auth/auth.service.ts": "838cbd9a00f101c42550bf44c0a63d0328a83b0f5880f04ba4bffb660136d67d",
-      "src/app/core/auth/sign-in.page.ts": "ca649236d90cd52f0523a6430f8cc1a87c7ab2155191d704025b870bf36d5e9c",
-      "src/app/core/auth/sign-in.provider.ts": "ede94400de4101db1305be8d9b6f3d372583a2ae69886af3c2406cc5e49da2b1",
-      "src/app/core/config/config.service.ts": "353f0ab8669f79602ba31527867cb620d55e0fa4a6d86f2a605fede973407de4",
+      "src/app/core/auth/auth.service.ts": "b21579afd6a17e132f8b7cb40c22b832f8b54ad261578ec97eaf03776834c799",
+      "src/app/core/auth/sign-in.page.ts": "16b5c83b595588deb0e4b9fe90ff1892377f63c8e40fc24a1e16c4449d067e8d",
+      "src/app/core/auth/sign-in.provider.ts": "e2bf99e55af372f6db4d57ec5464fef24d6765e83b6bab6eca61153dfb0bdd39",
+      "src/app/core/config/config.service.ts": "b44002d4bff01d0a9e1d7ea7e82d7c35e38ede5a8749dd47f84607c9c3afa052",
       "src/app/core/drafts/drafts.service.ts": "d9112ac0bd7fd432c33759c62c95a1e178eef286f8fe42711b716c8feca6a91c",
       "src/app/core/refresh/foreground-refresh.ts": "46cc47319973fca96d5c1e7d011dc4d116ac5b012ed88863512b5758095259fe",
       "src/app/core/routing/project-editor-reuse.strategy.ts": "d522a6a1c0ef68cd7004109fa5450a8aec6db12da314ef8171e57866a0579b72",
@@ -59,14 +59,14 @@
       "src/app/features/administration/administration.api.ts": "d549d3aac22f7925d6453840a98cef2b8cc66322de2715d016f1588674f52f4f",
       "src/app/features/administration/pages/activity/activity.page.ts": "c65d5ce10283e458f14d9c27abb74a16efbc9aa717515cd8c1f6139295d06b19",
       "src/app/features/administration/pages/memberships/memberships.page.ts": "b6ea81e02906790d7ed0a80c6c9d5b01beb9fd9d4f7aec9750b5c2c05fd5515b",
-      "src/app/features/administration/pages/users/users.page.ts": "f02b9f26a826f6291c1c358506ee3214a96bc51fdbc0afe492b837076f171186",
+      "src/app/features/administration/pages/users/users.page.ts": "0d3fbcc078c7c25dae0078e5f8ed2276a78efe4fe6d6410bbd62e6bfdde77616",
       "src/app/features/attachments/assets.api.ts": "170942770abe7ab989c87b1b627f63128cf3a2681ec99f4ed989fd2c1ab4ea33",
       "src/app/features/attachments/attachment-files.ts": "2dae7bfc64c7e7874637f48541d4202b98c2b74da969e2a73cad49dea0795163",
       "src/app/features/attachments/attachments.api.ts": "6efa85b21e3df5c9bfea611a93066fa60e2333e260aeed25c1508b07ffc078c4",
       "src/app/features/attachments/binary-contract.ts": "5e1bdf48eb18a3cfe09d8bafbd08f1cef03f25e62508d966d0d308ee091a0310",
       "src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts": "7e5514c26a121088d6136994ba59f3a530a6a3277c8aac64bc79b3029412f3de",
       "src/app/features/attachments/components/file-preview/file-preview.component.ts": "1638abc2781fb6f9e01310fc3ec636d5eafd9249b3b393087ca5431e7b7d2377",
-      "src/app/features/attachments/components/file-queue/file-queue.component.ts": "9ad386dad4669475a59583be0eabe70b55b789a4e06054378ccd8632b70f6561",
+      "src/app/features/attachments/components/file-queue/file-queue.component.ts": "f1b928e75725a3017497d31fa802ded233cb09946d45e7499a243240ab8e2ef6",
       "src/app/features/attachments/components/issue-attachments/issue-attachments.component.ts": "4ee4cab4bad9eac44e39e81e651dc097c87581b674b35e833e41adbcd9990fcb",
       "src/app/features/attachments/editor-attachment.ts": "992ac91facb86991e4daea60753d38bdb8d97e38a5c5e5d702e6d1e31cd0ee9d",
       "src/app/features/attachments/resumable-upload.ts": "a36cb0b0e159fc61d82fa866c580a69db9573eec3846dd0546f88c8de360a0aa",
@@ -105,7 +105,7 @@
       "src/app/features/issues/components/custom-fields/field-value-editor.component.ts": "0039c48d9297c2ffd28c359197c92b1d3d0f44933d78669fa6eb08138989a220",
       "src/app/features/issues/components/custom-fields/field-value.ts": "b95f3c7adc2c4b52ecefbd590be42a8ea6ac07766a3432b171f6871cac68bdfa",
       "src/app/features/issues/components/custom-fields/issue-review.component.ts": "60aa232ca1b52a4d15867686b00860eb460e8bf613d769f7477ecc3fe736eb5e",
-      "src/app/features/issues/components/date-label-fields/date-label-fields.component.ts": "121bb9cf50703f9b6fa3c86a1c1cc21c3d3d3220fd9c4ef9fd125bf271ff6afc",
+      "src/app/features/issues/components/date-label-fields/date-label-fields.component.ts": "92d94f71a6cfdb37cd15273b2eba7b1c9bf14ea8088f869bad5328e1c7f4af6b",
       "src/app/features/issues/components/dependencies/dependencies.component.ts": "b966fb97e318aebaf2d58b1b2f65bd54e3c4dc4ece969dbf934689bba8382fa2",
       "src/app/features/issues/components/description-editor/description-editor.component.ts": "95ff9133fb3eec1ec7005beb3e7fce6043fe45cb964262ac22730651a07582b7",
       "src/app/features/issues/components/issue-history/issue-history.component.ts": "22facf5b132af5055db31821edaf0b8eb585361124671f58d8c67c5281585bb3",
@@ -160,55 +160,55 @@
       "src/app/shared/ui/request-state.ts": "22d2e4790cead31b1ab09d545eb9d66f211809fa69b12b9dc55e80645a452034",
       "src/app/shared/ui/request-status.component.ts": "31f9bcb801e58941cdf075c0e0de716373e9b1839ae2c9f983a978708c518f86",
       "src/app/shared/ui/searchable-picker.component.ts": "bedd907bfb508f41fcdaffbefb713d7756569edb694a882cd31582772d06c217",
-      "src/main.ts": "930d8c9324b16b5fb9c00641899e96b6b373c0a82add221679c63ac18517b498"
+      "src/main.ts": "b25d8a607b8c0023efd4317e3c65fce78edd37e27fccc1076efa8614d1ab4367"
     },
     "summaries": {
       "unit": {
         "path": "unit/coverage-summary.json",
-        "sha256": "d4749eff3fcd93b871b0a0e08154b0b6fd119788cf486669f7b531c06b824a53"
+        "sha256": "c40787edec514a0a6a09f9675171a703a169396d7f76b71d433bbd5922607d74"
       },
       "combined": {
         "path": "combined/coverage-summary.json",
-        "sha256": "cac0a03b426ce1c1ab1ee3026b64d9080f494e7785f748e37ce9325de46a418d"
+        "sha256": "377ed06edf34a2a92ab19cc2ab1a83a0937558b00756ebe7a2c94d97c9f66de9"
       }
     },
     "unitRun": {
       "path": "unit/provenance/unit-run-provenance.json",
-      "sha256": "6c37a8bbe1ed3492c9a0c602ac9040f92076af6be6c8c32198b4a133a5d78b50",
-      "runId": "6969c4dd02344ec5b862cd3322af7d91"
+      "sha256": "0212522c5d4452ac741970259824815508baea4a1e58a3883fd64b35a4f8536a",
+      "runId": "ff0af9b5e6b14ce39a9cccf7637bac7d"
     }
   },
   "combinedFiles": 123,
   "combinedCoverageLimitation": "Conservative projection onto the full Vitest denominator: only exact statement/function/branch source spans with matching file hashes receive browser credit. Incompatible compiler-generated spans are not credited. Percentages are never added and the denominator does not grow.",
   "navigationLimit": "Chromium may reset V8 counters on document navigation. SPA execution in captured page fixtures is measured; auxiliary contexts are not automatically captured.",
-  "records": 13930,
-  "convertedScripts": 2375,
+  "records": 14013,
+  "convertedScripts": 2441,
   "identicalScriptGrouping": true,
   "files": 123,
   "browserSummary": {
     "lines": {
-      "total": 11002,
-      "covered": 10343,
+      "total": 11018,
+      "covered": 10355,
       "skipped": 0,
-      "pct": 94.01
+      "pct": 93.98
     },
     "statements": {
-      "total": 14792,
-      "covered": 13430,
+      "total": 14820,
+      "covered": 13450,
       "skipped": 0,
-      "pct": 90.79
+      "pct": 90.75
     },
     "functions": {
-      "total": 2477,
-      "covered": 2253,
+      "total": 2481,
+      "covered": 2258,
       "skipped": 0,
-      "pct": 90.95
+      "pct": 91.01
     },
     "branches": {
-      "total": 6890,
-      "covered": 5473,
+      "total": 6930,
+      "covered": 5514,
       "skipped": 0,
-      "pct": 79.43
+      "pct": 79.56
     },
     "branchesTrue": {
       "total": 0,
@@ -219,28 +219,28 @@
   },
   "unitSummary": {
     "lines": {
-      "total": 8639,
-      "covered": 3737,
+      "total": 8653,
+      "covered": 4773,
       "skipped": 0,
-      "pct": 43.25
+      "pct": 55.16
     },
     "statements": {
-      "total": 9764,
-      "covered": 4203,
+      "total": 9788,
+      "covered": 5388,
       "skipped": 0,
-      "pct": 43.04
+      "pct": 55.04
     },
     "functions": {
-      "total": 2067,
-      "covered": 869,
+      "total": 2071,
+      "covered": 1106,
       "skipped": 0,
-      "pct": 42.04
+      "pct": 53.4
     },
     "branches": {
-      "total": 5576,
-      "covered": 2525,
+      "total": 5612,
+      "covered": 3066,
       "skipped": 0,
-      "pct": 45.28
+      "pct": 54.63
     },
     "branchesTrue": {
       "total": 0,

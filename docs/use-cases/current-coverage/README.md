@@ -2,27 +2,25 @@
 
 Target: **100%**. A mapped case is counted only after its exact assertions pass on the recorded source.
 
-Read the [verification report](verification.md), [validation notes](validation-notes.md) and [remaining source gaps](source-gaps.md).
-
-Verified cases: **1759 / 1772**. Verified on every declared surface: **1759 / 1772**.
+Verified cases: **1768 / 1781**. Verified on every declared surface: **1768 / 1781**.
 
 Suite result: `passed`. Invalid evidence: `False`.
 
-Browser execution scope: `full_unfiltered`; selected tests: 884; recorded attempts: 884; explicit timing opt-outs: 1.
+Browser execution scope: `full_unfiltered`; selected tests: 888; recorded attempts: 888; explicit timing opt-outs: 1.
 
 Browser/API outcome coverage, frontend source coverage and Go statement coverage are separate measurements. They are not interchangeable or added together.
 
 | Area | Passed cases | All cases | Every declared surface |
 |---|---:|---:|---:|
-| access | 59 | 63 | 59 |
+| access | 66 | 70 | 66 |
 | activity | 32 | 32 | 32 |
-| assets | 86 | 86 | 86 |
+| assets | 87 | 87 | 87 |
 | backlog | 41 | 41 | 41 |
 | boards | 112 | 112 | 112 |
 | collaboration | 137 | 137 | 137 |
 | compatibility | 30 | 30 | 30 |
 | configuration | 90 | 90 | 90 |
-| fields-review-labels | 183 | 183 | 183 |
+| fields-review-labels | 184 | 184 | 184 |
 | integrations | 65 | 65 | 65 |
 | issues | 203 | 203 | 203 |
 | mcp | 110 | 113 | 110 |
@@ -42,28 +40,28 @@ Browser/API outcome coverage, frontend source coverage and Go statement coverage
   "frontendDenominatorVerified": true,
   "frontendUnit": {
     "lines": {
-      "total": 8639,
-      "covered": 3737,
+      "total": 8653,
+      "covered": 4773,
       "skipped": 0,
-      "pct": 43.25
+      "pct": 55.16
     },
     "statements": {
-      "total": 9764,
-      "covered": 4203,
+      "total": 9788,
+      "covered": 5388,
       "skipped": 0,
-      "pct": 43.04
+      "pct": 55.04
     },
     "functions": {
-      "total": 2067,
-      "covered": 869,
+      "total": 2071,
+      "covered": 1106,
       "skipped": 0,
-      "pct": 42.04
+      "pct": 53.4
     },
     "branches": {
-      "total": 5576,
-      "covered": 2525,
+      "total": 5612,
+      "covered": 3066,
       "skipped": 0,
-      "pct": 45.28
+      "pct": 54.63
     },
     "branchesTrue": {
       "total": 0,
@@ -74,28 +72,28 @@ Browser/API outcome coverage, frontend source coverage and Go statement coverage
   },
   "frontendCombined": {
     "lines": {
-      "total": 8639,
-      "covered": 7915,
+      "total": 8653,
+      "covered": 8067,
       "skipped": 0,
-      "pct": 91.61
+      "pct": 93.22
     },
     "statements": {
-      "total": 9764,
-      "covered": 8697,
+      "total": 9788,
+      "covered": 8930,
       "skipped": 0,
-      "pct": 89.07
+      "pct": 91.23
     },
     "functions": {
-      "total": 2067,
-      "covered": 882,
+      "total": 2071,
+      "covered": 1118,
       "skipped": 0,
-      "pct": 42.67
+      "pct": 53.98
     },
     "branches": {
-      "total": 5576,
-      "covered": 4630,
+      "total": 5612,
+      "covered": 4826,
       "skipped": 0,
-      "pct": 83.03
+      "pct": 85.99
     },
     "branchesTrue": {
       "total": 0,
@@ -106,10 +104,10 @@ Browser/API outcome coverage, frontend source coverage and Go statement coverage
   },
   "goDenominatorVerified": true,
   "goStatements": {
-    "covered": 13481,
-    "total": 16851
+    "covered": 13678,
+    "total": 17015
   },
-  "goStatementsPercent": 80.0
+  "goStatementsPercent": 80.4
 }
 ```
 

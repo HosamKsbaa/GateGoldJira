@@ -1,11 +1,11 @@
 # Remaining frontend source counters
 
-724 uncovered executable lines; 946 uncovered branch arms. Complete fixed 123-file denominator; source text omitted.
+586 uncovered executable lines; 786 uncovered branch arms. Complete fixed 123-file denominator; source text omitted.
 Positions use one-based lines and zero-based columns. An unavailable compiler-map position remains null.
 
 ## frontend/src/app/app.component.ts
 
-Uncovered executable lines: 26, 318, 358, 359, 373, 374, 375, 376, 378, 383, 384, 414, 443, 465, 478, 505, 506, 544, 545, 590, 600, 601, 635.
+Uncovered executable lines: 26, 318, 358, 359, 373, 374, 375, 376, 378, 383, 384, 414, 443, 465, 471, 480, 504, 505, 543, 544, 589, 599, 600, 634.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
@@ -18,25 +18,25 @@ Uncovered executable lines: 26, 318, 358, 359, 373, 374, 375, 376, 378, 383, 384
 | 9 | 1 | if | {"start":{"line":414,"column":13},"end":{"line":415,"column":null}} |
 | 11 | 0 | if | {"start":{"line":414,"column":13},"end":{"line":415,"column":null}} |
 | 11 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 26 | 0 | if | {"start":{"line":476,"column":6},"end":{"line":481,"column":null}} |
-| 26 | 1 | if | {"start":{"line":478,"column":11},"end":{"line":481,"column":null}} |
-| 28 | 0 | if | {"start":{"line":478,"column":11},"end":{"line":481,"column":null}} |
-| 28 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 42 | 0 | cond-expr | {"start":{"line":507,"column":12},"end":{"line":507,"column":null}} |
-| 42 | 1 | cond-expr | {"start":{"line":508,"column":12},"end":{"line":510,"column":null}} |
-| 43 | 0 | cond-expr | {"start":{"line":509,"column":14},"end":{"line":509,"column":null}} |
-| 43 | 1 | cond-expr | {"start":{"line":510,"column":14},"end":{"line":510,"column":null}} |
-| 45 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 51 | 0 | if | {"start":{"line":544,"column":4},"end":{"line":550,"column":null}} |
-| 51 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 59 | 0 | if | {"start":{"line":596,"column":6},"end":{"line":596,"column":null}} |
-| 60 | 0 | if | {"start":{"line":600,"column":6},"end":{"line":603,"column":null}} |
-| 60 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 61 | 0 | cond-expr | {"start":{"line":602,"column":38},"end":{"line":602,"column":54}} |
-| 61 | 1 | cond-expr | {"start":{"line":602,"column":54},"end":{"line":602,"column":null}} |
-| 66 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 69 | 0 | cond-expr | {"start":{"line":637,"column":10},"end":{"line":637,"column":null}} |
-| 69 | 1 | cond-expr | {"start":{"line":638,"column":10},"end":{"line":638,"column":null}} |
+| 27 | 0 | if | {"start":{"line":478,"column":6},"end":{"line":483,"column":null}} |
+| 27 | 1 | if | {"start":{"line":480,"column":11},"end":{"line":483,"column":null}} |
+| 29 | 0 | if | {"start":{"line":480,"column":11},"end":{"line":483,"column":null}} |
+| 29 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
+| 43 | 0 | cond-expr | {"start":{"line":506,"column":12},"end":{"line":506,"column":null}} |
+| 43 | 1 | cond-expr | {"start":{"line":507,"column":12},"end":{"line":509,"column":null}} |
+| 44 | 0 | cond-expr | {"start":{"line":508,"column":14},"end":{"line":508,"column":null}} |
+| 44 | 1 | cond-expr | {"start":{"line":509,"column":14},"end":{"line":509,"column":null}} |
+| 46 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
+| 52 | 0 | if | {"start":{"line":543,"column":4},"end":{"line":549,"column":null}} |
+| 52 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
+| 60 | 0 | if | {"start":{"line":595,"column":6},"end":{"line":595,"column":null}} |
+| 61 | 0 | if | {"start":{"line":599,"column":6},"end":{"line":602,"column":null}} |
+| 61 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
+| 62 | 0 | cond-expr | {"start":{"line":601,"column":38},"end":{"line":601,"column":54}} |
+| 62 | 1 | cond-expr | {"start":{"line":601,"column":54},"end":{"line":601,"column":null}} |
+| 67 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
+| 70 | 0 | cond-expr | {"start":{"line":636,"column":10},"end":{"line":636,"column":null}} |
+| 70 | 1 | cond-expr | {"start":{"line":637,"column":10},"end":{"line":637,"column":null}} |
 
 ## frontend/src/app/app.routes.ts
 
@@ -51,7 +51,15 @@ Uncovered executable lines: none.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
-| 15 | 0 | if | {"start":{"line":101,"column":6},"end":{"line":101,"column":null}} |
+| 20 | 0 | if | {"start":{"line":107,"column":6},"end":{"line":107,"column":null}} |
+
+## frontend/src/app/core/auth/sign-in.page.ts
+
+Uncovered executable lines: none.
+
+| Branch ID | Arm | Type | Arm location |
+|---|---:|---|---|
+| 5 | 1 | cond-expr | {"start":{"line":96,"column":140},"end":{"line":96,"column":null}} |
 
 ## frontend/src/app/core/drafts/drafts.service.ts
 
@@ -81,67 +89,34 @@ Uncovered executable lines: 9, 539, 542.
 
 ## frontend/src/app/features/account/mcp-authorize.page.ts
 
-Uncovered executable lines: 10, 32, 58, 62, 63, 64, 65, 66, 67, 68, 69, 70.
+Uncovered executable lines: none.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
 | 0 | 1 | binary-expr | {"start":{"line":36,"column":93},"end":{"line":36,"column":null}} |
-| 3 | 0 | if | {"start":{"line":58,"column":6},"end":{"line":58,"column":null}} |
 | 3 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 4 | 0 | if | {"start":{"line":65,"column":6},"end":{"line":65,"column":null}} |
-| 4 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 5 | 0 | binary-expr | {"start":{"line":67,"column":23},"end":{"line":67,"column":54}} |
-| 5 | 1 | binary-expr | {"start":{"line":67,"column":54},"end":{"line":67,"column":null}} |
-| 6 | 0 | binary-expr | {"start":{"line":68,"column":26},"end":{"line":68,"column":76}} |
-| 6 | 1 | binary-expr | {"start":{"line":68,"column":76},"end":{"line":68,"column":null}} |
-| 7 | 0 | if | {"start":{"line":69,"column":6},"end":{"line":69,"column":null}} |
-| 7 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 8 | 0 | binary-expr | {"start":{"line":69,"column":11},"end":{"line":69,"column":24}} |
-| 8 | 1 | binary-expr | {"start":{"line":69,"column":24},"end":{"line":69,"column":41}} |
-| 8 | 2 | binary-expr | {"start":{"line":69,"column":41},"end":{"line":69,"column":60}} |
-| 8 | 3 | binary-expr | {"start":{"line":69,"column":60},"end":{"line":69,"column":77}} |
-
-## frontend/src/app/features/account/mcp-connection-config.ts
-
-Uncovered executable lines: 9.
-
-| Branch ID | Arm | Type | Arm location |
-|---|---:|---|---|
-| 0 | 0 | if | {"start":{"line":8,"column":2},"end":{"line":10,"column":null}} |
 
 ## frontend/src/app/features/account/mcp-tokens.api.ts
 
-Uncovered executable lines: 7, 8.
+Uncovered executable lines: none.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
 
 ## frontend/src/app/features/account/mcp-tokens.page.ts
 
-Uncovered executable lines: 12, 19.
+Uncovered executable lines: none.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
-| 0 | 0 | binary-expr | {"start":{"line":36,"column":40},"end":{"line":36,"column":121}} |
 | 0 | 1 | binary-expr | {"start":{"line":36,"column":121},"end":{"line":36,"column":122}} |
-| 1 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 4 | 0 | if | {"start":{"line":70,"column":4},"end":{"line":70,"column":null}} |
-| 6 | 0 | if | {"start":{"line":76,"column":6},"end":{"line":76,"column":null}} |
+| 3 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 7 | 1 | cond-expr | {"start":{"line":81,"column":109},"end":{"line":81,"column":113}} |
-| 8 | 0 | if | {"start":{"line":95,"column":4},"end":{"line":95,"column":null}} |
-| 9 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 10 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 11 | 0 | if | {"start":{"line":107,"column":4},"end":{"line":107,"column":null}} |
 | 14 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 16 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 17 | 0 | if | {"start":{"line":123,"column":6},"end":{"line":123,"column":null}} |
 | 18 | 1 | cond-expr | {"start":{"line":124,"column":125},"end":{"line":124,"column":129}} |
-| 20 | 0 | if | {"start":{"line":125,"column":6},"end":{"line":125,"column":null}} |
-| 21 | 0 | default-arg | {"start":{"line":143,"column":29},"end":{"line":143,"column":36}} |
-| 22 | 0 | if | {"start":{"line":145,"column":4},"end":{"line":145,"column":null}} |
-| 24 | 0 | if | {"start":{"line":147,"column":4},"end":{"line":147,"column":null}} |
-| 32 | 0 | cond-expr | {"start":{"line":159,"column":74},"end":{"line":159,"column":86}} |
-| 33 | 1 | binary-expr | {"start":{"line":159,"column":30},"end":{"line":159,"column":74}} |
 
 ## frontend/src/app/features/administration/administration.api.ts
 
@@ -196,15 +171,15 @@ Uncovered executable lines: 26, 144, 171, 172, 173, 174, 175, 176, 177, 178, 217
 
 ## frontend/src/app/features/administration/pages/users/users.page.ts
 
-Uncovered executable lines: 24, 26, 29, 159, 236, 237, 255.
+Uncovered executable lines: 24, 26, 29, 161, 239, 240, 258.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
-| 1 | 0 | if | {"start":{"line":201,"column":4},"end":{"line":201,"column":null}} |
+| 1 | 0 | if | {"start":{"line":204,"column":4},"end":{"line":204,"column":null}} |
 | 3 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 4 | 0 | cond-expr | {"start":{"line":233,"column":28},"end":{"line":233,"column":42}} |
-| 5 | 0 | if | {"start":{"line":240,"column":4},"end":{"line":240,"column":null}} |
-| 7 | 0 | if | {"start":{"line":253,"column":4},"end":{"line":253,"column":null}} |
+| 4 | 0 | cond-expr | {"start":{"line":236,"column":28},"end":{"line":236,"column":42}} |
+| 5 | 0 | if | {"start":{"line":243,"column":4},"end":{"line":243,"column":null}} |
+| 7 | 0 | if | {"start":{"line":256,"column":4},"end":{"line":256,"column":null}} |
 | 9 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 
 ## frontend/src/app/features/attachments/assets.api.ts
@@ -261,7 +236,7 @@ Uncovered executable lines: 111, 123.
 
 ## frontend/src/app/features/attachments/components/file-queue/file-queue.component.ts
 
-Uncovered executable lines: 32, 33, 34, 35, 48, 91, 92, 114, 117, 118, 152, 153, 207, 228.
+Uncovered executable lines: none.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
@@ -269,30 +244,9 @@ Uncovered executable lines: 32, 33, 34, 35, 48, 91, 92, 114, 117, 118, 152, 153,
 | 4 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 5 | 1 | binary-expr | {"start":{"line":99,"column":51},"end":{"line":99,"column":53}} |
 | 6 | 1 | binary-expr | {"start":{"line":106,"column":56},"end":{"line":106,"column":58}} |
-| 7 | 0 | if | {"start":{"line":110,"column":4},"end":{"line":110,"column":null}} |
-| 9 | 0 | binary-expr | {"start":{"line":114,"column":16},"end":{"line":114,"column":45}} |
-| 9 | 1 | binary-expr | {"start":{"line":114,"column":45},"end":{"line":114,"column":null}} |
-| 10 | 0 | if | {"start":{"line":116,"column":6},"end":{"line":119,"column":null}} |
-| 13 | 0 | cond-expr | {"start":{"line":124,"column":14},"end":{"line":124,"column":null}} |
-| 13 | 1 | cond-expr | {"start":{"line":125,"column":14},"end":{"line":125,"column":null}} |
 | 15 | 1 | binary-expr | {"start":{"line":147,"column":60},"end":{"line":147,"column":65}} |
-| 17 | 0 | if | {"start":{"line":151,"column":4},"end":{"line":154,"column":null}} |
-| 18 | 0 | if | {"start":{"line":152,"column":6},"end":{"line":152,"column":null}} |
-| 18 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 19 | 1 | cond-expr | {"start":{"line":164,"column":12},"end":{"line":164,"column":null}} |
-| 20 | 0 | if | {"start":{"line":169,"column":4},"end":{"line":169,"column":null}} |
-| 22 | 0 | if | {"start":{"line":174,"column":4},"end":{"line":174,"column":null}} |
-| 24 | 0 | if | {"start":{"line":183,"column":4},"end":{"line":183,"column":null}} |
-| 25 | 0 | if | {"start":{"line":189,"column":4},"end":{"line":189,"column":null}} |
-| 28 | 0 | if | {"start":{"line":199,"column":8},"end":{"line":199,"column":null}} |
-| 29 | 0 | if | {"start":{"line":203,"column":10},"end":{"line":203,"column":null}} |
-| 35 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 36 | 0 | if | {"start":{"line":226,"column":10},"end":{"line":226,"column":null}} |
-| 37 | 0 | if | {"start":{"line":227,"column":10},"end":{"line":228,"column":null}} |
-| 40 | 1 | cond-expr | {"start":{"line":235,"column":41},"end":{"line":235,"column":null}} |
-| 41 | 0 | if | {"start":{"line":258,"column":10},"end":{"line":258,"column":null}} |
-| 42 | 1 | cond-expr | {"start":{"line":260,"column":64},"end":{"line":260,"column":null}} |
-| 44 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
+| 32 | 0 | if | {"start":{"line":208,"column":10},"end":{"line":208,"column":null}} |
+| 43 | 1 | cond-expr | {"start":{"line":240,"column":41},"end":{"line":240,"column":null}} |
 
 ## frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.ts
 
@@ -302,7 +256,6 @@ Uncovered executable lines: 46, 55, 59, 64, 65, 126, 127, 128, 129, 131, 163, 16
 |---|---:|---|---|
 | 4 | 0 | default-arg | {"start":{"line":111,"column":20},"end":{"line":111,"column":42}} |
 | 6 | 1 | binary-expr | {"start":{"line":116,"column":70},"end":{"line":116,"column":83}} |
-| 7 | 0 | if | {"start":{"line":117,"column":8},"end":{"line":117,"column":null}} |
 | 10 | 0 | if | {"start":{"line":126,"column":8},"end":{"line":130,"column":null}} |
 | 10 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 11 | 0 | binary-expr | {"start":{"line":126,"column":12},"end":{"line":126,"column":25}} |
@@ -412,7 +365,6 @@ Uncovered executable lines: none.
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
 | 10 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 32 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 55 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 62 | 1 | binary-expr | {"start":{"line":320,"column":49},"end":{"line":320,"column":62}} |
 | 65 | 1 | binary-expr | {"start":{"line":324,"column":68},"end":{"line":324,"column":73}} |
@@ -496,14 +448,10 @@ Uncovered executable lines: none.
 
 ## frontend/src/app/features/comments/components/comment-editor/comment-editor.component.ts
 
-Uncovered executable lines: 72, 77, 78, 81, 82, 108, 181, 196, 208, 225, 242, 243, 244, 255, 274, 308, 309, 355, 356, 357, 358, 359, 361, 362, 363, 383, 395, 403, 432, 441, 488, 489, 506, 583, 613, 628, 631.
+Uncovered executable lines: 181, 196, 208, 225, 242, 243, 244, 255, 274, 308, 309, 355, 356, 357, 358, 359, 361, 362, 363, 383, 395, 403, 432, 441, 488, 489, 506, 613, 628, 631.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
-| 0 | 0 | binary-expr | {"start":{"line":74,"column":52},"end":{"line":74,"column":74}} |
-| 0 | 1 | binary-expr | {"start":{"line":74,"column":74},"end":{"line":74,"column":78}} |
-| 1 | 0 | if | {"start":{"line":104,"column":4},"end":{"line":104,"column":null}} |
-| 3 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 9 | 1 | binary-expr | {"start":{"line":188,"column":65},"end":{"line":188,"column":null}} |
 | 10 | 0 | if | {"start":{"line":215,"column":16},"end":{"line":215,"column":null}} |
 | 12 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
@@ -530,7 +478,6 @@ Uncovered executable lines: 72, 77, 78, 81, 82, 108, 181, 196, 208, 225, 242, 24
 | 42 | 1 | binary-expr | {"start":{"line":396,"column":38},"end":{"line":396,"column":null}} |
 | 43 | 1 | binary-expr | {"start":{"line":408,"column":59},"end":{"line":408,"column":64}} |
 | 44 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 46 | 0 | if | {"start":{"line":414,"column":4},"end":{"line":414,"column":null}} |
 | 55 | 1 | binary-expr | {"start":{"line":436,"column":71},"end":{"line":436,"column":null}} |
 | 58 | 1 | binary-expr | {"start":{"line":455,"column":61},"end":{"line":455,"column":63}} |
 | 60 | 0 | if | {"start":{"line":464,"column":4},"end":{"line":464,"column":null}} |
@@ -546,7 +493,6 @@ Uncovered executable lines: 72, 77, 78, 81, 82, 108, 181, 196, 208, 225, 242, 24
 | 72 | 0 | cond-expr | {"start":{"line":520,"column":58},"end":{"line":520,"column":70}} |
 | 74 | 0 | if | {"start":{"line":540,"column":4},"end":{"line":540,"column":null}} |
 | 77 | 1 | binary-expr | {"start":{"line":554,"column":30},"end":{"line":554,"column":null}} |
-| 78 | 0 | if | {"start":{"line":559,"column":4},"end":{"line":559,"column":null}} |
 | 80 | 0 | if | {"start":{"line":569,"column":4},"end":{"line":569,"column":null}} |
 | 82 | 0 | if | {"start":{"line":585,"column":4},"end":{"line":585,"column":null}} |
 | 83 | 0 | if | {"start":{"line":597,"column":4},"end":{"line":597,"column":null}} |
@@ -616,13 +562,14 @@ Uncovered executable lines: 11, 12, 18, 34.
 
 ## frontend/src/app/features/import-export/pages/import-export/import-export.page.ts
 
-Uncovered executable lines: 31, 45, 51, 67, 74, 191, 202, 212, 213, 214, 215, 222, 223, 225, 231, 234, 237, 238, 244, 263, 276, 300, 322, 364, 380, 428.
+Uncovered executable lines: 31, 45, 51, 67, 74, 191, 199, 202, 212, 213, 214, 215, 222, 223, 225, 231, 234, 237, 238, 244, 263, 276, 300, 322, 364, 380, 428.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
 | 0 | 0 | binary-expr | {"start":{"line":56,"column":38},"end":{"line":56,"column":72}} |
 | 0 | 1 | binary-expr | {"start":{"line":56,"column":72},"end":{"line":56,"column":74}} |
 | 16 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
+| 18 | 0 | if | {"start":{"line":194,"column":8},"end":{"line":199,"column":null}} |
 | 20 | 0 | binary-expr | {"start":{"line":202,"column":12},"end":{"line":202,"column":46}} |
 | 20 | 1 | binary-expr | {"start":{"line":202,"column":46},"end":{"line":202,"column":null}} |
 | 21 | 0 | if | {"start":{"line":206,"column":4},"end":{"line":206,"column":null}} |
@@ -665,6 +612,7 @@ Uncovered executable lines: 30, 241, 254, 256, 262, 312, 317, 318, 319, 344, 345
 | 10 | 0 | if | {"start":{"line":343,"column":4},"end":{"line":346,"column":null}} |
 | 13 | 1 | binary-expr | {"start":{"line":360,"column":35},"end":{"line":360,"column":null}} |
 | 14 | 2 | binary-expr | {"start":{"line":364,"column":6},"end":{"line":364,"column":null}} |
+| 15 | 1 | binary-expr | {"start":{"line":368,"column":74},"end":{"line":368,"column":null}} |
 | 17 | 0 | cond-expr | {"start":{"line":393,"column":18},"end":{"line":393,"column":48}} |
 | 17 | 1 | cond-expr | {"start":{"line":393,"column":48},"end":{"line":393,"column":null}} |
 | 18 | 1 | binary-expr | {"start":{"line":393,"column":35},"end":{"line":393,"column":48}} |
@@ -716,7 +664,7 @@ Uncovered executable lines: 15, 24, 34, 43.
 
 ## frontend/src/app/features/issues/backlog.api.ts
 
-Uncovered executable lines: 6, 7, 10, 19.
+Uncovered executable lines: 10, 19.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
@@ -789,6 +737,7 @@ Uncovered executable lines: 167, 223, 247, 266, 271, 279, 281, 289, 297, 299, 30
 | 4 | 0 | default-arg | {"start":{"line":219,"column":20},"end":{"line":219,"column":42}} |
 | 5 | 0 | cond-expr | {"start":{"line":229,"column":20},"end":{"line":229,"column":54}} |
 | 5 | 1 | cond-expr | {"start":{"line":229,"column":54},"end":{"line":229,"column":null}} |
+| 6 | 1 | binary-expr | {"start":{"line":229,"column":41},"end":{"line":229,"column":54}} |
 | 12 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 13 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 16 | 0 | if | {"start":{"line":276,"column":4},"end":{"line":276,"column":null}} |
@@ -803,18 +752,11 @@ Uncovered executable lines: 167, 223, 247, 266, 271, 279, 281, 289, 297, 299, 30
 
 ## frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts
 
-Uncovered executable lines: 110, 111, 171, 172, 173, 174, 188, 201, 212, 213, 214, 215, 216, 217, 218, 220, 221, 222, 223, 224, 226, 235, 240, 251.
+Uncovered executable lines: 212, 213, 214, 215, 216, 217, 218, 220, 221, 222, 223, 224, 226.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
-| 0 | 0 | if | {"start":{"line":108,"column":4},"end":{"line":108,"column":null}} |
-| 1 | 0 | if | {"start":{"line":109,"column":4},"end":{"line":112,"column":null}} |
-| 3 | 0 | if | {"start":{"line":126,"column":6},"end":{"line":126,"column":null}} |
 | 5 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 8 | 0 | if | {"start":{"line":171,"column":4},"end":{"line":171,"column":null}} |
-| 8 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 15 | 0 | cond-expr | {"start":{"line":203,"column":12},"end":{"line":203,"column":null}} |
-| 15 | 1 | cond-expr | {"start":{"line":204,"column":12},"end":{"line":204,"column":null}} |
 | 16 | 0 | if | {"start":{"line":212,"column":4},"end":{"line":212,"column":null}} |
 | 16 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 17 | 0 | binary-expr | {"start":{"line":212,"column":8},"end":{"line":212,"column":55}} |
@@ -827,11 +769,6 @@ Uncovered executable lines: 110, 111, 171, 172, 173, 174, 188, 201, 212, 213, 21
 | 20 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 21 | 0 | if | {"start":{"line":222,"column":11},"end":{"line":225,"column":null}} |
 | 21 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 22 | 0 | if | {"start":{"line":229,"column":4},"end":{"line":229,"column":null}} |
-| 24 | 0 | if | {"start":{"line":234,"column":4},"end":{"line":234,"column":null}} |
-| 27 | 0 | if | {"start":{"line":245,"column":6},"end":{"line":245,"column":null}} |
-| 28 | 0 | cond-expr | {"start":{"line":252,"column":46},"end":{"line":252,"column":55}} |
-| 28 | 1 | cond-expr | {"start":{"line":252,"column":55},"end":{"line":252,"column":null}} |
 
 ## frontend/src/app/features/issues/components/dependencies/dependencies.component.ts
 
@@ -844,7 +781,6 @@ Uncovered executable lines: 43, 44, 208, 216, 236, 237, 238, 250, 259, 260, 282,
 | 1 | 0 | if | {"start":{"line":75,"column":4},"end":{"line":75,"column":null}} |
 | 2 | 0 | if | {"start":{"line":101,"column":6},"end":{"line":101,"column":null}} |
 | 3 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 5 | 0 | if | {"start":{"line":171,"column":6},"end":{"line":171,"column":null}} |
 | 7 | 0 | if | {"start":{"line":180,"column":4},"end":{"line":180,"column":null}} |
 | 8 | 0 | if | {"start":{"line":184,"column":6},"end":{"line":184,"column":null}} |
 | 10 | 0 | if | {"start":{"line":195,"column":4},"end":{"line":195,"column":null}} |
@@ -867,16 +803,14 @@ Uncovered executable lines: 43, 44, 208, 216, 236, 237, 238, 250, 259, 260, 282,
 
 ## frontend/src/app/features/issues/components/description-editor/description-editor.component.ts
 
-Uncovered executable lines: 66, 68, 70, 71, 92, 102, 112, 163, 182, 218, 219, 235, 236, 237, 238, 239, 240, 242, 243, 244, 251, 252, 253, 269, 270, 271, 272, 274, 290, 313, 316, 320, 323, 325, 332, 335, 382.
+Uncovered executable lines: 163, 182, 218, 219, 235, 236, 237, 238, 239, 240, 242, 243, 244, 269, 270, 271, 272, 274, 290, 313, 316, 320, 323, 325, 332, 335, 382.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
 | 0 | 0 | if | {"start":{"line":51,"column":4},"end":{"line":51,"column":null}} |
 | 1 | 0 | if | {"start":{"line":52,"column":4},"end":{"line":52,"column":null}} |
-| 2 | 0 | if | {"start":{"line":76,"column":4},"end":{"line":76,"column":null}} |
 | 5 | 0 | if | {"start":{"line":83,"column":4},"end":{"line":83,"column":null}} |
 | 7 | 1 | binary-expr | {"start":{"line":84,"column":59},"end":{"line":84,"column":61}} |
-| 9 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 13 | 1 | cond-expr | {"start":{"line":183,"column":69},"end":{"line":183,"column":null}} |
 | 15 | 1 | binary-expr | {"start":{"line":223,"column":54},"end":{"line":223,"column":56}} |
 | 16 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
@@ -890,8 +824,6 @@ Uncovered executable lines: 66, 68, 70, 71, 92, 102, 112, 163, 182, 218, 219, 23
 | 20 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 21 | 0 | binary-expr | {"start":{"line":239,"column":39},"end":{"line":239,"column":48}} |
 | 21 | 1 | binary-expr | {"start":{"line":239,"column":48},"end":{"line":239,"column":50}} |
-| 22 | 0 | if | {"start":{"line":251,"column":4},"end":{"line":254,"column":null}} |
-| 22 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 23 | 0 | if | {"start":{"line":257,"column":4},"end":{"line":257,"column":null}} |
 | 24 | 0 | if | {"start":{"line":269,"column":4},"end":{"line":269,"column":null}} |
 | 24 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
@@ -904,7 +836,6 @@ Uncovered executable lines: 66, 68, 70, 71, 92, 102, 112, 163, 182, 218, 219, 23
 | 30 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 32 | 0 | if | {"start":{"line":301,"column":4},"end":{"line":301,"column":null}} |
 | 34 | 0 | if | {"start":{"line":306,"column":4},"end":{"line":306,"column":null}} |
-| 35 | 0 | if | {"start":{"line":311,"column":4},"end":{"line":311,"column":null}} |
 | 37 | 0 | if | {"start":{"line":312,"column":4},"end":{"line":317,"column":null}} |
 | 39 | 0 | if | {"start":{"line":319,"column":6},"end":{"line":324,"column":null}} |
 | 40 | 0 | if | {"start":{"line":331,"column":4},"end":{"line":336,"column":null}} |
@@ -955,7 +886,7 @@ Uncovered executable lines: 189, 256, 263, 270, 272, 301, 302, 326, 332, 363, 37
 
 ## frontend/src/app/features/issues/components/modern-issue-field-editor/modern-issue-field-editor.component.ts
 
-Uncovered executable lines: 260, 261, 342, 367, 406, 422, 423, 466, 467, 488, 497, 509, 521, 686, 687.
+Uncovered executable lines: 207, 260, 261, 342, 367, 406, 422, 423, 466, 467, 488, 497, 509, 521, 686, 687.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
@@ -1110,47 +1041,20 @@ Uncovered executable lines: 8, 15.
 
 ## frontend/src/app/features/issues/pages/backlog/backlog.page.ts
 
-Uncovered executable lines: 33, 236, 260, 264, 267, 268, 348, 349, 350, 351, 356, 357, 366, 376, 382, 387, 388, 389, 390, 391, 434, 443, 444, 445, 446, 447, 448, 451, 452.
+Uncovered executable lines: 366, 443, 444, 445, 446, 447, 448, 451, 452.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
-| 0 | 0 | binary-expr | {"start":{"line":248,"column":38},"end":{"line":248,"column":72}} |
-| 0 | 1 | binary-expr | {"start":{"line":248,"column":72},"end":{"line":248,"column":74}} |
-| 3 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 8 | 0 | if | {"start":{"line":324,"column":4},"end":{"line":324,"column":null}} |
 | 9 | 0 | if | {"start":{"line":329,"column":6},"end":{"line":329,"column":null}} |
-| 10 | 0 | binary-expr | {"start":{"line":334,"column":12},"end":{"line":334,"column":32}} |
-| 10 | 1 | binary-expr | {"start":{"line":334,"column":32},"end":{"line":334,"column":42}} |
-| 11 | 0 | if | {"start":{"line":342,"column":4},"end":{"line":342,"column":null}} |
-| 15 | 0 | cond-expr | {"start":{"line":350,"column":10},"end":{"line":350,"column":null}} |
-| 15 | 1 | cond-expr | {"start":{"line":351,"column":10},"end":{"line":351,"column":null}} |
-| 17 | 0 | if | {"start":{"line":355,"column":4},"end":{"line":355,"column":null}} |
-| 18 | 0 | if | {"start":{"line":356,"column":4},"end":{"line":363,"column":null}} |
 | 18 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 19 | 0 | cond-expr | {"start":{"line":359,"column":12},"end":{"line":361,"column":null}} |
-| 19 | 1 | cond-expr | {"start":{"line":362,"column":12},"end":{"line":362,"column":null}} |
-| 20 | 0 | if | {"start":{"line":369,"column":4},"end":{"line":369,"column":null}} |
-| 22 | 0 | if | {"start":{"line":372,"column":4},"end":{"line":372,"column":null}} |
-| 24 | 0 | if | {"start":{"line":387,"column":6},"end":{"line":387,"column":null}} |
-| 24 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 25 | 0 | binary-expr | {"start":{"line":387,"column":10},"end":{"line":387,"column":48}} |
-| 25 | 1 | binary-expr | {"start":{"line":387,"column":48},"end":{"line":387,"column":60}} |
 | 26 | 0 | if | {"start":{"line":390,"column":6},"end":{"line":390,"column":null}} |
-| 26 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 27 | 0 | binary-expr | {"start":{"line":391,"column":21},"end":{"line":391,"column":41}} |
-| 27 | 1 | binary-expr | {"start":{"line":391,"column":41},"end":{"line":391,"column":51}} |
-| 28 | 0 | if | {"start":{"line":402,"column":4},"end":{"line":402,"column":null}} |
-| 31 | 0 | if | {"start":{"line":415,"column":8},"end":{"line":415,"column":null}} |
 | 33 | 0 | if | {"start":{"line":424,"column":6},"end":{"line":424,"column":null}} |
-| 35 | 0 | if | {"start":{"line":432,"column":4},"end":{"line":432,"column":null}} |
 | 36 | 0 | if | {"start":{"line":443,"column":4},"end":{"line":443,"column":null}} |
 | 36 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 37 | 0 | binary-expr | {"start":{"line":443,"column":8},"end":{"line":443,"column":29}} |
 | 37 | 1 | binary-expr | {"start":{"line":443,"column":29},"end":{"line":443,"column":65}} |
-| 38 | 0 | if | {"start":{"line":455,"column":4},"end":{"line":455,"column":null}} |
 | 44 | 0 | if | {"start":{"line":476,"column":6},"end":{"line":476,"column":null}} |
 | 46 | 0 | if | {"start":{"line":483,"column":6},"end":{"line":483,"column":null}} |
-| 47 | 1 | binary-expr | {"start":{"line":484,"column":41},"end":{"line":484,"column":51}} |
 
 ## frontend/src/app/features/issues/pages/issue-detail/modern-issue-detail.page.ts
 
@@ -1171,7 +1075,6 @@ Uncovered executable lines: 76, 86, 87, 88, 89, 104, 105, 106, 107, 112, 115, 12
 | 22 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 25 | 0 | if | {"start":{"line":243,"column":4},"end":{"line":243,"column":null}} |
 | 25 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 26 | 1 | binary-expr | {"start":{"line":252,"column":42},"end":{"line":252,"column":44}} |
 | 30 | 0 | if | {"start":{"line":290,"column":4},"end":{"line":290,"column":null}} |
 | 33 | 0 | binary-expr | {"start":{"line":296,"column":22},"end":{"line":296,"column":39}} |
 | 33 | 1 | binary-expr | {"start":{"line":296,"column":39},"end":{"line":296,"column":60}} |
@@ -1202,24 +1105,9 @@ Uncovered executable lines: none.
 | 132 | 0 | if | {"start":{"line":578,"column":4},"end":{"line":578,"column":null}} |
 | 137 | 0 | if | {"start":{"line":591,"column":10},"end":{"line":591,"column":null}} |
 
-## frontend/src/app/features/notifications/components/notification-preferences.component.ts
-
-Uncovered executable lines: 16, 29, 252, 274, 275, 276, 277, 278, 279, 280, 281, 282, 289, 290.
-
-| Branch ID | Arm | Type | Arm location |
-|---|---:|---|---|
-| 0 | 0 | if | {"start":{"line":273,"column":6},"end":{"line":283,"column":null}} |
-| 1 | 0 | cond-expr | {"start":{"line":290,"column":31},"end":{"line":290,"column":71}} |
-| 1 | 1 | cond-expr | {"start":{"line":290,"column":71},"end":{"line":290,"column":null}} |
-| 2 | 0 | if | {"start":{"line":307,"column":4},"end":{"line":307,"column":null}} |
-| 4 | 0 | if | {"start":{"line":313,"column":6},"end":{"line":313,"column":null}} |
-| 5 | 0 | if | {"start":{"line":322,"column":4},"end":{"line":322,"column":null}} |
-| 7 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 10 | 0 | if | {"start":{"line":341,"column":6},"end":{"line":341,"column":null}} |
-
 ## frontend/src/app/features/notifications/notifications.api.ts
 
-Uncovered executable lines: 18, 19, 25, 38, 49, 62.
+Uncovered executable lines: 25, 38, 49, 62.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
@@ -1235,41 +1123,12 @@ Uncovered executable lines: 5.
 
 ## frontend/src/app/features/notifications/pages/inbox/inbox.page.ts
 
-Uncovered executable lines: 26, 496, 515, 516, 518, 519, 520, 521, 522, 523, 530, 531, 532, 533, 577, 583, 606, 616, 628, 640, 654, 655, 660, 661, 666, 671, 676, 677, 679.
+Uncovered executable lines: none.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
-| 0 | 0 | binary-expr | {"start":{"line":501,"column":45},"end":{"line":501,"column":71}} |
-| 0 | 1 | binary-expr | {"start":{"line":501,"column":71},"end":{"line":501,"column":75}} |
-| 1 | 0 | binary-expr | {"start":{"line":516,"column":12},"end":{"line":516,"column":33}} |
-| 1 | 1 | binary-expr | {"start":{"line":516,"column":33},"end":{"line":516,"column":55}} |
-| 1 | 2 | binary-expr | {"start":{"line":516,"column":55},"end":{"line":516,"column":null}} |
-| 2 | 0 | if | {"start":{"line":523,"column":8},"end":{"line":530,"column":null}} |
-| 2 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 3 | 0 | binary-expr | {"start":{"line":524,"column":10},"end":{"line":524,"column":null}} |
-| 3 | 1 | binary-expr | {"start":{"line":525,"column":10},"end":{"line":525,"column":null}} |
-| 3 | 2 | binary-expr | {"start":{"line":526,"column":10},"end":{"line":526,"column":null}} |
-| 3 | 3 | binary-expr | {"start":{"line":527,"column":10},"end":{"line":527,"column":null}} |
-| 3 | 4 | binary-expr | {"start":{"line":528,"column":10},"end":{"line":528,"column":null}} |
-| 4 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 10 | 1 | binary-expr | {"start":{"line":591,"column":42},"end":{"line":591,"column":44}} |
-| 11 | 1 | binary-expr | {"start":{"line":599,"column":51},"end":{"line":599,"column":null}} |
-| 15 | 0 | if | {"start":{"line":605,"column":4},"end":{"line":606,"column":null}} |
-| 17 | 0 | if | {"start":{"line":607,"column":4},"end":{"line":607,"column":null}} |
-| 18 | 0 | default-arg | {"start":{"line":613,"column":72},"end":{"line":613,"column":93}} |
 | 20 | 0 | if | {"start":{"line":623,"column":10},"end":{"line":623,"column":null}} |
-| 21 | 0 | if | {"start":{"line":627,"column":10},"end":{"line":627,"column":null}} |
-| 22 | 0 | cond-expr | {"start":{"line":629,"column":31},"end":{"line":629,"column":61}} |
-| 22 | 1 | cond-expr | {"start":{"line":629,"column":61},"end":{"line":629,"column":null}} |
 | 24 | 0 | if | {"start":{"line":637,"column":8},"end":{"line":637,"column":null}} |
-| 26 | 0 | if | {"start":{"line":655,"column":4},"end":{"line":655,"column":null}} |
-| 26 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 27 | 0 | if | {"start":{"line":659,"column":4},"end":{"line":662,"column":null}} |
-| 28 | 1 | binary-expr | {"start":{"line":659,"column":36},"end":{"line":659,"column":74}} |
-| 28 | 2 | binary-expr | {"start":{"line":659,"column":74},"end":{"line":659,"column":93}} |
-| 29 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 30 | 0 | if | {"start":{"line":673,"column":4},"end":{"line":673,"column":null}} |
-| 32 | 0 | if | {"start":{"line":675,"column":4},"end":{"line":678,"column":null}} |
 
 ## frontend/src/app/features/pictures/components/picture-image/picture-image.component.ts
 
@@ -1312,10 +1171,8 @@ Uncovered executable lines: 45, 87, 88, 104, 105, 135, 174, 185, 206, 212, 278, 
 | 12 | 1 | binary-expr | {"start":{"line":136,"column":68},"end":{"line":136,"column":71}} |
 | 16 | 0 | if | {"start":{"line":160,"column":4},"end":{"line":160,"column":null}} |
 | 18 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 20 | 0 | if | {"start":{"line":170,"column":4},"end":{"line":170,"column":null}} |
 | 24 | 0 | cond-expr | {"start":{"line":188,"column":18},"end":{"line":188,"column":48}} |
 | 24 | 1 | cond-expr | {"start":{"line":188,"column":48},"end":{"line":188,"column":null}} |
-| 25 | 1 | binary-expr | {"start":{"line":188,"column":35},"end":{"line":188,"column":48}} |
 | 28 | 0 | if | {"start":{"line":199,"column":4},"end":{"line":206,"column":null}} |
 | 31 | 0 | if | {"start":{"line":208,"column":4},"end":{"line":208,"column":null}} |
 | 33 | 1 | binary-expr | {"start":{"line":210,"column":65},"end":{"line":210,"column":null}} |
@@ -1357,42 +1214,18 @@ Uncovered executable lines: 22, 31, 40, 50, 63, 73.
 
 ## frontend/src/app/features/planning/project-planning.page.ts
 
-Uncovered executable lines: 26, 390, 404, 406, 439, 479, 488, 489, 535, 545, 562, 591, 601, 605, 606.
+Uncovered executable lines: none.
 
 | Branch ID | Arm | Type | Arm location |
 |---|---:|---|---|
-| 0 | 1 | binary-expr | {"start":{"line":392,"column":19},"end":{"line":392,"column":null}} |
-| 1 | 0 | binary-expr | {"start":{"line":403,"column":38},"end":{"line":403,"column":72}} |
 | 1 | 1 | binary-expr | {"start":{"line":403,"column":72},"end":{"line":403,"column":74}} |
 | 3 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 4 | 2 | binary-expr | {"start":{"line":440,"column":48},"end":{"line":440,"column":64}} |
-| 6 | 0 | cond-expr | {"start":{"line":482,"column":18},"end":{"line":482,"column":52}} |
-| 6 | 1 | cond-expr | {"start":{"line":482,"column":52},"end":{"line":482,"column":null}} |
 | 7 | 1 | binary-expr | {"start":{"line":482,"column":39},"end":{"line":482,"column":52}} |
 | 8 | 0 | if | {"start":{"line":484,"column":6},"end":{"line":484,"column":null}} |
-| 11 | 0 | if | {"start":{"line":488,"column":6},"end":{"line":489,"column":null}} |
-| 11 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 12 | 0 | cond-expr | {"start":{"line":489,"column":48},"end":{"line":489,"column":64}} |
-| 12 | 1 | cond-expr | {"start":{"line":489,"column":64},"end":{"line":489,"column":95}} |
-| 13 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 15 | 2 | binary-expr | {"start":{"line":517,"column":51},"end":{"line":517,"column":70}} |
-| 17 | 0 | if | {"start":{"line":529,"column":4},"end":{"line":529,"column":null}} |
 | 22 | 0 | if | {"start":{"line":551,"column":8},"end":{"line":551,"column":null}} |
-| 24 | 0 | if | {"start":{"line":562,"column":6},"end":{"line":562,"column":null}} |
-| 24 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
-| 25 | 0 | cond-expr | {"start":{"line":562,"column":61},"end":{"line":562,"column":77}} |
-| 25 | 1 | cond-expr | {"start":{"line":562,"column":77},"end":{"line":562,"column":107}} |
-| 26 | 0 | if | {"start":{"line":564,"column":6},"end":{"line":564,"column":null}} |
-| 27 | 0 | if | {"start":{"line":585,"column":4},"end":{"line":585,"column":null}} |
-| 28 | 0 | cond-expr | {"start":{"line":594,"column":18},"end":{"line":594,"column":53}} |
-| 28 | 1 | cond-expr | {"start":{"line":594,"column":53},"end":{"line":594,"column":null}} |
 | 29 | 1 | binary-expr | {"start":{"line":594,"column":40},"end":{"line":594,"column":53}} |
-| 30 | 0 | if | {"start":{"line":596,"column":6},"end":{"line":601,"column":null}} |
-| 33 | 0 | if | {"start":{"line":605,"column":6},"end":{"line":608,"column":null}} |
-| 33 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 | 34 | 0 | cond-expr | {"start":{"line":607,"column":35},"end":{"line":607,"column":51}} |
-| 34 | 1 | cond-expr | {"start":{"line":607,"column":51},"end":{"line":607,"column":null}} |
-| 35 | 1 | if | {"start":{"line":null,"column":null},"end":{"line":null,"column":null}} |
 
 ## frontend/src/app/features/projects/components/project-activation/project-activation.component.ts
 

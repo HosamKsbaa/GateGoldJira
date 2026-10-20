@@ -1,18 +1,18 @@
 {
   "version": 1,
-  "generatedAt": "2026-10-20T01:29:09.290244+00:00",
-  "applicationSha256": "3fbda7e589b993005ff37410a86d1668d4305aeaefbe1454b42c183168025bc1",
-  "catalogSha256": "3e0706fb468ec62323178776d8f07304c38682c86b067d96fad34e6c7ef0a69f",
-  "sourceManifestSha256": "76eccaba993bc134c805a3e85d0e7b7bcf803410d4a1336f0860fedd8bf0a8b9",
-  "browserRunId": "full-v9-2026-10-20",
-  "goProofSourceRunId": "e3bf603e6efd49638f3b0d306c8e7abb",
+  "generatedAt": "2026-10-20T11:21:30.387873+00:00",
+  "applicationSha256": "16324c3cb2b071b9ec228b1fb0ffdefbb7ff4e2e97e6d911cccb333ebedf7141",
+  "catalogSha256": "4269a4a8ae2a927648540fc11c73ed00bfc8f0c76110bce1b870bdfde1ad14e1",
+  "sourceManifestSha256": "79bde1ad7cc08fc73786aca00b2b0ef8e7e8103d5b79dcf6e0a145e5e7dbc752",
+  "browserRunId": "full-continued-20261020-r3",
+  "goProofSourceRunId": "119c5973ad56498883954472aacb05fd",
   "browserExecution": {
     "suiteStatus": "passed",
     "scope": "full_unfiltered",
     "invalidEvidence": false,
-    "selected": 884,
-    "attempts": 884,
-    "passed": 883,
+    "selected": 888,
+    "attempts": 888,
+    "passed": 887,
     "failed": 0,
     "skipped": 1,
     "timedOut": 0,
@@ -24,15 +24,15 @@
     "otherBrowserCoverage": "not measured"
   },
   "allDocumentedCases": {
-    "cases": 1772,
-    "passedCases": 1759,
-    "casesVerifiedOnEveryDeclaredSurface": 1759,
+    "cases": 1781,
+    "passedCases": 1768,
+    "casesVerifiedOnEveryDeclaredSurface": 1768,
     "outcomes": {
       "not_run": 13,
-      "passed": 1759
+      "passed": 1768
     },
-    "declaredSurfacePairs": 3388,
-    "verifiedDeclaredSurfacePairs": 3367,
+    "declaredSurfacePairs": 3399,
+    "verifiedDeclaredSurfacePairs": 3378,
     "surfaceCounts": {
       "background": {
         "declared": 23,
@@ -43,8 +43,8 @@
         "verified": 2
       },
       "mcp": {
-        "declared": 975,
-        "verified": 974
+        "declared": 976,
+        "verified": 975
       },
       "operator": {
         "declared": 17,
@@ -55,24 +55,24 @@
         "verified": 27
       },
       "rest": {
-        "declared": 1022,
-        "verified": 1017
+        "declared": 1027,
+        "verified": 1022
       },
       "web": {
-        "declared": 1320,
-        "verified": 1316
+        "declared": 1325,
+        "verified": 1321
       }
     }
   },
   "documentedLocalCases": {
-    "cases": 1759,
-    "passedCases": 1759,
-    "casesVerifiedOnEveryDeclaredSurface": 1759,
+    "cases": 1768,
+    "passedCases": 1768,
+    "casesVerifiedOnEveryDeclaredSurface": 1768,
     "outcomes": {
-      "passed": 1759
+      "passed": 1768
     },
-    "declaredSurfacePairs": 3367,
-    "verifiedDeclaredSurfacePairs": 3367,
+    "declaredSurfacePairs": 3378,
+    "verifiedDeclaredSurfacePairs": 3378,
     "surfaceCounts": {
       "background": {
         "declared": 21,
@@ -83,8 +83,8 @@
         "verified": 2
       },
       "mcp": {
-        "declared": 974,
-        "verified": 974
+        "declared": 975,
+        "verified": 975
       },
       "operator": {
         "declared": 10,
@@ -95,12 +95,12 @@
         "verified": 27
       },
       "rest": {
-        "declared": 1017,
-        "verified": 1017
+        "declared": 1022,
+        "verified": 1022
       },
       "web": {
-        "declared": 1316,
-        "verified": 1316
+        "declared": 1321,
+        "verified": 1321
       }
     }
   },
@@ -134,28 +134,28 @@
     "denominatorVerified": true,
     "unit": {
       "lines": {
-        "total": 8639,
-        "covered": 3737,
+        "total": 8653,
+        "covered": 4773,
         "skipped": 0,
-        "pct": 43.25
+        "pct": 55.16
       },
       "statements": {
-        "total": 9764,
-        "covered": 4203,
+        "total": 9788,
+        "covered": 5388,
         "skipped": 0,
-        "pct": 43.04
+        "pct": 55.04
       },
       "functions": {
-        "total": 2067,
-        "covered": 869,
+        "total": 2071,
+        "covered": 1106,
         "skipped": 0,
-        "pct": 42.04
+        "pct": 53.4
       },
       "branches": {
-        "total": 5576,
-        "covered": 2525,
+        "total": 5612,
+        "covered": 3066,
         "skipped": 0,
-        "pct": 45.28
+        "pct": 54.63
       },
       "branchesTrue": {
         "total": 0,
@@ -166,28 +166,28 @@
     },
     "combined": {
       "lines": {
-        "total": 8639,
-        "covered": 7915,
+        "total": 8653,
+        "covered": 8067,
         "skipped": 0,
-        "pct": 91.61
+        "pct": 93.22
       },
       "statements": {
-        "total": 9764,
-        "covered": 8697,
+        "total": 9788,
+        "covered": 8930,
         "skipped": 0,
-        "pct": 89.07
+        "pct": 91.23
       },
       "functions": {
-        "total": 2067,
-        "covered": 882,
+        "total": 2071,
+        "covered": 1118,
         "skipped": 0,
-        "pct": 42.67
+        "pct": 53.98
       },
       "branches": {
-        "total": 5576,
-        "covered": 4630,
+        "total": 5612,
+        "covered": 4826,
         "skipped": 0,
-        "pct": 83.03
+        "pct": 85.99
       },
       "branchesTrue": {
         "total": 0,
@@ -197,34 +197,34 @@
       }
     },
     "successfulUnitTestRun": {
-      "runId": "6969c4dd02344ec5b862cd3322af7d91",
-      "passedTests": 781,
-      "files": 64
+      "runId": "ff0af9b5e6b14ce39a9cccf7637bac7d",
+      "passedTests": 1000,
+      "files": 74
     },
     "browserLoadedSourceOnly": {
       "lines": {
-        "total": 11002,
-        "covered": 10343,
+        "total": 11018,
+        "covered": 10355,
         "skipped": 0,
-        "pct": 94.01
+        "pct": 93.98
       },
       "statements": {
-        "total": 14792,
-        "covered": 13430,
+        "total": 14820,
+        "covered": 13450,
         "skipped": 0,
-        "pct": 90.79
+        "pct": 90.75
       },
       "functions": {
-        "total": 2477,
-        "covered": 2253,
+        "total": 2481,
+        "covered": 2258,
         "skipped": 0,
-        "pct": 90.95
+        "pct": 91.01
       },
       "branches": {
-        "total": 6890,
-        "covered": 5473,
+        "total": 6930,
+        "covered": 5514,
         "skipped": 0,
-        "pct": 79.43
+        "pct": 79.56
       },
       "branchesTrue": {
         "total": 0,
@@ -239,8 +239,8 @@
   "go": {
     "measurement": "statements only",
     "denominatorVerified": true,
-    "covered": 13481,
-    "total": 16851,
+    "covered": 13678,
+    "total": 17015,
     "packageCount": 39,
     "lineCoverage": "not measured by Go coverage",
     "branchCoverage": "not measured by Go coverage"

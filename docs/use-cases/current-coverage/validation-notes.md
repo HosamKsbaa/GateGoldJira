@@ -1,46 +1,65 @@
 # Validation notes and remaining work
 
-Recorded on 20 October 2026. See [verification.md](verification.md) for the current measured results and [source-gaps.md](source-gaps.md) for uncovered frontend locations.
+Recorded on 20 October 2026. See [verification.md](verification.md) for measured results, [source-gaps.md](source-gaps.md) for frontend gaps and [go-statement-gaps.md](go-statement-gaps.md) for native Go gaps.
 
-## What passed locally
+## Verified locally
 
-- The full, unfiltered Chromium cohort selected 884 tests: 883 passed, zero failed, and one instrumented timing test was explicitly skipped. There were no retries. A separate uninstrumented run passed that timing test.
-- All 1,759 locally eligible documented cases passed on every declared interface: 3,367 verified case/interface pairs. The catalog contains 1,772 cases in total; 13 actual provider or supported-host acceptance cases remain pending.
-- The complete frontend unit run passed 781 tests across 64 files. Test TypeScript checking passed.
-- Reporting and evidence validation passed 83 Python regression tests and 16 Node regression tests.
-- The identity package passed its one local test. The portable integration plugin passed its 16 unit tests. These do not establish actual identity-provider or installed-host acceptance, or source percentages for those packages.
-- The retained Go verification passed the complete 39-package race-enabled suite. The frontend production build, architecture checks, Go vet and generated-contract checks passed against unchanged application sources.
+- The full, unfiltered Chromium cohort selected 888 tests: **887 passed, zero failed, one timing test explicitly skipped**. There were zero retries. That timing test passed separately without coverage instrumentation.
+- All **1,768 locally eligible documented cases passed on every declared interface: 3,378 verified case/interface pairs**. The complete catalog contains 1,781 cases; 13 actual provider or supported-host acceptance cases remain pending.
+- The complete frontend unit run passed **1,000 tests across 74 files**. Strict test TypeScript checks, application compilation and the production build passed.
+- The complete **39-package Go race-enabled suite passed**. An independent official no-test instrumentation run validated the complete native statement denominator.
+- Tooling regressions passed **173 Python tests and 16 Node tests**. Architecture checks, Go vet and generated REST/MCP/SQL/TypeScript consistency checks passed. Contract regeneration ran inside an isolated captured source copy.
+- The identity package passed 30 local unit cases; the portable integration plugin passed its 16 unit tests. These do not establish actual provider or installed-host acceptance, or complete source percentages for those packages.
 
-The browser suite exercises the web app, real local REST and MCP services, isolated PostgreSQL and supported local integration boundaries. Unit tests cover additional controller and service boundaries; passing a unit test does not imply a DOM interaction was tested. Chromium is the only verified browser engine. Hosted GitHub Actions execution has not been verified; local workflow and reporting checks do not establish a hosted CI result.
+The browser cohort exercises actual local web, REST and MCP behavior against isolated PostgreSQL and local storage. It also tests the real hosted-password mode with operator provisioning, current account approval, a canonical HTTPS fixture origin and PostgreSQL verify-full TLS. That local fixture does not establish a deployed VM, public certificate, Google/Auth0 tenant, SMTP provider or cloud storage target.
 
-Catalog coverage describes documented behavior, including rejection of unavailable operations. Eleven local cases explicitly verify boundaries for features classified as not implemented. Passing those cases does not implement the absent features or establish complete Jira feature parity. Some supported service operations have no corresponding web UI.
+Node component tests exercise public state and service behavior before DOM initialization; browser tests provide actual DOM and rich-editor interactions. Chromium is the verified browser engine. Other engines, physical devices and hosted GitHub Actions execution remain unverified. CI configuration and local checks are not evidence of a hosted CI run.
+
+Catalog coverage includes expected rejection of unavailable operations. Eleven cases explicitly verify boundaries for features classified as not implemented. Passing them does not implement those features or establish complete Jira parity. Some service capabilities have no corresponding native web action.
+
+## Repairs covered by regressions
+
+- Delayed upload-cancellation acknowledgements cannot restore a previous account's private queue after component destruction or an account change.
+- Accepted label creation clears an unchanged name and preserves a newer unsent label draft.
+- Obsolete project replies cannot initiate unsigned board discovery or cancel a replacement login. Protected requests retain their original session ownership while waiting for authentication and response parsing.
+- Owned captured migration commands reuse their genuine parent storage lease. Exact paths, manifests, held locks and registered output ownership are required; budgets and concurrency limits remain enforced. The real Make migration/restart check and the full migration package passed.
+- The storage signal handler records cancellation without re-entering a child wait lock. A deterministic OS-boundary regression reproduced the lock race before the repair; the original shutdown deadline and owned-descendant grace were preserved.
 
 ## Source target remains incomplete
 
 | Measurement | Covered / total | Result |
 |---|---:|---:|
-| Combined frontend executable lines | 7,915 / 8,639 | 91.61% |
-| Combined frontend branch arms | 4,630 / 5,576 | 83.03% |
-| Combined frontend statements | 8,697 / 9,764 | 89.07% |
-| Combined frontend functions | 882 / 2,067 | 42.67% |
-| Go statements | 13,481 / 16,851 | 80.0% rounded |
+| Combined frontend executable lines | 8,067 / 8,653 | 93.22% |
+| Combined frontend branch arms | 4,826 / 5,612 | 85.99% |
+| Combined frontend statements | 8,930 / 9,788 | 91.23% |
+| Combined frontend functions | 1,118 / 2,071 | 53.98% |
+| Go native statements | 13,678 / 17,015 | 80.4% rounded |
 
-The frontend denominator contains all 123 handwritten runtime TypeScript files, including bootstrap. Specs and the two generated API directories are excluded. Unit and browser counters are combined only when their source hashes and exact mapped spans agree. Percentages are never added. Incompatible compiler mappings remain uncredited, so the gap map records measured uncovered counters; it does not prove a missing product feature.
+The frontend denominator contains all 123 handwritten runtime TypeScript files, including bootstrap. Specs and the two generated API directories are excluded. Unit and browser counters combine only when source hashes and exact mapped spans agree. Incompatible compiler mappings receive no additional credit; a remaining counter does not itself prove a missing feature. Browser-only loaded-source percentages use a different denominator and are not the full source result.
 
-There are **724 uncovered executable frontend lines and 946 uncovered branch arms**. The complete positions are recorded in [source-gaps.json](source-gaps.json), including unavailable compiler-map positions as null. Go has **3,370 uncovered statements**. Go's native tool measures statements; no Go line or branch percentage has been measured. Identity and plugin source percentages are also unmeasured.
+Remaining measured gaps are **586 frontend executable lines, 786 frontend branch arms and 3,337 Go statements across 3,009 native blocks**. Complete positions are recorded in the linked JSON and Markdown gap reports, with no source text. Unavailable frontend compiler-map positions remain null. Go's native denominator includes generated and test-support packages; its blocks must not be interpreted as independent line or branch coverage. Go line/branch percentages and complete identity/plugin source metrics remain unmeasured.
 
-The strict 100% gate was run on the complete, valid evidence and failed as expected: both source denominators were verified, but source targets and external acceptance remain incomplete. That is a target failure, not a passing 100% result.
+The strict 100% gate was run against complete, valid evidence and **failed**: both source denominators were verified, while source targets and external acceptance remain incomplete. This is a target failure, not a passing 100% result. Further work includes assertions for the recorded source gaps, trustworthy independent Go line/branch measurement, complete identity/plugin source measurement and actual external acceptance. See [external-acceptance.md](../external-acceptance.md) for prerequisites.
 
-To reach the requested target, remaining work includes meaningful assertions for the recorded source gaps, independent Go line/branch measurement, source measurement for the identity and plugin packages, and actual provider/supported-host acceptance. Each change requires a new validated source-bound run; current results must not be carried forward as if they covered changed code. External prerequisites are listed in [external-acceptance.md](../external-acceptance.md).
+## Uninstrumented local performance
 
-## Local performance scope
+The separate Chromium run passed 100 warmed journeys per operation on the local development server and small fixture: project p95 **150.72 ms**, board p95 **392.30 ms**, each against a **2,000 ms** budget. See [performance.json](performance.json). These are not cold-start, deployed or 200,000-issue browser measurements.
 
-The separate uninstrumented Chromium run measured 100 warmed journeys per operation. Project p95 was approximately **147 ms**, and board p95 approximately **408 ms**, against the test's **2,000 ms** budget. These are small local-fixture journeys on the development server. They do not establish cloud, cold-start or 200,000-issue browser performance. Numeric results are in [performance.json](performance.json).
+A separate current-source backend benchmark passed against **200,000 canonical issues in one project and 100 simultaneous users**, with actual authenticated REST and MCP calls and no recorded errors:
 
-A separate retained local backend benchmark used 200,000 canonical issues in one project and a mixed authenticated REST/MCP workload with 100 simultaneous users. Recorded p95 values were 393 ms for search (1,000 trials), 435 ms for broad board reads (10 trials), 373 ms for priority writes (200 trials), and 587 ms for comment writes (100 trials). Each met its recorded local budget. The small board sample and local environment limit that conclusion. This is a retained benchmark record against unchanged backend sources, not cloud acceptance or a cryptographically attested browser cohort.
+| Operation | Trials | Local p95 | Budget |
+|---|---:|---:|---:|
+| Search | 1,000 | 333.49 ms | 500 ms |
+| Broad board reads | 10 | 459.54 ms | 500 ms |
+| Priority writes | 200 | 400.87 ms | 750 ms |
+| Comment writes | 100 | 598.72 ms | 750 ms |
 
-## Evidence and publication
+The small board sample and local environment limit that conclusion. See [scale-performance.json](scale-performance.json). This benchmark is separate from coverage instrumentation, browser rendering and cloud acceptance.
 
-The published JSON summaries are curated display reports. The actual producer-bound profiles, run proofs, logs, browser results and private test artifacts remain private. The published measurement metadata includes their identities and hashes, not their contents; the public folder alone is not a self-contained input to the strict gate. No raw source bundles, upload contents, credentials or tokens are published here.
+## Historical failures and evidence
 
-Historical shutdown and drag observations are qualified in [verification.md](verification.md). Later passing tests establish current outcomes without establishing an unproven cause or repair for earlier failures.
+An earlier complete browser attempt had three failures and is excluded from these results. The project-pagination test observed request starts and could advance the same cursor before a response committed. Its replacement waits for completed, typed page responses and rendered publication while retaining distinct cursor and option-growth assertions. Back-navigation coverage now verifies rendered destinations and ready return controls, and fails on unexpected confirmation dialogs. The exact historical navigation trigger was not captured; stronger synchronization does not establish a causal product repair for that earlier observation.
+
+That earlier attempt also recorded eight uncaught page errors during an otherwise successful approval story. Their messages and stacks were not retained, so the cause remains unknown. The complete 39-test discovery/approval run and the fresh full cohort passed without those errors. Private runtime-error diagnostics now retain details if they recur; the public assertion remains opaque. No runtime repair is claimed for that unexplained historical failure. Earlier native-profile shutdown and drag observations remain qualified in [verification.md](verification.md).
+
+Published files contain curated case reports, counters, hashes and source positions. Producer-bound profiles, source snapshots, logs, runtime diagnostics, test uploads, credentials and raw results remain private. The public folder alone is not a self-contained strict-gate input. The latest full source snapshots, shard dependencies, unit/Go proofs and timing/scale evidence are retained; managed cleanup removed the superseded failed cohort after preserving bounded private case/source receipts. Application databases, database volumes, identities and user uploads were preserved.

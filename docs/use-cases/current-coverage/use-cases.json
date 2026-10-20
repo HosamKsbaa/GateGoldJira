@@ -1,22 +1,22 @@
 {
   "version": 1,
   "targetPercent": 100,
-  "applicationSha256": "3fbda7e589b993005ff37410a86d1668d4305aeaefbe1454b42c183168025bc1",
-  "catalogSha256": "3e0706fb468ec62323178776d8f07304c38682c86b067d96fad34e6c7ef0a69f",
+  "applicationSha256": "16324c3cb2b071b9ec228b1fb0ffdefbb7ff4e2e97e6d911cccb333ebedf7141",
+  "catalogSha256": "4269a4a8ae2a927648540fc11c73ed00bfc8f0c76110bce1b870bdfde1ad14e1",
   "suiteStatus": "passed",
   "invalidEvidence": false,
   "browserExecution": {
     "full": true,
     "scope": "full_unfiltered",
-    "selectedTests": 884,
-    "attempts": 884,
+    "selectedTests": 888,
+    "attempts": 888,
     "timingOptOuts": 1
   },
-  "total": 1772,
-  "verified": 1759,
-  "fullyVerifiedAcrossSurfaces": 1759,
+  "total": 1781,
+  "verified": 1768,
+  "fullyVerifiedAcrossSurfaces": 1768,
   "outcomes": {
-    "passed": 1759,
+    "passed": 1768,
     "not_run": 13
   },
   "blockedExpectations": [
@@ -2279,6 +2279,198 @@
           "surface": "rest",
           "result": "passed",
           "originalTestId": "b0ad8cdf20f43aa16a38-28825ab5e7972bd753d8",
+          "shard": 8
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0064",
+      "area": "access",
+      "title": "Sign in with an approved provisioned hosted-password account",
+      "implementation": "implemented",
+      "status": "passed",
+      "verifiedSurfaces": [
+        "rest",
+        "web"
+      ],
+      "missingSurfaces": [],
+      "evidence": [
+        {
+          "testId": "6b40a84342a258855bae47a77be2618bbeb562da93677e1036a3f7c6311b9dec",
+          "file": "e2e/coverage-password-mode.spec.ts",
+          "line": 41,
+          "retry": 0,
+          "assertions": 5,
+          "surface": "rest",
+          "result": "passed",
+          "originalTestId": "755aaeffaab0dbd88994-d173d50be0bbc81dc90a",
+          "shard": 7
+        },
+        {
+          "testId": "6b40a84342a258855bae47a77be2618bbeb562da93677e1036a3f7c6311b9dec",
+          "file": "e2e/coverage-password-mode.spec.ts",
+          "line": 41,
+          "retry": 0,
+          "assertions": 9,
+          "surface": "web",
+          "result": "passed",
+          "originalTestId": "755aaeffaab0dbd88994-d173d50be0bbc81dc90a",
+          "shard": 7
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0065",
+      "area": "access",
+      "title": "Reject an incorrect hosted password without exposing credentials",
+      "implementation": "implemented",
+      "status": "passed",
+      "verifiedSurfaces": [
+        "rest"
+      ],
+      "missingSurfaces": [],
+      "evidence": [
+        {
+          "testId": "6b40a84342a258855bae47a77be2618bbeb562da93677e1036a3f7c6311b9dec",
+          "file": "e2e/coverage-password-mode.spec.ts",
+          "line": 41,
+          "retry": 0,
+          "assertions": 12,
+          "surface": "rest",
+          "result": "passed",
+          "originalTestId": "755aaeffaab0dbd88994-d173d50be0bbc81dc90a",
+          "shard": 7
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0066",
+      "area": "access",
+      "title": "Reject a provisioned hosted identity without current company approval",
+      "implementation": "implemented",
+      "status": "passed",
+      "verifiedSurfaces": [
+        "rest"
+      ],
+      "missingSurfaces": [],
+      "evidence": [
+        {
+          "testId": "6b40a84342a258855bae47a77be2618bbeb562da93677e1036a3f7c6311b9dec",
+          "file": "e2e/coverage-password-mode.spec.ts",
+          "line": 41,
+          "retry": 0,
+          "assertions": 11,
+          "surface": "rest",
+          "result": "passed",
+          "originalTestId": "755aaeffaab0dbd88994-d173d50be0bbc81dc90a",
+          "shard": 7
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0067",
+      "area": "access",
+      "title": "Keep the hosted password endpoint absent from the development identity service",
+      "implementation": "implemented",
+      "status": "passed",
+      "verifiedSurfaces": [
+        "rest"
+      ],
+      "missingSurfaces": [],
+      "evidence": [
+        {
+          "testId": "6b40a84342a258855bae47a77be2618bbeb562da93677e1036a3f7c6311b9dec",
+          "file": "e2e/coverage-password-mode.spec.ts",
+          "line": 41,
+          "retry": 0,
+          "assertions": 2,
+          "surface": "rest",
+          "result": "passed",
+          "originalTestId": "755aaeffaab0dbd88994-d173d50be0bbc81dc90a",
+          "shard": 7
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0068",
+      "area": "access",
+      "title": "Clear the hosted password session on sign-out and document reload",
+      "implementation": "implemented",
+      "status": "passed",
+      "verifiedSurfaces": [
+        "web"
+      ],
+      "missingSurfaces": [],
+      "evidence": [
+        {
+          "testId": "6b40a84342a258855bae47a77be2618bbeb562da93677e1036a3f7c6311b9dec",
+          "file": "e2e/coverage-password-mode.spec.ts",
+          "line": 41,
+          "retry": 0,
+          "assertions": 12,
+          "surface": "web",
+          "result": "passed",
+          "originalTestId": "755aaeffaab0dbd88994-d173d50be0bbc81dc90a",
+          "shard": 7
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0069",
+      "area": "access",
+      "title": "Reject a hosted REST token used directly as an MCP credential",
+      "implementation": "implemented",
+      "status": "passed",
+      "verifiedSurfaces": [
+        "mcp",
+        "rest"
+      ],
+      "missingSurfaces": [],
+      "evidence": [
+        {
+          "testId": "6b40a84342a258855bae47a77be2618bbeb562da93677e1036a3f7c6311b9dec",
+          "file": "e2e/coverage-password-mode.spec.ts",
+          "line": 41,
+          "retry": 0,
+          "assertions": 6,
+          "surface": "rest",
+          "result": "passed",
+          "originalTestId": "755aaeffaab0dbd88994-d173d50be0bbc81dc90a",
+          "shard": 7
+        },
+        {
+          "testId": "6b40a84342a258855bae47a77be2618bbeb562da93677e1036a3f7c6311b9dec",
+          "file": "e2e/coverage-password-mode.spec.ts",
+          "line": 41,
+          "retry": 0,
+          "assertions": 5,
+          "surface": "mcp",
+          "result": "passed",
+          "originalTestId": "755aaeffaab0dbd88994-d173d50be0bbc81dc90a",
+          "shard": 7
+        }
+      ]
+    },
+    {
+      "id": "UC-ACC-0070",
+      "area": "access",
+      "title": "Keep delayed previous-session project replies from canceling a replacement login",
+      "implementation": "implemented",
+      "status": "passed",
+      "verifiedSurfaces": [
+        "web"
+      ],
+      "missingSurfaces": [],
+      "evidence": [
+        {
+          "testId": "242ca7a79f6b94abaa962088b3d937b6321be379458ce95b67f43cab96c12d2a",
+          "file": "e2e/session-login-request-ownership.spec.ts",
+          "line": 16,
+          "retry": 0,
+          "assertions": 33,
+          "surface": "web",
+          "result": "passed",
+          "originalTestId": "81daa767dc6a8275e367-2e667b3b8fa86546588d",
           "shard": 8
         }
       ]
@@ -6857,6 +7049,30 @@
           "result": "passed",
           "originalTestId": "9a6fabe7d210d2ec7607-143e323f77de0670c3b9",
           "shard": 6
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0087",
+      "area": "assets",
+      "title": "Ignore accepted cancellation after queue destruction and account replacement",
+      "implementation": "implemented",
+      "status": "passed",
+      "verifiedSurfaces": [
+        "web"
+      ],
+      "missingSurfaces": [],
+      "evidence": [
+        {
+          "testId": "59655fefe146c5ebc3e4a96391b5b212ed535aa4c563a53324af49ffc268e393",
+          "file": "e2e/upload-cancellation-ownership.spec.ts",
+          "line": 36,
+          "retry": 0,
+          "assertions": 65,
+          "surface": "web",
+          "result": "passed",
+          "originalTestId": "85c2da09c0c2c0ba4e70-42eeadfa973357bd814f",
+          "shard": 2
         }
       ]
     },
@@ -12023,7 +12239,7 @@
           "file": "e2e/board-grouping-quick-filters.spec.ts",
           "line": 328,
           "retry": 0,
-          "assertions": 257,
+          "assertions": 259,
           "surface": "web",
           "result": "passed",
           "originalTestId": "9e2f1541acdf2e814447-979379019c2973d038d4",
@@ -30001,6 +30217,30 @@
       ]
     },
     {
+      "id": "UC-LBL-0029",
+      "area": "fields-review-labels",
+      "title": "Preserve the next label name while an earlier creation acknowledgement arrives",
+      "implementation": "implemented",
+      "status": "passed",
+      "verifiedSurfaces": [
+        "web"
+      ],
+      "missingSurfaces": [],
+      "evidence": [
+        {
+          "testId": "8b29eef3d59b2486a1284a074b898774a37e97b0738bf042df13341e29919b1d",
+          "file": "e2e/label-create-draft-ownership.spec.ts",
+          "line": 19,
+          "retry": 0,
+          "assertions": 29,
+          "surface": "web",
+          "result": "passed",
+          "originalTestId": "20a4f3b315e701aa05e2-16945fe7667859e44269",
+          "shard": 8
+        }
+      ]
+    },
+    {
       "id": "UC-INT-0001",
       "area": "integrations",
       "title": "Read manual development links",
@@ -36184,7 +36424,7 @@
           "file": "e2e/coverage-issue-discovery.spec.ts",
           "line": 153,
           "retry": 0,
-          "assertions": 5,
+          "assertions": 11,
           "surface": "web",
           "result": "passed",
           "originalTestId": "2fdbcec3c602571103ad-ded79fa2c9e04624825b",
@@ -36431,9 +36671,9 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 3,
           "surface": "web",
@@ -36455,11 +36695,11 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
-          "assertions": 2,
+          "assertions": 8,
           "surface": "web",
           "result": "passed",
           "originalTestId": "2fdbcec3c602571103ad-802f66845926e7569722",
@@ -36479,11 +36719,11 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
-          "assertions": 2,
+          "assertions": 7,
           "surface": "web",
           "result": "passed",
           "originalTestId": "2fdbcec3c602571103ad-802f66845926e7569722",
@@ -36503,9 +36743,9 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 3,
           "surface": "web",
@@ -36527,9 +36767,9 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 2,
           "surface": "web",
@@ -36551,9 +36791,9 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 5,
           "surface": "web",
@@ -36575,9 +36815,9 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 3,
           "surface": "web",
@@ -36599,9 +36839,9 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 3,
           "surface": "web",
@@ -37439,9 +37679,9 @@
           "shard": 5
         },
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 3,
           "surface": "web",
@@ -37487,9 +37727,9 @@
           "shard": 5
         },
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 3,
           "surface": "web",
@@ -37535,9 +37775,9 @@
           "shard": 5
         },
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 3,
           "surface": "web",
@@ -37583,9 +37823,9 @@
           "shard": 5
         },
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 3,
           "surface": "web",
@@ -37607,9 +37847,9 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 25,
           "surface": "web",
@@ -37631,9 +37871,9 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 4,
           "surface": "web",
@@ -40090,9 +40330,9 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 4,
           "surface": "web",
@@ -40162,9 +40402,9 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "47dedfeeb19e2bea029552fa0c72b3933e3d9680f57df2f8709bafef1d56be1a",
+          "testId": "26e113e65cf680d7ad04d181f7e0c15fb326e8598aff2d7b1ae1fd8f4e4d7aca",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 171,
+          "line": 206,
           "retry": 0,
           "assertions": 3,
           "surface": "web",
@@ -40186,9 +40426,9 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "47b3d58f0e9159016bfc6b0f254d951e678b217bd466769f21438f58f80785b5",
+          "testId": "129f1975741f36c9a6e3f05b201ba61161888212658bcbf6b2b72e9da7b5fd19",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 220,
+          "line": 283,
           "retry": 0,
           "assertions": 5,
           "surface": "web",
@@ -52003,7 +52243,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-e5e42e814df710fdf26f",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "05d8e56d00e8426454f38036d3c70cba38a2a5b2536f541929dbe7f491b6efc8",
@@ -52062,7 +52302,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-e5e42e814df710fdf26f",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "05d8e56d00e8426454f38036d3c70cba38a2a5b2536f541929dbe7f491b6efc8",
@@ -52121,7 +52361,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-e5e42e814df710fdf26f",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "05d8e56d00e8426454f38036d3c70cba38a2a5b2536f541929dbe7f491b6efc8",
@@ -52180,7 +52420,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-e5e42e814df710fdf26f",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "05d8e56d00e8426454f38036d3c70cba38a2a5b2536f541929dbe7f491b6efc8",
@@ -52239,7 +52479,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-e5e42e814df710fdf26f",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "05d8e56d00e8426454f38036d3c70cba38a2a5b2536f541929dbe7f491b6efc8",
@@ -52298,7 +52538,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-e5e42e814df710fdf26f",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "05d8e56d00e8426454f38036d3c70cba38a2a5b2536f541929dbe7f491b6efc8",
@@ -52357,7 +52597,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-e5e42e814df710fdf26f",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "05d8e56d00e8426454f38036d3c70cba38a2a5b2536f541929dbe7f491b6efc8",
@@ -52512,7 +52752,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-9ee7cb07db97abd1d392",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "9a28f8cf3ea3b93aaa00ea00ce37ea96831178ccebd05a3f84d7d6dffbd71524",
@@ -52571,7 +52811,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-9ee7cb07db97abd1d392",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "9a28f8cf3ea3b93aaa00ea00ce37ea96831178ccebd05a3f84d7d6dffbd71524",
@@ -52755,11 +52995,11 @@
           "file": "e2e/coverage-project-native.spec.ts",
           "line": 88,
           "retry": 0,
-          "assertions": 12,
+          "assertions": 14,
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-9ee7cb07db97abd1d392",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "9a28f8cf3ea3b93aaa00ea00ce37ea96831178ccebd05a3f84d7d6dffbd71524",
@@ -52818,7 +53058,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-9ee7cb07db97abd1d392",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "9a28f8cf3ea3b93aaa00ea00ce37ea96831178ccebd05a3f84d7d6dffbd71524",
@@ -53089,7 +53329,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-d41fc6bf7fae0260cabc",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "9a28f8cf3ea3b93aaa00ea00ce37ea96831178ccebd05a3f84d7d6dffbd71524",
@@ -53159,7 +53399,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-b28aa7d94875c5ebb999",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "d058f9a961d79cf2c63c0653cba50296e377b7fb9e277f519b6cf8149bbb7c87",
@@ -53218,7 +53458,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-b28aa7d94875c5ebb999",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "d058f9a961d79cf2c63c0653cba50296e377b7fb9e277f519b6cf8149bbb7c87",
@@ -53324,7 +53564,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-b28aa7d94875c5ebb999",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "d058f9a961d79cf2c63c0653cba50296e377b7fb9e277f519b6cf8149bbb7c87",
@@ -53454,7 +53694,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-b28aa7d94875c5ebb999",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "d058f9a961d79cf2c63c0653cba50296e377b7fb9e277f519b6cf8149bbb7c87",
@@ -53513,7 +53753,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-b28aa7d94875c5ebb999",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "d058f9a961d79cf2c63c0653cba50296e377b7fb9e277f519b6cf8149bbb7c87",
@@ -53572,7 +53812,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-b28aa7d94875c5ebb999",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "d058f9a961d79cf2c63c0653cba50296e377b7fb9e277f519b6cf8149bbb7c87",
@@ -53631,7 +53871,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-b28aa7d94875c5ebb999",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "d058f9a961d79cf2c63c0653cba50296e377b7fb9e277f519b6cf8149bbb7c87",
@@ -53690,7 +53930,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-b28aa7d94875c5ebb999",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "d058f9a961d79cf2c63c0653cba50296e377b7fb9e277f519b6cf8149bbb7c87",
@@ -53749,7 +53989,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-b28aa7d94875c5ebb999",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "d058f9a961d79cf2c63c0653cba50296e377b7fb9e277f519b6cf8149bbb7c87",
@@ -53879,7 +54119,7 @@
           "surface": "web",
           "result": "passed",
           "originalTestId": "d4ec8209a783cee340f9-b28aa7d94875c5ebb999",
-          "shard": 8
+          "shard": 7
         },
         {
           "testId": "d058f9a961d79cf2c63c0653cba50296e377b7fb9e277f519b6cf8149bbb7c87",
@@ -68766,9 +69006,9 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "de6a093ce744d812d361d7a5aa2fdf5c3ebc230502d6c576a706bf0c6aa56080",
+          "testId": "606d02ae84241e897934c2a7f34be95bb2dd6b2b7ffd6c901071e46214cf1814",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 227,
+          "line": 290,
           "retry": 0,
           "assertions": 8,
           "surface": "web",
@@ -68814,9 +69054,9 @@
       "missingSurfaces": [],
       "evidence": [
         {
-          "testId": "43c11771ec7902e7d8c40ff9df8de81f1e3aa314efb0973df3ec6e61447714cf",
+          "testId": "ff8a50d45b2e7c4dcfc0f655b09d022c60c6c05d65f0efa95af825c0c40adc23",
           "file": "e2e/coverage-issue-discovery.spec.ts",
-          "line": 234,
+          "line": 297,
           "retry": 0,
           "assertions": 7,
           "surface": "web",
@@ -68851,33 +69091,33 @@
       ]
     }
   ],
-  "verifiedTestSourceFiles": 96,
+  "verifiedTestSourceFiles": 100,
   "sourceCoverage": {
     "frontendDenominatorVerified": true,
     "frontendUnit": {
       "lines": {
-        "total": 8639,
-        "covered": 3737,
+        "total": 8653,
+        "covered": 4773,
         "skipped": 0,
-        "pct": 43.25
+        "pct": 55.16
       },
       "statements": {
-        "total": 9764,
-        "covered": 4203,
+        "total": 9788,
+        "covered": 5388,
         "skipped": 0,
-        "pct": 43.04
+        "pct": 55.04
       },
       "functions": {
-        "total": 2067,
-        "covered": 869,
+        "total": 2071,
+        "covered": 1106,
         "skipped": 0,
-        "pct": 42.04
+        "pct": 53.4
       },
       "branches": {
-        "total": 5576,
-        "covered": 2525,
+        "total": 5612,
+        "covered": 3066,
         "skipped": 0,
-        "pct": 45.28
+        "pct": 54.63
       },
       "branchesTrue": {
         "total": 0,
@@ -68888,28 +69128,28 @@
     },
     "frontendCombined": {
       "lines": {
-        "total": 8639,
-        "covered": 7915,
+        "total": 8653,
+        "covered": 8067,
         "skipped": 0,
-        "pct": 91.61
+        "pct": 93.22
       },
       "statements": {
-        "total": 9764,
-        "covered": 8697,
+        "total": 9788,
+        "covered": 8930,
         "skipped": 0,
-        "pct": 89.07
+        "pct": 91.23
       },
       "functions": {
-        "total": 2067,
-        "covered": 882,
+        "total": 2071,
+        "covered": 1118,
         "skipped": 0,
-        "pct": 42.67
+        "pct": 53.98
       },
       "branches": {
-        "total": 5576,
-        "covered": 4630,
+        "total": 5612,
+        "covered": 4826,
         "skipped": 0,
-        "pct": 83.03
+        "pct": 85.99
       },
       "branchesTrue": {
         "total": 0,
@@ -68920,9 +69160,9 @@
     },
     "goDenominatorVerified": true,
     "goStatements": {
-      "covered": 13481,
-      "total": 16851
+      "covered": 13678,
+      "total": 17015
     },
-    "goStatementsPercent": 80.0
+    "goStatementsPercent": 80.4
   }
 }

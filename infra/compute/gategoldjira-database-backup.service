@@ -1,0 +1,11 @@
+[Unit]
+Description=Back up GateGoldJira PostgreSQL to private Cloud Storage
+After=network-online.target postgresql@16-main.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/gategoldjira-backup-database
+TimeoutStartSec=900
+UMask=0077
+PrivateTmp=true

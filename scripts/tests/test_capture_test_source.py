@@ -45,6 +45,7 @@ class CapturedSourceTests(unittest.TestCase):
             ".github/workflows/ci.yml": "name: captured acceptance workflow",
             "specs/002-scalable-core/contracts/operations.json": '{"operations": []}',
             "infra/sql/runtime-grants.sql": "SELECT 'fixture grant';",
+            "infra/compute/install-web.py": "owner deployment archive validator",
             "docs/use-cases/catalog.json": '{"cases": []}',
             "frontend/tooling/use-case-reporter.spec.ts": "reporter regression",
             "integrations/antigravity/build.mjs": "captured plugin builder",

@@ -7,7 +7,7 @@ from pathlib import Path
 import shutil
 import tempfile
 
-FOLDERS = ("backend", "frontend/src", "frontend/e2e", "frontend/tooling", "frontend/public", "scripts", "specs", "infra/sql", "docs/use-cases", "integrations/antigravity/src", "integrations/antigravity/tests", "integrations/antigravity/plugin")
+FOLDERS = ("backend", "frontend/src", "frontend/e2e", "frontend/tooling", "frontend/public", "scripts", "specs", "infra/sql", "infra/compute", "docs/use-cases", "integrations/antigravity/src", "integrations/antigravity/tests", "integrations/antigravity/plugin")
 IGNORED = {".cache", ".local", "node_modules", "vendor", "__pycache__", "dist"}
 BACKEND_SUFFIXES = {".go", ".mod", ".sum", ".sql", ".json", ".yaml", ".yml", ".txt", ".csv"}
 REQUIRED = {

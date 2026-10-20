@@ -1,0 +1,2288 @@
+{
+  "area": "integrations",
+  "title": "Manual development links and stage assignment rules",
+  "summary": "Current integration features are manually maintained development URLs and stage-entry assignee rules. Automatic Git provider synchronization, build webhooks and a general trigger/action automation builder are outside the implemented boundary.",
+  "sources": {
+    "linksPage": {
+      "path": "frontend/src/app/features/integrations/development-links.component.ts",
+      "line": 169
+    },
+    "rulesPage": {
+      "path": "frontend/src/app/features/integrations/automation-rules.page.ts",
+      "line": 242
+    },
+    "normalizeLink": {
+      "path": "backend/internal/features/integrations/service.go",
+      "line": 77
+    },
+    "saveLink": {
+      "path": "backend/internal/features/integrations/service.go",
+      "line": 102
+    },
+    "saveRule": {
+      "path": "backend/internal/features/integrations/service.go",
+      "line": 234
+    },
+    "applyRule": {
+      "path": "backend/internal/features/integrations/service.go",
+      "line": 374
+    },
+    "queries": {
+      "path": "backend/internal/features/integrations/queries.sql",
+      "line": 1
+    },
+    "boardListing": {
+      "path": "backend/internal/features/boards/queries.sql",
+      "line": 23
+    },
+    "mcp": {
+      "path": "backend/internal/features/integrations/mcp.go",
+      "line": 29
+    },
+    "gap_gap_int_001": {
+      "path": "frontend/src/app/features/integrations/automation-rules.page.ts",
+      "line": 266
+    },
+    "issueMove": {
+      "path": "frontend/src/app/features/issues/components/modern-issue-status-menu/modern-issue-status-menu.component.ts",
+      "line": 40
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-INT-0001",
+      "title": "Read manual development links",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open the issue's Development section."
+      ],
+      "expected": [
+        "Visible manually entered links show kind, title and destination hostname."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage"
+      ],
+      "operations": [
+        "list_development_links"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-INT-0061."
+      ],
+      "relatedCases": [
+        "UC-INT-0061"
+      ]
+    },
+    {
+      "id": "UC-INT-0002",
+      "title": "Read empty development links",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open Development for an issue without links."
+      ],
+      "expected": [
+        "The empty state appears without implying provider synchronization."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0003",
+      "title": "Page development links",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Choose Load more development links."
+      ],
+      "expected": [
+        "The next cursor page appends."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage"
+      ],
+      "operations": [
+        "list_development_links"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-INT-0059."
+      ],
+      "relatedCases": [
+        "UC-INT-0059"
+      ]
+    },
+    {
+      "id": "UC-INT-0004",
+      "title": "Add a pull_request development link",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Save a valid pull_request URL and title."
+      ],
+      "expected": [
+        "The manually maintained typed link appears on the issue."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0005",
+      "title": "Add a commit development link",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Save a valid commit URL and title."
+      ],
+      "expected": [
+        "The manually maintained typed link appears on the issue."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0006",
+      "title": "Add a other development link",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Save a valid other URL and title."
+      ],
+      "expected": [
+        "The manually maintained typed link appears on the issue."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0007",
+      "title": "Follow a development link",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open an existing development URL."
+      ],
+      "expected": [
+        "The external page opens separately with noopener/noreferrer attributes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0008",
+      "title": "Edit development link title",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Save a changed title for a retained link."
+      ],
+      "expected": [
+        "The same link identity shows the updated title."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0009",
+      "title": "Edit development link URL",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Save a changed URL for a retained link."
+      ],
+      "expected": [
+        "The destination and displayed hostname update."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-INT-0062."
+      ],
+      "relatedCases": [
+        "UC-INT-0062"
+      ]
+    },
+    {
+      "id": "UC-INT-0010",
+      "title": "Edit development link kind",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Save a different supported link kind."
+      ],
+      "expected": [
+        "The same link displays its new kind."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0011",
+      "title": "Detach a development link",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Choose Remove for an existing development link."
+      ],
+      "expected": [
+        "The link is removed from the visible issue list."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0012",
+      "title": "Cancel development link editing",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Cancel an open link form."
+      ],
+      "expected": [
+        "No staged link mutation is saved."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0013",
+      "title": "Retain Arabic development link titles",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Save a link using Arabic title text."
+      ],
+      "expected": [
+        "The exact title remains readable using automatic direction."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage",
+        "normalizeLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-INT-0063."
+      ],
+      "relatedCases": [
+        "UC-INT-0063"
+      ]
+    },
+    {
+      "id": "UC-INT-0014",
+      "title": "Read assignment rules",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open project Automation."
+      ],
+      "expected": [
+        "Enabled and disabled stage-entry rules show current stage and assignee."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage"
+      ],
+      "operations": [
+        "list_automation_rules"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0015",
+      "title": "Page assignment rules",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Choose Load more rules."
+      ],
+      "expected": [
+        "The next bounded rule page appends."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage"
+      ],
+      "operations": [
+        "list_automation_rules"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-INT-0060."
+      ],
+      "relatedCases": [
+        "UC-INT-0060"
+      ]
+    },
+    {
+      "id": "UC-INT-0016",
+      "title": "Read empty automation rules",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open Automation where no assignment rules exist."
+      ],
+      "expected": [
+        "The empty state explains stage-entry assignment."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0017",
+      "title": "Create an enabled assignment rule",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save a name, eligible stage and eligible assignee with Enabled selected."
+      ],
+      "expected": [
+        "A new enabled rule appears for that project stage."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0018",
+      "title": "Create a disabled assignment rule",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save an assignment rule with Enabled cleared."
+      ],
+      "expected": [
+        "The rule is retained but does not assign work."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0019",
+      "title": "Rename an assignment rule",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save a changed rule name."
+      ],
+      "expected": [
+        "The retained rule displays its new name."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0020",
+      "title": "Change an assignment rule's stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Choose another eligible project stage and save."
+      ],
+      "expected": [
+        "Later matching stage entries use the new rule stage."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0021",
+      "title": "Change an assignment rule's assignee",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Choose another eligible teammate and save."
+      ],
+      "expected": [
+        "Later matching stage entries assign the new teammate."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0022",
+      "title": "Disable an assignment rule",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Clear Enabled on an existing rule."
+      ],
+      "expected": [
+        "Later stage entries stop applying that rule."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0023",
+      "title": "Enable an assignment rule",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Enable an eligible disabled rule."
+      ],
+      "expected": [
+        "Later stage entries apply the selected assignment."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0024",
+      "title": "Cancel assignment rule editing",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Cancel an open rule editor."
+      ],
+      "expected": [
+        "No staged rule changes are saved."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0025",
+      "title": "Search rule assignees as typed",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Type a teammate name in Assign to."
+      ],
+      "expected": [
+        "Eligible assignee choices update after the typing debounce."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "list_assignees"
+      ],
+      "existingTests": [
+        "frontend/e2e/teammate-label-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-ISS-0197."
+      ],
+      "relatedCases": [
+        "UC-ISS-0197"
+      ]
+    },
+    {
+      "id": "UC-INT-0026",
+      "title": "Page rule assignee choices",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Choose more assignees after a search."
+      ],
+      "expected": [
+        "The next real cursor page appends without duplicate user IDs."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "list_assignees"
+      ],
+      "existingTests": [
+        "frontend/e2e/teammate-label-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-INT-0064."
+      ],
+      "relatedCases": [
+        "UC-INT-0064"
+      ]
+    },
+    {
+      "id": "UC-INT-0027",
+      "title": "Run assignment rule on stage entry",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Move an issue into a stage with an enabled eligible rule."
+      ],
+      "expected": [
+        "Assignment joins the same move transaction and existing completion/permission guards remain authoritative."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "applyRule",
+        "issueMove"
+      ],
+      "operations": [
+        "move_issue_v2",
+        "move_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts",
+        "frontend/e2e/coverage-integration-native-guards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-INT-0028",
+      "title": "Keep a revoked rule assignee inert",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Move work after its configured assignee loses project eligibility."
+      ],
+      "expected": [
+        "The rule does not assign work to the revoked teammate."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "applyRule",
+        "queries",
+        "issueMove"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-integration-native-guards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-INT-0029",
+      "title": "Keep a retired-stage rule inert",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Exercise work after its configured stage is retired."
+      ],
+      "expected": [
+        "The obsolete stage rule does not assign work."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "applyRule",
+        "queries",
+        "issueMove"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-integration-native-guards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-INT-0030",
+      "title": "Hide link mutations from viewers",
+      "actor": "reader",
+      "preconditions": [
+        "Actor has viewer access to the issue's project."
+      ],
+      "steps": [
+        "Open Development as a project viewer."
+      ],
+      "expected": [
+        "Links remain readable; add/edit/remove controls and writes are unavailable."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage",
+        "saveLink"
+      ],
+      "operations": [
+        "list_development_links",
+        "save_development_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-INT-0065."
+      ],
+      "relatedCases": [
+        "UC-INT-0065"
+      ]
+    },
+    {
+      "id": "UC-INT-0031",
+      "title": "Reject rule writes by ordinary members",
+      "actor": "writer",
+      "preconditions": [
+        "Actor is a project member without administration authority."
+      ],
+      "steps": [
+        "Submit a rule mutation without project administrator authority."
+      ],
+      "expected": [
+        "The server refuses configuration writes."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "saveRule",
+        "rulesPage"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts",
+        "frontend/e2e/coverage-integration-native-guards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-INT-0032",
+      "title": "Reject blank development link title",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Submit a whitespace-only title."
+      ],
+      "expected": [
+        "Validation requires a nonblank title."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalizeLink",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0033",
+      "title": "Reject oversized development link title",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Submit more than 200 title characters."
+      ],
+      "expected": [
+        "Validation rejects the title."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalizeLink",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0034",
+      "title": "Reject non-HTTP development URLs",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Submit a URL with a scheme other than HTTP or HTTPS."
+      ],
+      "expected": [
+        "The link is refused."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalizeLink",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0035",
+      "title": "Reject credential-bearing development URLs",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Submit an HTTP URL containing username/password credentials."
+      ],
+      "expected": [
+        "The link is refused without storing credentials."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalizeLink",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0036",
+      "title": "Reject malformed development URLs",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Submit an invalid or hostless URL."
+      ],
+      "expected": [
+        "The link is refused."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalizeLink",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0037",
+      "title": "Reject oversized development URLs",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Submit more than 2000 URL characters."
+      ],
+      "expected": [
+        "The link is refused."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalizeLink",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0038",
+      "title": "Reject unsupported development link kind",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Submit a kind outside pull_request, commit and other."
+      ],
+      "expected": [
+        "Validation rejects the kind."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalizeLink",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0039",
+      "title": "Reject an already-removed new link",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Create a new link ID with removed true."
+      ],
+      "expected": [
+        "A new link must initially be visible."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalizeLink",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0040",
+      "title": "Reject development writes on archived issue",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Save a link for an archived issue."
+      ],
+      "expected": [
+        "The issue must be restored before link mutation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalizeLink",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0041",
+      "title": "Reject blank automation rule name",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save a whitespace-only rule name."
+      ],
+      "expected": [
+        "A nonblank bounded name is required."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "backend/internal/features/integrations/canonical_rule_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0042",
+      "title": "Reject oversized automation rule name",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save more than 100 rule-name characters."
+      ],
+      "expected": [
+        "Validation rejects the name."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "backend/internal/features/integrations/canonical_rule_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0043",
+      "title": "Reject a second enabled rule for a stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Enable another rule for a stage that already has an enabled rule."
+      ],
+      "expected": [
+        "The uniqueness guard prevents competing enabled stage assignments."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "backend/internal/features/integrations/canonical_rule_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0044",
+      "title": "Reject an ineligible rule assignee",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Enable a rule targeting a user without active project eligibility."
+      ],
+      "expected": [
+        "The enabled rule is refused."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "backend/internal/features/integrations/canonical_rule_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0045",
+      "title": "Reject an unavailable rule stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Enable a rule for a noncurrent stage."
+      ],
+      "expected": [
+        "The enabled rule must use a current project stage."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "backend/internal/features/integrations/canonical_rule_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0046",
+      "title": "Reject mismatched rule stage identity",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Submit inconsistent native stage ID and stage token."
+      ],
+      "expected": [
+        "Validation requires one matching stage identity."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "backend/internal/features/integrations/canonical_rule_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0047",
+      "title": "Reject a stale development link revision",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Save a link after another actor changed it."
+      ],
+      "expected": [
+        "The newer link is preserved through a typed conflict."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "saveLink",
+        "linksPage"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-INT-0048",
+      "title": "Reject a stale assignment rule revision",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save a rule after another administrator changed it."
+      ],
+      "expected": [
+        "The stale operation cannot overwrite the newer rule."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "backend/internal/features/integrations/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts",
+        "frontend/e2e/coverage-integration-native-guards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-INT-0049",
+      "title": "Replay an accepted development link write",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Retry the same accepted link operation after losing the response."
+      ],
+      "expected": [
+        "The stable link ID and retry reference prevent duplicate side effects."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0050",
+      "title": "Replay an accepted assignment rule write",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Retry an accepted rule operation after losing the response."
+      ],
+      "expected": [
+        "The stable rule ID and retry reference confirm the original mutation once."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts",
+        "frontend/e2e/coverage-integration-native-guards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0051",
+      "title": "Ignore stale assignee-search replies",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Change the query or project while a rule-assignee search is pending."
+      ],
+      "expected": [
+        "Generation/session ownership discards obsolete search results."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/teammate-label-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0052",
+      "title": "Reflow development links on narrow screens",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open a long-title development link list on a narrow viewport."
+      ],
+      "expected": [
+        "Content wraps and link actions reflow without hiding the destination."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0053",
+      "title": "Reflow assignment rules on narrow screens",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open Automation on a narrow viewport."
+      ],
+      "expected": [
+        "Rule rows and editor reflow to a usable single-column layout."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0054",
+      "title": "Retain Arabic assignment rule names",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save an Arabic rule name."
+      ],
+      "expected": [
+        "The exact Unicode name remains readable."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "save_automation_rule"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-INT-0055",
+      "title": "Discover automation stages beyond the first board directory page",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Create 26 alphabetically earlier nondefault boards, then open automation stage choices."
+      ],
+      "expected": [
+        "All four eligible default-workflow stages remain selectable even when All Issues is beyond the first board-directory page."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "boardListing"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-INT-001"
+      ],
+      "notes": [
+        "The browser regression passed after discovery moved to typed paginated workflow/stage reads, independent of board-directory pagination."
+      ]
+    },
+    {
+      "id": "UC-INT-0056",
+      "title": "Isolate development-link continuations",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Switch issue or sign out and back in while a development-link read or accepted save reply is delayed."
+      ],
+      "expected": [
+        "An obsolete read error, saving state or save continuation cannot affect the destination issue editor or the new signed-in session."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-INT-002"
+      ],
+      "notes": [
+        "The actual late read failure already remained isolated through native detail child recreation. Additional delayed-save/session checks retain that behavior as an explicit regression boundary.",
+        "Implementation status is separate from the first-attempt runtime evidence ledger."
+      ]
+    },
+    {
+      "id": "UC-INT-0057",
+      "title": "Isolate late automation saves",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Accept a rule save but delay its reply, then open a different project rule editor."
+      ],
+      "expected": [
+        "The source rule remains in its original project; the late reply cannot close, overwrite or reload the destination project editor."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-INT-003"
+      ],
+      "notes": [
+        "Reproduced destination-editor closure; rule saves now check project, session, editor-generation and component ownership.",
+        "Implementation status is separate from the first-attempt runtime evidence ledger."
+      ]
+    },
+    {
+      "id": "UC-INT-0058",
+      "title": "Configure assignment for an eligible stage absent from the default board",
+      "actor": "project_admin",
+      "preconditions": [
+        "An active workflow stage is valid for assignment automation but intentionally not mapped in the default board layout."
+      ],
+      "steps": [
+        "Page workflow and stage choices, select an open unmapped stage, and save an enabled assignment rule."
+      ],
+      "expected": [
+        "The eligible unmapped stage is selectable across real workflow/stage cursor pages; a closed stage is excluded, and saving retains the exact selected stage ID."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "gap_gap_int_001"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-INT-001"
+      ],
+      "notes": [
+        "The browser regression passed with an active future workflow absent from default-board mappings and real limit-one workflow/stage pages."
+      ]
+    },
+    {
+      "id": "UC-INT-0059",
+      "title": "Read another development-link cursor page",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request a bounded development-link page and its continuation for one issue."
+      ],
+      "expected": [
+        "The next distinct retained development links and continuation metadata are returned."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage"
+      ],
+      "operations": [
+        "list_development_links"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-INT-0003."
+      ],
+      "relatedCases": [
+        "UC-INT-0003"
+      ]
+    },
+    {
+      "id": "UC-INT-0060",
+      "title": "Read another assignment-rule cursor page",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request a bounded assignment-rule page and its continuation for one project."
+      ],
+      "expected": [
+        "The next distinct enabled/disabled rules and continuation metadata are returned."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage"
+      ],
+      "operations": [
+        "list_automation_rules"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-INT-0015."
+      ],
+      "relatedCases": [
+        "UC-INT-0015"
+      ]
+    },
+    {
+      "id": "UC-INT-0061",
+      "title": "Read retained development-link service metadata",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request visible manually maintained development links for an authorized issue."
+      ],
+      "expected": [
+        "The typed kind, title, URL and retained link identities are returned."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage"
+      ],
+      "operations": [
+        "list_development_links"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-INT-0001."
+      ],
+      "relatedCases": [
+        "UC-INT-0001"
+      ]
+    },
+    {
+      "id": "UC-INT-0062",
+      "title": "Persist a changed development-link URL",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Save a new valid URL at the current link revision, then list that retained link."
+      ],
+      "expected": [
+        "The same link identity returns the accepted new URL."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage",
+        "saveLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-INT-0009."
+      ],
+      "relatedCases": [
+        "UC-INT-0009"
+      ]
+    },
+    {
+      "id": "UC-INT-0063",
+      "title": "Retain Arabic development-link title through service",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to the issue's active project."
+      ],
+      "steps": [
+        "Save an Arabic title on a development link and read it again."
+      ],
+      "expected": [
+        "The same retained link returns the exact Unicode title."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage",
+        "normalizeLink"
+      ],
+      "operations": [
+        "save_development_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-INT-0013."
+      ],
+      "relatedCases": [
+        "UC-INT-0013"
+      ]
+    },
+    {
+      "id": "UC-INT-0064",
+      "title": "Read another eligible assignee cursor page",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Request a bounded eligible-assignee page and its next cursor within the same project/query."
+      ],
+      "expected": [
+        "The next distinct assignable user IDs are returned without overlapping the first page."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "rulesPage",
+        "saveRule"
+      ],
+      "operations": [
+        "list_assignees"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-INT-0026."
+      ],
+      "relatedCases": [
+        "UC-INT-0026"
+      ]
+    },
+    {
+      "id": "UC-INT-0065",
+      "title": "Enforce viewer development-link service access",
+      "actor": "reader",
+      "preconditions": [
+        "Actor has viewer access to the issue's project."
+      ],
+      "steps": [
+        "Read development links as a viewer and attempt a link mutation."
+      ],
+      "expected": [
+        "The authorized link read succeeds while current write permission refuses the mutation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "linksPage",
+        "saveLink"
+      ],
+      "operations": [
+        "list_development_links",
+        "save_development_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-INT-0030."
+      ],
+      "relatedCases": [
+        "UC-INT-0030"
+      ]
+    }
+  ]
+}

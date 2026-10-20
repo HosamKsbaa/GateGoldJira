@@ -1,0 +1,6563 @@
+{
+  "area": "fields-review-labels",
+  "title": "Issue custom values, approval execution and reusable labels",
+  "summary": "Value behaviors separate from definition settings; review is a revision-bound transition context with immutable votes, not an independent approval request object.",
+  "sources": {
+    "fieldUi": {
+      "path": "frontend/src/app/features/issues/components/custom-fields/field-value-editor.component.ts",
+      "line": 29
+    },
+    "fieldDraft": {
+      "path": "frontend/src/app/features/issues/components/custom-fields/custom-fields.component.ts",
+      "line": 133
+    },
+    "fieldSave": {
+      "path": "backend/internal/features/issues/custom_fields.go",
+      "line": 152
+    },
+    "fieldValidate": {
+      "path": "backend/internal/features/issues/custom_fields.go",
+      "line": 286
+    },
+    "creationValues": {
+      "path": "backend/internal/features/issues/custom_fields.go",
+      "line": 354
+    },
+    "decimal": {
+      "path": "backend/internal/platform/command/field_values.go",
+      "line": 26
+    },
+    "fieldSql": {
+      "path": "backend/internal/features/issues/custom_field_queries.sql",
+      "line": 26
+    },
+    "fieldBackfill": {
+      "path": "backend/internal/features/issues/custom_fields.go",
+      "line": 413
+    },
+    "reviewUi": {
+      "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+      "line": 30
+    },
+    "reviewActions": {
+      "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+      "line": 308
+    },
+    "reviewRules": {
+      "path": "backend/internal/features/issues/approvals.go",
+      "line": 80
+    },
+    "vote": {
+      "path": "backend/internal/features/issues/approvals.go",
+      "line": 256
+    },
+    "resubmit": {
+      "path": "backend/internal/features/issues/approvals.go",
+      "line": 344
+    },
+    "voteSql": {
+      "path": "backend/internal/features/issues/approval_queries.sql",
+      "line": 6
+    },
+    "moveRules": {
+      "path": "backend/internal/features/issues/canonical_move.go",
+      "line": 78
+    },
+    "transitionFields": {
+      "path": "backend/internal/features/issues/approvals.go",
+      "line": 425
+    },
+    "statusRefresh": {
+      "path": "frontend/src/app/features/issues/components/modern-issue-status-menu/modern-issue-status-menu.component.ts",
+      "line": 89
+    },
+    "labelUi": {
+      "path": "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts",
+      "line": 27
+    },
+    "labelCreate": {
+      "path": "backend/internal/features/issues/dates_labels.go",
+      "line": 48
+    },
+    "labelRead": {
+      "path": "backend/internal/features/issues/dates_labels.go",
+      "line": 97
+    },
+    "fieldMcp": {
+      "path": "backend/internal/features/issues/field_mcp.go",
+      "line": 9
+    },
+    "gap_gap_fld_002": {
+      "path": "frontend/src/app/features/issues/components/custom-fields/custom-fields.component.ts",
+      "line": 147
+    },
+    "gap_gap_fld_003": {
+      "path": "frontend/src/app/features/issues/components/custom-fields/custom-fields.component.ts",
+      "line": 250
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-FLD-0001",
+      "title": "Read issue custom values",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open custom fields on existing issue."
+      ],
+      "expected": [
+        "Actual stored values load; missing values do not acquire creation defaults."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldDraft"
+      ],
+      "operations": [
+        "get_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0002",
+      "title": "Show creation defaults",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Open create issue/subtask custom fields."
+      ],
+      "expected": [
+        "Current configured defaults display."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft",
+        "creationValues"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0003",
+      "title": "Use omitted creation default",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create without supplying an assignment."
+      ],
+      "expected": [
+        "Configured active-field default is stored."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "creationValues"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0004",
+      "title": "Override creation default",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create with explicit field assignment."
+      ],
+      "expected": [
+        "Provided value replaces default for that issue."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "creationValues"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0005",
+      "title": "Clear optional creation default",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create with explicit null optional assignment."
+      ],
+      "expected": [
+        "Null suppresses default instead of treating assignment as omitted."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "creationValues"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0006",
+      "title": "Create text value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create issue with Arabic or mixed Unicode text."
+      ],
+      "expected": [
+        "Typed text value is stored atomically with issue."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "creationValues"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0007",
+      "title": "Edit text value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Change text value and choose Save fields."
+      ],
+      "expected": [
+        "New typed text value persists."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0008",
+      "title": "Clear optional text value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Empty/clear optional text and choose Save fields."
+      ],
+      "expected": [
+        "Stored value is removed rather than replaced by default."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0009",
+      "title": "Create number value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create issue with an exact decimal string."
+      ],
+      "expected": [
+        "Typed number value is stored atomically with issue."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "creationValues"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0010",
+      "title": "Edit number value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Change number value and choose Save fields."
+      ],
+      "expected": [
+        "New typed number value persists."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0011",
+      "title": "Clear optional number value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Empty/clear optional number and choose Save fields."
+      ],
+      "expected": [
+        "Stored value is removed rather than replaced by default."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0012",
+      "title": "Create date value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create issue with a calendar date."
+      ],
+      "expected": [
+        "Typed date value is stored atomically with issue."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "creationValues"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0013",
+      "title": "Edit date value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Change date value and choose Save fields."
+      ],
+      "expected": [
+        "New typed date value persists."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0014",
+      "title": "Clear optional date value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Empty/clear optional date and choose Save fields."
+      ],
+      "expected": [
+        "Stored value is removed rather than replaced by default."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0015",
+      "title": "Create choice value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create issue with an active field-option ID."
+      ],
+      "expected": [
+        "Typed choice value is stored atomically with issue."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "creationValues"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0016",
+      "title": "Edit choice value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Change choice value and choose Save fields."
+      ],
+      "expected": [
+        "New typed choice value persists."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0017",
+      "title": "Clear optional choice value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Empty/clear optional choice and choose Save fields."
+      ],
+      "expected": [
+        "Stored value is removed rather than replaced by default."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0018",
+      "title": "Create person value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create issue with an eligible project user ID."
+      ],
+      "expected": [
+        "Typed user value is stored atomically with issue."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "creationValues"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0019",
+      "title": "Edit person value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Change person value and choose Save fields."
+      ],
+      "expected": [
+        "New typed user value persists."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0020",
+      "title": "Clear optional person value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Empty/clear optional person and choose Save fields."
+      ],
+      "expected": [
+        "Stored value is removed rather than replaced by default."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0021",
+      "title": "Preserve large decimal precision",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save a decimal beyond JavaScript safe integer range."
+      ],
+      "expected": [
+        "All accepted integer/fractional digits survive round-trip without floats."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "decimal",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0022",
+      "title": "Normalize decimal trailing zeros",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save a valid decimal ending in fractional zeros."
+      ],
+      "expected": [
+        "Canonical result trims redundant fractional zeros without changing value."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "decimal",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0023",
+      "title": "Normalize negative zero",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save negative zero."
+      ],
+      "expected": [
+        "Canonical result is zero."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "decimal",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0024",
+      "title": "Reject numeric JSON literal",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit number field as JSON numeric literal."
+      ],
+      "expected": [
+        "Typed contract rejects it rather than float-converting."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "decimal"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0025",
+      "title": "Reject excess integer precision",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit decimal with more than 28 integer digits."
+      ],
+      "expected": [
+        "Value rejects rather than rounding."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "decimal"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0026",
+      "title": "Reject excess fractional precision",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit decimal with more than 10 fractional digits."
+      ],
+      "expected": [
+        "Value rejects rather than rounding."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "decimal"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0027",
+      "title": "Reject exponent numeric notation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit exponent-form decimal string."
+      ],
+      "expected": [
+        "Exact decimal format rejects exponent notation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "decimal"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0028",
+      "title": "Reject malformed decimal",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit malformed signed/decimal text."
+      ],
+      "expected": [
+        "Invalid number is rejected with draft retained."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "decimal",
+        "fieldDraft"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Appending/displaying picker results or preserving/reviewing an editor draft is native client state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-FLD-0075"
+      ]
+    },
+    {
+      "id": "UC-FLD-0029",
+      "title": "Reject overlong text value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit more than 5000 Unicode text characters."
+      ],
+      "expected": [
+        "Typed text validation rejects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "decimal"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The native text input has maxlength 5000 and does not send an overlong text draft through ordinary typing. The original raw Unicode text validation remains required on REST/MCP."
+      ],
+      "relatedCases": [
+        "UC-FLD-0086"
+      ]
+    },
+    {
+      "id": "UC-FLD-0030",
+      "title": "Reject invalid custom calendar date",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit invalid custom date."
+      ],
+      "expected": [
+        "Typed date validation rejects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "decimal"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The native calendar input uses type=date; an impossible calendar string is not a selectable native value. The original typed calendar rejection remains required on REST/MCP."
+      ],
+      "relatedCases": [
+        "UC-FLD-0012",
+        "UC-FLD-0013"
+      ]
+    },
+    {
+      "id": "UC-FLD-0031",
+      "title": "Reject wrong value kind",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit value kind different from field definition."
+      ],
+      "expected": [
+        "No field changes commit."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldValidate"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Each native field renders the control selected by its fixed definition kind; there is no value-kind selector. A mismatching discriminated value is a raw REST/MCP boundary."
+      ],
+      "relatedCases": [
+        "UC-FLD-0006",
+        "UC-FLD-0009",
+        "UC-FLD-0012",
+        "UC-FLD-0015",
+        "UC-FLD-0018"
+      ]
+    },
+    {
+      "id": "UC-FLD-0032",
+      "title": "Reject mixed value slots",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit more than one typed value slot."
+      ],
+      "expected": [
+        "Discriminated value validation rejects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "decimal"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0033",
+      "title": "Reject unknown value kind",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit an unknown kind."
+      ],
+      "expected": [
+        "Typed value validation rejects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "decimal"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0034",
+      "title": "Search loaded choice options",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Type in choice picker."
+      ],
+      "expected": [
+        "Matching active options from loaded pages display."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-FLD-001"
+      ],
+      "notes": [
+        "Choice search currently filters loaded options locally; More loads further pages."
+      ]
+    },
+    {
+      "id": "UC-FLD-0035",
+      "title": "Page choice options",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Request more options."
+      ],
+      "expected": [
+        "Additional options append and enter local search."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi"
+      ],
+      "operations": [
+        "list_field_options"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-FLD-001"
+      ],
+      "notes": [
+        "Surface correction: Appending/displaying picker results or preserving/reviewing an editor draft is native client state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-FLD-0076"
+      ]
+    },
+    {
+      "id": "UC-FLD-0036",
+      "title": "Retain selected retired option",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open issue containing retired option."
+      ],
+      "expected": [
+        "Existing selected option remains visible with retired detail."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi"
+      ],
+      "operations": [
+        "get_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Appending/displaying picker results or preserving/reviewing an editor draft is native client state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-FLD-0077"
+      ]
+    },
+    {
+      "id": "UC-FLD-0037",
+      "title": "Reject new retired option",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Change choice to retired option."
+      ],
+      "expected": [
+        "Changed value is rejected."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldValidate"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0038",
+      "title": "Reject foreign field option",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Select option belonging to another field/project."
+      ],
+      "expected": [
+        "Scope validation rejects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldValidate"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native choice lookup uses the current definition field and project scope. Options owned by another field/project cannot be selected; raw foreign option identifiers remain rejected by REST/MCP."
+      ],
+      "relatedCases": [
+        "UC-FLD-0083"
+      ]
+    },
+    {
+      "id": "UC-FLD-0039",
+      "title": "Search person field",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Type teammate query."
+      ],
+      "expected": [
+        "Latest eligible project person candidates load live."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi"
+      ],
+      "operations": [
+        "list_mention_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Displaying the latest eligible people while typing is native custom-person picker behavior. Original expected behavior is unchanged and requires native-client assertions."
+      ],
+      "relatedCases": [
+        "UC-COM-0136"
+      ]
+    },
+    {
+      "id": "UC-FLD-0040",
+      "title": "Page person choices",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Request further person candidates."
+      ],
+      "expected": [
+        "Next candidates append."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi"
+      ],
+      "operations": [
+        "list_mention_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Appending/displaying picker results or preserving/reviewing an editor draft is native client state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-FLD-0078"
+      ]
+    },
+    {
+      "id": "UC-FLD-0041",
+      "title": "Choose viewer as person value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Select an active project viewer as custom person value."
+      ],
+      "expected": [
+        "Viewer ID is accepted for this field."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldSql",
+        "fieldUi"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Person-field eligibility includes readers; assignee eligibility is narrower."
+      ]
+    },
+    {
+      "id": "UC-FLD-0042",
+      "title": "Reject disabled person value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save changed person field after selected user becomes disabled."
+      ],
+      "expected": [
+        "Current eligibility rejects assignment."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldValidate",
+        "fieldSql"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0043",
+      "title": "Reject removed person value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save changed person field after selected user loses project access."
+      ],
+      "expected": [
+        "Current eligibility rejects assignment."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldValidate",
+        "fieldSql"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0044",
+      "title": "Reject unapproved person value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save changed person field for unapproved user."
+      ],
+      "expected": [
+        "Current eligibility rejects assignment."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldValidate",
+        "fieldSql"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0045",
+      "title": "Require field at creation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create while globally required field is missing."
+      ],
+      "expected": [
+        "Entire issue creation rejects."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "creationValues",
+        "fieldValidate"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0046",
+      "title": "Prevent required value clearing",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Clear globally required value."
+      ],
+      "expected": [
+        "Save rejects and previous values remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldValidate"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0047",
+      "title": "Reject whitespace required text",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save whitespace-only required text."
+      ],
+      "expected": [
+        "Missing meaningful text is rejected."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldValidate"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0048",
+      "title": "Read retired field value",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open a retired field."
+      ],
+      "expected": [
+        "Historical value is rendered read-only."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft"
+      ],
+      "operations": [
+        "get_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-FLD-002"
+      ],
+      "notes": [
+        "Surface correction: Appending/displaying picker results or preserving/reviewing an editor draft is native client state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-FLD-0079"
+      ]
+    },
+    {
+      "id": "UC-FLD-0049",
+      "title": "Retain unchanged retired value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Resubmit unchanged retired field value."
+      ],
+      "expected": [
+        "Historical value is retained as a no-op."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0050",
+      "title": "Reject retired field replacement",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Change value of retired field."
+      ],
+      "expected": [
+        "Historical field cannot receive new value."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0051",
+      "title": "Reject retired field clearing",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Clear value of retired field."
+      ],
+      "expected": [
+        "Historical field value cannot be removed through normal edit."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0052",
+      "title": "Save fields atomically",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save several changed values with one invalid value."
+      ],
+      "expected": [
+        "No partial field changes commit."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0053",
+      "title": "Discard field draft",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Discard draft."
+      ],
+      "expected": [
+        "Draft clears and stored values reload."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0054",
+      "title": "Restore field draft",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Return to same-tab issue field draft."
+      ],
+      "expected": [
+        "Draft values and original issue revision restore."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0055",
+      "title": "Review stale field draft",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save draft after issue revision changed."
+      ],
+      "expected": [
+        "Conflict preserves draft and requires review."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Appending/displaying picker results or preserving/reviewing an editor draft is native client state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-FLD-0080"
+      ]
+    },
+    {
+      "id": "UC-FLD-0056",
+      "title": "Apply reviewed field draft",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Review current issue, then save."
+      ],
+      "expected": [
+        "Latest issue revision is used while edited values remain."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Reviewing a preserved local draft and applying its chosen revision is a native action. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-FLD-0080",
+        "UC-FLD-0007"
+      ]
+    },
+    {
+      "id": "UC-FLD-0057",
+      "title": "Replay uncertain field save",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Retry original accepted save after response loss."
+      ],
+      "expected": [
+        "Frozen request/reference replays once."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0058",
+      "title": "Lock uncertain field values",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Attempt editing while original save pending."
+      ],
+      "expected": [
+        "Editors are disabled to preserve original payload."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0059",
+      "title": "Correct field validation failure",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Edit after definite validation failure."
+      ],
+      "expected": [
+        "Pending intent clears for corrected submission."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0060",
+      "title": "Avoid no-op field revision",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save all values unchanged."
+      ],
+      "expected": [
+        "Issue revision and audit event do not advance."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0061",
+      "title": "Record accepted field change",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save actual changed value."
+      ],
+      "expected": [
+        "Issue revision advances and before/after audit change is recorded."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0062",
+      "title": "Page field definitions",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose More fields."
+      ],
+      "expected": [
+        "Definitions and actual stored values append."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft"
+      ],
+      "operations": [
+        "get_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Appending/displaying picker results or preserving/reviewing an editor draft is native client state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-FLD-0081"
+      ]
+    },
+    {
+      "id": "UC-FLD-0063",
+      "title": "Prevent paging dirty fields",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Edit field before requesting More fields."
+      ],
+      "expected": [
+        "Paging is disabled until draft resolved."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0064",
+      "title": "Reject stale field cursor",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Continue field page after issue/configuration changes."
+      ],
+      "expected": [
+        "Scoped cursor cannot continue stale state."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldSave"
+      ],
+      "operations": [
+        "get_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0065",
+      "title": "Protect viewer custom fields",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open custom fields as viewer."
+      ],
+      "expected": [
+        "Values readable, editors disabled, direct write rejected."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Disabled editor controls require native proof independently of service authorization. Original expected behavior is unchanged and requires native-client assertions."
+      ],
+      "relatedCases": [
+        "UC-FLD-0082"
+      ]
+    },
+    {
+      "id": "UC-FLD-0066",
+      "title": "Reject foreign field assignment",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit field ID from another project."
+      ],
+      "expected": [
+        "No values commit."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native issue fields are loaded only from the owning project and expose no arbitrary field identifier input. Foreign field assignment rejection remains required on REST/MCP."
+      ],
+      "relatedCases": [
+        "UC-FLD-0085"
+      ]
+    },
+    {
+      "id": "UC-FLD-0067",
+      "title": "Reject zero field ID",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit zero field ID."
+      ],
+      "expected": [
+        "Assignment validation rejects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0068",
+      "title": "Reject duplicate field IDs",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit repeated field ID assignments."
+      ],
+      "expected": [
+        "Assignment validation rejects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0069",
+      "title": "Reject empty update batch",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit zero edit assignments."
+      ],
+      "expected": [
+        "Update requires 1-100 assignments."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0070",
+      "title": "Reject oversized update batch",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit more than 100 edit assignments."
+      ],
+      "expected": [
+        "Update batch rejects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0071",
+      "title": "Backfill missing default",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has current configuration access to the relevant project."
+      ],
+      "steps": [
+        "Run a configured active-field default backfill."
+      ],
+      "expected": [
+        "Only missing values receive default in bounded batches; affected issue revisions/events advance."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldBackfill"
+      ],
+      "operations": [
+        "backfill_field_defaults"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0072",
+      "title": "Retain explicit value in backfill",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has current configuration access to the relevant project."
+      ],
+      "steps": [
+        "Backfill field on issue with explicit value."
+      ],
+      "expected": [
+        "Existing stored value remains unchanged."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldBackfill"
+      ],
+      "operations": [
+        "backfill_field_defaults"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0001",
+      "title": "Read transition review choices",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Open Review and approvals."
+      ],
+      "expected": [
+        "Assigned workflow transitions/stage names load."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0002",
+      "title": "Select review context",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose a transition."
+      ],
+      "expected": [
+        "Current review context and retained votes load without executing/requesting a move."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi"
+      ],
+      "operations": [
+        "get_issue_approvals"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0003",
+      "title": "Page review move choices",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose More moves."
+      ],
+      "expected": [
+        "Additional workflow transitions append."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi"
+      ],
+      "operations": [
+        "list_workflow_transitions"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native selection, labels, popup reopening and appending are distinct from returned service state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-APR-0058"
+      ]
+    },
+    {
+      "id": "UC-APR-0004",
+      "title": "Page review stage names",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose More stage names."
+      ],
+      "expected": [
+        "Further names replace fallback identifiers."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi"
+      ],
+      "operations": [
+        "list_workflow_stages"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native selection, labels, popup reopening and appending are distinct from returned service state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-APR-0059"
+      ]
+    },
+    {
+      "id": "UC-APR-0005",
+      "title": "Clear review selection",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose empty transition."
+      ],
+      "expected": [
+        "Review context clears without mutation."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0006",
+      "title": "Display approval count",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read active review context."
+      ],
+      "expected": [
+        "Approved/required count is displayed."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi"
+      ],
+      "operations": [
+        "get_issue_approvals"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native selection, labels, popup reopening and appending are distinct from returned service state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-APR-0060"
+      ]
+    },
+    {
+      "id": "UC-APR-0007",
+      "title": "Approve current review",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Choose Approve as eligible reviewer."
+      ],
+      "expected": [
+        "Immutable current-context decision is recorded with identity/time/revisions."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi",
+        "vote"
+      ],
+      "operations": [
+        "vote_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0008",
+      "title": "Request changes",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Choose Request changes as eligible reviewer."
+      ],
+      "expected": [
+        "Rejection is retained and Changes requested appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi",
+        "vote"
+      ],
+      "operations": [
+        "vote_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native selection, labels, popup reopening and appending are distinct from returned service state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-APR-0061"
+      ]
+    },
+    {
+      "id": "UC-APR-0009",
+      "title": "Hide repeat vote controls",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Open context after current reviewer already voted."
+      ],
+      "expected": [
+        "Approve/Request changes controls are absent."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0010",
+      "title": "Repeat identical decision",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Submit same current-context decision again."
+      ],
+      "expected": [
+        "No duplicate vote or issue-content revision."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "vote"
+      ],
+      "operations": [
+        "vote_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0011",
+      "title": "Reject changing retained decision",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Submit opposite decision within same context."
+      ],
+      "expected": [
+        "Validation requires resubmission rather than replacing immutable vote."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "vote"
+      ],
+      "operations": [
+        "vote_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0012",
+      "title": "Count distinct simultaneous reviewers",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Two eligible people approve same current context concurrently."
+      ],
+      "expected": [
+        "Both distinct votes count without advancing issue content revision."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "vote",
+        "voteSql"
+      ],
+      "operations": [
+        "vote_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0013",
+      "title": "Satisfy threshold",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Record enough eligible approvals without rejection."
+      ],
+      "expected": [
+        "Review requirements satisfied appears."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "get_issue_approvals"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0014",
+      "title": "Let rejection veto threshold",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Record eligible rejection despite enough approvals."
+      ],
+      "expected": [
+        "Review remains unsatisfied."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "get_issue_approvals"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0015",
+      "title": "Resubmit fresh context",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Resubmit for review."
+      ],
+      "expected": [
+        "Issue revision advances; old decisions remain history but no longer count."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi",
+        "resubmit"
+      ],
+      "operations": [
+        "resubmit_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0016",
+      "title": "Vote after resubmission",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Vote in fresh resubmitted context."
+      ],
+      "expected": [
+        "New immutable decision belongs to new revision context."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "vote",
+        "resubmit"
+      ],
+      "operations": [
+        "vote_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0017",
+      "title": "Execute approved issue move",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose approved target in normal status menu."
+      ],
+      "expected": [
+        "Issue transitions separately from voting."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "moveRules",
+        "statusRefresh"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native selection, labels, popup reopening and appending are distinct from returned service state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-APR-0062"
+      ]
+    },
+    {
+      "id": "UC-APR-0018",
+      "title": "Execute approved board move",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move approved card to target board column."
+      ],
+      "expected": [
+        "Shared move service applies current review requirement."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "moveRules"
+      ],
+      "operations": [
+        "move_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-board-native-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0019",
+      "title": "Execute approved bulk move",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Apply target stage to selected approved issue."
+      ],
+      "expected": [
+        "Per-issue current approvals are checked."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "moveRules"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-board-native-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0020",
+      "title": "Reject insufficient approvals",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move before threshold is reached."
+      ],
+      "expected": [
+        "Stage remains unchanged."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "moveRules"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0021",
+      "title": "Reject currently rejected review",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move while eligible current rejection exists."
+      ],
+      "expected": [
+        "Move remains blocked until fresh valid review."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "moveRules"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0022",
+      "title": "Enforce transition assignee",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move with enough approvals but missing assignee."
+      ],
+      "expected": [
+        "Transition field requirement rejects move without changing stage."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "transitionFields",
+        "moveRules"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0023",
+      "title": "Enforce transition due date",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move with enough approvals but missing due date."
+      ],
+      "expected": [
+        "Transition field requirement rejects move without changing stage."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "transitionFields",
+        "moveRules"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0024",
+      "title": "Enforce transition meaningful description",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move with enough approvals but missing meaningful description."
+      ],
+      "expected": [
+        "Transition field requirement rejects move without changing stage."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "transitionFields",
+        "moveRules"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0025",
+      "title": "Enforce transition required custom value",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move with enough approvals but missing required custom value."
+      ],
+      "expected": [
+        "Transition field requirement rejects move without changing stage."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "transitionFields",
+        "moveRules"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0026",
+      "title": "Keep completion guards after approval",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move approved issue to Done with unfinished prerequisites."
+      ],
+      "expected": [
+        "Blocker/subtask completion guard still rejects."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "moveRules"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0027",
+      "title": "Keep transition administrator guard",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move approved issue through administrator-only transition as member."
+      ],
+      "expected": [
+        "Permission rejects despite enough approvals."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "moveRules"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0028",
+      "title": "Exclude reporter from voting",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Reporter attempts vote under exclude-reporter rule."
+      ],
+      "expected": [
+        "Vote rejects and retained reporter decision does not count."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "vote_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The native approval context marks the reporter ineligible when reporter exclusion is enabled and therefore offers no vote action. Policy changes also change the review revision token, so a stale native request exercises context conflict; direct reporter-ineligible request rejection remains independently required on REST/MCP."
+      ],
+      "relatedCases": [
+        "UC-APR-0069"
+      ]
+    },
+    {
+      "id": "UC-APR-0029",
+      "title": "Enforce administrator reviewer role",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Member votes when rule requires project administrator."
+      ],
+      "expected": [
+        "Vote rejected as ineligible."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "vote_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0030",
+      "title": "Allow administrator reviewer",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Eligible project/company administrator votes under admin rule."
+      ],
+      "expected": [
+        "Vote counts."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "vote_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0031",
+      "title": "Allow member reviewer",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Eligible member votes under member rule."
+      ],
+      "expected": [
+        "Vote counts."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "vote_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0032",
+      "title": "Reject viewer reviewer",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Viewer attempts review vote."
+      ],
+      "expected": [
+        "Current write/reviewer eligibility rejects."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "vote_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0033",
+      "title": "Invalidate vote after removed membership",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read/execute review after reviewer has removed membership."
+      ],
+      "expected": [
+        "Retained decision remains history but no longer counts."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "get_issue_approvals",
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0034",
+      "title": "Invalidate vote after disabled account",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read/execute review after reviewer has disabled account."
+      ],
+      "expected": [
+        "Retained decision remains history but no longer counts."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "get_issue_approvals",
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0035",
+      "title": "Invalidate vote after unapproved account",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read/execute review after reviewer has unapproved account."
+      ],
+      "expected": [
+        "Retained decision remains history but no longer counts."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "get_issue_approvals",
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0036",
+      "title": "Invalidate vote after demotion below reviewer role",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read/execute review after reviewer has demotion below reviewer role."
+      ],
+      "expected": [
+        "Retained decision remains history but no longer counts."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "get_issue_approvals",
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0037",
+      "title": "Invalidate approval on issue content revision",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read/execute review after issue content revision advances."
+      ],
+      "expected": [
+        "Earlier decisions remain history but approval count for current context resets."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "get_issue_approvals",
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0038",
+      "title": "Invalidate approval on workflow revision",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read/execute review after workflow revision advances."
+      ],
+      "expected": [
+        "Earlier decisions remain history but approval count for current context resets."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "get_issue_approvals",
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0039",
+      "title": "Invalidate approval on project configuration revision",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read/execute review after project configuration revision advances."
+      ],
+      "expected": [
+        "Earlier decisions remain history but approval count for current context resets."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules",
+        "voteSql"
+      ],
+      "operations": [
+        "get_issue_approvals",
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0040",
+      "title": "Reject stale issue review token",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Vote/resubmit with outdated issue revision."
+      ],
+      "expected": [
+        "Conflict requires current-context reload."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules"
+      ],
+      "operations": [
+        "vote_issue_approval",
+        "resubmit_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0041",
+      "title": "Reject stale workflow review token",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Vote/resubmit with outdated workflow revision."
+      ],
+      "expected": [
+        "Conflict requires current-context reload."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules"
+      ],
+      "operations": [
+        "vote_issue_approval",
+        "resubmit_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0042",
+      "title": "Reject stale configuration review token",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Vote/resubmit with outdated configuration revision."
+      ],
+      "expected": [
+        "Conflict requires current-context reload."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules"
+      ],
+      "operations": [
+        "vote_issue_approval",
+        "resubmit_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0043",
+      "title": "Reject retired transition",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Vote/resubmit using retired transition."
+      ],
+      "expected": [
+        "Review action rejects invalid current context."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules"
+      ],
+      "operations": [
+        "vote_issue_approval",
+        "resubmit_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0044",
+      "title": "Reject different workflow transition",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Vote/resubmit using different workflow transition."
+      ],
+      "expected": [
+        "Review action rejects invalid current context."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules"
+      ],
+      "operations": [
+        "vote_issue_approval",
+        "resubmit_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The native review move selector loads only the issue assigned workflow. It cannot submit a foreign workflow transition identifier; that invalid current-context service boundary remains required on REST/MCP."
+      ],
+      "relatedCases": [
+        "UC-APR-0001"
+      ]
+    },
+    {
+      "id": "UC-APR-0045",
+      "title": "Reject transition not from current stage",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Vote/resubmit using transition not from current stage."
+      ],
+      "expected": [
+        "Review action rejects invalid current context."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules"
+      ],
+      "operations": [
+        "vote_issue_approval",
+        "resubmit_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native non-current transition context is History only and hides review actions. Sending vote/resubmit for such a transition remains a separate REST/MCP rejection boundary."
+      ],
+      "relatedCases": [
+        "UC-APR-0047"
+      ]
+    },
+    {
+      "id": "UC-APR-0046",
+      "title": "Reject no-requirement resubmit",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Resubmit a transition with zero approval requirement."
+      ],
+      "expected": [
+        "Validation rejects unnecessary new review context."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "resubmit"
+      ],
+      "operations": [
+        "resubmit_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native approval action buttons render only for a current transition with required > 0. No unnecessary resubmit button is offered; the raw service request remains validated on REST/MCP."
+      ],
+      "relatedCases": [
+        "UC-APR-0068"
+      ]
+    },
+    {
+      "id": "UC-APR-0047",
+      "title": "Read past transition history",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read selected transition after moving away."
+      ],
+      "expected": [
+        "Past move / History only appears; no current voting."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi",
+        "reviewRules"
+      ],
+      "operations": [
+        "get_issue_approvals"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native selection, labels, popup reopening and appending are distinct from returned service state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-APR-0063"
+      ]
+    },
+    {
+      "id": "UC-APR-0048",
+      "title": "Distinguish current previous votes",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read retained decisions."
+      ],
+      "expected": [
+        "Eligible current versus previous/ineligible decisions are labeled."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi",
+        "reviewRules"
+      ],
+      "operations": [
+        "get_issue_approvals"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native selection, labels, popup reopening and appending are distinct from returned service state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-APR-0064"
+      ]
+    },
+    {
+      "id": "UC-APR-0049",
+      "title": "Append earlier review decisions",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose Earlier decisions."
+      ],
+      "expected": [
+        "Next newest-first history page appends without losing revision contexts."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi",
+        "voteSql"
+      ],
+      "operations": [
+        "get_issue_approvals"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native selection, labels, popup reopening and appending are distinct from returned service state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-APR-0065"
+      ]
+    },
+    {
+      "id": "UC-APR-0050",
+      "title": "Reject stale review history cursor",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Continue history after issue/workflow/configuration revision changes."
+      ],
+      "expected": [
+        "Scoped cursor rejects continuation of old context."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewRules"
+      ],
+      "operations": [
+        "get_issue_approvals"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0051",
+      "title": "Retry original review action",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Retry after review vote/resubmit acknowledgment loss."
+      ],
+      "expected": [
+        "Original transition/body/reference is reused."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewActions"
+      ],
+      "operations": [
+        "vote_issue_approval",
+        "resubmit_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Reuse of the frozen native pending-action object is client ownership. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-APR-0067"
+      ]
+    },
+    {
+      "id": "UC-APR-0052",
+      "title": "Refresh review context deliberately",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Choose Review current context after uncertain/conflicting action."
+      ],
+      "expected": [
+        "Pending intent clears and fresh context loads."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewActions"
+      ],
+      "operations": [
+        "get_issue_approvals"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Clearing a native pending intent is not a stateless read operation. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-APR-0002"
+      ]
+    },
+    {
+      "id": "UC-APR-0053",
+      "title": "Ignore stale review load",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Switch issue/session while context request is pending."
+      ],
+      "expected": [
+        "Late reply cannot replace current review."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0054",
+      "title": "Refresh target eligibility after vote",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Reopen issue status popup after vote."
+      ],
+      "expected": [
+        "Fresh transition read reflects current approval eligibility."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "statusRefresh"
+      ],
+      "operations": [
+        "list_issue_transitions_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native selection, labels, popup reopening and appending are distinct from returned service state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-APR-0066"
+      ]
+    },
+    {
+      "id": "UC-APR-0055",
+      "title": "Request independent review object",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Attempt separate request-review action/assign reviewers."
+      ],
+      "expected": [
+        "No standalone request object/action exists; context derives from transition rules."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "not_implemented",
+      "evidence": [
+        "reviewUi",
+        "fieldMcp"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0056",
+      "title": "Withdraw review request",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Attempt cancel/withdraw of approval request."
+      ],
+      "expected": [
+        "No independent cancel/withdraw operation exists."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "not_implemented",
+      "evidence": [
+        "reviewUi",
+        "fieldMcp"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-APR-0057",
+      "title": "Retract prior vote",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Attempt deletion/retraction of immutable vote."
+      ],
+      "expected": [
+        "No vote-retraction operation exists; resubmit starts another context."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "not_implemented",
+      "evidence": [
+        "vote",
+        "fieldMcp"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0001",
+      "title": "Create reusable label",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Enter new label and choose Create and select."
+      ],
+      "expected": [
+        "Project label is created and selected in local issue draft."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [
+        "create_label"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Live typing, direction rendering and selected-chip state require the native controls. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-LBL-0023"
+      ]
+    },
+    {
+      "id": "UC-LBL-0002",
+      "title": "Create Arabic label",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create an Arabic/mixed Unicode label."
+      ],
+      "expected": [
+        "Accepted name displays with automatic direction."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [
+        "create_label"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Live typing, direction rendering and selected-chip state require the native controls. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-LBL-0024"
+      ]
+    },
+    {
+      "id": "UC-LBL-0003",
+      "title": "Trim label name",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create name with surrounding spaces."
+      ],
+      "expected": [
+        "Trimmed name is stored."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [
+        "create_label"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-label-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0004",
+      "title": "Reuse equivalent label",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create name case-fold equivalent to existing label."
+      ],
+      "expected": [
+        "Existing ID is returned rather than duplicate."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [
+        "create_label"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-label-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0005",
+      "title": "Serialize equivalent label creation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create case-fold-equivalent names simultaneously."
+      ],
+      "expected": [
+        "Project write serialization yields one reusable identity."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [
+        "create_label"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-label-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0006",
+      "title": "Reject empty label",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create blank/whitespace-only name."
+      ],
+      "expected": [
+        "Validation rejects."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [
+        "create_label"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-label-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0007",
+      "title": "Reject overlong label",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create label longer than 40 Unicode characters."
+      ],
+      "expected": [
+        "Validation rejects."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [
+        "create_label"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-label-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0008",
+      "title": "Reject invalid label Unicode",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit invalid Unicode/control text."
+      ],
+      "expected": [
+        "Validation rejects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [
+        "create_label"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0009",
+      "title": "Search labels live",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Type project label query."
+      ],
+      "expected": [
+        "Case-folded matching choices update without search click."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelRead"
+      ],
+      "operations": [
+        "list_labels"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Live typing, direction rendering and selected-chip state require the native controls. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-LBL-0025"
+      ]
+    },
+    {
+      "id": "UC-LBL-0010",
+      "title": "Page label choices",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Request more labels."
+      ],
+      "expected": [
+        "Next scoped page appends while selected labels remain."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelRead"
+      ],
+      "operations": [
+        "list_labels"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Live typing, direction rendering and selected-chip state require the native controls. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-LBL-0026"
+      ]
+    },
+    {
+      "id": "UC-LBL-0011",
+      "title": "Select existing label",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose a label in issue edit."
+      ],
+      "expected": [
+        "Local draft selection changes without implicit issue save."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0012",
+      "title": "Remove label selection",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Remove selected label from issue draft."
+      ],
+      "expected": [
+        "Only selection changes; reusable project label is not deleted."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0013",
+      "title": "Create label at selection capacity",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create label while ten labels selected."
+      ],
+      "expected": [
+        "Label is saved reusable; user must remove one before selecting it."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [
+        "create_label"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The service cannot observe the unsaved local ten-label selection capacity. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-LBL-0023"
+      ]
+    },
+    {
+      "id": "UC-LBL-0014",
+      "title": "Remove unloaded selected label",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Remove a retained selection absent from loaded choices."
+      ],
+      "expected": [
+        "Selection remains removable rather than disappearing."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0015",
+      "title": "Filter using all labels",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose several labels in Issues filter."
+      ],
+      "expected": [
+        "All selected labels are required and create-label control is absent."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Live typing, direction rendering and selected-chip state require the native controls. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-LBL-0027"
+      ]
+    },
+    {
+      "id": "UC-LBL-0016",
+      "title": "Reset labels across projects",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Switch selected project."
+      ],
+      "expected": [
+        "Previous-project choice scope/cache is invalidated."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0017",
+      "title": "Reject foreign label assignment",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save another project label on issue."
+      ],
+      "expected": [
+        "Assignment rejects atomically."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [
+        "update_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The native label picker scopes lookup and existing issue draft to its fixed project. Label definitions cannot change owning project, so a foreign UUID cannot be selected or introduced through ordinary controls. The original atomic foreign-identifier assignment rejection remains required on REST/MCP."
+      ],
+      "relatedCases": [
+        "UC-LBL-0028"
+      ]
+    },
+    {
+      "id": "UC-LBL-0018",
+      "title": "Reject viewer label creation",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Create project label as viewer."
+      ],
+      "expected": [
+        "Current write permission rejects."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "labelCreate"
+      ],
+      "operations": [
+        "create_label"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-label-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0019",
+      "title": "Ignore earlier label lookup",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Let old query complete after new query."
+      ],
+      "expected": [
+        "Latest choices remain."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi"
+      ],
+      "operations": [
+        "list_labels"
+      ],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Only the client can reject an earlier lookup completion from its visible state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-LBL-0025"
+      ]
+    },
+    {
+      "id": "UC-LBL-0020",
+      "title": "Rename reusable label",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has current configuration access to the relevant project."
+      ],
+      "steps": [
+        "Attempt project label rename."
+      ],
+      "expected": [
+        "No update-label action/UI exists in current feature."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "not_implemented",
+      "evidence": [
+        "labelCreate",
+        "labelRead"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0021",
+      "title": "Retire reusable label",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has current configuration access to the relevant project."
+      ],
+      "steps": [
+        "Attempt project label retirement."
+      ],
+      "expected": [
+        "No label retirement action/UI exists."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "not_implemented",
+      "evidence": [
+        "labelCreate",
+        "labelRead"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-LBL-0022",
+      "title": "Delete reusable label",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has current configuration access to the relevant project."
+      ],
+      "steps": [
+        "Attempt deleting reusable label itself."
+      ],
+      "expected": [
+        "Only issue deselection exists; no label-delete action was found."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "not_implemented",
+      "evidence": [
+        "labelCreate",
+        "labelRead"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/dates-labels.spec.ts",
+        "frontend/e2e/teammate-label-live-search.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-FLD-0073",
+      "title": "Retired person and choice friendly display",
+      "actor": "reader",
+      "preconditions": [
+        "A readable issue retains a person or choice value on a retired custom field."
+      ],
+      "steps": [
+        "Open that retired field in issue detail."
+      ],
+      "expected": [
+        "Authorized retained person and choice references display their current friendly names, including on retired fields; their raw typed IDs remain unchanged in the issue values."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "gap_gap_fld_002"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-fields.spec.ts",
+        "backend/internal/features/issues/custom_field_display_test.go"
+      ],
+      "gapIds": [
+        "GAP-FLD-002"
+      ],
+      "notes": [
+        "The initial runtime reproduction displayed UUIDs. The additive displayValues read projection resolves only the authorized current field page with one bounded SQL join; no per-row HTTP lookup is required."
+      ]
+    },
+    {
+      "id": "UC-FLD-0074",
+      "title": "Field definition changes during conflict review",
+      "actor": "writer",
+      "preconditions": [
+        "A writer has an unsaved custom-field draft and another administrator changes a relevant field definition or option."
+      ],
+      "steps": [
+        "Use Review current issue and inspect the preserved draft and available options."
+      ],
+      "expected": [
+        "Review refreshes the current loaded field definitions, retained display names and current picker options together with the issue revision while preserving the writer draft. Retired options remain readable but cannot be newly selected."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "gap_gap_fld_003"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-fields.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-FLD-003"
+      ],
+      "notes": [
+        "The initial runtime reproduction kept the previous field name after Review. Recovery now reloads the current loaded definition pages and recreates picker inputs before allowing the preserved draft to be applied."
+      ]
+    },
+    {
+      "id": "UC-FLD-0075",
+      "title": "Reject malformed decimal at service boundary",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit malformed signed/decimal text."
+      ],
+      "expected": [
+        "Validation rejects the write and preserves the stored typed value."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "decimal",
+        "fieldDraft"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-FLD-0028. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-FLD-0028"
+      ]
+    },
+    {
+      "id": "UC-FLD-0076",
+      "title": "Read choice option cursor pages",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Read a bounded choice-options page and its next cursor."
+      ],
+      "expected": [
+        "Later distinct options return in stable configured order."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi"
+      ],
+      "operations": [
+        "list_field_options"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-FLD-001"
+      ],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-FLD-0035. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-FLD-0035"
+      ]
+    },
+    {
+      "id": "UC-FLD-0077",
+      "title": "Read retained option identity and display metadata",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read an issue retaining an old retired choice option."
+      ],
+      "expected": [
+        "The raw typed option ID and authorized friendly/retired display metadata remain readable."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi"
+      ],
+      "operations": [
+        "get_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-FLD-0036. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-FLD-0036"
+      ]
+    },
+    {
+      "id": "UC-FLD-0078",
+      "title": "Read custom-person candidate cursor pages",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Read scoped person choices and their next cursor."
+      ],
+      "expected": [
+        "Later eligible distinct project people return without replacing stored values."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi"
+      ],
+      "operations": [
+        "list_mention_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-FLD-0040. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-FLD-0040"
+      ]
+    },
+    {
+      "id": "UC-FLD-0079",
+      "title": "Read typed values of retired fields",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read an issue containing retired field definitions."
+      ],
+      "expected": [
+        "Retired definitions and their historical raw typed values remain readable."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft"
+      ],
+      "operations": [
+        "get_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-FLD-002"
+      ],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-FLD-0048. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-FLD-0048"
+      ]
+    },
+    {
+      "id": "UC-FLD-0080",
+      "title": "Reject stale custom-field write",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save custom values using an outdated issue revision."
+      ],
+      "expected": [
+        "A conflict rejects the stale write and reports the current issue without overwriting values."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft",
+        "fieldSave"
+      ],
+      "operations": [
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-FLD-0055. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-FLD-0055"
+      ]
+    },
+    {
+      "id": "UC-FLD-0081",
+      "title": "Read paged definitions with stored custom values",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read a bounded issue-field page and its next cursor."
+      ],
+      "expected": [
+        "Distinct definition pages return their corresponding stored values and scoped cursors."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft"
+      ],
+      "operations": [
+        "get_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-FLD-0062. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-FLD-0062"
+      ]
+    },
+    {
+      "id": "UC-APR-0058",
+      "title": "Read workflow transition cursor pages",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read workflow transitions with a bounded limit and next cursor."
+      ],
+      "expected": [
+        "Later distinct current-workflow transitions are returned."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi"
+      ],
+      "operations": [
+        "list_workflow_transitions"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-APR-0003. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-APR-0003"
+      ]
+    },
+    {
+      "id": "UC-APR-0059",
+      "title": "Read workflow stage-name cursor pages",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read workflow stages with a bounded limit and next cursor."
+      ],
+      "expected": [
+        "Later stage IDs retain their configured friendly names."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi"
+      ],
+      "operations": [
+        "list_workflow_stages"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-APR-0004. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-APR-0004"
+      ]
+    },
+    {
+      "id": "UC-APR-0060",
+      "title": "Read approval count projection",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read an active transition approval context."
+      ],
+      "expected": [
+        "Approved and required counts match the current eligible distinct decisions."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi"
+      ],
+      "operations": [
+        "get_issue_approvals"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-APR-0006. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-APR-0006"
+      ]
+    },
+    {
+      "id": "UC-APR-0061",
+      "title": "Retain current review rejection decision",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Reject a current review as an eligible reviewer."
+      ],
+      "expected": [
+        "The immutable rejection is retained and the context reports rejected/unsatisfied."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi",
+        "vote"
+      ],
+      "operations": [
+        "vote_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-APR-0008. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-APR-0008"
+      ]
+    },
+    {
+      "id": "UC-APR-0062",
+      "title": "Execute approved service issue move",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move an issue whose target review is satisfied."
+      ],
+      "expected": [
+        "The stage changes only through the separate move command; voting alone does not move it."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "moveRules",
+        "statusRefresh"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-APR-0017. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-APR-0017"
+      ]
+    },
+    {
+      "id": "UC-APR-0063",
+      "title": "Read past-transition review-only context",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read a transition context after the issue has moved away."
+      ],
+      "expected": [
+        "The context is not current and disallows new voting while retaining history."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi",
+        "reviewRules"
+      ],
+      "operations": [
+        "get_issue_approvals"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-APR-0047. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-APR-0047"
+      ]
+    },
+    {
+      "id": "UC-APR-0064",
+      "title": "Read current and eligible review flags",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read retained transition review decisions."
+      ],
+      "expected": [
+        "Each decision exposes its current-context and current-eligibility flags."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi",
+        "reviewRules"
+      ],
+      "operations": [
+        "get_issue_approvals"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-APR-0048. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-APR-0048"
+      ]
+    },
+    {
+      "id": "UC-APR-0065",
+      "title": "Read paged review decision history",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read a bounded review decision page and advance its cursor."
+      ],
+      "expected": [
+        "Distinct newest-first decisions retain their original revision contexts."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi",
+        "voteSql"
+      ],
+      "operations": [
+        "get_issue_approvals"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-APR-0049. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-APR-0049"
+      ]
+    },
+    {
+      "id": "UC-APR-0066",
+      "title": "Read target review eligibility after vote",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Read issue transition targets before and after an accepted review decision."
+      ],
+      "expected": [
+        "The fresh target projection reflects the current review-satisfied state."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "statusRefresh"
+      ],
+      "operations": [
+        "list_issue_transitions_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-APR-0054. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-APR-0054"
+      ]
+    },
+    {
+      "id": "UC-APR-0067",
+      "title": "Replay accepted review action once",
+      "actor": "reviewer",
+      "preconditions": [
+        "A transition approval context exists; reviewer eligibility is evaluated by the case."
+      ],
+      "steps": [
+        "Retry the identical accepted vote or resubmit with its original retry reference."
+      ],
+      "expected": [
+        "The original outcome replays without duplicate decisions or another resubmit revision."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewActions"
+      ],
+      "operations": [
+        "vote_issue_approval",
+        "resubmit_issue_approval"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-APR-0051. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-APR-0051"
+      ]
+    },
+    {
+      "id": "UC-LBL-0023",
+      "title": "Create reusable project label through service",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create a new allowed label name in the project."
+      ],
+      "expected": [
+        "One reusable label is returned and persisted independently of issue selection."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [
+        "create_label"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-LBL-0001. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-LBL-0001"
+      ]
+    },
+    {
+      "id": "UC-LBL-0024",
+      "title": "Retain Arabic label name through service",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create an Arabic or mixed Unicode project label."
+      ],
+      "expected": [
+        "The exact accepted Unicode name is retained and returned."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelCreate"
+      ],
+      "operations": [
+        "create_label"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-LBL-0002. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-LBL-0002"
+      ]
+    },
+    {
+      "id": "UC-LBL-0025",
+      "title": "Read case-folded project label matches",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Query a project label name using case-folded text."
+      ],
+      "expected": [
+        "Only matching authorized-project labels are returned."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelRead"
+      ],
+      "operations": [
+        "list_labels"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-LBL-0009. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-LBL-0009"
+      ]
+    },
+    {
+      "id": "UC-LBL-0026",
+      "title": "Read scoped label cursor pages",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read a bounded label page and its next cursor."
+      ],
+      "expected": [
+        "Distinct later matching labels return with the same project/query scope."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi",
+        "labelRead"
+      ],
+      "operations": [
+        "list_labels"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-LBL-0010. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-LBL-0010"
+      ]
+    },
+    {
+      "id": "UC-LBL-0027",
+      "title": "Search issues requiring every requested label",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Search issues with multiple allowed label IDs."
+      ],
+      "expected": [
+        "Every returned issue carries all requested labels; matching uses intersection."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-LBL-0015. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-LBL-0015"
+      ]
+    },
+    {
+      "id": "UC-FLD-0082",
+      "title": "Authorize viewer custom-field reads and deny writes",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read stored custom values as a viewer, then attempt a write."
+      ],
+      "expected": [
+        "Authorized values remain readable and the forbidden write leaves stored values unchanged."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft",
+        "fieldSave"
+      ],
+      "operations": [
+        "get_issue_fields",
+        "save_issue_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-FLD-0065."
+      ],
+      "relatedCases": [
+        "UC-FLD-0065"
+      ]
+    },
+    {
+      "id": "UC-FLD-0083",
+      "title": "Scope native choice options to their owning field",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Open a choice-valued issue field lookup with options also present on other fields and another project."
+      ],
+      "expected": [
+        "Only options belonging to this issue field are selectable; foreign field/project options are absent."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native control boundary, distinct from submitting unsupported raw REST/MCP arguments."
+      ],
+      "relatedCases": [
+        "UC-FLD-0038"
+      ]
+    },
+    {
+      "id": "UC-FLD-0084",
+      "title": "Offer only currently eligible custom-field people",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Open the native person-valued issue field picker."
+      ],
+      "expected": [
+        "An approved active project member is offered; unapproved, disabled and approved non-member accounts are absent."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native control boundary, distinct from submitting unsupported raw REST/MCP arguments."
+      ],
+      "relatedCases": [
+        "UC-FLD-0041",
+        "UC-FLD-0044"
+      ]
+    },
+    {
+      "id": "UC-FLD-0085",
+      "title": "Scope native field definitions to the issue project",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Open an issue while another project owns a separately named custom field."
+      ],
+      "expected": [
+        "Only owning-project field controls appear; the foreign field cannot be selected or assigned."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldDraft"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native control boundary, distinct from submitting unsupported raw REST/MCP arguments."
+      ],
+      "relatedCases": [
+        "UC-FLD-0066"
+      ]
+    },
+    {
+      "id": "UC-FLD-0086",
+      "title": "Bound native text field entry to 5000 characters",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Enter 5001 ASCII text characters using the native custom field input, then save."
+      ],
+      "expected": [
+        "The native maxlength retains exactly 5000 characters; the accepted save persists exactly that bounded value."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native control boundary, distinct from submitting unsupported raw REST/MCP arguments."
+      ],
+      "relatedCases": [
+        "UC-FLD-0029"
+      ]
+    },
+    {
+      "id": "UC-APR-0068",
+      "title": "Omit review actions when no approval is required",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Select a current transition whose approval requirement is zero in Review and approvals."
+      ],
+      "expected": [
+        "The satisfied current context is visible and Approve, Request changes and Resubmit for review controls are absent."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-native-fields-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native control boundary, distinct from submitting unsupported raw REST/MCP arguments."
+      ],
+      "relatedCases": [
+        "UC-APR-0046"
+      ]
+    },
+    {
+      "id": "UC-APR-0069",
+      "title": "Omit reporter voting and exclude retained reporter decisions",
+      "actor": "writer",
+      "preconditions": [
+        "The actor reported the issue and its transition review policy excludes the reporter."
+      ],
+      "steps": [
+        "Read the native transition review after reporter exclusion is enabled, retaining any earlier reporter decision."
+      ],
+      "expected": [
+        "Approve and Request changes actions are absent for the reporter; its retained decision stays visible as previous history and no longer counts."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "reviewUi",
+        "reviewRules"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-native-approval-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native policy boundary distinct from direct reporter-ineligible service rejection."
+      ],
+      "relatedCases": [
+        "UC-APR-0028"
+      ]
+    },
+    {
+      "id": "UC-LBL-0028",
+      "title": "Omit foreign project labels from native assignment choices",
+      "actor": "writer",
+      "preconditions": [
+        "The actor can read two projects with distinct reusable labels."
+      ],
+      "steps": [
+        "Open an issue label picker and search for another project label, then search and select an owning-project label."
+      ],
+      "expected": [
+        "Foreign project labels are absent and cannot be selected; the owning-project label remains selectable."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "labelUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-native-label-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native scoped-choice boundary distinct from direct raw assignment validation."
+      ],
+      "relatedCases": [
+        "UC-LBL-0017"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,224 @@
+name: Typed applications
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      enforce_full_coverage:
+        description: Require every declared surface and exact source metric to reach 100%; pending providers will fail this gate.
+        type: boolean
+        default: false
+permissions:
+  contents: read
+env:
+  GOFLAGS: -trimpath
+  GOCACHE: ${{ github.workspace }}/.cache/go-build
+  GOMODCACHE: ${{ github.workspace }}/.cache/go-mod
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  frontend:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: |
+            frontend/package-lock.json
+            identity/auth0/package-lock.json
+            integrations/antigravity/package-lock.json
+      - run: npm ci && npm run typecheck && npm run typecheck:tests && npm run build && npm audit --audit-level=high
+        working-directory: frontend
+      - run: bash scripts/run-unit-coverage.sh
+      - run: npm ci && npm run typecheck && npm test && npm audit --audit-level=high
+        working-directory: identity/auth0
+      - run: npm ci && npm run typecheck && npm test && npm run build && npm audit --audit-level=high
+        working-directory: integrations/antigravity
+  backend:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:18.6@sha256:74935e72241653ca55e0414067e6d8763aceb8a810eb51b452253ec3dcfc4336
+        env:
+          POSTGRES_USER: gategoldjira
+          POSTGRES_PASSWORD: local-development-only
+          POSTGRES_DB: gategoldjira
+        ports: ["54329:5432"]
+        options: >-
+          --health-cmd "pg_isready -U gategoldjira -d gategoldjira"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+    env:
+      TEST_DATABASE_URL: postgres://gategoldjira:local-development-only@127.0.0.1:54329/gategoldjira?sslmode=disable
+      REQUIRE_POSTGRES_TESTS: "1"
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: mkdir -p .local
+      - run: python3 ../scripts/with-project-storage.py --root "$GITHUB_WORKSPACE" --kind build -- bash -c 'go mod download && go build ./... && go vet ./...'
+        working-directory: backend
+      - run: bash scripts/run-backend-coverage.sh
+      - run: make check-generated
+      - run: python3 scripts/check-architecture.py
+      - run: python3 ../scripts/with-project-storage.py --root "$GITHUB_WORKSPACE" --kind security-check -- go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
+        working-directory: backend
+  browser:
+    runs-on: ubuntu-24.04
+    # The complete acceptance catalog runs serially against one owned database;
+    # coverage collection is a separate matrix run and adds substantial runtime.
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        measurement: [functional, coverage]
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.cache/playwright
+      # Timing budgets run without instrumentation. A separate run captures code
+      # coverage; its timings are not interpreted as performance acceptance.
+      RUN_BROWSER_PERFORMANCE: ${{ matrix.measurement == 'functional' && '1' || '0' }}
+      GATEGOLD_CAPTURE_CODE_COVERAGE: ${{ matrix.measurement == 'coverage' && '1' || '0' }}
+      # Preserve raw counters and convert once in the authoritative finalizer.
+      GATEGOLD_DEFER_BROWSER_COVERAGE_REPORT: ${{ matrix.measurement == 'coverage' && '1' || '0' }}
+      GATEGOLD_MCP_REMOTE_PROXY: ${{ github.workspace }}/.local/mcp-remote/node_modules/mcp-remote/dist/proxy.js
+      GATEGOLD_BROWSER_RUN_INDEX: ${{ github.workspace }}/.local/coverage/browser-run-${{ matrix.measurement }}.json
+      GATEGOLD_STRICT_FULL_COVERAGE: ${{ github.event_name == 'workflow_dispatch' && inputs.enforce_full_coverage && '1' || '0' }}
+      TEST_DATABASE_URL: postgres://gategoldjira:local-development-only@127.0.0.1:54329/gategoldjira?sslmode=disable
+      # Only a genuine SDK already installed on the runner may enable native
+      # acceptance. The hosted runner has no vendor-provided SDK by default.
+      GATEGOLD_PLUGIN_SDK_CANDIDATE: ${{ vars.GATEGOLD_PLUGIN_SDK_DIRECTORY }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      - run: npm install --prefix .local/mcp-remote --ignore-scripts --no-audit --no-fund mcp-remote@0.15.1
+      - name: Install the locked portable plugin dependencies
+        run: npm ci
+        working-directory: integrations/antigravity
+      - name: Detect the genuine host SDK without substituting a mock
+        shell: bash
+        run: |
+          candidate="${GATEGOLD_PLUGIN_SDK_CANDIDATE:-$HOME/.gemini/config/node_modules/sidecar_sdk}"
+          if [[ "$candidate" == /* && -f "$candidate/register_loader.js" ]]; then
+            printf 'GATEGOLD_PLUGIN_SDK=%s\n' "$candidate" >> "$GITHUB_ENV"
+            printf 'GATEGOLD_BUILD_PLUGIN_FROM_SOURCE=1\nGATEGOLD_NATIVE_SDK_AVAILABLE=1\n' >> "$GITHUB_ENV"
+          else
+            printf 'GATEGOLD_NATIVE_SDK_AVAILABLE=0\n' >> "$GITHUB_ENV"
+            echo 'Native SDK acceptance remains pending: no genuine host SDK is installed on this runner.'
+          fi
+      - run: python3 -m unittest discover -s scripts/tests -p 'test_*.py'
+      - run: node --test --test-isolation=none scripts/tests/*.test.mjs
+      - run: python3 docs/use-cases/build_catalog.py --check
+      - run: docker compose -f compose.dev.yaml up -d --wait postgres
+      # The runner generates disposable identities and a fresh gg_browser database.
+      # Do not upload its private accounts, tokens, object directory or traces.
+      - if: matrix.measurement == 'coverage'
+        run: bash scripts/run-unit-coverage.sh
+      # Keep authoritative full Go provenance in this same job. A separate job's
+      # summary cannot establish the browser finalizer's complete denominator.
+      - if: matrix.measurement == 'coverage'
+        run: bash scripts/run-backend-coverage.sh
+      - name: Run the complete configured browser suite without filters or retries
+        run: make test-browser
+      - name: Publish source-matched coverage and optional strict 100% gate
+        if: always() && matrix.measurement == 'coverage'
+        shell: bash
+        run: |
+          arguments=(--run-index "$GATEGOLD_BROWSER_RUN_INDEX" --output .local/coverage/browser)
+          if [[ "$GATEGOLD_STRICT_FULL_COVERAGE" == 1 ]]; then arguments+=(--enforce); fi
+          python3 scripts/finalize-browser-coverage.py "${arguments[@]}"
+      - name: Prepare only safe public coverage reports and an honest step summary
+        if: always()
+        env:
+          MEASUREMENT: ${{ matrix.measurement }}
+        shell: bash
+        run: |
+          python3 - <<'PYREPORT'
+          import json, os, shutil
+          from pathlib import Path
+          root = Path.cwd()
+          output = root / '.local/coverage' / ('ci-public-' + os.environ['MEASUREMENT'])
+          output.mkdir(parents=True, exist_ok=True)
+          allowed = {
+              '.local/coverage/frontend-unit/coverage-summary.json': 'frontend-unit-summary.json',
+              '.local/coverage/frontend-unit/source-manifest.json': 'frontend-unit-source-manifest.json',
+              '.local/coverage/browser/cases/use-cases.json': 'use-cases.json',
+              '.local/coverage/browser/cases/README.md': 'coverage.md',
+              '.local/coverage/browser/code/measurement.json': 'measurement.json',
+              '.local/coverage/browser/code/unit/coverage-summary.json': 'validated-unit-summary.json',
+              '.local/coverage/browser/code/combined/coverage-summary.json': 'combined-summary.json',
+          }
+          for source, name in allowed.items():
+              path = root / source
+              if path.is_file() and not path.is_symlink(): shutil.copyfile(path, output / name)
+          index_path = Path(os.environ['GATEGOLD_BROWSER_RUN_INDEX'])
+          run = None
+          if index_path.is_file():
+              index = json.loads(index_path.read_text())
+              candidate = Path(index['runDirectory']).resolve()
+              if candidate.parent == (root / '.local/browser-tests').resolve(): run = candidate
+          raw = {}
+          if run and (run / 'use-case-results.json').is_file():
+              raw = json.loads((run / 'use-case-results.json').read_text())
+              shutil.copyfile(run / 'use-case-results.json', output / 'browser-use-case-results.json')
+              shutil.copyfile(run / 'source/source-manifest.json', output / 'browser-source-manifest.json')
+          catalog = json.loads((root / 'docs/use-cases/catalog.json').read_text())
+          pending = sorted(case['id'] for case in catalog['cases'] if case['implementation'] in ['external_pending', 'unclear'])
+          execution = raw.get('execution') or {}
+          attempts = execution.get('attempts', [])
+          selected = {test['testId']: test for test in execution.get('selectedTests', [])}
+          skipped = [attempt for attempt in attempts if attempt['status'] == 'skipped']
+          native_skips = sum(selected.get(attempt['testId'], {}).get('file') in ['e2e/antigravity-plugin.spec.ts', 'e2e/coverage-native-boundaries.spec.ts'] for attempt in skipped)
+          published = json.loads((output / 'use-cases.json').read_text()) if (output / 'use-cases.json').is_file() else {}
+          summary = {'measurement': os.environ['MEASUREMENT'], 'suiteStatus': raw.get('suiteStatus', 'not_run'),
+              'strict100Requested': os.environ.get('GATEGOLD_STRICT_FULL_COVERAGE') == '1',
+              'pendingExternalOrUnclear': pending, 'selectedTests': len(selected), 'actualAttempts': len(attempts),
+              'skippedTests': len(skipped), 'nativeSdkAvailable': os.environ.get('GATEGOLD_NATIVE_SDK_AVAILABLE') == '1',
+              'skippedNativeAcceptance': native_skips, 'sourceCoverage': published.get('sourceCoverage', {}),
+              'full100Claimed': False}
+          (output / 'ci-summary.json').write_text(json.dumps(summary, indent=2) + '\n')
+          lines = ['## GateGoldJira ' + summary['measurement'] + ' acceptance', '',
+              '100% is an explicit opt-in target; this summary does not claim it has been reached.', '',
+              '- Suite: `' + summary['suiteStatus'] + '`; selected: ' + str(len(selected)) + '; actual attempts: ' + str(len(attempts)) + '.',
+              '- Skipped tests: ' + str(len(skipped)) + '; skipped native SDK acceptance: ' + str(native_skips) + '.',
+              '- Genuine native SDK available: ' + str(summary['nativeSdkAvailable']) + '.',
+              '- Strict100 gate requested: ' + str(summary['strict100Requested']) + '.',
+              '- Pending provider/host or unclear expectations: ' + str(len(pending)) + ' (' + ', '.join(pending) + ').',
+              '- Only curated case reports, counters and source hashes are uploaded; credentials, logs, raw browser coverage, objects and traces remain private.', '']
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as target: target.write('\n'.join(lines))
+          PYREPORT
+      - name: Retain safe case and source coverage summaries even after failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: test-coverage-${{ matrix.measurement }}-${{ github.run_attempt }}
+          path: .local/coverage/ci-public-${{ matrix.measurement }}/
+          if-no-files-found: error
+          # .local is hidden; include only this newly curated allowlist directory.
+          include-hidden-files: true
+          retention-days: 14
+      - if: always()
+        run: docker compose -f compose.dev.yaml down --volumes

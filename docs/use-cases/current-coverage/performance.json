@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "browser": "Chromium",
+  "instrumented": false,
+  "samples": [
+    {
+      "name": "Warmed project journey p95",
+      "operation": "project",
+      "trials": 100,
+      "milliseconds": 146.8927819999999,
+      "budgetMilliseconds": 2000,
+      "passed": true
+    },
+    {
+      "name": "Warmed board journey p95",
+      "operation": "board",
+      "trials": 100,
+      "milliseconds": 407.8278810000047,
+      "budgetMilliseconds": 2000,
+      "passed": true
+    }
+  ]
+}

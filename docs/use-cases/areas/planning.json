@@ -1,0 +1,3180 @@
+{
+  "area": "planning",
+  "title": "Epics, releases, issue planning and Kanban reports",
+  "summary": "Current planning groups work into epics/releases and reports actual Kanban completion history. Planning items are not issue hierarchy nodes or Scrum sprints; this catalog does not count roadmap or time-log capabilities as implemented.",
+  "sources": {
+    "page": {
+      "path": "frontend/src/app/features/planning/project-planning.page.ts",
+      "line": 388
+    },
+    "assignment": {
+      "path": "frontend/src/app/features/planning/issue-planning.component.ts",
+      "line": 31
+    },
+    "assignmentTemplate": {
+      "path": "frontend/src/app/features/planning/issue-planning.component.html",
+      "line": 1
+    },
+    "service": {
+      "path": "backend/internal/features/planning/service.go",
+      "line": 118
+    },
+    "setIssue": {
+      "path": "backend/internal/features/planning/service.go",
+      "line": 272
+    },
+    "report": {
+      "path": "backend/internal/features/planning/reads.go",
+      "line": 142
+    },
+    "reportPage": {
+      "path": "frontend/src/app/features/planning/kanban-report.page.ts",
+      "line": 372
+    },
+    "queries": {
+      "path": "backend/internal/features/planning/queries.sql",
+      "line": 9
+    },
+    "normalize": {
+      "path": "backend/internal/features/planning/service.go",
+      "line": 28
+    },
+    "reads": {
+      "path": "backend/internal/features/planning/reads.go",
+      "line": 23
+    },
+    "mcp": {
+      "path": "backend/internal/features/planning/mcp.go",
+      "line": 29
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-PLN-0001",
+      "title": "Read project planning",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open the project Planning page."
+      ],
+      "expected": [
+        "Epics and releases show status, description, target date and linked-issue progress."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "list_planning_items"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0002",
+      "title": "Read empty project planning",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open planning with no items."
+      ],
+      "expected": [
+        "An empty state explains creating epics/releases and assigning issues."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0003",
+      "title": "Page through planning items",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Choose Load more planning items."
+      ],
+      "expected": [
+        "The next cursor page appends."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_planning_items"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0080."
+      ],
+      "relatedCases": [
+        "UC-PLN-0080"
+      ]
+    },
+    {
+      "id": "UC-PLN-0004",
+      "title": "Create an epic",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Create a planning item of kind epic."
+      ],
+      "expected": [
+        "The new epic appears in the project."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "create_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0005",
+      "title": "Rename an epic",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save a changed name for an existing epic."
+      ],
+      "expected": [
+        "The epic retains identity and linked issues under the new name."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0006",
+      "title": "Edit an epic description",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save changed description text for an epic."
+      ],
+      "expected": [
+        "The description persists without modifying issue descriptions."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0007",
+      "title": "Set an epic target date",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose and save a valid target date for an epic."
+      ],
+      "expected": [
+        "The target date appears on its planning card."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0083."
+      ],
+      "relatedCases": [
+        "UC-PLN-0083"
+      ]
+    },
+    {
+      "id": "UC-PLN-0008",
+      "title": "Clear an epic target date",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Clear and save the target date of an epic."
+      ],
+      "expected": [
+        "The planning card shows no target date."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0084."
+      ],
+      "relatedCases": [
+        "UC-PLN-0084"
+      ]
+    },
+    {
+      "id": "UC-PLN-0009",
+      "title": "Set epic status to planned",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save planned on the epic."
+      ],
+      "expected": [
+        "The planning status changes without transitioning its linked issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0010",
+      "title": "Set epic status to active",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save active on the epic."
+      ],
+      "expected": [
+        "The planning status changes without transitioning its linked issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0011",
+      "title": "Set epic status to complete",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save complete on the epic."
+      ],
+      "expected": [
+        "The planning status changes without transitioning its linked issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0012",
+      "title": "Create a release",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Create a planning item of kind release."
+      ],
+      "expected": [
+        "The new release appears in the project."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "create_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0013",
+      "title": "Rename a release",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save a changed name for an existing release."
+      ],
+      "expected": [
+        "The release retains identity and linked issues under the new name."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0014",
+      "title": "Edit a release description",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save changed description text for a release."
+      ],
+      "expected": [
+        "The description persists without modifying issue descriptions."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0015",
+      "title": "Set a release target date",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose and save a valid target date for a release."
+      ],
+      "expected": [
+        "The target date appears on its planning card."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0085."
+      ],
+      "relatedCases": [
+        "UC-PLN-0085"
+      ]
+    },
+    {
+      "id": "UC-PLN-0016",
+      "title": "Clear a release target date",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Clear and save the target date of a release."
+      ],
+      "expected": [
+        "The planning card shows no target date."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0086."
+      ],
+      "relatedCases": [
+        "UC-PLN-0086"
+      ]
+    },
+    {
+      "id": "UC-PLN-0017",
+      "title": "Set release status to planned",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save planned on the release."
+      ],
+      "expected": [
+        "The planning status changes without transitioning its linked issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0018",
+      "title": "Set release status to active",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save active on the release."
+      ],
+      "expected": [
+        "The planning status changes without transitioning its linked issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0019",
+      "title": "Set release status to complete",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save complete on the release."
+      ],
+      "expected": [
+        "The planning status changes without transitioning its linked issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0020",
+      "title": "Cancel planning item editing",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Cancel an open planning-item form."
+      ],
+      "expected": [
+        "The editor closes without saving the staged fields."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0021",
+      "title": "Read an epic's issues",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Choose View issues on an epic."
+      ],
+      "expected": [
+        "Its nonarchived assigned issues appear."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_planning_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0022",
+      "title": "Read a release's issues",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Choose View issues on a release."
+      ],
+      "expected": [
+        "Its nonarchived assigned issues appear."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_planning_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0023",
+      "title": "Page through linked planning work",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Choose Load more linked issues."
+      ],
+      "expected": [
+        "The next bounded page appends to the selected planning item."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_planning_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0081."
+      ],
+      "relatedCases": [
+        "UC-PLN-0081"
+      ]
+    },
+    {
+      "id": "UC-PLN-0024",
+      "title": "Open a linked planning issue",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Follow an issue in a planning item's issue list."
+      ],
+      "expected": [
+        "Its dedicated issue route opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0025",
+      "title": "Filter planning by epic kind through API",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request planning with kind epic."
+      ],
+      "expected": [
+        "Only epic items are returned with cursor metadata."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "reads",
+        "mcp"
+      ],
+      "operations": [
+        "list_planning_items"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0026",
+      "title": "Filter planning by release kind through API",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request planning with kind release."
+      ],
+      "expected": [
+        "Only release items are returned with cursor metadata."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "reads",
+        "mcp"
+      ],
+      "operations": [
+        "list_planning_items"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0027",
+      "title": "Read issue planning assignments",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open an issue's Planning section."
+      ],
+      "expected": [
+        "Current epic/release names and the separate planning revision load."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment",
+        "setIssue"
+      ],
+      "operations": [
+        "get_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0028",
+      "title": "Assign issue epic immediately",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose an epic on the issue."
+      ],
+      "expected": [
+        "The selection autosaves without a Save button and the other assignment is preserved."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment",
+        "setIssue"
+      ],
+      "operations": [
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0087."
+      ],
+      "relatedCases": [
+        "UC-PLN-0087"
+      ]
+    },
+    {
+      "id": "UC-PLN-0029",
+      "title": "Change issue epic",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose a different epic."
+      ],
+      "expected": [
+        "Only the selected planning relationship changes."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment",
+        "setIssue"
+      ],
+      "operations": [
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0030",
+      "title": "Clear issue epic",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose None for epic."
+      ],
+      "expected": [
+        "That relationship clears while the other assignment remains."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment",
+        "setIssue"
+      ],
+      "operations": [
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0031",
+      "title": "Assign issue release immediately",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose a release on the issue."
+      ],
+      "expected": [
+        "The selection autosaves without a Save button and the other assignment is preserved."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment",
+        "setIssue"
+      ],
+      "operations": [
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0088."
+      ],
+      "relatedCases": [
+        "UC-PLN-0088"
+      ]
+    },
+    {
+      "id": "UC-PLN-0032",
+      "title": "Change issue release",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose a different release."
+      ],
+      "expected": [
+        "Only the selected planning relationship changes."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment",
+        "setIssue"
+      ],
+      "operations": [
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0033",
+      "title": "Clear issue release",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose None for release."
+      ],
+      "expected": [
+        "That relationship clears while the other assignment remains."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment",
+        "setIssue"
+      ],
+      "operations": [
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0034",
+      "title": "Page issue planning choices",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Load more epics and releases in the issue Planning section."
+      ],
+      "expected": [
+        "Cursor choices append without duplicate identities; an existing selected value remains visible."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment",
+        "assignmentTemplate"
+      ],
+      "operations": [
+        "list_planning_items"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0080, UC-PLN-0025, UC-PLN-0026."
+      ],
+      "relatedCases": [
+        "UC-PLN-0080",
+        "UC-PLN-0025",
+        "UC-PLN-0026"
+      ]
+    },
+    {
+      "id": "UC-PLN-0035",
+      "title": "Avoid no-op planning writes",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose the issue's already selected planning value."
+      ],
+      "expected": [
+        "The editor avoids sending another assignment mutation."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0036",
+      "title": "Preserve completed planning progress",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Complete an issue assigned to an epic/release."
+      ],
+      "expected": [
+        "Its base Done category contributes to completed count and percentage."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queries"
+      ],
+      "operations": [
+        "move_issue_v2",
+        "list_planning_items"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0037",
+      "title": "Reduce progress when work reopens",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Reopen a completed linked issue."
+      ],
+      "expected": [
+        "Current completed count and percentage decrease accordingly."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queries"
+      ],
+      "operations": [
+        "move_issue_v2",
+        "list_planning_items"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0038",
+      "title": "Exclude archived work from planning progress",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Archive a linked issue."
+      ],
+      "expected": [
+        "Archived issues are omitted from current planning progress and linked issue list."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "queries"
+      ],
+      "operations": [
+        "organize_issue",
+        "list_planning_items",
+        "list_planning_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0039",
+      "title": "Open the default Kanban report",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open project Reports."
+      ],
+      "expected": [
+        "A default inclusive 30-day UTC window loads."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reportPage",
+        "report"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0040."
+      ],
+      "relatedCases": [
+        "UC-PLN-0040"
+      ]
+    },
+    {
+      "id": "UC-PLN-0040",
+      "title": "Update report date window",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Choose valid From and Through dates and Update report."
+      ],
+      "expected": [
+        "Completion history is recomputed for that inclusive window."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reportPage",
+        "report"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-surface-followup.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0041",
+      "title": "Read daily throughput",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Inspect daily completion rows."
+      ],
+      "expected": [
+        "Each UTC date shows its recorded completed-cycle count."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "report",
+        "reportPage"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0042",
+      "title": "Count completion after reopening",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Read a report including an issue completed, reopened and completed again."
+      ],
+      "expected": [
+        "Each recorded completion contributes a separate completed cycle."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "report"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0043",
+      "title": "Measure cycle time from recorded start",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Read a report containing work with a recorded In progress/Review start."
+      ],
+      "expected": [
+        "Average cycle time uses recorded start-to-completion duration."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "report"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0044",
+      "title": "Exclude unstarted cycles from the average",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Read completions having no recorded start."
+      ],
+      "expected": [
+        "They contribute to throughput but not measured-cycle average."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "report"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0045",
+      "title": "Retain clock when work returns to To do",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Read history where started work returned to To do before completion."
+      ],
+      "expected": [
+        "Its cycle clock continues rather than restarting on the return."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "report"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0046",
+      "title": "Read active work count",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Inspect Active board work."
+      ],
+      "expected": [
+        "The current snapshot includes unfinished nonarchived nonbacklog work, including To do."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "report",
+        "queries"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0047",
+      "title": "Read blocked work count",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Inspect Blocked work."
+      ],
+      "expected": [
+        "Current unfinished active issues with unfinished blockers contribute to the count."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "report",
+        "queries"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0048",
+      "title": "Read aging work",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Inspect an active-work row."
+      ],
+      "expected": [
+        "The row shows assignee, work age, cycle age where recorded, and unfinished blocker count."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "report",
+        "reportPage"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0049",
+      "title": "Page aging work",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Choose Load more active work."
+      ],
+      "expected": [
+        "The next bounded issue page appends using the report's loaded date window."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "report",
+        "reportPage"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0082."
+      ],
+      "relatedCases": [
+        "UC-PLN-0082"
+      ]
+    },
+    {
+      "id": "UC-PLN-0050",
+      "title": "Open a reported issue",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Follow an aging-work issue link."
+      ],
+      "expected": [
+        "The issue route opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reportPage"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0051",
+      "title": "Read report definitions",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Expand How these numbers are calculated."
+      ],
+      "expected": [
+        "UTC, cycle-start, reopening and current-snapshot semantics are explained."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reportPage",
+        "report"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0052",
+      "title": "Reject blank planning name",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save a whitespace-only planning name."
+      ],
+      "expected": [
+        "A bounded nonblank name is required."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalize"
+      ],
+      "operations": [
+        "create_planning_item",
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0053",
+      "title": "Reject oversized planning name",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save a name longer than 100 Unicode characters."
+      ],
+      "expected": [
+        "Validation rejects the name."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalize"
+      ],
+      "operations": [
+        "create_planning_item",
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0054",
+      "title": "Reject oversized planning description",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save more than 2000 description characters."
+      ],
+      "expected": [
+        "Validation rejects the description."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalize"
+      ],
+      "operations": [
+        "create_planning_item",
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0055",
+      "title": "Reject invalid planning target date",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Submit an invalid calendar date."
+      ],
+      "expected": [
+        "Validation rejects the target date."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalize"
+      ],
+      "operations": [
+        "create_planning_item",
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0056",
+      "title": "Reject unsupported planning status",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Submit a status outside planned, active and complete."
+      ],
+      "expected": [
+        "Validation rejects the status."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "normalize"
+      ],
+      "operations": [
+        "create_planning_item",
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0057",
+      "title": "Reject unsupported planning kind",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Create a planning kind other than epic or release."
+      ],
+      "expected": [
+        "Validation rejects the kind."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "create_planning_item"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0058",
+      "title": "Reject wrong-kind epic assignment",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Use a release ID in the epic field."
+      ],
+      "expected": [
+        "The assignment is rejected without changing existing relationships."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "setIssue"
+      ],
+      "operations": [
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0059",
+      "title": "Reject wrong-kind release assignment",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Use an epic ID in the release field."
+      ],
+      "expected": [
+        "The assignment is rejected without changing existing relationships."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "setIssue"
+      ],
+      "operations": [
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0060",
+      "title": "Reject foreign-project planning assignment",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Assign an item from another project."
+      ],
+      "expected": [
+        "The foreign item is unavailable for the scoped assignment."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "setIssue"
+      ],
+      "operations": [
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0061",
+      "title": "Reject planning edits on archived issue",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Set planning on an archived issue."
+      ],
+      "expected": [
+        "Restore is required before changing its assignments."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "setIssue"
+      ],
+      "operations": [
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0062",
+      "title": "Reject reversed report dates",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Request Through earlier than From."
+      ],
+      "expected": [
+        "Validation rejects the reversed range."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "report"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0063",
+      "title": "Reject report range beyond 366 days",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Request an inclusive range longer than 366 days."
+      ],
+      "expected": [
+        "Validation rejects the oversized window."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "report"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0064",
+      "title": "Enforce viewer planning access",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open planning as a viewer and attempt a planning write."
+      ],
+      "expected": [
+        "Read views remain available; write controls and server mutations are refused."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service",
+        "assignment"
+      ],
+      "operations": [
+        "create_planning_item",
+        "update_planning_item",
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0089."
+      ],
+      "relatedCases": [
+        "UC-PLN-0089"
+      ]
+    },
+    {
+      "id": "UC-PLN-0065",
+      "title": "Freeze pending issue planning choices",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Change an assignment while the save response is unresolved."
+      ],
+      "expected": [
+        "Both controls remain locked against overlapping writes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0066",
+      "title": "Retry a lost accepted planning response",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Retry after an assignment response is lost."
+      ],
+      "expected": [
+        "The frozen original body/reference confirms once without duplicate effects."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment"
+      ],
+      "operations": [
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0067",
+      "title": "Review conflicting planning assignment",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Review a stale epic/release autosave."
+      ],
+      "expected": [
+        "The draft reuses the latest unrelated assignment and needs explicit apply."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment"
+      ],
+      "operations": [
+        "get_issue_planning",
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0090."
+      ],
+      "relatedCases": [
+        "UC-PLN-0090"
+      ]
+    },
+    {
+      "id": "UC-PLN-0068",
+      "title": "Cancel a failed planning assignment",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Cancel an unsaved failed assignment."
+      ],
+      "expected": [
+        "The draft clears and current server assignments are reloaded."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0069",
+      "title": "Protect failed planning on drawer close",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Close a drawer with failed unsaved planning."
+      ],
+      "expected": [
+        "Leave protection permits retaining the draft; reopening restores the pending selection."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0070",
+      "title": "Ignore an old issue's planning reply",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Switch issue while an assignment request is pending."
+      ],
+      "expected": [
+        "Session/generation ownership prevents the old response from replacing the new issue."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-autosave.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0071",
+      "title": "Reject a stale planning-item revision",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Update a planning item after another actor changed it."
+      ],
+      "expected": [
+        "Conflict leaves the newer item unchanged."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "service_only",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0072",
+      "title": "Treat unchanged planning item update as no-op",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Save the same planning fields at current revision."
+      ],
+      "expected": [
+        "No extra field-change event or revision advance is produced."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/service_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0073",
+      "title": "Render planning on narrow screens",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open Planning at a narrow viewport."
+      ],
+      "expected": [
+        "Cards use one column and editor fields reflow."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0074",
+      "title": "Scroll a narrow report table",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Inspect report tables on a narrow viewport."
+      ],
+      "expected": [
+        "Metrics reflow and the aging-work table scrolls horizontally."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "reportPage"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0075",
+      "title": "Retain Arabic planning text",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Create or edit an epic/release with Arabic name and description."
+      ],
+      "expected": [
+        "Unicode text is retained and displayed using automatic direction."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "normalize"
+      ],
+      "operations": [
+        "create_planning_item",
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/planning-integrations.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-PLN-0091."
+      ],
+      "relatedCases": [
+        "UC-PLN-0091"
+      ]
+    },
+    {
+      "id": "UC-PLN-0076",
+      "title": "Bound report issue payload",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Read a report for a large project."
+      ],
+      "expected": [
+        "Aging work is cursor-paged instead of sending all project issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "report"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "backend/internal/features/planning/report_performance_test.go",
+        "frontend/e2e/coverage-board-service-rest.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PLN-0077",
+      "title": "Isolate late planning-item saves",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Accept a planning-item save but delay its reply, then open another project editor."
+      ],
+      "expected": [
+        "The accepted item belongs to its original project; its late reply cannot close, overwrite, reload or unlock another project editor."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-PLN-001"
+      ],
+      "notes": [
+        "Reproduced destination-editor closure; saves now retain project, session, editor-generation and component ownership.",
+        "Implementation status is separate from the first-attempt runtime evidence ledger."
+      ]
+    },
+    {
+      "id": "UC-PLN-0078",
+      "title": "Confirm discarding a dirty planning editor",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Edit an epic or release and attempt to leave; reject the confirmation, then explicitly accept leaving."
+      ],
+      "expected": [
+        "Rejecting the discard keeps the route and draft intact; accepting leaves without creating a planning item. Reloading or closing a dirty editor also requests the browser leave warning."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-PLN-002"
+      ],
+      "notes": [
+        "Reproduced silent dirty navigation. Planning now participates in a component-specific route discard guard and browser unload warning.",
+        "Implementation status is separate from the first-attempt runtime evidence ledger."
+      ]
+    },
+    {
+      "id": "UC-PLN-0079",
+      "title": "Show exact current stage names in planning and reports",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Read planning-linked and aging-report rows for work at a custom named stage."
+      ],
+      "expected": [
+        "Both rows display the exact current stage name, including Arabic, while the API retains its existing status field for compatibility."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reportPage"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-PLN-003"
+      ],
+      "notes": [
+        "Reproduced Review instead of the custom name. Bounded SQL page projections now return additive stageName without per-issue requests.",
+        "Implementation status is separate from the first-attempt runtime evidence ledger."
+      ]
+    },
+    {
+      "id": "UC-PLN-0080",
+      "title": "Read another planning-item cursor page",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request a bounded planning-item page and its signed continuation."
+      ],
+      "expected": [
+        "The next distinct planning items retain project/kind scope and current cursor metadata."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_planning_items"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-PLN-0003."
+      ],
+      "relatedCases": [
+        "UC-PLN-0003"
+      ]
+    },
+    {
+      "id": "UC-PLN-0081",
+      "title": "Read another linked-planning cursor page",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request a bounded linked-issue page and its signed continuation for one planning item."
+      ],
+      "expected": [
+        "The next distinct authorized issue summaries remain assigned to the selected planning item."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_planning_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-PLN-0023."
+      ],
+      "relatedCases": [
+        "UC-PLN-0023"
+      ]
+    },
+    {
+      "id": "UC-PLN-0082",
+      "title": "Read another aging-work cursor page",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request an aging-work cursor page using the same explicit report date window."
+      ],
+      "expected": [
+        "The next distinct issue summaries retain the loaded date-window scope and bounded continuation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "report",
+        "reportPage"
+      ],
+      "operations": [
+        "get_kanban_report"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-PLN-0049."
+      ],
+      "relatedCases": [
+        "UC-PLN-0049"
+      ]
+    },
+    {
+      "id": "UC-PLN-0083",
+      "title": "Set epic target date through service",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Update an existing epic with a valid targetDate."
+      ],
+      "expected": [
+        "A fresh planning read returns the exact saved calendar date."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-PLN-0007."
+      ],
+      "relatedCases": [
+        "UC-PLN-0007"
+      ]
+    },
+    {
+      "id": "UC-PLN-0084",
+      "title": "Clear epic target date through service",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Update an existing epic with targetDate null."
+      ],
+      "expected": [
+        "A fresh planning read returns the cleared null target date."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-PLN-0008."
+      ],
+      "relatedCases": [
+        "UC-PLN-0008"
+      ]
+    },
+    {
+      "id": "UC-PLN-0085",
+      "title": "Set release target date through service",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Update an existing release with a valid targetDate."
+      ],
+      "expected": [
+        "A fresh planning read returns the exact saved calendar date."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-PLN-0015."
+      ],
+      "relatedCases": [
+        "UC-PLN-0015"
+      ]
+    },
+    {
+      "id": "UC-PLN-0086",
+      "title": "Clear release target date through service",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Update an existing release with targetDate null."
+      ],
+      "expected": [
+        "A fresh planning read returns the cleared null target date."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-PLN-0016."
+      ],
+      "relatedCases": [
+        "UC-PLN-0016"
+      ]
+    },
+    {
+      "id": "UC-PLN-0087",
+      "title": "Assign issue epic through service",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Set the issue epic ID using the current separate planning revision."
+      ],
+      "expected": [
+        "The accepted epic identity/name persist while the other planning relationship remains unchanged."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment",
+        "setIssue"
+      ],
+      "operations": [
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-PLN-0028."
+      ],
+      "relatedCases": [
+        "UC-PLN-0028"
+      ]
+    },
+    {
+      "id": "UC-PLN-0088",
+      "title": "Assign issue release through service",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Set the issue release ID using the current separate planning revision."
+      ],
+      "expected": [
+        "The accepted release identity/name persist while the other planning relationship remains unchanged."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment",
+        "setIssue"
+      ],
+      "operations": [
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-PLN-0031."
+      ],
+      "relatedCases": [
+        "UC-PLN-0031"
+      ]
+    },
+    {
+      "id": "UC-PLN-0089",
+      "title": "Enforce viewer planning service permission",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Read planning as a viewer and submit a planning-item or assignment write."
+      ],
+      "expected": [
+        "Authorized planning reads succeed and current write permission refuses the mutation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service",
+        "assignment"
+      ],
+      "operations": [
+        "create_planning_item",
+        "update_planning_item",
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-PLN-0064."
+      ],
+      "relatedCases": [
+        "UC-PLN-0064"
+      ]
+    },
+    {
+      "id": "UC-PLN-0090",
+      "title": "Reject stale issue-planning revision",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Submit planning assignments using a revision superseded by another accepted assignment."
+      ],
+      "expected": [
+        "A typed conflict returns current null with reload_current_state; an explicit fresh assignment read retains the accepted relationships and planning revision."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "assignment"
+      ],
+      "operations": [
+        "get_issue_planning",
+        "set_issue_planning"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-PLN-0067.",
+        "SetIssue returns stale(nil); the client fetches get_issue_planning after the conflict instead of receiving an embedded IssuePlanningView."
+      ],
+      "relatedCases": [
+        "UC-PLN-0067"
+      ]
+    },
+    {
+      "id": "UC-PLN-0091",
+      "title": "Retain Arabic planning fields through service",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Create or update an epic/release with Arabic name and description, then read it again."
+      ],
+      "expected": [
+        "The exact Unicode name and description persist with the same planning identity."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "normalize"
+      ],
+      "operations": [
+        "create_planning_item",
+        "update_planning_item"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-PLN-0075."
+      ],
+      "relatedCases": [
+        "UC-PLN-0075"
+      ]
+    }
+  ]
+}

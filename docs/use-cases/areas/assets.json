@@ -1,0 +1,3113 @@
+{
+  "area": "assets",
+  "title": "Unified attachments, private previews and recoverable uploads",
+  "summary": "Native queue and panel actions plus typed transfer boundaries. Distinguishes policy-driven file capacity, ten-MiB image/direct uploads and one-MiB chunks.",
+  "sources": {
+    "queue": {
+      "path": "frontend/src/app/features/attachments/components/file-queue/file-queue.component.html",
+      "line": 1
+    },
+    "queueLogic": {
+      "path": "frontend/src/app/features/attachments/components/file-queue/file-queue.component.ts",
+      "line": 90
+    },
+    "metadata": {
+      "path": "frontend/src/app/features/attachments/attachment-files.ts",
+      "line": 26
+    },
+    "panel": {
+      "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+      "line": 1
+    },
+    "preview": {
+      "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+      "line": 23
+    },
+    "reference": {
+      "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+      "line": 27
+    },
+    "resume": {
+      "path": "frontend/src/app/features/attachments/resumable-upload.ts",
+      "line": 18
+    },
+    "assets": {
+      "path": "backend/internal/features/attachments/assets.go",
+      "line": 60
+    },
+    "detach": {
+      "path": "backend/internal/features/attachments/assets.go",
+      "line": 130
+    },
+    "download": {
+      "path": "backend/internal/features/attachments/assets.go",
+      "line": 205
+    },
+    "upload": {
+      "path": "backend/internal/features/attachments/asset_upload.go",
+      "line": 193
+    },
+    "contentValidation": {
+      "path": "backend/internal/features/attachments/asset_upload.go",
+      "line": 34
+    },
+    "contracts": {
+      "path": "backend/internal/features/attachments/asset_types.go",
+      "line": 32
+    },
+    "mcp": {
+      "path": "backend/internal/features/attachments/asset_mcp.go",
+      "line": 31
+    },
+    "commentPublish": {
+      "path": "backend/internal/features/comments/service.go",
+      "line": 188
+    },
+    "descriptionPublish": {
+      "path": "backend/internal/features/issues/description_pictures.go",
+      "line": 1
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-AST-0001",
+      "title": "Choose one attachment",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose one file."
+      ],
+      "expected": [
+        "File appears with filename, byte size and ready state."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queue",
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0002",
+      "title": "Choose several attachments",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Select several files."
+      ],
+      "expected": [
+        "Accepted files appear in same queue."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queue",
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0003",
+      "title": "Drop attachments",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Drop files onto upload zone."
+      ],
+      "expected": [
+        "Files enter upload queue."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queue",
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0004",
+      "title": "Remove pending attachment",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Remove a queued file."
+      ],
+      "expected": [
+        "It leaves queue without publication."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queue",
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0005",
+      "title": "Clear pending queue",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Clear queue."
+      ],
+      "expected": [
+        "Pending queue clears when no transfer is active."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queue",
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0006",
+      "title": "Upload queued attachments",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Upload queued files."
+      ],
+      "expected": [
+        "Per-file progress and accepted/failed states appear."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queue",
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0007",
+      "title": "Dismiss completed queue",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Dismiss uploaded files."
+      ],
+      "expected": [
+        "Uploaded queue entries are dismissed without deleting attachments."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queue",
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0008",
+      "title": "Show upload progress",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Transfer a queued file in chunks."
+      ],
+      "expected": [
+        "Accessible progress reflects acknowledged received bytes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queue",
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0009",
+      "title": "Cancel active upload",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Cancel for an unfinished upload."
+      ],
+      "expected": [
+        "Transfer stops and cancellation is confirmed."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queue",
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0010",
+      "title": "Retry uncertain cancel",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Retry a cancellation whose acknowledgment was lost."
+      ],
+      "expected": [
+        "Original cancel reference reconciles outcome."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "queue",
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0011",
+      "title": "Restore same-tab file queue",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Reopen issue/upload scope with retained queue."
+      ],
+      "expected": [
+        "Selected files, session and progress restore."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "queue",
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0012",
+      "title": "Retry failed file",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Retry queue after a transfer failure."
+      ],
+      "expected": [
+        "Original file/session is reused rather than silently replaced."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "queue",
+        "queueLogic",
+        "resume"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0013",
+      "title": "Upload PNG image",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload a valid PNG image."
+      ],
+      "expected": [
+        "Validated protected image appears in unified panel with thumbnail."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queueLogic",
+        "upload"
+      ],
+      "operations": [
+        "start_asset_upload",
+        "append_asset_chunk",
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Rendering the accepted image thumbnail in the unified panel requires the native browser. All original expected behavior remains on the native case."
+      ],
+      "relatedCases": [
+        "UC-AST-0083"
+      ]
+    },
+    {
+      "id": "UC-AST-0014",
+      "title": "Upload JPEG image",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload a valid JPEG image."
+      ],
+      "expected": [
+        "Validated protected image appears in unified panel with thumbnail."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queueLogic",
+        "upload"
+      ],
+      "operations": [
+        "start_asset_upload",
+        "append_asset_chunk",
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Rendering the accepted image thumbnail in the unified panel requires the native browser. All original expected behavior remains on the native case."
+      ],
+      "relatedCases": [
+        "UC-AST-0084"
+      ]
+    },
+    {
+      "id": "UC-AST-0015",
+      "title": "Upload WebP image",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload a valid WebP image."
+      ],
+      "expected": [
+        "Validated protected image appears in unified panel with thumbnail."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queueLogic",
+        "upload"
+      ],
+      "operations": [
+        "start_asset_upload",
+        "append_asset_chunk",
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Rendering the accepted image thumbnail in the unified panel requires the native browser. All original expected behavior remains on the native case."
+      ],
+      "relatedCases": [
+        "UC-AST-0085"
+      ]
+    },
+    {
+      "id": "UC-AST-0016",
+      "title": "Upload PDF file",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload a valid PDF file."
+      ],
+      "expected": [
+        "A protected file attachment is accepted with safe supported metadata."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "metadata",
+        "upload"
+      ],
+      "operations": [
+        "start_asset_upload",
+        "append_asset_chunk",
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0017",
+      "title": "Upload text file",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload a valid text file."
+      ],
+      "expected": [
+        "A protected file attachment is accepted with safe supported metadata."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "metadata",
+        "upload"
+      ],
+      "operations": [
+        "start_asset_upload",
+        "append_asset_chunk",
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0018",
+      "title": "Upload CSV file",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload a valid CSV file."
+      ],
+      "expected": [
+        "A protected file attachment is accepted with safe supported metadata."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "metadata",
+        "upload"
+      ],
+      "operations": [
+        "start_asset_upload",
+        "append_asset_chunk",
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0019",
+      "title": "Upload Word DOCX file",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload a valid Word DOCX file."
+      ],
+      "expected": [
+        "A protected file attachment is accepted with safe supported metadata."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "metadata",
+        "upload"
+      ],
+      "operations": [
+        "start_asset_upload",
+        "append_asset_chunk",
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0020",
+      "title": "Upload Excel XLSX file",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload a valid Excel XLSX file."
+      ],
+      "expected": [
+        "A protected file attachment is accepted with safe supported metadata."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "metadata",
+        "upload"
+      ],
+      "operations": [
+        "start_asset_upload",
+        "append_asset_chunk",
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0021",
+      "title": "Upload unknown binary file",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload a valid unknown binary file."
+      ],
+      "expected": [
+        "A protected file attachment is accepted with safe supported metadata."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "metadata",
+        "upload"
+      ],
+      "operations": [
+        "start_asset_upload",
+        "append_asset_chunk",
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0022",
+      "title": "Read unified attachment panel",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open Attachments."
+      ],
+      "expected": [
+        "Published pictures and files share one list/count."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "list_assets"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The unified panel presentation requires the native client. Original expected behavior is unchanged and requires native-client assertions."
+      ],
+      "relatedCases": [
+        "UC-AST-0079"
+      ]
+    },
+    {
+      "id": "UC-AST-0023",
+      "title": "Refresh attachment panel",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose Refresh attachments."
+      ],
+      "expected": [
+        "List and matching count refresh."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "list_assets"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Refreshing or appending the visible unified attachment panel is native client state. Original expected behavior is unchanged and requires native-client assertions."
+      ],
+      "relatedCases": [
+        "UC-AST-0079"
+      ]
+    },
+    {
+      "id": "UC-AST-0024",
+      "title": "Page attachments",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose Load more attachments."
+      ],
+      "expected": [
+        "Next cursor page appends."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "list_assets"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Refreshing or appending the visible unified attachment panel is native client state. Original expected behavior is unchanged and requires native-client assertions."
+      ],
+      "relatedCases": [
+        "UC-AST-0079"
+      ]
+    },
+    {
+      "id": "UC-AST-0025",
+      "title": "Open picture preview",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Click image thumbnail."
+      ],
+      "expected": [
+        "Correct protected image opens in preview dialog."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Only the native client opens/renders/closes this preview, owns its object URL, or explains a download fallback. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-AST-0074"
+      ]
+    },
+    {
+      "id": "UC-AST-0026",
+      "title": "Open file-name preview",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Click attachment filename."
+      ],
+      "expected": [
+        "Correct attachment preview dialog opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Only the native client opens/renders/closes this preview, owns its object URL, or explains a download fallback. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-AST-0074"
+      ]
+    },
+    {
+      "id": "UC-AST-0027",
+      "title": "Preview PDF",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open PDF attachment."
+      ],
+      "expected": [
+        "Private PDF content renders in bounded preview frame."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Only the native client opens/renders/closes this preview, owns its object URL, or explains a download fallback. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-AST-0074"
+      ]
+    },
+    {
+      "id": "UC-AST-0028",
+      "title": "Open unknown-file preview",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open a nonpreviewable document."
+      ],
+      "expected": [
+        "Download fallback is explained."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Only the native client opens/renders/closes this preview, owns its object URL, or explains a download fallback. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-AST-0074"
+      ]
+    },
+    {
+      "id": "UC-AST-0029",
+      "title": "Download attachment",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose Download."
+      ],
+      "expected": [
+        "Authenticated content saves using original filename."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Saving a browser download with its suggested filename is a native action. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-AST-0078"
+      ]
+    },
+    {
+      "id": "UC-AST-0030",
+      "title": "Download from preview",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose Download file in preview."
+      ],
+      "expected": [
+        "Current private content saves using original filename."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The native preview/referral control and its retry/open state cannot be asserted by a stateless asset read. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-AST-0074",
+        "UC-AST-0078"
+      ]
+    },
+    {
+      "id": "UC-AST-0031",
+      "title": "Close preview button",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose Close attachment preview."
+      ],
+      "expected": [
+        "Dialog closes and temporary object URL is released."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Only the native client opens/renders/closes this preview, owns its object URL, or explains a download fallback. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-AST-0074"
+      ]
+    },
+    {
+      "id": "UC-AST-0032",
+      "title": "Close preview by Escape",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Press Escape in preview."
+      ],
+      "expected": [
+        "Dialog closes without changing attachment."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Only the native client opens/renders/closes this preview, owns its object URL, or explains a download fallback. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-AST-0074"
+      ]
+    },
+    {
+      "id": "UC-AST-0033",
+      "title": "Retry attachment preview",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose Retry preview after load failure."
+      ],
+      "expected": [
+        "Protected content lookup is retried."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The native preview/referral control and its retry/open state cannot be asserted by a stateless asset read. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-AST-0074",
+        "UC-AST-0078"
+      ]
+    },
+    {
+      "id": "UC-AST-0034",
+      "title": "Open retained file reference",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Click a file reference in saved text/history."
+      ],
+      "expected": [
+        "Current-authorized metadata and preview open for retained asset."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The native preview/referral control and its retry/open state cannot be asserted by a stateless asset read. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-AST-0074",
+        "UC-AST-0078"
+      ]
+    },
+    {
+      "id": "UC-AST-0035",
+      "title": "Recover unavailable reference",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open unavailable protected reference."
+      ],
+      "expected": [
+        "Attachment unavailable message appears without exposing content."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Showing an unavailable reference message is native presentation. Original expected behavior is unchanged and requires native-client assertions."
+      ],
+      "relatedCases": [
+        "UC-AST-0080"
+      ]
+    },
+    {
+      "id": "UC-AST-0036",
+      "title": "Detach published panel asset",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Remove an attachment from shared panel."
+      ],
+      "expected": [
+        "Panel membership is removed while retained historical references and bytes remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "detach"
+      ],
+      "operations": [
+        "detach_asset"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0037",
+      "title": "Review stale detach",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Detach using old issue revision."
+      ],
+      "expected": [
+        "Current attachments/revision must be reviewed before retry."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "detach"
+      ],
+      "operations": [
+        "detach_asset"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Retaining visible attachments for deliberate stale-detach review is native client state. Original expected behavior is unchanged and requires native-client assertions."
+      ],
+      "relatedCases": [
+        "UC-AST-0081"
+      ]
+    },
+    {
+      "id": "UC-AST-0038",
+      "title": "Keep historical file after detach",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open old comment/version file after panel detach."
+      ],
+      "expected": [
+        "Authorized retained reference remains readable."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "detach",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/issue-workspace.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0039",
+      "title": "Hide comment draft assets",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload comment draft without posting."
+      ],
+      "expected": [
+        "Other users do not see draft as published issue attachment."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "queueLogic",
+        "commentPublish"
+      ],
+      "operations": [
+        "start_asset_upload",
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/unified-assets.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0040",
+      "title": "Publish comment assets atomically",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post comment referencing completed own drafts."
+      ],
+      "expected": [
+        "Assets publish with accepted comment and appear in shared panel."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentPublish"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/unified-assets.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0041",
+      "title": "Hide description draft assets",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload into description draft without saving."
+      ],
+      "expected": [
+        "Assets remain private until accepted description save."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionPublish",
+        "queueLogic"
+      ],
+      "operations": [
+        "start_asset_upload",
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/unified-assets.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0042",
+      "title": "Publish description assets atomically",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save description referencing completed drafts."
+      ],
+      "expected": [
+        "Referenced assets become published with accepted issue content."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionPublish"
+      ],
+      "operations": [
+        "update_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/unified-assets.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0043",
+      "title": "Retain ID-based references across hostname",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open a saved file reference after frontend hostname changes."
+      ],
+      "expected": [
+        "Reference resolves through current application asset endpoint."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "reference"
+      ],
+      "operations": [
+        "get_asset"
+      ],
+      "existingTests": [
+        "frontend/e2e/unified-assets.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0044",
+      "title": "Reject empty file",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Queue a zero-byte file."
+      ],
+      "expected": [
+        "File validation rejects it."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "metadata"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0045",
+      "title": "Reject invalid filename",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Queue filename with control character or path separator."
+      ],
+      "expected": [
+        "File validation rejects unsafe name."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "metadata"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0046",
+      "title": "Limit file queue",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Queue more than twenty files."
+      ],
+      "expected": [
+        "Additional queue items are rejected with guidance."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "queueLogic"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0047",
+      "title": "Enforce configured file maximum",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Queue file exceeding current policy maximum."
+      ],
+      "expected": [
+        "Displayed policy limit is enforced."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "queueLogic",
+        "contracts"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [
+        "GAP-AST-001"
+      ],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0048",
+      "title": "Enforce image maximum",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Queue PNG/JPEG/WebP larger than min(policy maximum,10 MiB)."
+      ],
+      "expected": [
+        "Image is rejected."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "metadata"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [
+        "GAP-AST-001"
+      ],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0049",
+      "title": "Validate actual image content",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload bytes mismatching claimed image format."
+      ],
+      "expected": [
+        "Content validation prevents accepted image."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "contentValidation"
+      ],
+      "operations": [
+        "upload_asset"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0050",
+      "title": "Validate actual document content",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload bytes mismatching supported document metadata."
+      ],
+      "expected": [
+        "Content validation prevents accepted typed document."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "contentValidation"
+      ],
+      "operations": [
+        "upload_asset"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0051",
+      "title": "Reject foreign draft reference",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Publish another issue or user private draft reference."
+      ],
+      "expected": [
+        "Current scope/ownership validation rejects publication."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "assets",
+        "commentPublish"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0052",
+      "title": "Reject unauthorized content",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Read protected asset without current project access."
+      ],
+      "expected": [
+        "No metadata or bytes leak."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "assets",
+        "download"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0053",
+      "title": "Restrict viewer upload",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload as project viewer."
+      ],
+      "expected": [
+        "Current project write access rejects upload."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "upload"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0054",
+      "title": "Recheck access after storage read",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Lose access while private bytes are being loaded."
+      ],
+      "expected": [
+        "Post-I/O authorization prevents returning protected bytes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "download"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-native-asset-authorization.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "The native Playwright scenario uses the normal Download action and a Linux write lease on only its freshly uploaded, isolated local text object. The kernel's SIGIO proves the real Go storage open is waiting; actual project membership is removed before releasing the lease. The actual typed 404 response contains no protected bytes, no browser download occurs, and the UI shows the denial. The lease fixture does not modify stored bytes or metadata. Finally cleanup restores membership and verifies the original content through the service.",
+        "This verifies the real local object-store post-I/O authorization boundary without an application test hook. It does not verify Google Cloud Storage provider behavior. Additional deterministic account-revocation and upload interleavings remain supplemental Go service evidence in docs/use-cases/service-evidence.json; those do not substitute for browser surface evidence."
+      ]
+    },
+    {
+      "id": "UC-AST-0055",
+      "title": "Preserve Arabic filenames",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload/download an Arabic or mixed-language filename."
+      ],
+      "expected": [
+        "Accepted filename is retained and readable without path interpretation."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "metadata",
+        "panel"
+      ],
+      "operations": [
+        "start_asset_upload",
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/unified-assets.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0056",
+      "title": "Read asset policy",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Read upload policy."
+      ],
+      "expected": [
+        "Current file/image/chunk limits are returned."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "get_asset_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0057",
+      "title": "Start recoverable session",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Reserve upload with metadata, expected byte count and SHA-256."
+      ],
+      "expected": [
+        "An actor-scoped session identifies intended asset and offsets."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "start_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0058",
+      "title": "Read recoverable session",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Read own upload session."
+      ],
+      "expected": [
+        "Current progress and terminal state are returned."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "get_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0059",
+      "title": "Append exact-offset chunk",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Append a valid chunk at acknowledged offset."
+      ],
+      "expected": [
+        "Received byte count advances exactly."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "append_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0060",
+      "title": "Finalize complete session",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Finalize after all valid bytes arrive."
+      ],
+      "expected": [
+        "Size, SHA-256 and content verify before one asset commits."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0061",
+      "title": "Cancel unfinished session",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Cancel own unfinished session."
+      ],
+      "expected": [
+        "Session becomes canceled and cannot publish later."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "cancel_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0062",
+      "title": "Replay lost chunk acknowledgment",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Retry identical chunk with original retry reference."
+      ],
+      "expected": [
+        "Accepted bytes are not appended twice."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "append_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB.",
+        "Surface correction: The native resumable uploader first reads the authoritative session after a lost chunk acknowledgement and skips committed offsets. Its ordinary retry does not resend that accepted chunk with its original reference; exact same-reference replay remains a REST/MCP operation boundary and the native resume outcome is preserved separately."
+      ],
+      "relatedCases": [
+        "UC-AST-0086"
+      ]
+    },
+    {
+      "id": "UC-AST-0063",
+      "title": "Replay lost finalize acknowledgment",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Retry original finalize reference."
+      ],
+      "expected": [
+        "One committed asset is returned without duplicate publication."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB.",
+        "Surface correction: The native resumable uploader reads an already committed session and fetches its existing asset after a lost finalize acknowledgement. It does not resubmit the original finalize request in this reachable flow; exact finalize reference replay remains required on REST/MCP and committed-session native recovery is separately preserved."
+      ],
+      "relatedCases": [
+        "UC-AST-0064"
+      ]
+    },
+    {
+      "id": "UC-AST-0064",
+      "title": "Resume committed session",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Resume after final acknowledgment was lost."
+      ],
+      "expected": [
+        "Client reads existing committed asset rather than retransferring."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "get_asset_upload",
+        "get_asset"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0065",
+      "title": "Reject wrong offset",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Append chunk at different offset from received bytes."
+      ],
+      "expected": [
+        "Append is rejected without corrupting progress."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "append_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0066",
+      "title": "Reject oversized chunk",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Append more than one MiB in a chunk."
+      ],
+      "expected": [
+        "Chunk is rejected."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "append_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0067",
+      "title": "Reject misaligned nonfinal chunk",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Append nonfinal chunk not a multiple of 256 KiB."
+      ],
+      "expected": [
+        "Chunk is rejected."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "append_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0068",
+      "title": "Reject wrong checksum",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Finalize bytes with wrong complete SHA-256."
+      ],
+      "expected": [
+        "Corrupt asset is not committed."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0069",
+      "title": "Reject incomplete finalization",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Finalize before expected bytes arrive."
+      ],
+      "expected": [
+        "Asset is not published."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0070",
+      "title": "Reject expired session resume",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Resume canceled/expired session."
+      ],
+      "expected": [
+        "User is told to choose file/start again."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "get_asset_upload"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB.",
+        "Surface correction: Telling the user to choose a file/start again is native queue presentation; the service returns a terminal state and rejects writes. All original expected behavior remains on the native case."
+      ],
+      "relatedCases": [
+        "UC-AST-0082"
+      ]
+    },
+    {
+      "id": "UC-AST-0071",
+      "title": "Reject other actor session",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Read or mutate another user upload session."
+      ],
+      "expected": [
+        "Session ownership prevents access."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "service_only",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "get_asset_upload",
+        "append_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0072",
+      "title": "Reject committed-session cancel",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Cancel an already committed asset session."
+      ],
+      "expected": [
+        "Published asset is not canceled."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "cancel_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0073",
+      "title": "Direct base64 upload",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The client is authenticated with access to the relevant project/resource."
+      ],
+      "steps": [
+        "Upload up to ten MiB using direct upload tool."
+      ],
+      "expected": [
+        "Validated asset is returned without claiming resumable hundred-MiB capacity."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "upload_asset"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-AST-001"
+      ],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0074",
+      "title": "Download bounded chunk",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The client is authenticated with access to the relevant project/resource."
+      ],
+      "steps": [
+        "Request private bytes by offset/count."
+      ],
+      "expected": [
+        "At most one MiB and terminal indicator are returned under current access."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Overall server maximum is 100 MiB; ordinary file limit is policy-driven, images/direct upload remain at most 10 MiB; resumable chunk at most 1 MiB."
+      ]
+    },
+    {
+      "id": "UC-AST-0075",
+      "title": "Ignore late preview across sessions",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open a private attachment preview and hold its content response.",
+        "Close the loading preview through its normal control, then sign out and sign in as a different user in the same SPA before releasing the old response."
+      ],
+      "expected": [
+        "Old private result cannot populate new session and request is aborted on cleanup."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "preview"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "The native preview dialog makes background Sign out inert. This reachable flow verifies cleanup abort and session ownership without bypassing modal interaction rules or reloading the SPA."
+      ]
+    },
+    {
+      "id": "UC-AST-0076",
+      "title": "Expose accessible file progress",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Inspect active upload with assistive technology."
+      ],
+      "expected": [
+        "File-specific progress labels and errors are exposed."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "queue"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0077",
+      "title": "Permanently delete retained attachment bytes",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Attempt permanent deletion of published retained bytes through issue panel."
+      ],
+      "expected": [
+        "Panel exposes detach, not ordinary permanent byte deletion."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "not_implemented",
+      "evidence": [
+        "panel",
+        "mcp"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AST-0078",
+      "title": "Read original attachment filename and exact private bytes",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read authorized asset metadata and its content chunks."
+      ],
+      "expected": [
+        "Metadata preserves the original filename and assembled chunk bytes equal the accepted stored file."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-AST-0029. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-AST-0029"
+      ]
+    },
+    {
+      "id": "UC-AST-0079",
+      "title": "Read unified published asset cursor pages",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read issue assets with a bounded page and advance its cursor."
+      ],
+      "expected": [
+        "Published images and files share a matching total and distinct authorized cursor pages."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "list_assets"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-AST-0022."
+      ],
+      "relatedCases": [
+        "UC-AST-0022"
+      ]
+    },
+    {
+      "id": "UC-AST-0080",
+      "title": "Deny unavailable asset metadata and bytes",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read unavailable or unauthorized asset metadata and a content chunk."
+      ],
+      "expected": [
+        "Both reads return unavailable without exposing metadata or bytes."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "preview",
+        "reference"
+      ],
+      "operations": [
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-AST-0035."
+      ],
+      "relatedCases": [
+        "UC-AST-0035"
+      ]
+    },
+    {
+      "id": "UC-AST-0081",
+      "title": "Reject stale asset detach command",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Detach a published asset using an obsolete issue revision."
+      ],
+      "expected": [
+        "The conflict rejects the command and preserves published panel membership."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "panel",
+        "detach"
+      ],
+      "operations": [
+        "detach_asset"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-AST-0037."
+      ],
+      "relatedCases": [
+        "UC-AST-0037"
+      ]
+    },
+    {
+      "id": "UC-AST-0082",
+      "title": "Read expired upload state and reject resumed writes",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Read an expired actor-owned upload, then attempt append and finalization."
+      ],
+      "expected": [
+        "Expired terminal state remains readable; append/finalize reject and no asset publishes."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "mcp",
+        "contracts",
+        "resume"
+      ],
+      "operations": [
+        "get_asset_upload",
+        "append_asset_chunk",
+        "finalize_asset_upload"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native case UC-AST-0070. Browser behavior and its stable ID are unchanged."
+      ],
+      "relatedCases": [
+        "UC-AST-0070"
+      ]
+    },
+    {
+      "id": "UC-AST-0083",
+      "title": "Accept validated protected PNG bytes",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload a real PNG image and read its authorized metadata/content."
+      ],
+      "expected": [
+        "Validated published image metadata retains the accepted format, filename and size; downloaded private bytes equal the accepted encoded image."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queueLogic",
+        "upload"
+      ],
+      "operations": [
+        "upload_asset",
+        "start_asset_upload",
+        "append_asset_chunk",
+        "finalize_asset_upload",
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-collaboration.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native case UC-AST-0013. Browser behavior and its stable ID are unchanged."
+      ],
+      "relatedCases": [
+        "UC-AST-0013"
+      ]
+    },
+    {
+      "id": "UC-AST-0084",
+      "title": "Accept validated protected JPEG bytes",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload a real JPEG image and read its authorized metadata/content."
+      ],
+      "expected": [
+        "Validated published image metadata retains the accepted format, filename and size; downloaded private bytes equal the accepted encoded image."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queueLogic",
+        "upload"
+      ],
+      "operations": [
+        "upload_asset",
+        "start_asset_upload",
+        "append_asset_chunk",
+        "finalize_asset_upload",
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native case UC-AST-0014. Browser behavior and its stable ID are unchanged."
+      ],
+      "relatedCases": [
+        "UC-AST-0014"
+      ]
+    },
+    {
+      "id": "UC-AST-0085",
+      "title": "Accept validated protected WebP bytes",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload a real WebP image and read its authorized metadata/content."
+      ],
+      "expected": [
+        "Validated published image metadata retains the accepted format, filename and size; downloaded private bytes equal the accepted encoded image."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "queueLogic",
+        "upload"
+      ],
+      "operations": [
+        "upload_asset",
+        "start_asset_upload",
+        "append_asset_chunk",
+        "finalize_asset_upload",
+        "get_asset",
+        "download_asset_chunk"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native case UC-AST-0015. Browser behavior and its stable ID are unchanged."
+      ],
+      "relatedCases": [
+        "UC-AST-0015"
+      ]
+    },
+    {
+      "id": "UC-AST-0086",
+      "title": "Resume accepted chunk progress after a lost acknowledgement",
+      "actor": "writer",
+      "preconditions": [
+        "A native upload has an actor-owned recoverable session and its first chunk was accepted before the acknowledgement was lost."
+      ],
+      "steps": [
+        "Retry the failed native upload queue."
+      ],
+      "expected": [
+        "The uploader reads committed progress and skips the accepted chunk; remaining offsets upload once and exactly one complete asset with the original bytes publishes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "resume",
+        "queueLogic"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-native-assets-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native resume flow distinct from exact same-reference service replay."
+      ],
+      "relatedCases": [
+        "UC-AST-0062"
+      ]
+    }
+  ]
+}

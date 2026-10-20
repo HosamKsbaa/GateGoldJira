@@ -1,0 +1,4031 @@
+{
+  "area": "mcp",
+  "title": "MCP protocol, account connections and native Antigravity plugin",
+  "summary": "Business tool behavior is canonical in its domain. This area documents authentication, browser-only credential management, OAuth, activity privacy, proxy onboarding and native plugin interaction. Real managed provider/shared deployment remains pending. Related test paths are references, not proof of per-case execution.",
+  "sources": {
+    "ui": {
+      "path": "frontend/src/app/features/account/mcp-tokens.page.html",
+      "line": 2
+    },
+    "reveal": {
+      "path": "frontend/src/app/features/account/mcp-tokens.page.html",
+      "line": 10
+    },
+    "page": {
+      "path": "frontend/src/app/features/account/mcp-tokens.page.ts",
+      "line": 19
+    },
+    "clipboard": {
+      "path": "frontend/src/app/features/account/mcp-tokens.page.ts",
+      "line": 104
+    },
+    "activityUi": {
+      "path": "frontend/src/app/features/account/mcp-tokens.page.ts",
+      "line": 130
+    },
+    "consentUi": {
+      "path": "frontend/src/app/features/account/mcp-authorize.page.ts",
+      "line": 32
+    },
+    "personal": {
+      "path": "backend/internal/features/mcptokens/service.go",
+      "line": 104
+    },
+    "list": {
+      "path": "backend/internal/features/mcptokens/service.go",
+      "line": 83
+    },
+    "revoke": {
+      "path": "backend/internal/features/mcptokens/service.go",
+      "line": 141
+    },
+    "authenticate": {
+      "path": "backend/internal/features/mcptokens/service.go",
+      "line": 157
+    },
+    "http": {
+      "path": "backend/internal/features/mcptokens/http.go",
+      "line": 29
+    },
+    "activity": {
+      "path": "backend/internal/features/mcptokens/activity.go",
+      "line": 31
+    },
+    "activityStart": {
+      "path": "backend/internal/features/mcptokens/activity.go",
+      "line": 59
+    },
+    "oauthSetup": {
+      "path": "backend/internal/features/mcptokens/oauth.go",
+      "line": 33
+    },
+    "metadata": {
+      "path": "backend/internal/features/mcptokens/oauth.go",
+      "line": 90
+    },
+    "authorize": {
+      "path": "backend/internal/features/mcptokens/oauth.go",
+      "line": 124
+    },
+    "consent": {
+      "path": "backend/internal/features/mcptokens/oauth.go",
+      "line": 169
+    },
+    "decision": {
+      "path": "backend/internal/features/mcptokens/oauth.go",
+      "line": 184
+    },
+    "exchange": {
+      "path": "backend/internal/features/mcptokens/oauth.go",
+      "line": 231
+    },
+    "oauthRevoke": {
+      "path": "backend/internal/features/mcptokens/oauth.go",
+      "line": 335
+    },
+    "server": {
+      "path": "backend/internal/platform/mcpapi/server.go",
+      "line": 24
+    },
+    "protected": {
+      "path": "backend/internal/platform/mcpapi/server.go",
+      "line": 49
+    },
+    "registry": {
+      "path": "backend/api/mcp-tools.json",
+      "line": 1
+    },
+    "identityNotes": {
+      "path": "identity/auth0/README.md",
+      "line": 19
+    },
+    "pluginGuide": {
+      "path": "integrations/antigravity/README.md",
+      "line": 7
+    },
+    "pluginPrivacy": {
+      "path": "integrations/antigravity/README.md",
+      "line": 48
+    },
+    "pluginShared": {
+      "path": "integrations/antigravity/README.md",
+      "line": 70
+    },
+    "pluginUi": {
+      "path": "integrations/antigravity/src/ui.ts",
+      "line": 42
+    },
+    "pluginSearch": {
+      "path": "integrations/antigravity/src/ui.ts",
+      "line": 154
+    },
+    "pluginSettings": {
+      "path": "integrations/antigravity/src/server-settings.ts",
+      "line": 5
+    },
+    "pluginOauth": {
+      "path": "integrations/antigravity/src/oauth.ts",
+      "line": 21
+    },
+    "pluginRefresh": {
+      "path": "integrations/antigravity/src/oauth.ts",
+      "line": 149
+    },
+    "pluginDisconnect": {
+      "path": "integrations/antigravity/src/oauth.ts",
+      "line": 199
+    },
+    "pluginStore": {
+      "path": "integrations/antigravity/src/store.ts",
+      "line": 10
+    },
+    "panelPreference": {
+      "path": "integrations/antigravity/src/panel-preference.ts",
+      "line": 26
+    },
+    "pluginMcp": {
+      "path": "integrations/antigravity/src/mcp.ts",
+      "line": 38
+    },
+    "legacySearchGate": {
+      "path": "backend/internal/features/issues/search.go",
+      "line": 146
+    },
+    "pluginModel": {
+      "path": "integrations/antigravity/src/models.ts",
+      "line": 47
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-MCP-0001",
+      "title": "Read own MCP connections",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Open Account MCP connections."
+      ],
+      "expected": [
+        "Only own personal/browser connection metadata, endpoint and active limit appear."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "list"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "listPersonalMcpTokens"
+      ]
+    },
+    {
+      "id": "UC-MCP-0002",
+      "title": "Refresh connection list",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Refresh tokens."
+      ],
+      "expected": [
+        "Current own connection lifecycle/last-use metadata reloads."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "list"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "listPersonalMcpTokens"
+      ]
+    },
+    {
+      "id": "UC-MCP-0003",
+      "title": "Show empty connections state",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Open connections before any are created."
+      ],
+      "expected": [
+        "The page explains browser login and personal-token fallback.",
+        "The signed-in account wire response has an empty own items array, its canonical MCP endpoint and active connection limit, and available browser OAuth client metadata."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "list"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "The browser explanatory copy remains required. The distinct existing REST surface now names its directly observable empty-own-list contract from mcptokens.Service.List; no page copy is inferred from an API seed."
+      ],
+      "httpOperations": [
+        "listPersonalMcpTokens"
+      ]
+    },
+    {
+      "id": "UC-MCP-0004",
+      "title": "Create personal credential",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Enter a valid nonblank connection name and generate token."
+      ],
+      "expected": [
+        "A named permanent credential is created and its secret is returned only in this creation response."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "personal",
+        "reveal"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "createPersonalMcpToken"
+      ]
+    },
+    {
+      "id": "UC-MCP-0005",
+      "title": "Reject blank token name",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Submit an empty or whitespace-only name."
+      ],
+      "expected": [
+        "The browser/server rejects the name."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "personal",
+        "ui"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "createPersonalMcpToken"
+      ]
+    },
+    {
+      "id": "UC-MCP-0006",
+      "title": "Reject long token name",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Submit more than 80 supported characters."
+      ],
+      "expected": [
+        "Validation rejects the token name."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "personal",
+        "ui"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "createPersonalMcpToken"
+      ]
+    },
+    {
+      "id": "UC-MCP-0007",
+      "title": "Preserve Arabic token name",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Create a token named with Arabic or mixed-direction text."
+      ],
+      "expected": [
+        "The Unicode name is retained and rendered using automatic direction."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "personal",
+        "ui"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "createPersonalMcpToken"
+      ]
+    },
+    {
+      "id": "UC-MCP-0008",
+      "title": "Mask newly revealed secret",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Create a personal token."
+      ],
+      "expected": [
+        "The secret input begins masked and creation focus moves to the reveal heading."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reveal"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "createPersonalMcpToken"
+      ]
+    },
+    {
+      "id": "UC-MCP-0009",
+      "title": "Show personal secret",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Show token before dismissing it."
+      ],
+      "expected": [
+        "The current creation secret becomes selectable visible text."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reveal"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0010",
+      "title": "Hide personal secret",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Hide token."
+      ],
+      "expected": [
+        "The input returns to password masking."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reveal"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0011",
+      "title": "Copy personal secret",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Copy token."
+      ],
+      "expected": [
+        "The exact current secret is copied and success feedback appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "clipboard"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0012",
+      "title": "Copy bearer client configuration",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Copy Antigravity config while token is revealed."
+      ],
+      "expected": [
+        "The endpoint and Authorization header configuration are copied."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "clipboard",
+        "reveal"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0013",
+      "title": "Handle token clipboard denial",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Deny clipboard access then choose Copy token/config."
+      ],
+      "expected": [
+        "The UI explains using Show token and manual copy."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "clipboard"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0014",
+      "title": "Dismiss revealed credential",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Done on the reveal panel."
+      ],
+      "expected": [
+        "The page drops the secret and explains revoking/replacing it if lost."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reveal"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0015",
+      "title": "Clear secret on navigation",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Navigate away or trigger pagehide after creation."
+      ],
+      "expected": [
+        "The component drops the secret rather than persisting it."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0016",
+      "title": "Clear secret on account switch",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Switch session while a creation request or reveal is active."
+      ],
+      "expected": [
+        "Old secret, metadata and pending reply cannot populate the next account."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0017",
+      "title": "Enforce active connection limit",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Create or approve another connection when ten personal/OAuth connections are active."
+      ],
+      "expected": [
+        "The service rejects the extra connection until another is revoked."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "personal",
+        "decision"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "createPersonalMcpToken",
+        "decideMcpBrowserAuthorization"
+      ]
+    },
+    {
+      "id": "UC-MCP-0018",
+      "title": "Serialize concurrent creation limit",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Create connections concurrently near the per-owner limit."
+      ],
+      "expected": [
+        "The owner guard keeps the combined active count within ten."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "personal",
+        "decision"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "createPersonalMcpToken",
+        "decideMcpBrowserAuthorization"
+      ]
+    },
+    {
+      "id": "UC-MCP-0019",
+      "title": "Recover lost creation response",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Refresh the connection list after a token was created but its secret response was lost."
+      ],
+      "expected": [
+        "The metadata may exist but the secret cannot be recovered; revoke the inaccessible credential and create a replacement."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "personal",
+        "list",
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Personal-token creation has no business retry receipt for recovering the secret; do not document automatic exactly-once secret recovery."
+      ],
+      "httpOperations": [
+        "createPersonalMcpToken",
+        "listPersonalMcpTokens"
+      ]
+    },
+    {
+      "id": "UC-MCP-0020",
+      "title": "Request revocation confirmation",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Revoke on an active connection."
+      ],
+      "expected": [
+        "Confirm revoke and Cancel controls appear before mutation."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0021",
+      "title": "Cancel token revocation",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Cancel in the revocation prompt."
+      ],
+      "expected": [
+        "No revocation is sent and the connection remains active."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "ui"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0022",
+      "title": "Revoke own connection",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Confirm revocation of own active connection."
+      ],
+      "expected": [
+        "The list shows revoked and future access/refresh is unusable."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "revoke",
+        "ui"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "revokePersonalMcpToken"
+      ]
+    },
+    {
+      "id": "UC-MCP-0023",
+      "title": "Deny foreign connection management",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Request another user token revoke/activity endpoint."
+      ],
+      "expected": [
+        "The foreign connection is unavailable, including to company administrators."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "revoke",
+        "activity"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "revokePersonalMcpToken",
+        "listPersonalMcpTokenActivity"
+      ]
+    },
+    {
+      "id": "UC-MCP-0024",
+      "title": "Hide stored credential secrets",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Read connection list after leaving the reveal page."
+      ],
+      "expected": [
+        "Only lifecycle metadata and prefix return; the full token cannot be fetched."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "list",
+        "personal"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "listPersonalMcpTokens"
+      ]
+    },
+    {
+      "id": "UC-MCP-0025",
+      "title": "Keep credential management browser-only",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Attempt creating/listing/revoking credentials using an assistant bearer identity."
+      ],
+      "expected": [
+        "Credential management is not exposed as an MCP tool and requires signed-in browser identity."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "personal",
+        "http"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0026",
+      "title": "Authenticate personal MCP credential",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Call MCP with an active personal token."
+      ],
+      "expected": [
+        "The token resolves to its owning human and current company/project permissions."
+      ],
+      "surfaces": [
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "authenticate",
+        "server"
+      ],
+      "operations": [
+        "get_me"
+      ],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0027",
+      "title": "Reject malformed MCP credential",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Use malformed token encoding/prefix/length."
+      ],
+      "expected": [
+        "Authentication is rejected without identifying account metadata."
+      ],
+      "surfaces": [
+        "mcp",
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "authenticate",
+        "identityNotes"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0028",
+      "title": "Reject revoked MCP credential",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Use a revoked token."
+      ],
+      "expected": [
+        "The next authenticated request is rejected."
+      ],
+      "surfaces": [
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "authenticate",
+        "identityNotes"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: this case invokes an MCP credential/tool and verifies its current revocation/owner/project access at /mcp. Personal credentials are never accepted at REST, so a REST 401 would only prove the separate audience boundary in UC-MCP-0031. No authorization behavior is removed. Sources: backend/internal/features/mcptokens/service.go Authenticate; backend/internal/platform/auth/session.go REST/MCP channel validation; identity/auth0/README.md Personal MCP tokens."
+      ]
+    },
+    {
+      "id": "UC-MCP-0029",
+      "title": "Reject disabled token owner",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Disable the owning account then invoke a tool."
+      ],
+      "expected": [
+        "Current owner status prevents access."
+      ],
+      "surfaces": [
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "authenticate",
+        "identityNotes"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: this case invokes an MCP credential/tool and verifies its current revocation/owner/project access at /mcp. Personal credentials are never accepted at REST, so a REST 401 would only prove the separate audience boundary in UC-MCP-0031. No authorization behavior is removed. Sources: backend/internal/features/mcptokens/service.go Authenticate; backend/internal/platform/auth/session.go REST/MCP channel validation; identity/auth0/README.md Personal MCP tokens."
+      ]
+    },
+    {
+      "id": "UC-MCP-0030",
+      "title": "Enforce changed project permission",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Remove project access after a credential was issued."
+      ],
+      "expected": [
+        "The next project tool call enforces current membership."
+      ],
+      "surfaces": [
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "authenticate",
+        "identityNotes"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: this case invokes an MCP credential/tool and verifies its current revocation/owner/project access at /mcp. Personal credentials are never accepted at REST, so a REST 401 would only prove the separate audience boundary in UC-MCP-0031. No authorization behavior is removed. Sources: backend/internal/features/mcptokens/service.go Authenticate; backend/internal/platform/auth/session.go REST/MCP channel validation; identity/auth0/README.md Personal MCP tokens."
+      ]
+    },
+    {
+      "id": "UC-MCP-0031",
+      "title": "Reject personal token at REST",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Use a personal MCP token as REST bearer."
+      ],
+      "expected": [
+        "The credential cannot be used to bypass the browser audience boundary."
+      ],
+      "surfaces": [
+        "mcp",
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "authenticate",
+        "identityNotes"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0032",
+      "title": "Discover protected MCP resource",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Read protected-resource metadata."
+      ],
+      "expected": [
+        "The exact MCP resource, issuer, required scope and advertised website are returned."
+      ],
+      "surfaces": [
+        "mcp",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "protected"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0033",
+      "title": "Initialize MCP client",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Connect using a supported MCP SDK/protocol."
+      ],
+      "expected": [
+        "The authenticated stateless transport initializes with tool capability."
+      ],
+      "surfaces": [
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "server"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0034",
+      "title": "Page published tool catalog",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Read tools/list and follow its cursor."
+      ],
+      "expected": [
+        "All currently published tools and typed schemas can be discovered in bounded pages."
+      ],
+      "surfaces": [
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "registry",
+        "server"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "The checked registry currently contains 133 tools; master inventory owns the exact registry mapping."
+      ]
+    },
+    {
+      "id": "UC-MCP-0035",
+      "title": "Read typed tool result",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Invoke get_me using a current MCP identity."
+      ],
+      "expected": [
+        "Typed own-account/calendar content is returned."
+      ],
+      "surfaces": [
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "registry",
+        "server"
+      ],
+      "operations": [
+        "get_me"
+      ],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0036",
+      "title": "Retain website resource link",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Invoke a business tool returning an issue or project."
+      ],
+      "expected": [
+        "A safe application link accompanies the appropriate returned resource."
+      ],
+      "surfaces": [
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "server",
+        "registry"
+      ],
+      "operations": [
+        "get_project",
+        "get_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0037",
+      "title": "Reject unauthenticated protocol request",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Call the protected MCP transport without acceptable bearer identity."
+      ],
+      "expected": [
+        "The request is challenged with resource metadata instead of serving private data."
+      ],
+      "surfaces": [
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "server"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0038",
+      "title": "Reject invalid tool input",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Call a registered tool with schema-invalid input."
+      ],
+      "expected": [
+        "A structured protocol/business failure is returned."
+      ],
+      "surfaces": [
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "server",
+        "registry"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0039",
+      "title": "Read OAuth discovery",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Read the advertised authorization-server metadata."
+      ],
+      "expected": [
+        "Authorization, token and revocation endpoints advertise public-client S256 code/refresh support."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "metadata"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0040",
+      "title": "Copy browser proxy configuration",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Copy OAuth configuration."
+      ],
+      "expected": [
+        "Pinned proxy configuration includes the registered public client, resource and scope without a personal secret."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0041",
+      "title": "Handle OAuth config clipboard denial",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Deny clipboard permission then copy OAuth configuration."
+      ],
+      "expected": [
+        "The page explains enabling clipboard access and retrying."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0042",
+      "title": "Start valid browser authorization",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Send a valid registered-client authorization request with S256 challenge, state and resource."
+      ],
+      "expected": [
+        "A browser consent request is created and the app authorization route opens."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "authorize"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0043",
+      "title": "Reject unregistered OAuth client",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Use an unknown client_id."
+      ],
+      "expected": [
+        "Authorization returns invalid_request."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "authorize"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0044",
+      "title": "Reject wrong OAuth response type",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Use a response_type other than code."
+      ],
+      "expected": [
+        "Authorization returns invalid_request."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "authorize"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0045",
+      "title": "Reject wrong OAuth scope",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Request a scope other than the registered access scope."
+      ],
+      "expected": [
+        "Authorization returns invalid_request."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "authorize"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0046",
+      "title": "Reject wrong OAuth resource",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Request a resource other than this exact MCP endpoint."
+      ],
+      "expected": [
+        "Authorization returns invalid_request."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "authorize"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0047",
+      "title": "Require PKCE S256",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Omit S256 or use an invalid challenge."
+      ],
+      "expected": [
+        "Authorization rejects the PKCE request."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "authorize"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0048",
+      "title": "Require OAuth state",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Omit state or exceed its bound."
+      ],
+      "expected": [
+        "Authorization rejects the request."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "authorize"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0049",
+      "title": "Reject unsafe OAuth callback",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Use another host/path, credentials, query or fragment in callback."
+      ],
+      "expected": [
+        "Authorization rejects the redirect."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "authorize"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0050",
+      "title": "Reject duplicate OAuth parameters",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Repeat a required authorization query key."
+      ],
+      "expected": [
+        "The request is rejected rather than selecting an ambiguous value."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "authorize"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0051",
+      "title": "Bound authorization query size",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Send an authorization query over its request bound."
+      ],
+      "expected": [
+        "The service rejects the request."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "authorize"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0052",
+      "title": "View consent details",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Open a current pending consent while signed in."
+      ],
+      "expected": [
+        "Client name, acting account, callback and current-permission statement appear."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "consent",
+        "consentUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "getMcpBrowserAuthorization"
+      ]
+    },
+    {
+      "id": "UC-MCP-0053",
+      "title": "Approve browser connection",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Approve connection."
+      ],
+      "expected": [
+        "A one-use code is issued and returned with original state and issuer."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "decision",
+        "consentUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "decideMcpBrowserAuthorization"
+      ]
+    },
+    {
+      "id": "UC-MCP-0054",
+      "title": "Deny browser connection",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Cancel connection."
+      ],
+      "expected": [
+        "The callback receives access_denied and no credential is issued."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "decision",
+        "consentUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "decideMcpBrowserAuthorization"
+      ]
+    },
+    {
+      "id": "UC-MCP-0055",
+      "title": "Reject invalid consent identifier",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Open the app consent route with a malformed request value."
+      ],
+      "expected": [
+        "The page rejects the invalid connection request."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "consentUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0056",
+      "title": "Reject consumed or expired consent",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Read or decide an expired/already completed request."
+      ],
+      "expected": [
+        "The service asks to restart authorization from the client."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "consent",
+        "decision"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "getMcpBrowserAuthorization",
+        "decideMcpBrowserAuthorization"
+      ]
+    },
+    {
+      "id": "UC-MCP-0057",
+      "title": "Validate client return address",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "The consent decision returns a callback URL."
+      ],
+      "expected": [
+        "The page navigates only to supported IP loopback or registered Antigravity callback forms."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "consentUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0058",
+      "title": "Exchange authorization code",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Send code, matching verifier/client/resource/callback."
+      ],
+      "expected": [
+        "Short-lived access and rotating refresh credentials are issued without cacheable secret responses."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "exchange"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0059",
+      "title": "Reject non-form token request",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Send JSON or token parameters in URL query."
+      ],
+      "expected": [
+        "The token endpoint returns invalid_request."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "exchange"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0060",
+      "title": "Reject confidential-client authentication",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Use Authorization/client_secret at the public-client token endpoint."
+      ],
+      "expected": [
+        "The endpoint returns invalid_client."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "exchange"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0061",
+      "title": "Reject incorrect token target",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Exchange with wrong resource."
+      ],
+      "expected": [
+        "The endpoint returns invalid_target."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "exchange"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0062",
+      "title": "Reject unsupported grant",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Request another grant_type."
+      ],
+      "expected": [
+        "The endpoint returns unsupported_grant_type."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "exchange"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0063",
+      "title": "Reject wrong PKCE verifier",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Exchange code with mismatched verifier."
+      ],
+      "expected": [
+        "The endpoint rejects the grant."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "exchange"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0064",
+      "title": "Reject consumed authorization code",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Exchange a code already used."
+      ],
+      "expected": [
+        "Another credential cannot be obtained from that code."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "exchange"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0065",
+      "title": "Serialize concurrent code exchange",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Race two exchanges of the same authorization code."
+      ],
+      "expected": [
+        "At most one exchange can consume the code."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "exchange"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0066",
+      "title": "Refresh OAuth connection",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Exchange a valid refresh credential."
+      ],
+      "expected": [
+        "New access and refresh credentials rotate."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "exchange",
+        "identityNotes"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0067",
+      "title": "Reject refresh scope escalation",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Refresh with unsupported or duplicate scope."
+      ],
+      "expected": [
+        "The endpoint rejects invalid_scope."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "exchange"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0068",
+      "title": "Revoke replayed refresh connection",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Reuse a spent rotating refresh credential."
+      ],
+      "expected": [
+        "The replay is rejected and its associated connection is revoked."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "exchange"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0069",
+      "title": "Preserve credential state after restart",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Restart the service after a connection is established."
+      ],
+      "expected": [
+        "Valid persisted access/refresh state remains usable."
+      ],
+      "surfaces": [
+        "mcp",
+        "rest"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "identityNotes"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0070",
+      "title": "Enforce access-token expiry",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Use an OAuth access credential after its 15-minute lifetime."
+      ],
+      "expected": [
+        "Access requires a valid refresh or a new authorization."
+      ],
+      "surfaces": [
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "identityNotes"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0071",
+      "title": "Enforce absolute authorization expiry",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Use a refresh grant beyond its absolute 30-day window."
+      ],
+      "expected": [
+        "The client must sign in and approve again."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "identityNotes"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0072",
+      "title": "Revoke own OAuth credential",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Submit a known access/refresh credential to revocation."
+      ],
+      "expected": [
+        "Only its associated connection is revoked."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "oauthRevoke"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0073",
+      "title": "Hide unknown revocation identity",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Submit an unknown bounded credential to revocation."
+      ],
+      "expected": [
+        "The successful outcome does not disclose whether another account credential exists."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "oauthRevoke"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0074",
+      "title": "Bound OAuth request rate",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Exceed configured authorization/token/revoke rate."
+      ],
+      "expected": [
+        "The service returns temporarily_unavailable with rate-limit status."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "authorize",
+        "exchange",
+        "oauthRevoke"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0075",
+      "title": "Require explicit shared OAuth deployment",
+      "actor": "operator",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Enable browser OAuth outside local development."
+      ],
+      "expected": [
+        "Verified OIDC identity, explicit enablement and canonical HTTPS API/browser origins are required."
+      ],
+      "surfaces": [
+        "operator"
+      ],
+      "kind": "permission",
+      "implementation": "external_pending",
+      "evidence": [
+        "oauthSetup",
+        "pluginShared"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [
+        "GAP-MCP-002"
+      ],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0076",
+      "title": "Read connection activity",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose View activity on own current or revoked connection."
+      ],
+      "expected": [
+        "Tool name, start time, outcome, duration, error code and safe resource link appear."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "activity",
+        "activityUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "listPersonalMcpTokenActivity"
+      ]
+    },
+    {
+      "id": "UC-MCP-0077",
+      "title": "Refresh connection activity",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Refresh activity."
+      ],
+      "expected": [
+        "Current calls for the selected connection reload."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "activity",
+        "activityUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "listPersonalMcpTokenActivity"
+      ]
+    },
+    {
+      "id": "UC-MCP-0078",
+      "title": "Page older connection calls",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Load older activity."
+      ],
+      "expected": [
+        "The next owner-scoped 25-call page appends."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "activity",
+        "activityUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "listPersonalMcpTokenActivity"
+      ]
+    },
+    {
+      "id": "UC-MCP-0079",
+      "title": "Close connection activity",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Close activity."
+      ],
+      "expected": [
+        "Selected log and pending generation clear."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "activityUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0080",
+      "title": "Record successful tool call",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Use an authenticated connection to complete a business tool."
+      ],
+      "expected": [
+        "The durable attempt can show Succeeded with timing and link."
+      ],
+      "surfaces": [
+        "mcp",
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "activityStart",
+        "activity"
+      ],
+      "operations": [
+        "get_me"
+      ],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0081",
+      "title": "Record failed tool call",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "A registered authenticated tool ends with a business failure."
+      ],
+      "expected": [
+        "Activity shows Failed and stable error code without request/response content."
+      ],
+      "surfaces": [
+        "mcp",
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "activityStart",
+        "activity"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0082",
+      "title": "Show unconfirmed call completion",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "A tool started but final recording is unavailable or still running."
+      ],
+      "expected": [
+        "The log shows Completion unconfirmed rather than asserting success."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "activity",
+        "ui"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0083",
+      "title": "Keep tool activity content private",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Inspect recorded activity for a call carrying file/content/credentials."
+      ],
+      "expected": [
+        "The activity projection excludes arguments, uploaded bytes, credentials and response bodies."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "activity"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "listPersonalMcpTokenActivity"
+      ]
+    },
+    {
+      "id": "UC-MCP-0084",
+      "title": "Discard obsolete connection log reply",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Switch selected connection or account while log request is delayed."
+      ],
+      "expected": [
+        "The stale reply cannot replace the new connection/account activity."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "activityUi",
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0085",
+      "title": "Install native plugin by copying folder",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Copy the public extracted plugin into a supported Antigravity plugins folder and reload."
+      ],
+      "expected": [
+        "The plugin panel and MCP bridge are discoverable without installing package dependencies."
+      ],
+      "surfaces": [
+        "plugin",
+        "operator"
+      ],
+      "kind": "happy_path",
+      "implementation": "external_pending",
+      "evidence": [
+        "pluginGuide"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Supported installed-host copy/reload/discovery remains unverified: the real package and installed sidecar SDK can run in an isolated profile, but this harness does not operate the supported Antigravity host trust/reload/discovery UI. Preserve the original installation outcome and operator/plugin requirements until that host acceptance is executed. Source: integrations/antigravity/README.md Install on any device, Antigravity 1.1.28+ host requirements."
+      ]
+    },
+    {
+      "id": "UC-MCP-0086",
+      "title": "Preserve explicit panel preference",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Discover the plugin when panel preference is already disabled."
+      ],
+      "expected": [
+        "The disabled setting is retained rather than forcibly enabled."
+      ],
+      "surfaces": [
+        "plugin",
+        "operator"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "panelPreference",
+        "pluginGuide"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-native-boundaries.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0087",
+      "title": "Add only missing panel preference",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Start discovery without a GateGoldJira panel preference."
+      ],
+      "expected": [
+        "Only the missing preference is added with unrelated configuration/comments preserved."
+      ],
+      "surfaces": [
+        "plugin",
+        "operator"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "panelPreference",
+        "pluginGuide"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-native-boundaries.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0088",
+      "title": "Save plugin API server",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Enter a valid API server URL with optional /mcp suffix and save."
+      ],
+      "expected": [
+        "Server settings normalize and the website is discovered."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginSettings",
+        "pluginUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0089",
+      "title": "Reject invalid plugin server address",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Save an unsafe or invalid API/website address."
+      ],
+      "expected": [
+        "An actionable validation error appears and no invalid connection is installed."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginSettings",
+        "pluginUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0090",
+      "title": "Override legacy website URL",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Use Advanced website override for a server without discovery metadata."
+      ],
+      "expected": [
+        "Validated website settings permit safe application links."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginSettings",
+        "pluginGuide"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0091",
+      "title": "Start plugin browser login",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Sign in with browser after server setup."
+      ],
+      "expected": [
+        "A pending OAuth flow opens with state, resource and S256 PKCE."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginOauth",
+        "pluginUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0092",
+      "title": "Continue after blocked browser popup",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Block the popup then use Continue sign-in in your browser."
+      ],
+      "expected": [
+        "The validated pending authorization link remains available."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0093",
+      "title": "Cancel plugin pending login",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Cancel during pending authorization."
+      ],
+      "expected": [
+        "The ephemeral callback closes and no credential is installed."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginOauth",
+        "pluginUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0094",
+      "title": "Share plugin account between panel and tools",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Complete browser consent from native plugin."
+      ],
+      "expected": [
+        "The panel and MCP bridge use the same approved human connection."
+      ],
+      "surfaces": [
+        "plugin",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginPrivacy",
+        "pluginOauth"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0095",
+      "title": "Reject unsafe plugin OAuth callback",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Receive mismatched state/issuer/resource/callback data."
+      ],
+      "expected": [
+        "The callback is rejected without installing the credential."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginOauth"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0096",
+      "title": "Browse plugin projects",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Open Projects in the connected panel."
+      ],
+      "expected": [
+        "Accessible project summaries and website links appear."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginUi"
+      ],
+      "operations": [
+        "list_projects"
+      ],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0097",
+      "title": "Page plugin projects",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose More projects in the connected panel."
+      ],
+      "expected": [
+        "The next scoped page appends."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginUi"
+      ],
+      "operations": [
+        "list_projects"
+      ],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0098",
+      "title": "Search plugin issues by submission",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Enter a query in the plugin Issues tab and submit."
+      ],
+      "expected": [
+        "Issue results load; this panel currently requires submit rather than live-as-you-type search."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginSearch",
+        "pluginUi",
+        "pluginMcp",
+        "pluginModel"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "integrations/antigravity/tests/mcp-search.test.ts"
+      ],
+      "gapIds": [
+        "GAP-MCP-001",
+        "GAP-MCP-003"
+      ],
+      "notes": [
+        "The plugin query is a separate surface from the live web issue search."
+      ]
+    },
+    {
+      "id": "UC-MCP-0099",
+      "title": "Page plugin issues",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose More issues after a successful query."
+      ],
+      "expected": [
+        "The next result page appends within that query."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginUi",
+        "pluginMcp",
+        "pluginModel"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "integrations/antigravity/tests/mcp-search.test.ts"
+      ],
+      "gapIds": [
+        "GAP-MCP-003"
+      ],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0100",
+      "title": "Open plugin website resource",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Follow a project or issue link in the panel."
+      ],
+      "expected": [
+        "The configured website resource opens with safe link isolation."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0101",
+      "title": "Refresh plugin status",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Refresh the panel or return focus."
+      ],
+      "expected": [
+        "Connection status/account and accessible workspace refresh."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0102",
+      "title": "Serialize plugin rotating refresh",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Panel and MCP bridge require refresh concurrently."
+      ],
+      "expected": [
+        "The shared private-store lock serializes rotation rather than replaying a spent refresh."
+      ],
+      "surfaces": [
+        "plugin",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginRefresh",
+        "pluginStore"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0103",
+      "title": "Disconnect plugin connection",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Choose Disconnect while the server is reachable."
+      ],
+      "expected": [
+        "Server revocation completes before local credentials are deleted."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginDisconnect"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0104",
+      "title": "Retain recoverable offline disconnect",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Disconnect while the service is unreachable."
+      ],
+      "expected": [
+        "The error retains local connection state for retry or website revocation."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginDisconnect",
+        "pluginPrivacy"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0105",
+      "title": "Switch plugin account safely",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Disconnect then sign in with another account."
+      ],
+      "expected": [
+        "Old workspace rows and identity cannot leak into the new session."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginUi",
+        "pluginOauth"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0106",
+      "title": "Lock server settings while connected",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Try editing server/website while credential or login is active."
+      ],
+      "expected": [
+        "Controls require disconnect/cancel before changing connection target."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0107",
+      "title": "Preserve state during plugin upgrade",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Replace only the public plugin folder with a newer release."
+      ],
+      "expected": [
+        "Private settings and credentials remain in the separate user profile."
+      ],
+      "surfaces": [
+        "plugin",
+        "operator"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginGuide",
+        "pluginPrivacy"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-native-boundaries.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0108",
+      "title": "Keep credential material outside panel",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Inspect native panel messages/configuration output."
+      ],
+      "expected": [
+        "Bearer/refresh/password values are not sent into the panel or MCP configuration."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginPrivacy",
+        "pluginUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0109",
+      "title": "Use separate private plugin profile",
+      "actor": "operator",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Configure the documented separate private data-directory profile."
+      ],
+      "expected": [
+        "Settings and credentials are isolated from the default operating-system user profile."
+      ],
+      "surfaces": [
+        "plugin",
+        "operator"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginPrivacy",
+        "pluginStore"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go",
+        "frontend/e2e/coverage-native-boundaries.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0110",
+      "title": "Reject unsupported standalone panel context",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Open panel without the supported sidecar API."
+      ],
+      "expected": [
+        "The UI explains opening the panel in Antigravity."
+      ],
+      "surfaces": [
+        "plugin"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0111",
+      "title": "Document shared plugin deployment boundary",
+      "actor": "operator",
+      "preconditions": [
+        "The actor has the stated current approved account or client credential; local authorization uses isolated loopback development, and shared-provider cases explicitly remain pending."
+      ],
+      "steps": [
+        "Configure native plugin for a company shared server."
+      ],
+      "expected": [
+        "A reachable HTTPS API/site, real approved identity provider and explicit broker enablement remain required; copying plugin does not deploy cloud resources."
+      ],
+      "surfaces": [
+        "plugin",
+        "operator"
+      ],
+      "kind": "lifecycle",
+      "implementation": "external_pending",
+      "evidence": [
+        "pluginShared"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/mcp-tokens.spec.ts",
+        "frontend/e2e/mcp-oauth.spec.ts",
+        "frontend/e2e/mcp-remote.spec.ts",
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "backend/tests/integration/mcp_oauth_test.go"
+      ],
+      "gapIds": [
+        "GAP-MCP-002"
+      ],
+      "notes": []
+    },
+    {
+      "id": "UC-MCP-0112",
+      "title": "Plugin issue search in a modern project",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The plugin is connected and its account can read a modern-mode project."
+      ],
+      "steps": [
+        "Submit an issue query in the native plugin panel that uniquely matches work in the modern project."
+      ],
+      "expected": [
+        "The matching modern issue appears with its title, key and canonical stage display name."
+      ],
+      "surfaces": [
+        "plugin",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginMcp",
+        "pluginModel"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "integrations/antigravity/tests/mcp-search.test.ts"
+      ],
+      "gapIds": [
+        "GAP-MCP-003"
+      ],
+      "notes": [
+        "Corrected on 2026-10-19: canonical search replaced the gated legacy client. Local real-sidecar acceptance and unit regressions cover the repair; real hosted identity/deployment acceptance remains separate."
+      ]
+    },
+    {
+      "id": "UC-MCP-0113",
+      "title": "Plugin issue search across mixed project modes",
+      "actor": "plugin_user",
+      "preconditions": [
+        "The plugin account can access legacy and modern projects and issue search is unscoped."
+      ],
+      "steps": [
+        "Submit a plugin issue query matching accessible legacy and modern project work, then append any remaining pages."
+      ],
+      "expected": [
+        "Matching work from both project modes is returned and displayed without silently dropping either mode."
+      ],
+      "surfaces": [
+        "plugin",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "pluginMcp",
+        "pluginModel"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/antigravity-plugin.spec.ts",
+        "integrations/antigravity/tests/mcp-search.test.ts"
+      ],
+      "gapIds": [
+        "GAP-MCP-003"
+      ],
+      "notes": [
+        "Corrected on 2026-10-19: native plugin search now uses the canonical typed result across modes. Local acceptance verified a mixed 28-issue result over two pages; this does not establish hosted-provider acceptance."
+      ]
+    }
+  ]
+}

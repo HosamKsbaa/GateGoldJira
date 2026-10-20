@@ -1,0 +1,2410 @@
+{
+  "area": "notifications",
+  "title": "Watching, private inbox and notification delivery",
+  "summary": "Canonical owner of watch/unwatch. Event creation, preference and worker behavior are documented independently from external SMTP delivery. Related test files are references only; no tests were executed for this inventory.",
+  "sources": {
+    "watch": {
+      "path": "backend/internal/features/issues/organization.go",
+      "line": 130
+    },
+    "watchUi": {
+      "path": "frontend/src/app/features/issues/components/modern-issue-actions/modern-issue-actions.component.ts",
+      "line": 276
+    },
+    "service": {
+      "path": "backend/internal/features/notifications/service.go",
+      "line": 122
+    },
+    "single": {
+      "path": "backend/internal/features/notifications/service.go",
+      "line": 189
+    },
+    "read": {
+      "path": "backend/internal/features/notifications/service.go",
+      "line": 199
+    },
+    "all": {
+      "path": "backend/internal/features/notifications/service.go",
+      "line": 277
+    },
+    "events": {
+      "path": "backend/internal/features/notifications/events.go",
+      "line": 63
+    },
+    "inbox": {
+      "path": "frontend/src/app/features/notifications/pages/inbox/inbox.page.ts",
+      "line": 36
+    },
+    "inboxState": {
+      "path": "frontend/src/app/features/notifications/pages/inbox/inbox.page.ts",
+      "line": 657
+    },
+    "preferenceUi": {
+      "path": "frontend/src/app/features/notifications/components/notification-preferences.component.ts",
+      "line": 16
+    },
+    "preferences": {
+      "path": "backend/internal/features/notifications/preferences.go",
+      "line": 16
+    },
+    "savePreferences": {
+      "path": "backend/internal/features/notifications/preferences.go",
+      "line": 90
+    },
+    "worker": {
+      "path": "backend/internal/features/notifications/delivery.go",
+      "line": 49
+    },
+    "delivery": {
+      "path": "backend/internal/features/notifications/delivery.go",
+      "line": 108
+    },
+    "reminders": {
+      "path": "backend/internal/features/notifications/queries.sql",
+      "line": 92
+    },
+    "currentDelivery": {
+      "path": "backend/internal/features/notifications/queries.sql",
+      "line": 127
+    },
+    "smtp": {
+      "path": "backend/internal/features/notifications/smtp.go",
+      "line": 32
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-NTF-0001",
+      "title": "Watch accessible issue",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Choose Watch issue."
+      ],
+      "expected": [
+        "The caller subscription becomes active without changing issue content."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "watch",
+        "watchUi"
+      ],
+      "operations": [
+        "set_issue_watch"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0002",
+      "title": "Unwatch issue",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Choose Watching to stop following an issue."
+      ],
+      "expected": [
+        "Only the caller subscription is removed."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "watch",
+        "watchUi"
+      ],
+      "operations": [
+        "set_issue_watch"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0003",
+      "title": "Watch as viewer",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Watch a currently readable issue as a viewer."
+      ],
+      "expected": [
+        "Read access is sufficient to manage the private subscription."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "watch"
+      ],
+      "operations": [
+        "set_issue_watch"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0004",
+      "title": "Keep watch state private",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Read another account view of the same issue."
+      ],
+      "expected": [
+        "One account cannot replace or expose another user subscription through its own watch control."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "watch"
+      ],
+      "operations": [
+        "set_issue_watch"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0005",
+      "title": "Retry original watch choice",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Repeat a watch change with original retry reference."
+      ],
+      "expected": [
+        "The accepted personal watch state is returned without duplicate subscription effects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "watch"
+      ],
+      "operations": [
+        "set_issue_watch"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0006",
+      "title": "Notify watcher of generic issue change",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Another user changes an issue followed by the recipient."
+      ],
+      "expected": [
+        "The eligible watcher receives a watching reason when preferences permit."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "events"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0007",
+      "title": "Notify responsible people of comment",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Another user posts a comment on an issue."
+      ],
+      "expected": [
+        "Eligible reporter/assignee receive the comment reason."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "events"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0008",
+      "title": "Notify selected mention",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Another user selects the recipient as a comment mention."
+      ],
+      "expected": [
+        "The recipient receives a mention reason when still eligible."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "events"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0009",
+      "title": "Notify new mention after comment edit",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Edit a comment so a newly selected person is mentioned."
+      ],
+      "expected": [
+        "Eligible newly mentioned people receive a mention event."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "events"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0010",
+      "title": "Notify new assignee",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Another user assigns an issue to the recipient."
+      ],
+      "expected": [
+        "The recipient receives an assignment reason."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "events"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0011",
+      "title": "Notify stage change",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Another user changes the issue stage."
+      ],
+      "expected": [
+        "Responsible users receive the status reason."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "events"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0012",
+      "title": "Notify due-date change",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Another user changes the issue due date."
+      ],
+      "expected": [
+        "Responsible users receive the due_date reason."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "events"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0013",
+      "title": "Notify new blocked state",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "An issue becomes blocked by unfinished work."
+      ],
+      "expected": [
+        "Responsible users receive dependency_blocked."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "events"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0014",
+      "title": "Notify last blocker completion",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "The last required blocker finishes."
+      ],
+      "expected": [
+        "Responsible users receive dependency_resolved."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "events"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0015",
+      "title": "Notify new subtask",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "A child issue is created for the parent."
+      ],
+      "expected": [
+        "Responsible users receive subtask_created."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "events"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0016",
+      "title": "Notify last subtask completion",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "The last remaining child finishes."
+      ],
+      "expected": [
+        "Responsible users receive subtasks_completed."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "events"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0017",
+      "title": "Suppress self-notification",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "The actor is also a potential recipient of their own action."
+      ],
+      "expected": [
+        "No notification is addressed to that actor for the event."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "events"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0018",
+      "title": "Consolidate overlapping reasons",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "One recipient qualifies as watcher, responsible user and mention target for an event."
+      ],
+      "expected": [
+        "The recipient record combines distinct reasons without duplicate notifications."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "events"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0019",
+      "title": "Read private inbox",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Open Notifications."
+      ],
+      "expected": [
+        "Only the caller currently accessible notifications appear newest first."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "inbox",
+        "service"
+      ],
+      "operations": [
+        "list_notifications"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0020",
+      "title": "Read unread summary without mutation",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Request get_inbox_summary."
+      ],
+      "expected": [
+        "The current accessible unread count and company calendar date return without changing read state."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "get_inbox_summary"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0021",
+      "title": "Read one notification without marking it read",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Call get_notification for a current own notification."
+      ],
+      "expected": [
+        "Its content and revision return with unchanged readAt."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "single"
+      ],
+      "operations": [
+        "get_notification"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0022",
+      "title": "Open notification issue",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Choose Open issue from Inbox."
+      ],
+      "expected": [
+        "The notification is marked read and its issue opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "inboxState",
+        "inbox"
+      ],
+      "operations": [
+        "set_notification_read"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0023",
+      "title": "Mark notification read",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Select Mark read on an unread notification."
+      ],
+      "expected": [
+        "Read state/revision and unread summary update."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "read",
+        "inbox"
+      ],
+      "operations": [
+        "set_notification_read"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0024",
+      "title": "Mark notification unread",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Select Mark unread on a read notification."
+      ],
+      "expected": [
+        "ReadAt clears and the unread count reflects the change."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "read",
+        "inbox"
+      ],
+      "operations": [
+        "set_notification_read"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0025",
+      "title": "Keep unchanged read state a no-op",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Set a current notification to its already saved read state."
+      ],
+      "expected": [
+        "The current record returns without another read-state change event."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "read"
+      ],
+      "operations": [
+        "set_notification_read"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0026",
+      "title": "Reject missing current notification revision",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Set read state without a positive current revision."
+      ],
+      "expected": [
+        "Validation requires reading current state before changing it."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "read"
+      ],
+      "operations": [
+        "set_notification_read"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0027",
+      "title": "Handle concurrent read-state changes",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Save a stale notification revision."
+      ],
+      "expected": [
+        "A conflict includes current state; the stale request cannot overwrite it."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "read"
+      ],
+      "operations": [
+        "set_notification_read"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0028",
+      "title": "Mark all accessible notifications read",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Choose Mark all as read."
+      ],
+      "expected": [
+        "The caller accessible unread snapshot is marked read and changedCount/summary return."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "all",
+        "inbox"
+      ],
+      "operations": [
+        "mark_all_notifications_read"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0029",
+      "title": "Repeat empty mark-all safely",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Mark all read when no accessible unread notification remains."
+      ],
+      "expected": [
+        "Changed count is zero and no false change event is created."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "all"
+      ],
+      "operations": [
+        "mark_all_notifications_read"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0030",
+      "title": "Filter unread inbox",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Enable Unread only and apply the inbox filter."
+      ],
+      "expected": [
+        "Only unread current-access records are shown."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "inbox"
+      ],
+      "operations": [
+        "list_notifications"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0031",
+      "title": "Restore complete inbox view",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Disable Unread only and apply."
+      ],
+      "expected": [
+        "Read and unread records join the current accessible list."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "inbox"
+      ],
+      "operations": [
+        "list_notifications"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0032",
+      "title": "Page private inbox",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Choose Next inbox page."
+      ],
+      "expected": [
+        "The next bounded private result page appears."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "inbox",
+        "service"
+      ],
+      "operations": [
+        "list_notifications"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0033",
+      "title": "Refresh inbox",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Choose Refresh inbox."
+      ],
+      "expected": [
+        "Current count and page reload with visible busy/error feedback."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "inbox"
+      ],
+      "operations": [
+        "list_notifications"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0034",
+      "title": "Show caught-up state",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Open an unread-only inbox with no matches."
+      ],
+      "expected": [
+        "The page says the user is caught up."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "inbox"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0035",
+      "title": "Show empty history state",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Open the full inbox with no notification history."
+      ],
+      "expected": [
+        "A distinct Nothing here yet explanation appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "inbox"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0036",
+      "title": "Exclude revoked project content",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Remove project membership then reload inbox/summary."
+      ],
+      "expected": [
+        "Notifications and counts from inaccessible project content are excluded."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "list_notifications",
+        "get_inbox_summary"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0037",
+      "title": "Deny foreign notification read",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Request another user notification ID."
+      ],
+      "expected": [
+        "Unknown, foreign and inaccessible records share an unavailable outcome."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "single"
+      ],
+      "operations": [
+        "get_notification"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0038",
+      "title": "Deny foreign notification mutation",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Set read state on another account notification."
+      ],
+      "expected": [
+        "The operation cannot change another user inbox."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "read"
+      ],
+      "operations": [
+        "set_notification_read"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0039",
+      "title": "Permit viewer private inbox changes",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Read and set read state on own notification as Viewer."
+      ],
+      "expected": [
+        "Project read access suffices for personal inbox state changes."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "read"
+      ],
+      "operations": [
+        "get_notification",
+        "set_notification_read"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0040",
+      "title": "Retry uncertain inbox mutation",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Retry a lost accepted read/mark-all response using the original pending intent."
+      ],
+      "expected": [
+        "The operation resolves without duplicate semantic changes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "inboxState"
+      ],
+      "operations": [
+        "set_notification_read",
+        "mark_all_notifications_read"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0041",
+      "title": "Clear private inbox on session switch",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Change account while an inbox request is delayed."
+      ],
+      "expected": [
+        "Old private rows and pending results cannot populate the next account."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "inboxState"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0042",
+      "title": "Expand preference panel",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Open Notification preferences."
+      ],
+      "expected": [
+        "Current delivery channels, selected event kinds and availability status appear."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "preferenceUi"
+      ],
+      "operations": [
+        "get_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0043",
+      "title": "Read saved preferences",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Request current notification preferences."
+      ],
+      "expected": [
+        "The caller event/channel settings and revision are returned."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "preferences"
+      ],
+      "operations": [
+        "get_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0044",
+      "title": "Enable in-app updates",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Save Show new updates in my Inbox enabled."
+      ],
+      "expected": [
+        "Future eligible updates can appear in the caller inbox."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "savePreferences",
+        "preferenceUi"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0045",
+      "title": "Disable in-app updates",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Save Show new updates in my Inbox disabled."
+      ],
+      "expected": [
+        "New inbox delivery stops while old inbox history remains accessible."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "savePreferences",
+        "preferenceUi"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0046",
+      "title": "Select individual event kinds",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Toggle supported assignment/mention/comment/status/dependency/subtask/due/watching choices."
+      ],
+      "expected": [
+        "The saved distinct event set controls future eligible deliveries."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "savePreferences",
+        "preferenceUi"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0047",
+      "title": "Select all event kinds",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Choose Select all then save."
+      ],
+      "expected": [
+        "Every currently supported event reason is saved once."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "preferenceUi"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0048",
+      "title": "Select no event kinds",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Choose Select none then save."
+      ],
+      "expected": [
+        "An empty event subscription set is retained."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "preferenceUi"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0049",
+      "title": "Set email off",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Save Email updates Off."
+      ],
+      "expected": [
+        "New email delivery is disabled and queued work is rechecked before sending."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "savePreferences",
+        "currentDelivery"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0050",
+      "title": "Set instant email",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Save As updates happen."
+      ],
+      "expected": [
+        "Instant delivery preference is retained independent of current SMTP availability."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "savePreferences",
+        "preferenceUi"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0051",
+      "title": "Set daily digest",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Save Daily digest."
+      ],
+      "expected": [
+        "Daily grouping preference is retained."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "savePreferences",
+        "preferenceUi"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0052",
+      "title": "Show unavailable email configuration",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Open preferences while workspace email is not configured."
+      ],
+      "expected": [
+        "The page explicitly says delivery is unavailable but preferences may be saved."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "preferenceUi"
+      ],
+      "operations": [
+        "get_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [
+        "GAP-NTF-001"
+      ],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0053",
+      "title": "Enable due-today reminders",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Save dueReminders enabled with due_date event and an active delivery channel."
+      ],
+      "expected": [
+        "Eligible due-today work can generate reminders."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "savePreferences",
+        "reminders"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0054",
+      "title": "Explain deselected due-date event",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Enable due reminders while Due dates is unchecked."
+      ],
+      "expected": [
+        "The page explains selecting Due dates is needed for reminders."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "preferenceUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0055",
+      "title": "Reject unsupported email mode",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Save an email mode outside off/instant/daily."
+      ],
+      "expected": [
+        "Validation rejects the preference change."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "preferences"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0056",
+      "title": "Reject unsupported notification event",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Save an unknown event reason."
+      ],
+      "expected": [
+        "The preference command is rejected."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "preferences"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0057",
+      "title": "Reject duplicate event reason",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Repeat the same reason within the saved event array."
+      ],
+      "expected": [
+        "The service rejects duplicates."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "preferences"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0058",
+      "title": "Reject stale preference revision",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Save after another preferences revision has been committed."
+      ],
+      "expected": [
+        "Conflict guidance requires reloading saved settings."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "savePreferences"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0059",
+      "title": "Retry uncertain preference save",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Retry the frozen original pending preference payload."
+      ],
+      "expected": [
+        "The accepted preference result returns without duplicate changes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "preferenceUi"
+      ],
+      "operations": [
+        "update_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0060",
+      "title": "Reload saved preference values",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Choose Reload saved preferences."
+      ],
+      "expected": [
+        "The form reads current persisted choices."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "preferenceUi"
+      ],
+      "operations": [
+        "get_notification_preferences"
+      ],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0061",
+      "title": "Generate company-day reminders",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Run maintenance for the company current calendar date."
+      ],
+      "expected": [
+        "Due-today unfinished active work notifies eligible assignee/reporter using selected channels."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "worker",
+        "reminders"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0062",
+      "title": "Suppress duplicate due reminders",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Run maintenance again for the same issue due date."
+      ],
+      "expected": [
+        "Existing due event/recipient uniqueness prevents another in-app reminder."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "reminders"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0063",
+      "title": "Skip completed or archived reminder work",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Run maintenance for completed or archived work or archived projects."
+      ],
+      "expected": [
+        "No new due reminder is created for those records."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "reminders"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0064",
+      "title": "Skip reminders after due date changes",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Process queued reminder after due date no longer matches its reminder event."
+      ],
+      "expected": [
+        "Current delivery eligibility prevents sending the obsolete reminder."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "currentDelivery"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0065",
+      "title": "Deliver instant email",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Run configured delivery for an eligible instant update."
+      ],
+      "expected": [
+        "Email includes current issue key/title, safe summary and authenticated website link."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "happy_path",
+      "implementation": "external_pending",
+      "evidence": [
+        "delivery",
+        "smtp"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [
+        "GAP-NTF-001"
+      ],
+      "notes": [
+        "Worker/sender code exists; actual deployment mail receipt requires external configuration and evidence."
+      ]
+    },
+    {
+      "id": "UC-NTF-0066",
+      "title": "Deliver bounded daily digest",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Process due daily deliveries."
+      ],
+      "expected": [
+        "At most 50 eligible updates are grouped with current issue links."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "performance",
+      "implementation": "external_pending",
+      "evidence": [
+        "delivery"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [
+        "GAP-NTF-001"
+      ],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0067",
+      "title": "Cancel revoked queued delivery",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Remove account/project access or disable selected email/event before delivery."
+      ],
+      "expected": [
+        "Current authorization/preferences cause queued records to cancel rather than expose data."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "currentDelivery",
+        "delivery"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0068",
+      "title": "Retry temporary mail failure",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "The sender returns an error."
+      ],
+      "expected": [
+        "Delivery is rescheduled with increasing delay rather than marked sent."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "delivery"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0069",
+      "title": "Stop exhausted mail retry",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "The sender keeps failing through the bounded attempt limit."
+      ],
+      "expected": [
+        "The delivery becomes failed instead of retrying forever."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "delivery"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0070",
+      "title": "Preserve mail commit uncertainty",
+      "actor": "worker",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Allow a real local SMTP sink to acknowledge the owned DATA payload, hold only that delivery’s QUIT response, and kill only the owned secondary worker with SIGKILL before Send returns or its database transaction commits.",
+        "Observe the retained pending row, then restart the captured server and let it retry the same delivery."
+      ],
+      "expected": [
+        "The acknowledged external SMTP acceptance is not rolled back with the database transaction: the retained row remains pending with attempt 0 after the crash.",
+        "The retry may be acknowledged a second time with the same stable Message-ID, then persist sent with attempt 1; this demonstrates at-least-once mail and does not promise duplicate suppression."
+      ],
+      "surfaces": [
+        "background"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "delivery"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go",
+        "frontend/e2e/coverage-notification-worker.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-NTF-002"
+      ],
+      "notes": [
+        "This case documents the send-before-commit boundary, not a guarantee of duplicate suppression.",
+        "Local acceptance clarifies crash-before-commit rather than claiming a PostgreSQL COMMIT error was injected. Intended-provider receipt remains a separate pending acceptance target.",
+        "A SIGKILL can prevent Go coverage counter flushing for that child; runtime case evidence and measured source coverage must be reported separately.",
+        "The real local SMTP integration now verifies accepted DATA followed by owned-worker SIGKILL, retained pending attempt 0, and a second accepted delivery with the same Message-ID before sent attempt 1. The inherent at-least-once boundary remains documented; intended-provider acceptance remains pending separately."
+      ]
+    },
+    {
+      "id": "UC-NTF-0071",
+      "title": "Render Arabic inbox content",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Read notifications whose actors and summaries contain Arabic and mixed-direction text."
+      ],
+      "expected": [
+        "Names are bidi-isolated and summaries use automatic direction."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "inbox"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-NTF-0072",
+      "title": "Use preferences on narrow screens",
+      "actor": "user",
+      "preconditions": [
+        "The actor is active and approved; issue notifications refer to currently accessible project content unless a denial case states otherwise."
+      ],
+      "steps": [
+        "Open preferences at a narrow viewport and use keyboard-labelled controls."
+      ],
+      "expected": [
+        "Delivery choices remain reachable with visible state and labelled controls."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "preferenceUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/notifications.spec.ts",
+        "frontend/e2e/audit-notifications.spec.ts",
+        "backend/internal/features/notifications/events_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    }
+  ]
+}

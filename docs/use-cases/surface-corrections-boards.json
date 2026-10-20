@@ -1,0 +1,1752 @@
+{
+  "version": 1,
+  "purpose": "Preserve every stable native use-case ID, original steps and exact expected behavior while separating stateless business outcomes. This corrects applicability only; no row is passing evidence without its own executed assertions.",
+  "corrections": [
+    {
+      "id": "UC-BRD-0002",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The next cursor page appends to the directory."
+      ],
+      "stepsPreserved": [
+        "Choose to load more project boards."
+      ],
+      "reason": "Appending to an existing rendered list is client state; the stateless endpoint/tool returns a bounded page only.",
+      "serviceCases": [
+        "UC-BRD-0095"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/boards/reads.go",
+          "line": 105
+        }
+      ]
+    },
+    {
+      "id": "UC-WFL-0002",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The next bounded page appends to the corresponding list."
+      ],
+      "stepsPreserved": [
+        "Request the next cursor page of workflows."
+      ],
+      "reason": "Appending to an existing rendered list is client state; the stateless endpoint/tool returns a bounded page only.",
+      "serviceCases": [
+        "UC-WFL-0091"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.ts",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "id": "UC-WFL-0004",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The next bounded page appends to the corresponding list."
+      ],
+      "stepsPreserved": [
+        "Request the next cursor page of stages."
+      ],
+      "reason": "Appending to an existing rendered list is client state; the stateless endpoint/tool returns a bounded page only.",
+      "serviceCases": [
+        "UC-WFL-0092"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/configuration/workflow_reads.go",
+          "line": 18
+        }
+      ]
+    },
+    {
+      "id": "UC-WFL-0006",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The next bounded page appends to the corresponding list."
+      ],
+      "stepsPreserved": [
+        "Request the next cursor page of transitions."
+      ],
+      "reason": "Appending to an existing rendered list is client state; the stateless endpoint/tool returns a bounded page only.",
+      "serviceCases": [
+        "UC-WFL-0093"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/configuration/workflow_reads.go",
+          "line": 18
+        }
+      ]
+    },
+    {
+      "id": "UC-WFL-0008",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The next bounded page appends to the corresponding list."
+      ],
+      "stepsPreserved": [
+        "Request the next cursor page of type workflow bindings."
+      ],
+      "reason": "Appending to an existing rendered list is client state; the stateless endpoint/tool returns a bounded page only.",
+      "serviceCases": [
+        "UC-WFL-0094"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/configuration/bindings.go",
+          "line": 14
+        }
+      ]
+    },
+    {
+      "id": "UC-BLG-0004",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The next cursor page appends without duplicate rows."
+      ],
+      "stepsPreserved": [
+        "Choose More planned work."
+      ],
+      "reason": "Appending to an existing rendered list is client state; the stateless endpoint/tool returns a bounded page only.",
+      "serviceCases": [
+        "UC-BLG-0037"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/issues/backlog.go",
+          "line": 63
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0003",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The next cursor page appends."
+      ],
+      "stepsPreserved": [
+        "Choose Load more planning items."
+      ],
+      "reason": "Appending to an existing rendered list is client state; the stateless endpoint/tool returns a bounded page only.",
+      "serviceCases": [
+        "UC-PLN-0080"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/planning/service.go",
+          "line": 118
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0023",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The next bounded page appends to the selected planning item."
+      ],
+      "stepsPreserved": [
+        "Choose Load more linked issues."
+      ],
+      "reason": "Appending to an existing rendered list is client state; the stateless endpoint/tool returns a bounded page only.",
+      "serviceCases": [
+        "UC-PLN-0081"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/planning/service.go",
+          "line": 118
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0049",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The next bounded issue page appends using the report's loaded date window."
+      ],
+      "stepsPreserved": [
+        "Choose Load more active work."
+      ],
+      "reason": "Appending to an existing rendered list is client state; the stateless endpoint/tool returns a bounded page only.",
+      "serviceCases": [
+        "UC-PLN-0082"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/planning/reads.go",
+          "line": 142
+        }
+      ]
+    },
+    {
+      "id": "UC-INT-0003",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The next cursor page appends."
+      ],
+      "stepsPreserved": [
+        "Choose Load more development links."
+      ],
+      "reason": "Appending to an existing rendered list is client state; the stateless endpoint/tool returns a bounded page only.",
+      "serviceCases": [
+        "UC-INT-0059"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/integrations/development-links.component.ts",
+          "line": 169
+        }
+      ]
+    },
+    {
+      "id": "UC-INT-0015",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The next bounded rule page appends."
+      ],
+      "stepsPreserved": [
+        "Choose Load more rules."
+      ],
+      "reason": "Appending to an existing rendered list is client state; the stateless endpoint/tool returns a bounded page only.",
+      "serviceCases": [
+        "UC-INT-0060"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/integrations/automation-rules.page.ts",
+          "line": 242
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0008",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The new column order survives reload."
+      ],
+      "stepsPreserved": [
+        "Use the column's earlier control and save the layout."
+      ],
+      "reason": "The named earlier/later control is native UI; layout persistence is the distinct service outcome.",
+      "serviceCases": [
+        "UC-BRD-0096"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/pages/modern-board-settings/modern-board-settings.page.ts",
+          "line": 78
+        },
+        {
+          "path": "backend/internal/features/boards/layout_update.go",
+          "line": 65
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0009",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The new column order survives reload."
+      ],
+      "stepsPreserved": [
+        "Use the column's later control and save the layout."
+      ],
+      "reason": "The named earlier/later control is native UI; layout persistence is the distinct service outcome.",
+      "serviceCases": [
+        "UC-BRD-0097"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/pages/modern-board-settings/modern-board-settings.page.ts",
+          "line": 78
+        },
+        {
+          "path": "backend/internal/features/boards/layout_update.go",
+          "line": 65
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0019",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Matching cards update after the short typing debounce without a search-button click."
+      ],
+      "stepsPreserved": [
+        "Type an issue number in the board search input."
+      ],
+      "reason": "Typing debounce and bidirectional document rendering belong to the browser; the service matches the supplied query.",
+      "serviceCases": [
+        "UC-BRD-0098"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/components/native-board-filters/native-board-filters.component.ts",
+          "line": 36
+        },
+        {
+          "path": "backend/internal/features/boards/native_mcp.go",
+          "line": 10
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0020",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Matching cards update after the short typing debounce without a search-button click."
+      ],
+      "stepsPreserved": [
+        "Type a full issue key in the board search input."
+      ],
+      "reason": "Typing debounce and bidirectional document rendering belong to the browser; the service matches the supplied query.",
+      "serviceCases": [
+        "UC-BRD-0099"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/components/native-board-filters/native-board-filters.component.ts",
+          "line": 36
+        },
+        {
+          "path": "backend/internal/features/boards/native_mcp.go",
+          "line": 10
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0021",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Matching cards update after the short typing debounce without a search-button click."
+      ],
+      "stepsPreserved": [
+        "Type title text in the board search input."
+      ],
+      "reason": "Typing debounce and bidirectional document rendering belong to the browser; the service matches the supplied query.",
+      "serviceCases": [
+        "UC-BRD-0100"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/components/native-board-filters/native-board-filters.component.ts",
+          "line": 36
+        },
+        {
+          "path": "backend/internal/features/boards/native_mcp.go",
+          "line": 10
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0022",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Matching Arabic issues appear with readable bidirectional text."
+      ],
+      "stepsPreserved": [
+        "Type Arabic title text."
+      ],
+      "reason": "Typing debounce and bidirectional document rendering belong to the browser; the service matches the supplied query.",
+      "serviceCases": [
+        "UC-BRD-0101"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/components/native-board-filters/native-board-filters.component.ts",
+          "line": 36
+        },
+        {
+          "path": "backend/internal/features/boards/native_mcp.go",
+          "line": 10
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0036",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Eligible choices update as typed and cursor pages can be loaded."
+      ],
+      "stepsPreserved": [
+        "Type a teammate name in the assignment picker."
+      ],
+      "reason": "The searchable picker owns typing debounce and choice state; scoped eligible assignee lookup already has canonical service cases.",
+      "serviceCases": [
+        "UC-ISS-0197",
+        "UC-PRJ-0056"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/components/board-assignee-picker/board-assignee-picker.component.ts",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0037",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The board returns to its permanent saved view."
+      ],
+      "stepsPreserved": [
+        "Choose Clear filters."
+      ],
+      "reason": "Clear filters resets native controls; the unchanged permanent saved view and ordinary board read are the existing service outcomes.",
+      "serviceCases": [
+        "UC-BRD-0004",
+        "UC-BRD-0013"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/components/native-board-filters/native-board-filters.component.ts",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0038",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "A personal quick-filter button becomes available on boards in this project."
+      ],
+      "stepsPreserved": [
+        "Name and save the board's current temporary filter."
+      ],
+      "reason": "Rendering a project quick-filter button is client behavior; creating a private saved search is already canonical.",
+      "serviceCases": [
+        "UC-ISS-0144"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/components/board-quick-filters/board-quick-filters.component.ts",
+          "line": 227
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0039",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "That filter's criteria update at its current revision."
+      ],
+      "stepsPreserved": [
+        "Save current filters using an existing personal filter's exact name."
+      ],
+      "reason": "Resolving a same-named personal button to its saved-search identity is client behavior; updating complete stored private filters already has a canonical service case.",
+      "serviceCases": [
+        "UC-ISS-0146"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/components/board-quick-filters/board-quick-filters.component.ts",
+          "line": 227
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0048",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The stage changes through the authoritative workflow and board refreshes."
+      ],
+      "stepsPreserved": [
+        "Drag a card into a column with one eligible destination stage."
+      ],
+      "reason": "Dragging and refreshing the rendered board require the native browser; the authoritative move is a separate command.",
+      "serviceCases": [
+        "UC-BRD-0102"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/boards/movement.go",
+          "line": 83
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0049",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "A chooser requests an explicit destination instead of guessing."
+      ],
+      "stepsPreserved": [
+        "Drop a card into a column with several eligible stages."
+      ],
+      "reason": "Only the browser opens a chooser; the server enforces explicit target identity.",
+      "serviceCases": [
+        "UC-BRD-0103"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/boards/movement.go",
+          "line": 83
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0051",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The move follows the same stage eligibility and completion guards as dragging."
+      ],
+      "stepsPreserved": [
+        "Select a destination in a card's Move controls."
+      ],
+      "reason": "The card Move menu is a native interaction; it submits the same already-canonical authoritative board move.",
+      "serviceCases": [
+        "UC-BRD-0102"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/components/native-issue-card/native-issue-card.component.ts",
+          "line": 13
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0058",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The issue is created once, queued uploads finish, and its drawer opens."
+      ],
+      "stepsPreserved": [
+        "Complete the board Create issue form."
+      ],
+      "reason": "Orchestrating queued files, form completion and opening a drawer is client state; issue creation replay and asset finalization already have canonical service outcomes.",
+      "serviceCases": [
+        "UC-ISS-0022",
+        "UC-AST-0060",
+        "UC-AST-0063"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/pages/modern-kanban/modern-kanban.page.ts",
+          "line": 82
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0060",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Cards can be read while creation, dragging and mutation controls are unavailable."
+      ],
+      "stepsPreserved": [
+        "Open a board using viewer project access."
+      ],
+      "reason": "Hiding create/drag/menu controls requires the browser; read permission and mutation rejection are service outcomes.",
+      "serviceCases": [
+        "UC-BRD-0104"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/pages/modern-kanban/modern-kanban.page.ts",
+          "line": 82
+        },
+        {
+          "path": "backend/internal/features/boards/movement.go",
+          "line": 83
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0077",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "A visible explanation appears and no issue stage changes."
+      ],
+      "stepsPreserved": [
+        "Drop into a column with no eligible transition."
+      ],
+      "reason": "The drag gesture and visible explanation are native; command eligibility rejection is stateless.",
+      "serviceCases": [
+        "UC-BRD-0105"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/boards/movement.go",
+          "line": 83
+        }
+      ]
+    },
+    {
+      "id": "UC-BRD-0082",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The local draft remains for explicit review and a new revision-aware save."
+      ],
+      "stepsPreserved": [
+        "Review current settings after a stale layout save."
+      ],
+      "reason": "Preserving a local draft and requiring explicit review is native state; revision compare-and-set is the separate service guard.",
+      "serviceCases": [
+        "UC-BRD-0106"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/boards/pages/modern-board-settings/modern-board-settings.page.ts",
+          "line": 78
+        },
+        {
+          "path": "backend/internal/features/boards/layout_update.go",
+          "line": 65
+        }
+      ]
+    },
+    {
+      "id": "UC-WFL-0010",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The selected type's allowed and default workflow bindings load."
+      ],
+      "stepsPreserved": [
+        "Choose another issue type."
+      ],
+      "reason": "Changing the selected type in an existing editor is browser state; the scoped type-binding read is already canonical.",
+      "serviceCases": [
+        "UC-WFL-0007"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.ts",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "id": "UC-WFL-0037",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Its stage choices load and paginate independently."
+      ],
+      "stepsPreserved": [
+        "Choose a destination workflow in the migration editor."
+      ],
+      "reason": "The migration editor owns destination selection and independent choice lists; workflow-scoped stage reads/pages already have canonical service outcomes.",
+      "serviceCases": [
+        "UC-WFL-0003",
+        "UC-WFL-0092"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.ts",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "id": "UC-WFL-0048",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The editor sends a null reviewer role and the saved policy no longer requires approvals."
+      ],
+      "stepsPreserved": [
+        "Set required approval count to zero and save."
+      ],
+      "reason": "The editor choosing a null role is native serialization behavior; accepting the valid zero-approval policy is distinct.",
+      "serviceCases": [
+        "UC-WFL-0095"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/configuration/transition_policy.go",
+          "line": 56
+        }
+      ]
+    },
+    {
+      "id": "UC-WFL-0085",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The exact pending input and retry reference are reused while the form is frozen."
+      ],
+      "stepsPreserved": [
+        "Retry after the server accepts a write but its response is lost."
+      ],
+      "reason": "Keeping a form frozen during an uncertain response is client state; exact command replay is a service guarantee.",
+      "serviceCases": [
+        "UC-WFL-0096"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.ts",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "id": "UC-WFL-0086",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The draft remains but cannot save until current configuration has been explicitly reviewed."
+      ],
+      "stepsPreserved": [
+        "Review current configuration after a stale settings write."
+      ],
+      "reason": "Retaining and explicitly reviewing a draft is native state; configuration compare-and-set is a service guard.",
+      "serviceCases": [
+        "UC-WFL-0097"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.ts",
+          "line": 61
+        }
+      ]
+    },
+    {
+      "id": "UC-BLG-0009",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The new backlog order survives refresh without changing active board ordering."
+      ],
+      "stepsPreserved": [
+        "Drag a loaded row earlier in backlog."
+      ],
+      "reason": "Drag gestures and keyboard button activation require the browser; both submit the same relative reorder command.",
+      "serviceCases": [
+        "UC-BLG-0038"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+          "line": 236
+        },
+        {
+          "path": "backend/internal/features/issues/backlog.go",
+          "line": 125
+        }
+      ]
+    },
+    {
+      "id": "UC-BLG-0010",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The new backlog order is saved without requiring a drag gesture."
+      ],
+      "stepsPreserved": [
+        "Use the Rank earlier button."
+      ],
+      "reason": "Drag gestures and keyboard button activation require the browser; both submit the same relative reorder command.",
+      "serviceCases": [
+        "UC-BLG-0038"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+          "line": 236
+        },
+        {
+          "path": "backend/internal/features/issues/backlog.go",
+          "line": 125
+        }
+      ]
+    },
+    {
+      "id": "UC-BLG-0011",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The new backlog order survives refresh without changing active board ordering."
+      ],
+      "stepsPreserved": [
+        "Drag a loaded row later in backlog."
+      ],
+      "reason": "Drag gestures and keyboard button activation require the browser; both submit the same relative reorder command.",
+      "serviceCases": [
+        "UC-BLG-0039"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+          "line": 236
+        },
+        {
+          "path": "backend/internal/features/issues/backlog.go",
+          "line": 125
+        }
+      ]
+    },
+    {
+      "id": "UC-BLG-0012",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The new backlog order is saved without requiring a drag gesture."
+      ],
+      "stepsPreserved": [
+        "Use the Rank later button."
+      ],
+      "reason": "Drag gestures and keyboard button activation require the browser; both submit the same relative reorder command.",
+      "serviceCases": [
+        "UC-BLG-0039"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+          "line": 236
+        },
+        {
+          "path": "backend/internal/features/issues/backlog.go",
+          "line": 125
+        }
+      ]
+    },
+    {
+      "id": "UC-BLG-0007",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Uploads finish against the one created issue before the form completes."
+      ],
+      "stepsPreserved": [
+        "Create a backlog issue with queued files or pictures."
+      ],
+      "reason": "Waiting for queued uploads before form completion is native orchestration; planned issue creation and validated asset finalization are already separate service outcomes.",
+      "serviceCases": [
+        "UC-BLG-0006",
+        "UC-AST-0060"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+          "line": 236
+        }
+      ]
+    },
+    {
+      "id": "UC-BLG-0018",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Each confirmed issue leaves backlog and the success count advances."
+      ],
+      "stepsPreserved": [
+        "Choose Move selected to board."
+      ],
+      "reason": "Selected-row iteration and advancing a visible success count are native state; each issue uses the existing activation command.",
+      "serviceCases": [
+        "UC-BLG-0017"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+          "line": 236
+        },
+        {
+          "path": "backend/internal/features/issues/organization.go",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "id": "UC-BLG-0019",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Previously confirmed issues remain removed while unconfirmed work is available to retry."
+      ],
+      "stepsPreserved": [
+        "Retry after a later selected issue fails to activate."
+      ],
+      "reason": "Retaining partial selection/results and enabling retry across separate commands is client state; per-issue activation and stable creation replay are already service cases.",
+      "serviceCases": [
+        "UC-BLG-0017",
+        "UC-BLG-0031"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+          "line": 236
+        }
+      ]
+    },
+    {
+      "id": "UC-BLG-0021",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Creation, selection, ranking and activation controls are unavailable."
+      ],
+      "stepsPreserved": [
+        "Open backlog using viewer access."
+      ],
+      "reason": "Selection/creation/ranking controls are native; current read/write permission is a service outcome.",
+      "serviceCases": [
+        "UC-BLG-0040"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+          "line": 236
+        },
+        {
+          "path": "backend/internal/features/issues/backlog.go",
+          "line": 125
+        }
+      ]
+    },
+    {
+      "id": "UC-BLG-0032",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The existing issue ID is reused instead of issuing another create."
+      ],
+      "stepsPreserved": [
+        "Retry after issue creation succeeds but a queued upload fails."
+      ],
+      "reason": "Reusing a created issue across a queued-upload retry is client orchestration; stable creation and finalize replay are already canonical.",
+      "serviceCases": [
+        "UC-BLG-0031",
+        "UC-AST-0063"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+          "line": 236
+        }
+      ]
+    },
+    {
+      "id": "UC-BLG-0036",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The exact title remains readable with automatic direction."
+      ],
+      "stepsPreserved": [
+        "Create and read planned work with Arabic text."
+      ],
+      "reason": "Automatic document direction and readable rendering require a browser; Unicode persistence is the service outcome.",
+      "serviceCases": [
+        "UC-BLG-0041"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+          "line": 236
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0007",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The target date appears on its planning card."
+      ],
+      "stepsPreserved": [
+        "Choose and save a valid target date for an epic."
+      ],
+      "reason": "Rendering the target on a planning card is native; typed date persistence is the service outcome.",
+      "serviceCases": [
+        "UC-PLN-0083"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/planning/project-planning.page.ts",
+          "line": 388
+        },
+        {
+          "path": "backend/internal/features/planning/service.go",
+          "line": 118
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0008",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The planning card shows no target date."
+      ],
+      "stepsPreserved": [
+        "Clear and save the target date of an epic."
+      ],
+      "reason": "Rendering the target on a planning card is native; typed date persistence is the service outcome.",
+      "serviceCases": [
+        "UC-PLN-0084"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/planning/project-planning.page.ts",
+          "line": 388
+        },
+        {
+          "path": "backend/internal/features/planning/service.go",
+          "line": 118
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0015",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The target date appears on its planning card."
+      ],
+      "stepsPreserved": [
+        "Choose and save a valid target date for a release."
+      ],
+      "reason": "Rendering the target on a planning card is native; typed date persistence is the service outcome.",
+      "serviceCases": [
+        "UC-PLN-0085"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/planning/project-planning.page.ts",
+          "line": 388
+        },
+        {
+          "path": "backend/internal/features/planning/service.go",
+          "line": 118
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0016",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The planning card shows no target date."
+      ],
+      "stepsPreserved": [
+        "Clear and save the target date of a release."
+      ],
+      "reason": "Rendering the target on a planning card is native; typed date persistence is the service outcome.",
+      "serviceCases": [
+        "UC-PLN-0086"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/planning/project-planning.page.ts",
+          "line": 388
+        },
+        {
+          "path": "backend/internal/features/planning/service.go",
+          "line": 118
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0028",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The selection autosaves without a Save button and the other assignment is preserved."
+      ],
+      "stepsPreserved": [
+        "Choose an epic on the issue."
+      ],
+      "reason": "Autosaving directly from a control without a Save button requires the native editor; the relationship mutation is stateless.",
+      "serviceCases": [
+        "UC-PLN-0087"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/planning/issue-planning.component.ts",
+          "line": 31
+        },
+        {
+          "path": "backend/internal/features/planning/service.go",
+          "line": 272
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0031",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The selection autosaves without a Save button and the other assignment is preserved."
+      ],
+      "stepsPreserved": [
+        "Choose a release on the issue."
+      ],
+      "reason": "Autosaving directly from a control without a Save button requires the native editor; the relationship mutation is stateless.",
+      "serviceCases": [
+        "UC-PLN-0088"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/planning/issue-planning.component.ts",
+          "line": 31
+        },
+        {
+          "path": "backend/internal/features/planning/service.go",
+          "line": 272
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0034",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Cursor choices append without duplicate identities; an existing selected value remains visible."
+      ],
+      "stepsPreserved": [
+        "Load more epics and releases in the issue Planning section."
+      ],
+      "reason": "Appending and retaining an already-selected option is client reconciliation; bounded kind-filtered planning-item pages are the canonical service reads.",
+      "serviceCases": [
+        "UC-PLN-0080",
+        "UC-PLN-0025",
+        "UC-PLN-0026"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/planning/issue-planning.component.ts",
+          "line": 31
+        },
+        {
+          "path": "frontend/src/app/features/planning/issue-planning.component.html",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0039",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "A default inclusive 30-day UTC window loads."
+      ],
+      "stepsPreserved": [
+        "Open project Reports."
+      ],
+      "reason": "The native Reports page computes its default 30-day UTC range; get_kanban_report requires explicit from/through and has no implicit default-window operation.",
+      "serviceCases": [
+        "UC-PLN-0040"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/planning/kanban-report.page.ts",
+          "line": 372
+        },
+        {
+          "path": "backend/internal/features/planning/reads.go",
+          "line": 142
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0064",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Read views remain available; write controls and server mutations are refused."
+      ],
+      "stepsPreserved": [
+        "Open planning as a viewer and attempt a planning write."
+      ],
+      "reason": "Hidden write controls are native; planning authorization is the separate service guarantee.",
+      "serviceCases": [
+        "UC-PLN-0089"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/planning/project-planning.page.ts",
+          "line": 388
+        },
+        {
+          "path": "backend/internal/features/planning/service.go",
+          "line": 118
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0067",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The draft reuses the latest unrelated assignment and needs explicit apply."
+      ],
+      "stepsPreserved": [
+        "Review a stale epic/release autosave."
+      ],
+      "reason": "Preserving a local draft and applying an explicitly reviewed merge requires the native editor; compare-and-set is stateless.",
+      "serviceCases": [
+        "UC-PLN-0090"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/planning/issue-planning.component.ts",
+          "line": 31
+        }
+      ]
+    },
+    {
+      "id": "UC-PLN-0075",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Unicode text is retained and displayed using automatic direction."
+      ],
+      "stepsPreserved": [
+        "Create or edit an epic/release with Arabic name and description."
+      ],
+      "reason": "Automatic document direction and readable rendering require the browser; exact Unicode persistence is a service outcome.",
+      "serviceCases": [
+        "UC-PLN-0091"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/planning/project-planning.page.ts",
+          "line": 388
+        },
+        {
+          "path": "backend/internal/features/planning/service.go",
+          "line": 28
+        }
+      ]
+    },
+    {
+      "id": "UC-INT-0001",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Visible manually entered links show kind, title and destination hostname."
+      ],
+      "stepsPreserved": [
+        "Open the issue's Development section."
+      ],
+      "reason": "The destination hostname is derived and rendered by the native template; the service returns URL metadata.",
+      "serviceCases": [
+        "UC-INT-0061"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/integrations/development-links.component.ts",
+          "line": 169
+        }
+      ]
+    },
+    {
+      "id": "UC-INT-0009",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The destination and displayed hostname update."
+      ],
+      "stepsPreserved": [
+        "Save a changed URL for a retained link."
+      ],
+      "reason": "Rendering the new hostname is native; accepting and retaining a URL is the distinct service outcome.",
+      "serviceCases": [
+        "UC-INT-0062"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/integrations/development-links.component.ts",
+          "line": 169
+        },
+        {
+          "path": "backend/internal/features/integrations/service.go",
+          "line": 102
+        }
+      ]
+    },
+    {
+      "id": "UC-INT-0013",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The exact title remains readable using automatic direction."
+      ],
+      "stepsPreserved": [
+        "Save a link using Arabic title text."
+      ],
+      "reason": "Automatic document direction and readable rendering require the browser; exact Unicode persistence is a service outcome.",
+      "serviceCases": [
+        "UC-INT-0063"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/integrations/development-links.component.ts",
+          "line": 169
+        },
+        {
+          "path": "backend/internal/features/integrations/service.go",
+          "line": 77
+        }
+      ]
+    },
+    {
+      "id": "UC-INT-0025",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Eligible assignee choices update after the typing debounce."
+      ],
+      "stepsPreserved": [
+        "Type a teammate name in Assign to."
+      ],
+      "reason": "Typing debounce and replacing visible assignee choices are native; scoped eligible assignee lookup already has a canonical service case.",
+      "serviceCases": [
+        "UC-ISS-0197"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/integrations/automation-rules.page.ts",
+          "line": 242
+        },
+        {
+          "path": "backend/internal/features/integrations/service.go",
+          "line": 234
+        }
+      ]
+    },
+    {
+      "id": "UC-INT-0026",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The next real cursor page appends without duplicate user IDs."
+      ],
+      "stepsPreserved": [
+        "Choose more assignees after a search."
+      ],
+      "reason": "Appending picker choices requires the browser; the service returns one bounded project/query-scoped page.",
+      "serviceCases": [
+        "UC-INT-0064"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/integrations/automation-rules.page.ts",
+          "line": 242
+        },
+        {
+          "path": "backend/internal/features/integrations/service.go",
+          "line": 234
+        }
+      ]
+    },
+    {
+      "id": "UC-INT-0030",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Links remain readable; add/edit/remove controls and writes are unavailable."
+      ],
+      "stepsPreserved": [
+        "Open Development as a project viewer."
+      ],
+      "reason": "Hiding add/edit/remove controls requires the native browser; current authorization is a service guarantee.",
+      "serviceCases": [
+        "UC-INT-0065"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/integrations/development-links.component.ts",
+          "line": 169
+        },
+        {
+          "path": "backend/internal/features/integrations/service.go",
+          "line": 102
+        }
+      ]
+    }
+  ]
+}

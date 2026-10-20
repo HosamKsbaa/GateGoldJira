@@ -1,0 +1,2029 @@
+{
+  "scope": "Access, projects and CSV transfer mixed-surface review",
+  "corrections": [
+    {
+      "area": "access",
+      "originalId": "UC-ACC-0002",
+      "serviceId": "UC-ACC-0062",
+      "before": {
+        "id": "UC-ACC-0002",
+        "title": "Sign in with local credentials",
+        "actor": "anonymous",
+        "preconditions": [
+          "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+        ],
+        "steps": [
+          "Enter a valid local username and password and submit."
+        ],
+        "expected": [
+          "The approved identity is installed and the requested safe route opens."
+        ],
+        "surfaces": [
+          "web",
+          "rest"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "loginSubmit",
+          "credentials",
+          "localServer"
+        ],
+        "operations": [],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [],
+        "httpOperations": [
+          "localSignIn"
+        ]
+      },
+      "after": {
+        "id": "UC-ACC-0002",
+        "title": "Sign in with local credentials",
+        "actor": "anonymous",
+        "preconditions": [
+          "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+        ],
+        "steps": [
+          "Enter a valid local username and password and submit."
+        ],
+        "expected": [
+          "The approved identity is installed and the requested safe route opens."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "loginSubmit",
+          "credentials",
+          "localServer"
+        ],
+        "operations": [],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-ACC-0062."
+        ],
+        "httpOperations": [
+          "localSignIn"
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-ACC-0062",
+        "title": "Exchange valid local credentials",
+        "actor": "anonymous",
+        "preconditions": [
+          "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+        ],
+        "steps": [
+          "Submit a valid local username and password to the local sign-in endpoint."
+        ],
+        "expected": [
+          "The server returns a bearer token for the active approved caller without a password or other account identity."
+        ],
+        "surfaces": [
+          "rest"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "loginSubmit",
+          "credentials",
+          "localServer"
+        ],
+        "operations": [],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-ACC-0002; it does not claim browser rendering, form state, session epochs or download assembly."
+        ],
+        "httpOperations": [
+          "localSignIn"
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/platform/auth/local_login.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "access",
+      "originalId": "UC-ACC-0029",
+      "serviceId": "UC-ACC-0059",
+      "before": {
+        "id": "UC-ACC-0029",
+        "title": "Refresh changed administrator status",
+        "actor": "user",
+        "preconditions": [
+          "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+        ],
+        "steps": [
+          "Refresh identity after administrator privilege changes."
+        ],
+        "expected": [
+          "The session epoch changes and dependent protected views can discard stale privilege state."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "permission",
+        "implementation": "implemented",
+        "evidence": [
+          "session"
+        ],
+        "operations": [
+          "get_me"
+        ],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-ACC-0029",
+        "title": "Refresh changed administrator status",
+        "actor": "user",
+        "preconditions": [
+          "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+        ],
+        "steps": [
+          "Refresh identity after administrator privilege changes."
+        ],
+        "expected": [
+          "The session epoch changes and dependent protected views can discard stale privilege state."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "permission",
+        "implementation": "implemented",
+        "evidence": [
+          "session"
+        ],
+        "operations": [
+          "get_me"
+        ],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-ACC-0059."
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-ACC-0059",
+        "title": "Read current changed administrator privilege",
+        "actor": "user",
+        "preconditions": [
+          "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+        ],
+        "steps": [
+          "Read get_me after the caller company administrator privilege changes."
+        ],
+        "expected": [
+          "The returned administrator flag reflects current persisted authorization rather than token-time privilege."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "permission",
+        "implementation": "implemented",
+        "evidence": [
+          "session"
+        ],
+        "operations": [
+          "get_me"
+        ],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-ACC-0029; it does not claim browser rendering, form state, session epochs or download assembly."
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/features/identity/service.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "access",
+      "originalId": "UC-ACC-0041",
+      "serviceId": "UC-ACC-0060",
+      "before": {
+        "id": "UC-ACC-0041",
+        "title": "Preserve Arabic display name",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+        ],
+        "steps": [
+          "Approve or rename an account using Arabic or mixed-language text."
+        ],
+        "expected": [
+          "The name is retained and rendered with automatic direction."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "localization",
+        "implementation": "implemented",
+        "evidence": [
+          "usersUi",
+          "approve"
+        ],
+        "operations": [
+          "approve_user",
+          "update_user"
+        ],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-ACC-0041",
+        "title": "Preserve Arabic display name",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+        ],
+        "steps": [
+          "Approve or rename an account using Arabic or mixed-language text."
+        ],
+        "expected": [
+          "The name is retained and rendered with automatic direction."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "localization",
+        "implementation": "implemented",
+        "evidence": [
+          "usersUi",
+          "approve"
+        ],
+        "operations": [
+          "approve_user",
+          "update_user"
+        ],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-ACC-0060."
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-ACC-0060",
+        "title": "Preserve Arabic account text through service contracts",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+        ],
+        "steps": [
+          "Approve or rename an account using Arabic or mixed-language text."
+        ],
+        "expected": [
+          "The typed account result and subsequent directory read preserve the exact display name."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "localization",
+        "implementation": "implemented",
+        "evidence": [
+          "usersUi",
+          "approve"
+        ],
+        "operations": [
+          "approve_user",
+          "update_user"
+        ],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-ACC-0041; it does not claim browser rendering, form state, session epochs or download assembly."
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/features/identity/service.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "access",
+      "originalId": "UC-ACC-0046",
+      "serviceId": "UC-ACC-0063",
+      "before": {
+        "id": "UC-ACC-0046",
+        "title": "Edit account display name",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+        ],
+        "steps": [
+          "Save a changed account display name at its current revision."
+        ],
+        "expected": [
+          "The updated name appears in the refreshed company directory."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "update",
+          "usersUi"
+        ],
+        "operations": [
+          "update_user"
+        ],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-ACC-0046",
+        "title": "Edit account display name",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+        ],
+        "steps": [
+          "Save a changed account display name at its current revision."
+        ],
+        "expected": [
+          "The updated name appears in the refreshed company directory."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "update",
+          "usersUi"
+        ],
+        "operations": [
+          "update_user"
+        ],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-ACC-0063."
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-ACC-0063",
+        "title": "Persist account display-name changes",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+        ],
+        "steps": [
+          "Save a changed display name using the current account revision."
+        ],
+        "expected": [
+          "The typed saved account returns the exact updated display name and a new revision."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "update",
+          "usersUi"
+        ],
+        "operations": [
+          "update_user"
+        ],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-ACC-0046; it does not claim browser rendering, form state, session epochs or download assembly."
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/features/identity/service.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "access",
+      "originalId": "UC-ACC-0053",
+      "serviceId": "UC-ACC-0061",
+      "before": {
+        "id": "UC-ACC-0053",
+        "title": "Review account conflict",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+        ],
+        "steps": [
+          "Submit a stale account revision and select Review current account."
+        ],
+        "expected": [
+          "The conflict exposes current account values and explicit review repopulates the edit form."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "concurrency",
+        "implementation": "implemented",
+        "evidence": [
+          "update",
+          "usersUi"
+        ],
+        "operations": [
+          "update_user"
+        ],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-ACC-0053",
+        "title": "Review account conflict",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+        ],
+        "steps": [
+          "Submit a stale account revision and select Review current account."
+        ],
+        "expected": [
+          "The conflict exposes current account values and explicit review repopulates the edit form."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "concurrency",
+        "implementation": "implemented",
+        "evidence": [
+          "update",
+          "usersUi"
+        ],
+        "operations": [
+          "update_user"
+        ],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-ACC-0061."
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-ACC-0061",
+        "title": "Return current account in a stale-write conflict",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+        ],
+        "steps": [
+          "Submit an outdated account revision."
+        ],
+        "expected": [
+          "A typed conflict returns the current approved account and the stale change does not overwrite it."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "concurrency",
+        "implementation": "implemented",
+        "evidence": [
+          "update",
+          "usersUi"
+        ],
+        "operations": [
+          "update_user"
+        ],
+        "existingTests": [
+          "frontend/e2e/access.spec.ts",
+          "frontend/src/app/core/auth/auth.service.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-ACC-0053; it does not claim browser rendering, form state, session epochs or download assembly."
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/features/identity/service.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "projects",
+      "originalId": "UC-PRJ-0018",
+      "serviceId": "UC-PRJ-0065",
+      "before": {
+        "id": "UC-PRJ-0018",
+        "title": "Preserve Arabic project metadata",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Create or edit Arabic name and description."
+        ],
+        "expected": [
+          "Text remains intact and displays with automatic direction."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "localization",
+        "implementation": "implemented",
+        "evidence": [
+          "directory",
+          "projectUi"
+        ],
+        "operations": [
+          "create_project",
+          "update_project"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-PRJ-0018",
+        "title": "Preserve Arabic project metadata",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Create or edit Arabic name and description."
+        ],
+        "expected": [
+          "Text remains intact and displays with automatic direction."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "localization",
+        "implementation": "implemented",
+        "evidence": [
+          "directory",
+          "projectUi"
+        ],
+        "operations": [
+          "create_project",
+          "update_project"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0065."
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-PRJ-0065",
+        "title": "Preserve Arabic project text through service contracts",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Create or edit an Arabic project name and description."
+        ],
+        "expected": [
+          "Typed saved metadata and a subsequent project read preserve both exact strings."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "localization",
+        "implementation": "implemented",
+        "evidence": [
+          "directory",
+          "projectUi"
+        ],
+        "operations": [
+          "create_project",
+          "update_project"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-PRJ-0018; it does not claim browser rendering, form state, session epochs or download assembly."
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/features/projects/service.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "projects",
+      "originalId": "UC-PRJ-0002",
+      "serviceId": "UC-PRJ-0066",
+      "before": {
+        "id": "UC-PRJ-0002",
+        "title": "Read project overview",
+        "actor": "reader",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Open a current accessible project."
+        ],
+        "expected": [
+          "Its key, name, description, effective role and navigation links load."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "overview"
+        ],
+        "operations": [
+          "get_project"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-PRJ-0002",
+        "title": "Read project overview",
+        "actor": "reader",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Open a current accessible project."
+        ],
+        "expected": [
+          "Its key, name, description, effective role and navigation links load."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "overview"
+        ],
+        "operations": [
+          "get_project"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0066."
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-PRJ-0066",
+        "title": "Read current project metadata",
+        "actor": "reader",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Read get_project for a currently accessible project."
+        ],
+        "expected": [
+          "The typed result returns its current key, name, description and caller effective role."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "overview"
+        ],
+        "operations": [
+          "get_project"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-PRJ-0002; it does not claim browser rendering, form state, session epochs or download assembly."
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/features/projects/reads.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "projects",
+      "originalId": "UC-PRJ-0006",
+      "serviceId": "UC-PRJ-0067",
+      "before": {
+        "id": "UC-PRJ-0006",
+        "title": "Append project directory page",
+        "actor": "reader",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Choose More projects."
+        ],
+        "expected": [
+          "The next accessible bounded page is appended."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "directory",
+          "read"
+        ],
+        "operations": [
+          "list_projects"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-PRJ-0006",
+        "title": "Append project directory page",
+        "actor": "reader",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Choose More projects."
+        ],
+        "expected": [
+          "The next accessible bounded page is appended."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "directory",
+          "read"
+        ],
+        "operations": [
+          "list_projects"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0067."
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-PRJ-0067",
+        "title": "Page accessible project metadata",
+        "actor": "reader",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Read list_projects with a bounded limit, then continue using its next cursor."
+        ],
+        "expected": [
+          "Pages retain the same filtered total, do not repeat returned records and expose only accessible project metadata."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "directory",
+          "read"
+        ],
+        "operations": [
+          "list_projects"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-PRJ-0006; it does not claim browser rendering, form state, session epochs or download assembly."
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/features/projects/reads.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "projects",
+      "originalId": "UC-PRJ-0039",
+      "serviceId": "UC-PRJ-0068",
+      "before": {
+        "id": "UC-PRJ-0039",
+        "title": "Page membership candidates",
+        "actor": "project_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Choose More approved users."
+        ],
+        "expected": [
+          "Further bounded approved-user candidates load."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "membershipUi",
+          "memberCandidate"
+        ],
+        "operations": [
+          "list_membership_candidates"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-PRJ-0039",
+        "title": "Page membership candidates",
+        "actor": "project_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Choose More approved users."
+        ],
+        "expected": [
+          "Further bounded approved-user candidates load."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "membershipUi",
+          "memberCandidate"
+        ],
+        "operations": [
+          "list_membership_candidates"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0068."
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-PRJ-0068",
+        "title": "Page approved membership candidates",
+        "actor": "project_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Read list_membership_candidates using a bounded limit and then its next cursor."
+        ],
+        "expected": [
+          "Further eligible approved candidates are returned without repeated records."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "membershipUi",
+          "memberCandidate"
+        ],
+        "operations": [
+          "list_membership_candidates"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-PRJ-0039; it does not claim browser rendering, form state, session epochs or download assembly."
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/features/identity/reads.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "projects",
+      "originalId": "UC-PRJ-0024",
+      "serviceId": "UC-PRJ-0069",
+      "before": {
+        "id": "UC-PRJ-0024",
+        "title": "Retain immutable project key",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Open an existing project edit form."
+        ],
+        "expected": [
+          "The key is retained and cannot be renamed through the edit body."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "validation",
+        "implementation": "implemented",
+        "evidence": [
+          "projectUi",
+          "service"
+        ],
+        "operations": [
+          "update_project"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-PRJ-0024",
+        "title": "Retain immutable project key",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Open an existing project edit form."
+        ],
+        "expected": [
+          "The key is retained and cannot be renamed through the edit body."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "validation",
+        "implementation": "implemented",
+        "evidence": [
+          "projectUi",
+          "service"
+        ],
+        "operations": [
+          "update_project"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0069."
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-PRJ-0069",
+        "title": "Keep project key immutable through update contracts",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Update existing project metadata; attempt a key property that is absent from the published update schema."
+        ],
+        "expected": [
+          "Accepted metadata changes retain the project key and an update body containing a replacement key is rejected."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "validation",
+        "implementation": "implemented",
+        "evidence": [
+          "projectUi",
+          "service"
+        ],
+        "operations": [
+          "update_project"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-PRJ-0024; it does not claim browser rendering, form state, session epochs or download assembly."
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/features/projects/contracts.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "projects",
+      "originalId": "UC-PRJ-0032",
+      "serviceId": "UC-PRJ-0070",
+      "before": {
+        "id": "UC-PRJ-0032",
+        "title": "Review project conflict",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Save a stale project revision and review current values."
+        ],
+        "expected": [
+          "The current project is shown before another intentional edit."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "concurrency",
+        "implementation": "implemented",
+        "evidence": [
+          "service",
+          "projectUi"
+        ],
+        "operations": [
+          "update_project"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-PRJ-0032",
+        "title": "Review project conflict",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Save a stale project revision and review current values."
+        ],
+        "expected": [
+          "The current project is shown before another intentional edit."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "concurrency",
+        "implementation": "implemented",
+        "evidence": [
+          "service",
+          "projectUi"
+        ],
+        "operations": [
+          "update_project"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0070."
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-PRJ-0070",
+        "title": "Return current project in a stale-write conflict",
+        "actor": "company_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Submit an outdated project revision."
+        ],
+        "expected": [
+          "A typed conflict returns current metadata and the stale change does not overwrite it."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "concurrency",
+        "implementation": "implemented",
+        "evidence": [
+          "service",
+          "projectUi"
+        ],
+        "operations": [
+          "update_project"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-PRJ-0032; it does not claim browser rendering, form state, session epochs or download assembly."
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/features/projects/service.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "projects",
+      "originalId": "UC-PRJ-0048",
+      "serviceId": "UC-PRJ-0071",
+      "before": {
+        "id": "UC-PRJ-0048",
+        "title": "Review membership conflict",
+        "actor": "project_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Save using an outdated membership revision and choose Review current membership."
+        ],
+        "expected": [
+          "Current role/removal state appears and the form requires explicit review."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "concurrency",
+        "implementation": "implemented",
+        "evidence": [
+          "roleSave",
+          "membershipUi"
+        ],
+        "operations": [
+          "set_membership",
+          "remove_membership"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-PRJ-0048",
+        "title": "Review membership conflict",
+        "actor": "project_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Save using an outdated membership revision and choose Review current membership."
+        ],
+        "expected": [
+          "Current role/removal state appears and the form requires explicit review."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "concurrency",
+        "implementation": "implemented",
+        "evidence": [
+          "roleSave",
+          "membershipUi"
+        ],
+        "operations": [
+          "set_membership",
+          "remove_membership"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0071."
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-PRJ-0071",
+        "title": "Return current membership in a stale-write conflict",
+        "actor": "project_admin",
+        "preconditions": [
+          "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+        ],
+        "steps": [
+          "Save or remove access using an outdated membership revision."
+        ],
+        "expected": [
+          "A typed conflict returns current role and removal state; the stale intent does not overwrite it."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "concurrency",
+        "implementation": "implemented",
+        "evidence": [
+          "roleSave",
+          "membershipUi"
+        ],
+        "operations": [
+          "set_membership",
+          "remove_membership"
+        ],
+        "existingTests": [
+          "frontend/e2e/projects.spec.ts",
+          "frontend/e2e/project-configuration.spec.ts",
+          "backend/internal/features/identity/service_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-PRJ-0048; it does not claim browser rendering, form state, session epochs or download assembly."
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/features/identity/service.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "transfer",
+      "originalId": "UC-CSV-0024",
+      "serviceId": "UC-CSV-0071",
+      "before": {
+        "id": "UC-CSV-0024",
+        "title": "Read every preview row",
+        "actor": "writer",
+        "preconditions": [
+          "The actor has the stated project role; imports target an active project and exports require current read access unless the scenario says otherwise."
+        ],
+        "steps": [
+          "Choose Preview import."
+        ],
+        "expected": [
+          "Row numbers, titles, source keys, field errors and valid/error totals are displayed."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "preview",
+          "ui"
+        ],
+        "operations": [
+          "preview_issue_import"
+        ],
+        "existingTests": [
+          "frontend/e2e/import-export.spec.ts",
+          "frontend/src/app/features/import-export/csv-columns.spec.ts",
+          "backend/internal/features/issues/backlog_import_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-CSV-0024",
+        "title": "Read every preview row",
+        "actor": "writer",
+        "preconditions": [
+          "The actor has the stated project role; imports target an active project and exports require current read access unless the scenario says otherwise."
+        ],
+        "steps": [
+          "Choose Preview import."
+        ],
+        "expected": [
+          "Row numbers, titles, source keys, field errors and valid/error totals are displayed."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "preview",
+          "ui"
+        ],
+        "operations": [
+          "preview_issue_import"
+        ],
+        "existingTests": [
+          "frontend/e2e/import-export.spec.ts",
+          "frontend/src/app/features/import-export/csv-columns.spec.ts",
+          "backend/internal/features/issues/backlog_import_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-CSV-0071."
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-CSV-0071",
+        "title": "Return complete typed import preview rows",
+        "actor": "writer",
+        "preconditions": [
+          "The actor has the stated project role; imports target an active project and exports require current read access unless the scenario says otherwise."
+        ],
+        "steps": [
+          "Call preview_issue_import for a multirow CSV containing valid and invalid rows."
+        ],
+        "expected": [
+          "Every row includes its number, title, source key and field errors, with exact valid/error totals."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "happy_path",
+        "implementation": "implemented",
+        "evidence": [
+          "preview",
+          "ui"
+        ],
+        "operations": [
+          "preview_issue_import"
+        ],
+        "existingTests": [
+          "frontend/e2e/import-export.spec.ts",
+          "frontend/src/app/features/import-export/csv-columns.spec.ts",
+          "backend/internal/features/issues/backlog_import_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-CSV-0024; it does not claim browser rendering, form state, session epochs or download assembly."
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/features/issues/import_export.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "transfer",
+      "originalId": "UC-CSV-0064",
+      "serviceId": "UC-CSV-0072",
+      "before": {
+        "id": "UC-CSV-0064",
+        "title": "Collect every export page",
+        "actor": "reader",
+        "preconditions": [
+          "The actor has the stated project role; imports target an active project and exports require current read access unless the scenario says otherwise."
+        ],
+        "steps": [
+          "Export results spanning several server pages."
+        ],
+        "expected": [
+          "The browser combines all rows with one heading row and accurate progress."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "performance",
+        "implementation": "implemented",
+        "evidence": [
+          "export",
+          "exportUi",
+          "formula"
+        ],
+        "operations": [
+          "export_issues"
+        ],
+        "existingTests": [
+          "frontend/e2e/import-export.spec.ts",
+          "frontend/src/app/features/import-export/csv-columns.spec.ts",
+          "backend/internal/features/issues/backlog_import_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-CSV-0064",
+        "title": "Collect every export page",
+        "actor": "reader",
+        "preconditions": [
+          "The actor has the stated project role; imports target an active project and exports require current read access unless the scenario says otherwise."
+        ],
+        "steps": [
+          "Export results spanning several server pages."
+        ],
+        "expected": [
+          "The browser combines all rows with one heading row and accurate progress."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "performance",
+        "implementation": "implemented",
+        "evidence": [
+          "export",
+          "exportUi",
+          "formula"
+        ],
+        "operations": [
+          "export_issues"
+        ],
+        "existingTests": [
+          "frontend/e2e/import-export.spec.ts",
+          "frontend/src/app/features/import-export/csv-columns.spec.ts",
+          "backend/internal/features/issues/backlog_import_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-CSV-0072."
+        ]
+      },
+      "serviceCase": {
+        "id": "UC-CSV-0072",
+        "title": "Continue bounded CSV export pages",
+        "actor": "reader",
+        "preconditions": [
+          "The actor has the stated project role; imports target an active project and exports require current read access unless the scenario says otherwise."
+        ],
+        "steps": [
+          "Request an export limit smaller than the matching issue set and continue its cursor until exhausted."
+        ],
+        "expected": [
+          "Every matching issue is represented once across bounded pages with a consistent total; the terminal page has no next cursor."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "performance",
+        "implementation": "implemented",
+        "evidence": [
+          "export",
+          "exportUi",
+          "formula"
+        ],
+        "operations": [
+          "export_issues"
+        ],
+        "existingTests": [
+          "frontend/e2e/import-export.spec.ts",
+          "frontend/src/app/features/import-export/csv-columns.spec.ts",
+          "backend/internal/features/issues/backlog_import_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Atomic service counterpart split from UC-CSV-0064; it does not claim browser rendering, form state, session epochs or download assembly."
+        ]
+      },
+      "sourceRationale": {
+        "source": "backend/internal/features/issues/import_export.go",
+        "reason": "The original expected result combines a browser-only effect with a separately observable service contract. Preserve the browser ID and require typed service evidence on the new ID."
+      }
+    },
+    {
+      "area": "configuration",
+      "originalId": "UC-CFG-0070",
+      "before": {
+        "id": "UC-CFG-0070",
+        "title": "Retain draft when conflict refresh fails",
+        "actor": "project_admin",
+        "preconditions": [
+          "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+        ],
+        "steps": [
+          "Select Review current configuration while its reload fails."
+        ],
+        "expected": [
+          "The draft remains visible and stale save remains blocked."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "failure",
+        "implementation": "implemented",
+        "evidence": [
+          "editor",
+          "fieldUi"
+        ],
+        "operations": [],
+        "existingTests": [
+          "frontend/e2e/project-configuration.spec.ts",
+          "frontend/e2e/fields-approvals.spec.ts",
+          "backend/internal/features/configuration/fields_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-CFG-0070",
+        "title": "Retain draft when conflict refresh fails",
+        "actor": "project_admin",
+        "preconditions": [
+          "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+        ],
+        "steps": [
+          "Select Review current configuration while its reload fails."
+        ],
+        "expected": [
+          "The draft remains visible and stale save remains blocked."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "failure",
+        "implementation": "implemented",
+        "evidence": [
+          "editor",
+          "fieldUi"
+        ],
+        "operations": [],
+        "existingTests": [
+          "frontend/e2e/project-configuration.spec.ts",
+          "frontend/e2e/fields-approvals.spec.ts",
+          "backend/internal/features/configuration/fields_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Browser draft/transport ownership is exercised only through real browser controls. Atomic service concurrency and replay boundaries are recorded separately as UC-CFG-0089 and UC-CFG-0090."
+        ]
+      },
+      "reason": "The literal scenario requires retained visible drafts or frozen UI retry intent, which a direct REST/MCP command cannot exercise. Preserve it as web and test actual service boundaries separately.",
+      "sources": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.ts",
+        "backend/internal/features/configuration/service.go",
+        "backend/internal/platform/command/transaction.go"
+      ]
+    },
+    {
+      "area": "configuration",
+      "originalId": "UC-CFG-0071",
+      "before": {
+        "id": "UC-CFG-0071",
+        "title": "Retry uncertain configuration save",
+        "actor": "project_admin",
+        "preconditions": [
+          "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+        ],
+        "steps": [
+          "Retry a lost accepted save using the frozen original payload/reference."
+        ],
+        "expected": [
+          "The original accepted mutation is returned without duplication."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "concurrency",
+        "implementation": "implemented",
+        "evidence": [
+          "editor",
+          "fieldUi"
+        ],
+        "operations": [
+          "save_field",
+          "save_field_option",
+          "save_issue_type",
+          "save_priority"
+        ],
+        "existingTests": [
+          "frontend/e2e/project-configuration.spec.ts",
+          "frontend/e2e/fields-approvals.spec.ts",
+          "backend/internal/features/configuration/fields_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-CFG-0071",
+        "title": "Retry uncertain configuration save",
+        "actor": "project_admin",
+        "preconditions": [
+          "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+        ],
+        "steps": [
+          "Retry a lost accepted save using the frozen original payload/reference."
+        ],
+        "expected": [
+          "The original accepted mutation is returned without duplication."
+        ],
+        "surfaces": [
+          "web"
+        ],
+        "kind": "concurrency",
+        "implementation": "implemented",
+        "evidence": [
+          "editor",
+          "fieldUi"
+        ],
+        "operations": [
+          "save_field",
+          "save_field_option",
+          "save_issue_type",
+          "save_priority"
+        ],
+        "existingTests": [
+          "frontend/e2e/project-configuration.spec.ts",
+          "frontend/e2e/fields-approvals.spec.ts",
+          "backend/internal/features/configuration/fields_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "Browser draft/transport ownership is exercised only through real browser controls. Atomic service concurrency and replay boundaries are recorded separately as UC-CFG-0089 and UC-CFG-0090."
+        ]
+      },
+      "reason": "The literal scenario requires retained visible drafts or frozen UI retry intent, which a direct REST/MCP command cannot exercise. Preserve it as web and test actual service boundaries separately.",
+      "sources": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.ts",
+        "backend/internal/features/configuration/service.go",
+        "backend/internal/platform/command/transaction.go"
+      ]
+    },
+    {
+      "area": "transfer",
+      "originalId": "UC-CSV-0022",
+      "before": {
+        "id": "UC-CSV-0022",
+        "title": "Reject missing selected heading",
+        "actor": "writer",
+        "preconditions": [
+          "The actor has the stated project role; imports target an active project and exports require current read access unless the scenario says otherwise."
+        ],
+        "steps": [
+          "Map a field to a heading absent from the CSV."
+        ],
+        "expected": [
+          "A mapping validation error is returned."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "validation",
+        "implementation": "implemented",
+        "evidence": [
+          "mapping",
+          "preview"
+        ],
+        "operations": [
+          "preview_issue_import"
+        ],
+        "existingTests": [
+          "frontend/e2e/import-export.spec.ts",
+          "frontend/src/app/features/import-export/csv-columns.spec.ts",
+          "backend/internal/features/issues/backlog_import_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-CSV-0022",
+        "title": "Reject missing selected heading",
+        "actor": "writer",
+        "preconditions": [
+          "The actor has the stated project role; imports target an active project and exports require current read access unless the scenario says otherwise."
+        ],
+        "steps": [
+          "Map a field to a heading absent from the CSV."
+        ],
+        "expected": [
+          "A mapping validation error is returned."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "validation",
+        "implementation": "implemented",
+        "evidence": [
+          "mapping",
+          "preview"
+        ],
+        "operations": [
+          "preview_issue_import"
+        ],
+        "existingTests": [
+          "frontend/e2e/import-export.spec.ts",
+          "frontend/src/app/features/import-export/csv-columns.spec.ts",
+          "backend/internal/features/issues/backlog_import_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "The public CSV page fixes its route project and offers only headings parsed from the selected file. This hostile raw input is a REST/MCP service boundary, not an available browser control."
+        ]
+      },
+      "reason": "The UI cannot select an absent heading or submit another project filter: select options come only from parsed headers, and export filters bind the route project. Preserve exact raw service rejection with its stable ID and service surfaces.",
+      "sources": [
+        "frontend/src/app/features/import-export/pages/import-export/import-export.page.html",
+        "frontend/src/app/features/import-export/pages/import-export/import-export.page.ts"
+      ]
+    },
+    {
+      "area": "transfer",
+      "originalId": "UC-CSV-0066",
+      "before": {
+        "id": "UC-CSV-0066",
+        "title": "Reject cross-project export filters",
+        "actor": "reader",
+        "preconditions": [
+          "The actor has the stated project role; imports target an active project and exports require current read access unless the scenario says otherwise."
+        ],
+        "steps": [
+          "Pass filters selecting multiple or another project."
+        ],
+        "expected": [
+          "The export requires one current authorized project."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "permission",
+        "implementation": "implemented",
+        "evidence": [
+          "export",
+          "exportUi",
+          "formula"
+        ],
+        "operations": [
+          "export_issues"
+        ],
+        "existingTests": [
+          "frontend/e2e/import-export.spec.ts",
+          "frontend/src/app/features/import-export/csv-columns.spec.ts",
+          "backend/internal/features/issues/backlog_import_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-CSV-0066",
+        "title": "Reject cross-project export filters",
+        "actor": "reader",
+        "preconditions": [
+          "The actor has the stated project role; imports target an active project and exports require current read access unless the scenario says otherwise."
+        ],
+        "steps": [
+          "Pass filters selecting multiple or another project."
+        ],
+        "expected": [
+          "The export requires one current authorized project."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "permission",
+        "implementation": "implemented",
+        "evidence": [
+          "export",
+          "exportUi",
+          "formula"
+        ],
+        "operations": [
+          "export_issues"
+        ],
+        "existingTests": [
+          "frontend/e2e/import-export.spec.ts",
+          "frontend/src/app/features/import-export/csv-columns.spec.ts",
+          "backend/internal/features/issues/backlog_import_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "The public CSV page fixes its route project and offers only headings parsed from the selected file. This hostile raw input is a REST/MCP service boundary, not an available browser control."
+        ]
+      },
+      "reason": "The UI cannot select an absent heading or submit another project filter: select options come only from parsed headers, and export filters bind the route project. Preserve exact raw service rejection with its stable ID and service surfaces.",
+      "sources": [
+        "frontend/src/app/features/import-export/pages/import-export/import-export.page.html",
+        "frontend/src/app/features/import-export/pages/import-export/import-export.page.ts"
+      ]
+    },
+    {
+      "area": "transfer",
+      "originalId": "UC-CSV-0057",
+      "before": {
+        "id": "UC-CSV-0057",
+        "title": "Reject archived project import",
+        "actor": "writer",
+        "preconditions": [
+          "The actor has the stated project role; imports target an active project and exports require current read access unless the scenario says otherwise."
+        ],
+        "steps": [
+          "Call import_issues for archived project work."
+        ],
+        "expected": [
+          "Current authorization rejects creating work until restoration."
+        ],
+        "surfaces": [
+          "web",
+          "rest",
+          "mcp"
+        ],
+        "kind": "permission",
+        "implementation": "implemented",
+        "evidence": [
+          "import",
+          "page"
+        ],
+        "operations": [
+          "import_issues"
+        ],
+        "existingTests": [
+          "frontend/e2e/import-export.spec.ts",
+          "frontend/src/app/features/import-export/csv-columns.spec.ts",
+          "backend/internal/features/issues/backlog_import_test.go"
+        ],
+        "gapIds": [],
+        "notes": []
+      },
+      "after": {
+        "id": "UC-CSV-0057",
+        "title": "Reject archived project import",
+        "actor": "writer",
+        "preconditions": [
+          "The actor has the stated project role; imports target an active project and exports require current read access unless the scenario says otherwise."
+        ],
+        "steps": [
+          "Call import_issues for archived project work."
+        ],
+        "expected": [
+          "Current authorization rejects creating work until restoration."
+        ],
+        "surfaces": [
+          "rest",
+          "mcp"
+        ],
+        "kind": "permission",
+        "implementation": "implemented",
+        "evidence": [
+          "import",
+          "page"
+        ],
+        "operations": [
+          "import_issues"
+        ],
+        "existingTests": [
+          "frontend/e2e/import-export.spec.ts",
+          "frontend/src/app/features/import-export/csv-columns.spec.ts",
+          "backend/internal/features/issues/backlog_import_test.go"
+        ],
+        "gapIds": [],
+        "notes": [
+          "This row explicitly calls import_issues on an archived project, a service-only hostile request. The real browser hides import controls on archived projects, separately exercised by UC-CSV-0003."
+        ]
+      },
+      "reason": "The exact steps call the service while archived; the browser offers no import action in that state. Preserve the native browser prevention journey separately as existing UC-CSV-0003.",
+      "sources": [
+        "frontend/src/app/features/import-export/pages/import-export/import-export.page.html"
+      ]
+    }
+  ],
+  "excluded": "UC-ACC-0058 requires managed-mode approval and remains unclaimed in local fixtures."
+}

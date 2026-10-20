@@ -1,0 +1,325 @@
+{
+  "purpose": "Preserve exact service expectations and stable IDs for raw inputs that native controls cannot construct; actual native workflows and validation remain independent assertions. This is catalog review, not runtime coverage.",
+  "changes": [
+    {
+      "id": "UC-CFG-0012",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "Replacement controls enumerate only active types with the same behavior; a wrong-behavior ID cannot be submitted through this control.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.html"
+      ]
+    },
+    {
+      "id": "UC-CFG-0014",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "The type editor has no stable-key input and retains the existing key internally; this literal raw-key rename is an API boundary.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.html"
+      ]
+    },
+    {
+      "id": "UC-CFG-0016",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "Type and priority stable keys are generated from the entered display name; the native editor exposes no raw taxonomy-key input.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.html"
+      ]
+    },
+    {
+      "id": "UC-CFG-0023",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "The priority editor has no stable-key input and retains the stored key internally.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.html"
+      ]
+    },
+    {
+      "id": "UC-CFG-0029",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "Default selectors enumerate scoped active choices; a foreign or retired raw default ID is not a native option.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.html"
+      ]
+    },
+    {
+      "id": "UC-CFG-0041",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "The saved custom-field key input is readonly; the exact raw key-rewrite rejection belongs to REST/MCP.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.html"
+      ]
+    },
+    {
+      "id": "UC-CFG-0044",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "The default editor constructs its discriminated value from the selected field kind and clears it on a kind change; it cannot submit a mismatched discriminator.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.html"
+      ]
+    },
+    {
+      "id": "UC-CFG-0045",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "The choice picker exposes current scoped active option identities; raw foreign/missing option IDs cannot be selected.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.html"
+      ]
+    },
+    {
+      "id": "UC-CFG-0064",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "This aggregate raw-input case includes missing generated IDs/revisions that the native option form never exposes. Native name/order validation is tested independently.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.html"
+      ]
+    },
+    {
+      "id": "UC-CFG-0067",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "The native backfill action always requests a fixed bounded batch; there is no editable batch-size input.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.html"
+      ]
+    },
+    {
+      "id": "UC-CFG-0085",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "The ready activation submit button is disabled until explicit confirmation. The exact confirm=false service request is not a native action.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.html"
+      ]
+    },
+    {
+      "id": "UC-CFG-0088",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "Already-active projects show current mode and Open issues; they expose no repeat-activation submit action.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.html"
+      ]
+    },
+    {
+      "id": "UC-WFL-0062",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "Both transition endpoint selectors enumerate only the selected workflow stages; a cross-workflow raw endpoint is not selectable.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.html"
+      ]
+    },
+    {
+      "id": "UC-WFL-0072",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "The migration source selector enumerates closed stages only; an open source ID is not a native option.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.html"
+      ]
+    },
+    {
+      "id": "UC-WFL-0073",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "Migration targets enumerate open active stages, while the selected source is closed; the source cannot be submitted as its own target.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.html"
+      ]
+    },
+    {
+      "id": "UC-WFL-0075",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "Migration target options exclude retired stages; the raw retired target rejection is a service boundary.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.html"
+      ]
+    },
+    {
+      "id": "UC-WFL-0079",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "Native checkbox and multi-select state contains unique field identities; it cannot construct a duplicate-ID policy.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.html"
+      ]
+    },
+    {
+      "id": "UC-WFL-0080",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "The required-field picker reads only scoped project definitions; it has no input for an arbitrary foreign UUID.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.html"
+      ]
+    },
+    {
+      "id": "UC-WFL-0081",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "The native required-field picker filters out retired definitions; a retired UUID cannot be selected as a new requirement.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.html"
+      ]
+    },
+    {
+      "id": "UC-WFL-0084",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "reason": "The native policy command sets approverRole=null when count=0 and supplies the selected role for positive counts; incompatible raw combinations are service boundaries.",
+      "source": [
+        "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.html"
+      ]
+    }
+  ]
+}

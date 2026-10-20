@@ -1,0 +1,1000 @@
+{
+  "area": "platform",
+  "title": "Shared API, authorization and transport rules",
+  "summary": "Cross-feature service and transport invariants. These are separately identifiable contract/operational cases, not a claim that one generic test proves every endpoint.",
+  "sources": {
+    "transaction": {
+      "path": "backend/internal/platform/command/transaction.go",
+      "line": 153
+    },
+    "retry": {
+      "path": "backend/internal/platform/command/retry.go",
+      "line": 1
+    },
+    "pagination": {
+      "path": "backend/internal/platform/command/pagination.go",
+      "line": 17
+    },
+    "errors": {
+      "path": "backend/internal/platform/httpapi/errors.go",
+      "line": 1
+    },
+    "server": {
+      "path": "backend/internal/platform/httpapi/server.go",
+      "line": 95
+    },
+    "maintenance": {
+      "path": "backend/internal/platform/httpapi/maintenance.go",
+      "line": 36
+    },
+    "config": {
+      "path": "backend/internal/platform/config/config.go",
+      "line": 2
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-SYS-0001",
+      "title": "Reject anonymous protected read",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Read a protected business endpoint without usable authentication."
+      ],
+      "expected": [
+        "A protected failure is returned without business data."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "service_only",
+      "evidence": [
+        "transaction"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0002",
+      "title": "Reject inactive account",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Invoke a business operation after its approved account is disabled."
+      ],
+      "expected": [
+        "Current account eligibility is enforced before authorized business work."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "service_only",
+      "evidence": [
+        "transaction"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0003",
+      "title": "Reject removed project membership",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Read a project-scoped operation after membership removal."
+      ],
+      "expected": [
+        "Project content is unavailable under current membership."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "service_only",
+      "evidence": [
+        "transaction"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0004",
+      "title": "Viewer write denied",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Forge a mutation request as a viewer."
+      ],
+      "expected": [
+        "The shared service rejects the write even if browser controls are bypassed."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "service_only",
+      "evidence": [
+        "transaction"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0005",
+      "title": "Member configuration denied",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Forge a project-configuration mutation as an ordinary member."
+      ],
+      "expected": [
+        "Configure permission is required independently of ordinary write permission."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "service_only",
+      "evidence": [
+        "transaction"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0006",
+      "title": "Project administrator configuration scope",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Configure a different project without that project role."
+      ],
+      "expected": [
+        "Project-admin rights do not grant access outside authorized projects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "service_only",
+      "evidence": [
+        "transaction"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0007",
+      "title": "Archived project write denied",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Attempt an ordinary work mutation against archived project content."
+      ],
+      "expected": [
+        "Archived work stays read-only under shared authorization."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "service_only",
+      "evidence": [
+        "transaction"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0008",
+      "title": "Reauthorize accepted retry",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Replay an accepted business write after access is revoked."
+      ],
+      "expected": [
+        "A stored accepted result does not bypass current authorization."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "service_only",
+      "evidence": [
+        "retry"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0009",
+      "title": "Replay accepted intent",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Repeat the same accepted mutation with the same caller, operation, payload and retry reference."
+      ],
+      "expected": [
+        "The stored result is replayed without a second business side effect."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "service_only",
+      "evidence": [
+        "retry"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0010",
+      "title": "Reject changed retry payload",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Reuse a retry reference with a materially different mutation payload."
+      ],
+      "expected": [
+        "The second intent is rejected rather than being treated as the original request."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "retry"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0011",
+      "title": "Concurrent same retry",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Submit the same mutation reference concurrently."
+      ],
+      "expected": [
+        "One semantic business effect is accepted and subsequent equivalent attempts replay it."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "service_only",
+      "evidence": [
+        "retry"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0012",
+      "title": "No-op write history",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Save a supported mutation with values equal to current values."
+      ],
+      "expected": [
+        "The feature no-op contract preserves content revision and avoids duplicate business-change history."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "service_only",
+      "evidence": [
+        "retry"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0013",
+      "title": "Roll back failed mutation",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Cause a business validation failure before a transaction commits."
+      ],
+      "expected": [
+        "No partial accepted business state is exposed."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "failure",
+      "implementation": "service_only",
+      "evidence": [
+        "transaction"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0014",
+      "title": "Safe unconfirmed write error",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Interrupt a write so its outcome cannot be confirmed."
+      ],
+      "expected": [
+        "The response exposes a safe retry-same-reference action rather than internal database details."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "failure",
+      "implementation": "service_only",
+      "evidence": [
+        "transaction"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0015",
+      "title": "Default collection page size",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Read a shared paginated collection without an explicit limit."
+      ],
+      "expected": [
+        "The shared default is 25 items, subject to the envelope budget."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "pagination"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0016",
+      "title": "Maximum collection page size",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Request a shared collection limit of 100."
+      ],
+      "expected": [
+        "At most 100 items are emitted in a bounded page."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "performance",
+      "implementation": "service_only",
+      "evidence": [
+        "pagination"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0017",
+      "title": "Reject zero page limit",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Request a page limit of zero."
+      ],
+      "expected": [
+        "Pagination validation rejects it."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "pagination"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0018",
+      "title": "Reject excessive page limit",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Request a page limit above 100."
+      ],
+      "expected": [
+        "Pagination validation rejects it."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "pagination"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0019",
+      "title": "Reject tampered cursor",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Change a signed pagination cursor."
+      ],
+      "expected": [
+        "Cursor authentication rejects the altered token."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "pagination"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0020",
+      "title": "Reject foreign caller cursor",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Use another caller cursor with the same query."
+      ],
+      "expected": [
+        "Caller scoping prevents its use."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "service_only",
+      "evidence": [
+        "pagination"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0021",
+      "title": "Reject other operation cursor",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Use a cursor for a different paginated operation."
+      ],
+      "expected": [
+        "Operation scoping rejects continuation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "pagination"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0022",
+      "title": "Reject changed filter cursor",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Reuse a cursor after changing its normalized filter or sort scope."
+      ],
+      "expected": [
+        "The cursor is rejected instead of silently skipping or mixing results."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "pagination"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0023",
+      "title": "Budget-truncated continuation",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Read rows whose serialized envelope reaches the page byte budget."
+      ],
+      "expected": [
+        "The continuation is based on the final emitted item; inspected but unsent rows are not skipped."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "performance",
+      "implementation": "service_only",
+      "evidence": [
+        "pagination"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-platform-budget.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0024",
+      "title": "Empty collection shape",
+      "actor": "mcp_client",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Read a shared collection with no matches."
+      ],
+      "expected": [
+        "Items is an empty array and no next cursor is advertised."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "pagination"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0025",
+      "title": "Read liveness",
+      "actor": "operator",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Request GET /healthz."
+      ],
+      "expected": [
+        "A JSON status ok response is returned independently of database readiness."
+      ],
+      "surfaces": [
+        "operator",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "server"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0026",
+      "title": "Read readiness success",
+      "actor": "operator",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Request GET /readyz when the readiness callback succeeds."
+      ],
+      "expected": [
+        "A JSON ready response is returned."
+      ],
+      "surfaces": [
+        "operator",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "server"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0027",
+      "title": "Read readiness unavailable",
+      "actor": "operator",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Request GET /readyz when readiness fails or times out."
+      ],
+      "expected": [
+        "HTTP 503 with JSON unavailable is returned."
+      ],
+      "surfaces": [
+        "operator",
+        "rest"
+      ],
+      "kind": "failure",
+      "implementation": "service_only",
+      "evidence": [
+        "server"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0028",
+      "title": "Maintenance service identity",
+      "actor": "operator",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Call the configured maintenance endpoint with an allowed verified Google service-account token and empty body."
+      ],
+      "expected": [
+        "The bounded maintenance operation runs with a no-store response."
+      ],
+      "surfaces": [
+        "operator",
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "external_pending",
+      "evidence": [
+        "maintenance"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage.",
+        "Managed-provider acceptance requires an actual verified Google service-account token from the intended test service. Local fake-verifier unit checks are separate evidence and cannot verify this REST/operator journey. The real configured missing-credential boundary is UC-SYS-0029."
+      ]
+    },
+    {
+      "id": "UC-SYS-0029",
+      "title": "Maintenance missing credential",
+      "actor": "operator",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Call maintenance without a bearer credential."
+      ],
+      "expected": [
+        "HTTP 401 is returned and maintenance does not run."
+      ],
+      "surfaces": [
+        "operator",
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "service_only",
+      "evidence": [
+        "maintenance"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    },
+    {
+      "id": "UC-SYS-0030",
+      "title": "Maintenance wrong identity",
+      "actor": "operator",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Call maintenance using an unapproved service identity."
+      ],
+      "expected": [
+        "The request is denied before maintenance execution."
+      ],
+      "surfaces": [
+        "operator",
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "external_pending",
+      "evidence": [
+        "maintenance"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage.",
+        "Managed-provider acceptance requires an actual verified Google service-account token from the intended test service. Local fake-verifier unit checks are separate evidence and cannot verify this REST/operator journey. The real configured missing-credential boundary is UC-SYS-0029."
+      ]
+    },
+    {
+      "id": "UC-SYS-0031",
+      "title": "Maintenance wrong audience",
+      "actor": "operator",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Call maintenance with a token that does not validate for its configured audience."
+      ],
+      "expected": [
+        "Authentication fails."
+      ],
+      "surfaces": [
+        "operator",
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "external_pending",
+      "evidence": [
+        "maintenance"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage.",
+        "Managed-provider acceptance requires an actual verified Google service-account token from the intended test service. Local fake-verifier unit checks are separate evidence and cannot verify this REST/operator journey. The real configured missing-credential boundary is UC-SYS-0029."
+      ]
+    },
+    {
+      "id": "UC-SYS-0032",
+      "title": "Maintenance unexpected body",
+      "actor": "operator",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Call maintenance with a positive Content-Length body."
+      ],
+      "expected": [
+        "HTTP 400 is returned instead of accepting caller-controlled input."
+      ],
+      "surfaces": [
+        "operator",
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "external_pending",
+      "evidence": [
+        "maintenance"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage.",
+        "Managed-provider acceptance requires an actual verified Google service-account token from the intended test service. Local fake-verifier unit checks are separate evidence and cannot verify this REST/operator journey. The real configured missing-credential boundary is UC-SYS-0029."
+      ]
+    },
+    {
+      "id": "UC-SYS-0033",
+      "title": "Maintenance disabled configuration",
+      "actor": "operator",
+      "preconditions": [
+        "An isolated authorized environment is available with the described account, collection or configured endpoint state."
+      ],
+      "steps": [
+        "Omit required maintenance audience or service identities at registration."
+      ],
+      "expected": [
+        "The maintenance route is not registered."
+      ],
+      "surfaces": [
+        "operator",
+        "rest"
+      ],
+      "kind": "lifecycle",
+      "implementation": "service_only",
+      "evidence": [
+        "maintenance"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Shared invariant: apply to the relevant operation set when designing later tests; this entry alone is not per-operation coverage."
+      ]
+    }
+  ]
+}

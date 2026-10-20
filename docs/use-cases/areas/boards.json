@@ -1,0 +1,3944 @@
+{
+  "area": "boards",
+  "title": "Boards, columns, card movement and filters",
+  "summary": "Current independent Kanban boards. Workflow/stage definitions belong to workflows; this area owns column mapping, board-local ranks and WIP. Existing test references are evidence locations, not fresh pass claims.",
+  "sources": {
+    "page": {
+      "path": "frontend/src/app/features/boards/pages/modern-kanban/modern-kanban.page.ts",
+      "line": 82
+    },
+    "template": {
+      "path": "frontend/src/app/features/boards/pages/modern-kanban/modern-kanban.page.html",
+      "line": 1
+    },
+    "settings": {
+      "path": "frontend/src/app/features/boards/pages/modern-board-settings/modern-board-settings.page.ts",
+      "line": 78
+    },
+    "store": {
+      "path": "frontend/src/app/features/boards/modern-boards.store.ts",
+      "line": 34
+    },
+    "layout": {
+      "path": "backend/internal/features/boards/layout_update.go",
+      "line": 65
+    },
+    "movement": {
+      "path": "backend/internal/features/boards/movement.go",
+      "line": 83
+    },
+    "wip": {
+      "path": "backend/internal/features/boards/wip.go",
+      "line": 12
+    },
+    "filters": {
+      "path": "frontend/src/app/features/boards/components/native-board-filters/native-board-filters.component.ts",
+      "line": 36
+    },
+    "quickFilters": {
+      "path": "frontend/src/app/features/boards/components/board-quick-filters/board-quick-filters.component.ts",
+      "line": 227
+    },
+    "card": {
+      "path": "frontend/src/app/features/boards/components/native-issue-card/native-issue-card.component.ts",
+      "line": 13
+    },
+    "lifecycle": {
+      "path": "backend/internal/features/boards/service.go",
+      "line": 500
+    },
+    "nativeMcp": {
+      "path": "backend/internal/features/boards/native_mcp.go",
+      "line": 10
+    },
+    "directory": {
+      "path": "backend/internal/features/boards/reads.go",
+      "line": 105
+    },
+    "assigneePicker": {
+      "path": "frontend/src/app/features/boards/components/board-assignee-picker/board-assignee-picker.component.ts",
+      "line": 1
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-BRD-0001",
+      "title": "List project boards",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Open the project's Boards page."
+      ],
+      "expected": [
+        "Accessible named boards show creator and archive state."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "directory"
+      ],
+      "operations": [
+        "list_boards"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0002",
+      "title": "Page through project boards",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose to load more project boards."
+      ],
+      "expected": [
+        "The next cursor page appends to the directory."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "directory"
+      ],
+      "operations": [
+        "list_boards"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0095."
+      ],
+      "relatedCases": [
+        "UC-BRD-0095"
+      ]
+    },
+    {
+      "id": "UC-BRD-0003",
+      "title": "Create an independent board",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Enter a valid board name and create it."
+      ],
+      "expected": [
+        "A new board appears with default stage mappings and independent card ordering."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout"
+      ],
+      "operations": [
+        "create_board_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0004",
+      "title": "Open the Kanban board",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Open an accessible board."
+      ],
+      "expected": [
+        "Ordered columns and full saved-view counts appear with bounded card pages."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-surface-followup.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0005",
+      "title": "Rename a board",
+      "actor": "writer",
+      "preconditions": [
+        "Actor is the eligible board creator; board and project are active.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Save a changed name on a board the actor created."
+      ],
+      "expected": [
+        "The new board name survives reload."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0006",
+      "title": "Add a board column",
+      "actor": "writer",
+      "preconditions": [
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Add and save a new column on a manageable board."
+      ],
+      "expected": [
+        "The independently identified column appears after reload."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0007",
+      "title": "Rename a board column",
+      "actor": "writer",
+      "preconditions": [
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Save a new column name."
+      ],
+      "expected": [
+        "Its heading changes without renaming mapped workflow stages."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0008",
+      "title": "Move a column earlier",
+      "actor": "writer",
+      "preconditions": [
+        "Actor can manage this active board; the column has a neighbor in the requested direction.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Use the column's earlier control and save the layout."
+      ],
+      "expected": [
+        "The new column order survives reload."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0096."
+      ],
+      "relatedCases": [
+        "UC-BRD-0096"
+      ]
+    },
+    {
+      "id": "UC-BRD-0009",
+      "title": "Move a column later",
+      "actor": "writer",
+      "preconditions": [
+        "Actor can manage this active board; the column has a neighbor in the requested direction.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Use the column's later control and save the layout."
+      ],
+      "expected": [
+        "The new column order survives reload."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0097."
+      ],
+      "relatedCases": [
+        "UC-BRD-0097"
+      ]
+    },
+    {
+      "id": "UC-BRD-0010",
+      "title": "Remove a board column",
+      "actor": "writer",
+      "preconditions": [
+        "Actor can manage this board; at least two columns exist; required default-board coverage remains.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Remove a column and save a valid remaining layout."
+      ],
+      "expected": [
+        "The removed column is absent; issues retain their workflow stages."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0011",
+      "title": "Group stages in a column",
+      "actor": "writer",
+      "preconditions": [
+        "Actor can manage this active board; selected stages belong to the project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Select several stages for one column and save."
+      ],
+      "expected": [
+        "Issues at those stages display together in that column."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0012",
+      "title": "Map stages from several workflows",
+      "actor": "writer",
+      "preconditions": [
+        "Actor can manage this active board; multiple project workflows exist.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Map project stages from different workflows into one column."
+      ],
+      "expected": [
+        "Column grouping retains each issue's assigned workflow."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0013",
+      "title": "Save a permanent board view",
+      "actor": "writer",
+      "preconditions": [
+        "Actor can manage this active nondefault board.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Change a nondefault board's saved filters and save its layout."
+      ],
+      "expected": [
+        "Future board reads start from the restricted saved view."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0014",
+      "title": "Set a warning WIP limit",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Save a warning limit below the column's saved-view occupancy."
+      ],
+      "expected": [
+        "The full-view excess is indicated while eligible moves remain permitted."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout",
+        "template"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0015",
+      "title": "Set a hard WIP limit",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Save a valid hard capacity for the column."
+      ],
+      "expected": [
+        "Later occupancy-increasing writes are subject to the saved-view capacity."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "wip"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0016",
+      "title": "Clear a warning WIP limit",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Clear the warning limit and save."
+      ],
+      "expected": [
+        "The column has no warning threshold."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0017",
+      "title": "Archive a nondefault board",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Archive a board the actor can manage."
+      ],
+      "expected": [
+        "The board remains readable and becomes read-only."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "lifecycle"
+      ],
+      "operations": [
+        "archive_board"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0018",
+      "title": "Restore an archived board",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Restore an archived manageable board."
+      ],
+      "expected": [
+        "Eligible board writes become available again."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "lifecycle"
+      ],
+      "operations": [
+        "restore_board"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0019",
+      "title": "Search the board by number",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Type an issue number in the board search input."
+      ],
+      "expected": [
+        "Matching cards update after the short typing debounce without a search-button click."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0098."
+      ],
+      "relatedCases": [
+        "UC-BRD-0098"
+      ]
+    },
+    {
+      "id": "UC-BRD-0020",
+      "title": "Search the board by key",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Type a full issue key in the board search input."
+      ],
+      "expected": [
+        "Matching cards update after the short typing debounce without a search-button click."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0099."
+      ],
+      "relatedCases": [
+        "UC-BRD-0099"
+      ]
+    },
+    {
+      "id": "UC-BRD-0021",
+      "title": "Search the board by title",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Type title text in the board search input."
+      ],
+      "expected": [
+        "Matching cards update after the short typing debounce without a search-button click."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0100."
+      ],
+      "relatedCases": [
+        "UC-BRD-0100"
+      ]
+    },
+    {
+      "id": "UC-BRD-0022",
+      "title": "Search Arabic board titles",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Type Arabic title text."
+      ],
+      "expected": [
+        "Matching Arabic issues appear with readable bidirectional text."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "template"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0101."
+      ],
+      "relatedCases": [
+        "UC-BRD-0101"
+      ]
+    },
+    {
+      "id": "UC-BRD-0023",
+      "title": "Show only my work",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Enable Only my issues."
+      ],
+      "expected": [
+        "Temporary results contain the signed-in actor's assigned work within the saved view."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0024",
+      "title": "Filter by stage category",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose one stage category."
+      ],
+      "expected": [
+        "Only cards in that category remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "filters",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0025",
+      "title": "Filter by issue types",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose issue type IDs."
+      ],
+      "expected": [
+        "Only cards matching the chosen types remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "filters",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0026",
+      "title": "Filter by priorities",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose priority IDs."
+      ],
+      "expected": [
+        "Only cards matching the chosen priorities remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "filters",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0027",
+      "title": "Filter unassigned work",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose Unassigned."
+      ],
+      "expected": [
+        "Only unassigned matching cards remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "filters",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0028",
+      "title": "Filter a specific teammate",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose Specific teammate and select an eligible user."
+      ],
+      "expected": [
+        "Only that teammate's matching cards remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "filters",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0029",
+      "title": "Filter blocked work",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose Blocked."
+      ],
+      "expected": [
+        "Only cards with unfinished blockers remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "filters",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0030",
+      "title": "Filter unblocked work",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose Unblocked."
+      ],
+      "expected": [
+        "Only cards without unfinished blockers remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "filters",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0031",
+      "title": "Filter a due-date range",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Set valid Due from and Due through dates."
+      ],
+      "expected": [
+        "Only matching due-date cards remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "filters",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0032",
+      "title": "Filter overdue work",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose Overdue."
+      ],
+      "expected": [
+        "Only currently overdue matching cards remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "filters",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0033",
+      "title": "Filter work that is not overdue",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose Not overdue."
+      ],
+      "expected": [
+        "Results apply the server's current non-overdue predicate."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "filters",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0034",
+      "title": "Filter by parent",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose a parent issue."
+      ],
+      "expected": [
+        "Results contain matching children of that parent."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "filters",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0035",
+      "title": "Filter by labels",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose label IDs."
+      ],
+      "expected": [
+        "The selected labels narrow the board's saved view."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "filters",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0036",
+      "title": "Search board assignee choices",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Type a teammate name in the assignment picker."
+      ],
+      "expected": [
+        "Eligible choices update as typed and cursor pages can be loaded."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "assigneePicker"
+      ],
+      "operations": [
+        "list_assignees"
+      ],
+      "existingTests": [
+        "frontend/e2e/board-grouping-quick-filters.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-ISS-0197, UC-PRJ-0056."
+      ],
+      "relatedCases": [
+        "UC-ISS-0197",
+        "UC-PRJ-0056"
+      ]
+    },
+    {
+      "id": "UC-BRD-0037",
+      "title": "Clear temporary filters",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose Clear filters."
+      ],
+      "expected": [
+        "The board returns to its permanent saved view."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-surface-followup.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0004, UC-BRD-0013."
+      ],
+      "relatedCases": [
+        "UC-BRD-0004",
+        "UC-BRD-0013"
+      ]
+    },
+    {
+      "id": "UC-BRD-0038",
+      "title": "Save a personal quick filter",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Name and save the board's current temporary filter."
+      ],
+      "expected": [
+        "A personal quick-filter button becomes available on boards in this project."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "quickFilters"
+      ],
+      "operations": [
+        "save_issue_search"
+      ],
+      "existingTests": [
+        "frontend/e2e/board-grouping-quick-filters.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-ISS-0144."
+      ],
+      "relatedCases": [
+        "UC-ISS-0144"
+      ]
+    },
+    {
+      "id": "UC-BRD-0039",
+      "title": "Update a same-named personal quick filter",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Save current filters using an existing personal filter's exact name."
+      ],
+      "expected": [
+        "That filter's criteria update at its current revision."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "quickFilters"
+      ],
+      "operations": [
+        "save_issue_search"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-ISS-0146."
+      ],
+      "relatedCases": [
+        "UC-ISS-0146"
+      ]
+    },
+    {
+      "id": "UC-BRD-0040",
+      "title": "Apply a personal quick filter",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose an inactive personal quick-filter button."
+      ],
+      "expected": [
+        "Stored filter values narrow this board's saved view."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "quickFilters"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0041",
+      "title": "Toggle off an active quick filter",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose the already active quick-filter button."
+      ],
+      "expected": [
+        "Temporary filters clear."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "quickFilters"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0042",
+      "title": "Remove a personal quick filter",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Remove a saved personal quick filter."
+      ],
+      "expected": [
+        "The removed filter no longer appears as an active choice."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "quickFilters"
+      ],
+      "operations": [
+        "save_issue_search"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-surface-followup.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0043",
+      "title": "Keep quick filters private",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Read quick filters while signed in as a different project user."
+      ],
+      "expected": [
+        "Another user's personal filter is not disclosed."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "quickFilters"
+      ],
+      "operations": [
+        "list_saved_searches"
+      ],
+      "existingTests": [
+        "frontend/e2e/board-grouping-quick-filters.spec.ts",
+        "frontend/e2e/coverage-board-surface-followup.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0044",
+      "title": "Group cards by assignee",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose assignee in Group by."
+      ],
+      "expected": [
+        "Loaded cards partition into matching lanes with an explicit unassigned/no-epic lane."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "template"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/board-grouping-quick-filters.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0045",
+      "title": "Group cards by epic",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose epic in Group by."
+      ],
+      "expected": [
+        "Loaded cards partition into matching lanes with an explicit unassigned/no-epic lane."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "template"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/board-grouping-quick-filters.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0046",
+      "title": "Collapse a swimlane",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Collapse one grouped lane."
+      ],
+      "expected": [
+        "Only that lane's card cells change visibility; shared column state remains."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "template"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0047",
+      "title": "Expand a swimlane",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Expand one grouped lane."
+      ],
+      "expected": [
+        "Only that lane's card cells change visibility; shared column state remains."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "template"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0048",
+      "title": "Move a card by drag and drop",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Drag a card into a column with one eligible destination stage."
+      ],
+      "expected": [
+        "The stage changes through the authoritative workflow and board refreshes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "movement"
+      ],
+      "operations": [
+        "move_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0102."
+      ],
+      "relatedCases": [
+        "UC-BRD-0102"
+      ]
+    },
+    {
+      "id": "UC-BRD-0049",
+      "title": "Choose an ambiguous destination stage",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Drop a card into a column with several eligible stages."
+      ],
+      "expected": [
+        "A chooser requests an explicit destination instead of guessing."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "movement"
+      ],
+      "operations": [
+        "list_issue_transitions_v2",
+        "move_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0103."
+      ],
+      "relatedCases": [
+        "UC-BRD-0103"
+      ]
+    },
+    {
+      "id": "UC-BRD-0050",
+      "title": "Cancel a destination chooser",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Cancel the stage chooser."
+      ],
+      "expected": [
+        "No movement is committed."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0051",
+      "title": "Move through the card menu",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Select a destination in a card's Move controls."
+      ],
+      "expected": [
+        "The move follows the same stage eligibility and completion guards as dragging."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "card",
+        "page",
+        "movement"
+      ],
+      "operations": [
+        "move_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0102."
+      ],
+      "relatedCases": [
+        "UC-BRD-0102"
+      ]
+    },
+    {
+      "id": "UC-BRD-0052",
+      "title": "Reorder a card before a neighbor",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Choose a loaded same-column neighbor and Move before."
+      ],
+      "expected": [
+        "Only this board's card order changes; issue content and another board's rank remain unchanged."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "card",
+        "store",
+        "movement"
+      ],
+      "operations": [
+        "reorder_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0053",
+      "title": "Reorder a card after a neighbor",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Choose a loaded same-column neighbor and Move after."
+      ],
+      "expected": [
+        "Only this board's card order changes; issue content and another board's rank remain unchanged."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "card",
+        "store",
+        "movement"
+      ],
+      "operations": [
+        "reorder_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0054",
+      "title": "Open an issue drawer from a card",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Click a card body, title or issue key."
+      ],
+      "expected": [
+        "The selected issue opens in the board drawer."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "card",
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0055",
+      "title": "Open a card in another tab",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Use a modified click on its issue link."
+      ],
+      "expected": [
+        "The normal link opens the issue separately instead of forcing a drawer."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "card"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0056",
+      "title": "Open a full issue from the drawer",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose Open full issue."
+      ],
+      "expected": [
+        "The dedicated issue route opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "template"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0057",
+      "title": "Close an issue drawer",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Close the drawer after saving issue changes."
+      ],
+      "expected": [
+        "The board refreshes to reflect saved issue data."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "store"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0058",
+      "title": "Create an issue from the board",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Complete the board Create issue form."
+      ],
+      "expected": [
+        "The issue is created once, queued uploads finish, and its drawer opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-ISS-0022, UC-AST-0060, UC-AST-0063."
+      ],
+      "relatedCases": [
+        "UC-ISS-0022",
+        "UC-AST-0060",
+        "UC-AST-0063"
+      ]
+    },
+    {
+      "id": "UC-BRD-0059",
+      "title": "Cancel board issue creation",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Cancel issue creation and resolve any dirty-draft prompt."
+      ],
+      "expected": [
+        "No new issue is created; focus returns to the create trigger."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0060",
+      "title": "Read a board as a viewer",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Open a board using viewer project access."
+      ],
+      "expected": [
+        "Cards can be read while creation, dragging and mutation controls are unavailable."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "store",
+        "template"
+      ],
+      "operations": [
+        "get_board_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0104."
+      ],
+      "relatedCases": [
+        "UC-BRD-0104"
+      ]
+    },
+    {
+      "id": "UC-BRD-0061",
+      "title": "Reject layout edit by a nonmanager",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Submit a layout save for a board another user owns."
+      ],
+      "expected": [
+        "The server refuses mutation unless the actor has project administration authority."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "layout",
+        "settings"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BRD-0062",
+      "title": "Reject board writes while archived",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Submit a card move against an archived board."
+      ],
+      "expected": [
+        "The server refuses the move."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "movement",
+        "card",
+        "store"
+      ],
+      "operations": [
+        "move_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BRD-0063",
+      "title": "Reject duplicate column identifiers",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Submit two columns with the same ID."
+      ],
+      "expected": [
+        "Layout validation rejects the duplicate ID."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "layout",
+        "wip"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0064",
+      "title": "Reject duplicate column names",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Submit case-insensitively duplicate trimmed column names."
+      ],
+      "expected": [
+        "Layout validation rejects the duplicate name."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "layout",
+        "wip",
+        "settings"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BRD-0065",
+      "title": "Reject a stage mapped twice",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Map the same stage into two columns."
+      ],
+      "expected": [
+        "Layout validation rejects repeated stage ownership."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "layout",
+        "wip",
+        "settings"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BRD-0066",
+      "title": "Reject a foreign-project stage mapping",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Map a stage belonging to another project."
+      ],
+      "expected": [
+        "Layout validation refuses the foreign stage."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "layout",
+        "wip"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0067",
+      "title": "Keep at least one column",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Submit a layout containing no columns."
+      ],
+      "expected": [
+        "Layout validation refuses an empty board."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "layout",
+        "wip"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0068",
+      "title": "Protect default-board name",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Rename the default All Issues board."
+      ],
+      "expected": [
+        "The protected default name is retained."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "layout",
+        "wip"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0069",
+      "title": "Protect default-board saved view",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Restrict the default board with permanent filters."
+      ],
+      "expected": [
+        "The unrestricted default saved view is retained."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "layout",
+        "wip"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0070",
+      "title": "Protect required default stage coverage",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Omit an intake or occupied stage from the default board."
+      ],
+      "expected": [
+        "Saving is rejected until required coverage is restored."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "layout",
+        "wip",
+        "settings"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BRD-0071",
+      "title": "Reject hard capacity below occupancy",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Save a hard limit below the full saved-view count."
+      ],
+      "expected": [
+        "The layout transaction is rejected."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "layout",
+        "wip",
+        "settings"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BRD-0072",
+      "title": "Reject hard capacity without a limit",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Select hard-block mode with no numeric limit."
+      ],
+      "expected": [
+        "The layout is rejected."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "layout",
+        "wip",
+        "settings"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BRD-0073",
+      "title": "Reject relative hard-capacity filters",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Save a hard board using actor-relative or time-relative filters."
+      ],
+      "expected": [
+        "Validation requires deterministic issue-owned filters."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "layout",
+        "wip",
+        "settings"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BRD-0074",
+      "title": "Reject blocked hard-capacity filters",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Save a hard board using blocked or prerequisite-derived criteria."
+      ],
+      "expected": [
+        "Validation refuses capacity dependent on other work."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "layout",
+        "wip",
+        "settings"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BRD-0075",
+      "title": "Reject an invalid WIP threshold",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Submit a WIP limit outside 1–1000."
+      ],
+      "expected": [
+        "Validation rejects the threshold."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "layout",
+        "wip",
+        "settings"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BRD-0076",
+      "title": "Protect the default board from archive",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Attempt to archive the default board."
+      ],
+      "expected": [
+        "The default board remains active."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "lifecycle"
+      ],
+      "operations": [
+        "archive_board"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0077",
+      "title": "Reject an ineligible workflow destination",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Drop into a column with no eligible transition."
+      ],
+      "expected": [
+        "A visible explanation appears and no issue stage changes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "movement"
+      ],
+      "operations": [
+        "move_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0105."
+      ],
+      "relatedCases": [
+        "UC-BRD-0105"
+      ]
+    },
+    {
+      "id": "UC-BRD-0078",
+      "title": "Show unfinished completion prerequisites",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Move an issue to Done while blockers or required child work remain unfinished."
+      ],
+      "expected": [
+        "The move fails and unfinished prerequisite links can be read and paged."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "store",
+        "template"
+      ],
+      "operations": [
+        "move_board_card_v2",
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-surface-followup.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0079",
+      "title": "Prevent cross-swimlane ownership changes",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Drag between different assignee or epic lanes."
+      ],
+      "expected": [
+        "The drop does not implicitly change assignee or epic."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0080",
+      "title": "Retry an uncertain original move",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Retry after the move response is lost."
+      ],
+      "expected": [
+        "The original frozen input and retry reference confirm once without duplicate side effects."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "store",
+        "movement"
+      ],
+      "operations": [
+        "move_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0081",
+      "title": "Reject stale card/order revisions",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Move using an issue, layout or column revision changed by another actor."
+      ],
+      "expected": [
+        "A typed conflict prevents overwriting newer state."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "movement"
+      ],
+      "operations": [
+        "move_board_card_v2",
+        "reorder_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-native-validation.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0082",
+      "title": "Review conflicting board settings",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Review current settings after a stale layout save."
+      ],
+      "expected": [
+        "The local draft remains for explicit review and a new revision-aware save."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "settings"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/board-editor-rich-text.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BRD-0106."
+      ],
+      "relatedCases": [
+        "UC-BRD-0106"
+      ]
+    },
+    {
+      "id": "UC-BRD-0083",
+      "title": "Serialize the final hard-WIP slot",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Compete with another writer for a column's final hard-capacity slot."
+      ],
+      "expected": [
+        "Only capacity-valid occupancy commits."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "wip"
+      ],
+      "operations": [
+        "move_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0084",
+      "title": "Close board popups by keyboard",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Press Escape in filters or quick-filter management."
+      ],
+      "expected": [
+        "The popup closes and focus returns to its summary trigger."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "quickFilters"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0085",
+      "title": "Jump to a distant board column",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Choose a column using Jump to column on a narrow screen."
+      ],
+      "expected": [
+        "The requested column scrolls into view."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "template"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0086",
+      "title": "Bound initial board loading",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Open a many-column board."
+      ],
+      "expected": [
+        "Initial fan-out covers the first four columns with at most three concurrent card loaders."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "store"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/performance.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0087",
+      "title": "Load later columns when visible",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Scroll an unloaded later column into view."
+      ],
+      "expected": [
+        "Its card page loads on demand."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "store"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0088",
+      "title": "Bound a paged column to 200 cards",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Load enough column pages to exceed 200 unique loaded cards."
+      ],
+      "expected": [
+        "The latest 200-card window remains with a skipped-window notice and continuing cursor."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "store",
+        "template"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/board-grouping-quick-filters.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0089",
+      "title": "Partition grouped windows without duplication",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Group a column after paging its cards."
+      ],
+      "expected": [
+        "Each loaded issue belongs to one lane while sharing the same bounded column window."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "store"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/board-grouping-quick-filters.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0090",
+      "title": "Reveal a moved card in an unloaded destination",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Move to a later previously unloaded column."
+      ],
+      "expected": [
+        "The target column explicitly loads after the confirmed move."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "store"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0091",
+      "title": "Defer refresh during local work",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Keep a draft, drag or modal open while foreground refresh becomes due."
+      ],
+      "expected": [
+        "Refresh waits until the interaction is safe."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/daily-workflow.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0092",
+      "title": "Discard superseded board reads",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Change board/filter context while an older request is pending."
+      ],
+      "expected": [
+        "Generation, abort and session checks stop older results from replacing the current board."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "store"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/modern-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BRD-0093",
+      "title": "Clear old quick-filter success during a new save",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Start a second quick-filter save after a previous successful save, and delay its acknowledgement."
+      ],
+      "expected": [
+        "The previous success notice clears while the second request is pending; its action stays disabled, and the new success appears only after acknowledgement."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "quickFilters"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-boards.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-BRD-001"
+      ],
+      "notes": [
+        "Reproduced stale success feedback in the browser; the send path now clears its notice before each request.",
+        "Implementation status is separate from the first-attempt runtime evidence ledger."
+      ]
+    },
+    {
+      "id": "UC-BRD-0094",
+      "title": "Debounce expanded board query typing",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Rapidly type a query in the expanded board filter."
+      ],
+      "expected": [
+        "The complete final text is retained and one query read begins after the 120 ms debounce; discrete choice filters remain immediate."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "filters",
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-boards.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-BRD-002"
+      ],
+      "notes": [
+        "A 12-character input reproduced 12 metadata requests. The expanded text control now debounces before emitting filters.",
+        "Implementation status is separate from the first-attempt runtime evidence ledger."
+      ]
+    },
+    {
+      "id": "UC-BRD-0095",
+      "title": "Read another board directory cursor page",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Request a bounded board page, then request its signed next cursor."
+      ],
+      "expected": [
+        "The later board summaries are distinct, remain project-scoped and include correct continuation metadata."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "directory"
+      ],
+      "operations": [
+        "list_boards"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-boards.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BRD-0002."
+      ],
+      "relatedCases": [
+        "UC-BRD-0002"
+      ]
+    },
+    {
+      "id": "UC-BRD-0096",
+      "title": "Persist a column earlier in layout order",
+      "actor": "writer",
+      "preconditions": [
+        "Actor can manage this active board; the column has a neighbor in the requested direction.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Submit a valid layout placing an existing column earlier than its neighbor, then read it again."
+      ],
+      "expected": [
+        "The saved column ID order persists while existing stage mappings retain their identities."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-boards.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BRD-0008."
+      ],
+      "relatedCases": [
+        "UC-BRD-0008"
+      ]
+    },
+    {
+      "id": "UC-BRD-0097",
+      "title": "Persist a column later in layout order",
+      "actor": "writer",
+      "preconditions": [
+        "Actor can manage this active board; the column has a neighbor in the requested direction.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Submit a valid layout placing an existing column later than its neighbor, then read it again."
+      ],
+      "expected": [
+        "The saved column ID order persists while existing stage mappings retain their identities."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "settings",
+        "layout"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BRD-0009."
+      ],
+      "relatedCases": [
+        "UC-BRD-0009"
+      ]
+    },
+    {
+      "id": "UC-BRD-0098",
+      "title": "Match board cards by number through service",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Request board card pages using a number query and the current saved view."
+      ],
+      "expected": [
+        "Only authorized matching issue identities are returned within the permanent saved view."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-boards.spec.ts",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BRD-0019."
+      ],
+      "relatedCases": [
+        "UC-BRD-0019"
+      ]
+    },
+    {
+      "id": "UC-BRD-0099",
+      "title": "Match board cards by key through service",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Request board card pages using a key query and the current saved view."
+      ],
+      "expected": [
+        "Only authorized matching issue identities are returned within the permanent saved view."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-boards.spec.ts",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BRD-0020."
+      ],
+      "relatedCases": [
+        "UC-BRD-0020"
+      ]
+    },
+    {
+      "id": "UC-BRD-0100",
+      "title": "Match board cards by title through service",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Request board card pages using a title query and the current saved view."
+      ],
+      "expected": [
+        "Only authorized matching issue identities are returned within the permanent saved view."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "store"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-boards.spec.ts",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BRD-0021."
+      ],
+      "relatedCases": [
+        "UC-BRD-0021"
+      ]
+    },
+    {
+      "id": "UC-BRD-0101",
+      "title": "Match board cards by Arabic title through service",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Request board card pages using a Arabic title query and the current saved view."
+      ],
+      "expected": [
+        "Only authorized matching issue identities are returned within the permanent saved view."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "template"
+      ],
+      "operations": [
+        "get_board_v2",
+        "list_board_cards_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-boards.spec.ts",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BRD-0022."
+      ],
+      "relatedCases": [
+        "UC-BRD-0022"
+      ]
+    },
+    {
+      "id": "UC-BRD-0102",
+      "title": "Move a board card through an eligible stage",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Submit a revision-aware board-card move to a column with one eligible stage."
+      ],
+      "expected": [
+        "The issue stage changes through its current workflow and fresh board/card reads expose the accepted destination."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "movement"
+      ],
+      "operations": [
+        "move_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BRD-0048."
+      ],
+      "relatedCases": [
+        "UC-BRD-0048"
+      ]
+    },
+    {
+      "id": "UC-BRD-0103",
+      "title": "Require an explicit ambiguous board destination",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Move into a column with several eligible destinations without a targetStageId, then choose one valid target ID explicitly."
+      ],
+      "expected": [
+        "The ambiguous command is rejected without changing issue state; an explicit eligible target stage can be committed."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "movement"
+      ],
+      "operations": [
+        "list_issue_transitions_v2",
+        "move_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BRD-0049."
+      ],
+      "relatedCases": [
+        "UC-BRD-0049"
+      ]
+    },
+    {
+      "id": "UC-BRD-0104",
+      "title": "Enforce viewer access on board service commands",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with access to the project."
+      ],
+      "steps": [
+        "Read board metadata/cards as a viewer and attempt an issue/card mutation."
+      ],
+      "expected": [
+        "Authorized board/card reads succeed while current project permission denies the mutation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "store",
+        "template"
+      ],
+      "operations": [
+        "get_board_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BRD-0060."
+      ],
+      "relatedCases": [
+        "UC-BRD-0060"
+      ]
+    },
+    {
+      "id": "UC-BRD-0105",
+      "title": "Reject an ineligible board-card target",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project."
+      ],
+      "steps": [
+        "Submit a board move into a column with no eligible current-workflow destination."
+      ],
+      "expected": [
+        "Validation returns a safe failure and the stored issue stage and order remain unchanged."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "movement"
+      ],
+      "operations": [
+        "move_board_card_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BRD-0077."
+      ],
+      "relatedCases": [
+        "UC-BRD-0077"
+      ]
+    },
+    {
+      "id": "UC-BRD-0106",
+      "title": "Reject a stale board-layout revision",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in as an eligible writer in an active project.",
+        "Actor can manage this active board."
+      ],
+      "steps": [
+        "Submit a layout revision already superseded by an accepted configuration change."
+      ],
+      "expected": [
+        "A typed conflict returns current null with reload_current_state and leaves the accepted layout unchanged."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "settings"
+      ],
+      "operations": [
+        "save_board_layout_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BRD-0082.",
+        "Native SaveLayout uses orderConflict: current is null and the client explicitly reloads layout; the error does not embed a current LayoutView."
+      ],
+      "relatedCases": [
+        "UC-BRD-0082"
+      ]
+    },
+    {
+      "id": "UC-BRD-0107",
+      "title": "Keep default board name read-only",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in with administration access to an active project."
+      ],
+      "steps": [
+        "Open default-board settings as an administrator."
+      ],
+      "expected": [
+        "The current board name is enabled for reading but read-only; no native name edit can be submitted."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "settings"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-board-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native prevention counterpart; the related raw service-rejection clause remains unchanged."
+      ],
+      "relatedCases": [
+        "UC-BRD-0068"
+      ]
+    },
+    {
+      "id": "UC-BRD-0108",
+      "title": "Hide default board saved-view edits",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in with administration access to an active project."
+      ],
+      "steps": [
+        "Open default-board settings."
+      ],
+      "expected": [
+        "No Saved view filter editor exists and the accepted default view remains unrestricted."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "settings"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-board-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native prevention counterpart; the related raw service-rejection clause remains unchanged."
+      ],
+      "relatedCases": [
+        "UC-BRD-0069"
+      ]
+    },
+    {
+      "id": "UC-BRD-0109",
+      "title": "Prevent removing the final native column",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in with administration access to an active project."
+      ],
+      "steps": [
+        "Remove columns from a named board until one remains."
+      ],
+      "expected": [
+        "The final column stays visible and its Remove column control is disabled."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "settings"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-board-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native prevention counterpart; the related raw service-rejection clause remains unchanged."
+      ],
+      "relatedCases": [
+        "UC-BRD-0067"
+      ]
+    },
+    {
+      "id": "UC-BRD-0110",
+      "title": "Scope native stage mapping choices to this project",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in with administration access to an active project."
+      ],
+      "steps": [
+        "Open workflow and mapped-stage choices while another project has a uniquely named stage."
+      ],
+      "expected": [
+        "Only current-project workflows and stages are offered; the foreign workflow and stage cannot be selected."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "settings"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-board-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native prevention counterpart; the related raw service-rejection clause remains unchanged."
+      ],
+      "relatedCases": [
+        "UC-BRD-0066"
+      ]
+    },
+    {
+      "id": "UC-BRD-0111",
+      "title": "Hide archive controls for the default board",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in with administration access to an active project."
+      ],
+      "steps": [
+        "Open active default-board settings as an administrator."
+      ],
+      "expected": [
+        "No Archive board or Restore board action appears and the default board remains active."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "settings"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-board-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native prevention counterpart; the related raw service-rejection clause remains unchanged."
+      ],
+      "relatedCases": [
+        "UC-BRD-0076"
+      ]
+    },
+    {
+      "id": "UC-BRD-0112",
+      "title": "Generate distinct native column identities",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in with administration access to an active project."
+      ],
+      "steps": [
+        "Add two independent columns through native controls and save."
+      ],
+      "expected": [
+        "Each column receives a distinct UUID, no raw identifier input exists, and the exact generated identities persist."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "settings"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-board-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native prevention counterpart; the related raw service-rejection clause remains unchanged."
+      ],
+      "relatedCases": [
+        "UC-BRD-0063"
+      ]
+    }
+  ]
+}

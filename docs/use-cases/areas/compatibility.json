@@ -1,0 +1,969 @@
+{
+  "area": "compatibility",
+  "title": "Compatibility clients and retained data",
+  "summary": "Published V1 issue/board/media operations remain a distinct API/MCP surface. Current native web routes use V2 where available; compatibility projection is not permission to rewrite custom identities.",
+  "sources": {
+    "issues": {
+      "path": "backend/internal/features/issues/compatibility.go",
+      "line": 8
+    },
+    "search": {
+      "path": "backend/internal/features/issues/search.go",
+      "line": 1
+    },
+    "boards": {
+      "path": "backend/internal/features/boards/service.go",
+      "line": 1
+    },
+    "pictures": {
+      "path": "backend/internal/features/pictures/service.go",
+      "line": 1
+    },
+    "attachments": {
+      "path": "backend/internal/features/attachments/service.go",
+      "line": 1
+    },
+    "boundary": {
+      "path": "specs/002-scalable-core/validation/native-client-boundary.md",
+      "line": 1
+    },
+    "receipts": {
+      "path": "backend/internal/platform/command/retry.go",
+      "line": 1
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-CMP-0001",
+      "title": "Read V1 issue projection",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current read access and all projects in the requested scope are compatible legacy-mode projects."
+      ],
+      "steps": [
+        "Read an authorized issue through get_issue."
+      ],
+      "expected": [
+        "The retained V1 representation is returned; it is not the native typed-choice editor contract."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "search"
+      ],
+      "operations": [
+        "get_issue"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Compatibility-surface case; do not infer a native browser control or full custom-choice support from this published operation."
+      ]
+    },
+    {
+      "id": "UC-CMP-0002",
+      "title": "Search V1 issues",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current read access and all projects in the requested scope are compatible legacy-mode projects."
+      ],
+      "steps": [
+        "Search authorized work through search_issues."
+      ],
+      "expected": [
+        "The V1 bounded authorized result surface remains published."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "search"
+      ],
+      "operations": [
+        "search_issues"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Compatibility-surface case; do not infer a native browser control or full custom-choice support from this published operation."
+      ]
+    },
+    {
+      "id": "UC-CMP-0003",
+      "title": "Create through V1 on compatible project",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current project access and an explicitly identified compatibility or modern project state."
+      ],
+      "steps": [
+        "Create a legacy-representable issue while the project remains in legacy mode."
+      ],
+      "expected": [
+        "The compatibility creation contract applies its legacy choices and preserves attribution."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "issues"
+      ],
+      "operations": [
+        "create_issue"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/compatibility_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Compatibility-surface case; do not infer a native browser control or full custom-choice support from this published operation."
+      ]
+    },
+    {
+      "id": "UC-CMP-0004",
+      "title": "Reject new V1 full edit on modern project",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current project access and an explicitly identified compatibility or modern project state."
+      ],
+      "steps": [
+        "Attempt a fresh V1 full issue edit after modern-mode activation."
+      ],
+      "expected": [
+        "Client-version validation directs the caller to V2 rather than rewriting custom identities."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "issues"
+      ],
+      "operations": [
+        "update_issue"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/compatibility_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Compatibility-surface case; do not infer a native browser control or full custom-choice support from this published operation."
+      ]
+    },
+    {
+      "id": "UC-CMP-0005",
+      "title": "Reject new V1 field patch on modern project",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current project access and an explicitly identified compatibility or modern project state."
+      ],
+      "steps": [
+        "Attempt a fresh V1 selected-field patch after modern-mode activation."
+      ],
+      "expected": [
+        "The compatibility gate prevents a new incompatible mutation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "issues"
+      ],
+      "operations": [
+        "patch_issue_field"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/compatibility_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Compatibility-surface case; do not infer a native browser control or full custom-choice support from this published operation."
+      ]
+    },
+    {
+      "id": "UC-CMP-0006",
+      "title": "Reject new V1 movement on modern project",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current project access and an explicitly identified compatibility or modern project state."
+      ],
+      "steps": [
+        "Attempt a fresh legacy issue movement after modern-mode activation."
+      ],
+      "expected": [
+        "The compatibility gate directs movement to the native workflow contract."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "issues"
+      ],
+      "operations": [
+        "move_issue"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/compatibility_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Compatibility-surface case; do not infer a native browser control or full custom-choice support from this published operation."
+      ]
+    },
+    {
+      "id": "UC-CMP-0007",
+      "title": "Retain legacy shared-order surface",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current project access and an explicitly identified compatibility or modern project state."
+      ],
+      "steps": [
+        "Use the published legacy reorder operation in its supported compatibility context."
+      ],
+      "expected": [
+        "The legacy shared-order contract remains distinct from independent V2 board ranks."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "boundary"
+      ],
+      "operations": [
+        "reorder_issue"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Compatibility-surface case; do not infer a native browser control or full custom-choice support from this published operation."
+      ]
+    },
+    {
+      "id": "UC-CMP-0008",
+      "title": "Retain V1 board creation contract",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current project access and an explicitly identified compatibility or modern project state."
+      ],
+      "steps": [
+        "Create a board through the published V1 board operation in a compatible project."
+      ],
+      "expected": [
+        "The legacy operation is distinct from create_board_v2 and does not become the native UI by implication."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "boards"
+      ],
+      "operations": [
+        "create_board"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Compatibility-surface case; do not infer a native browser control or full custom-choice support from this published operation."
+      ]
+    },
+    {
+      "id": "UC-CMP-0009",
+      "title": "Read V1 board projection",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current read access and all projects in the requested scope are compatible legacy-mode projects."
+      ],
+      "steps": [
+        "Read an authorized board through get_board."
+      ],
+      "expected": [
+        "The retained status-token column/count projection is returned; independent native column identities are a different contract."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "boards"
+      ],
+      "operations": [
+        "get_board"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Compatibility-surface case; do not infer a native browser control or full custom-choice support from this published operation."
+      ]
+    },
+    {
+      "id": "UC-CMP-0010",
+      "title": "Page V1 board cards",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current read access and all projects in the requested scope are compatible legacy-mode projects."
+      ],
+      "steps": [
+        "Read a supported legacy column through list_board_cards."
+      ],
+      "expected": [
+        "Bounded V1 cards use their retained status/order contract and scoped cursors."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "boards"
+      ],
+      "operations": [
+        "list_board_cards"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Compatibility-surface case; do not infer a native browser control or full custom-choice support from this published operation."
+      ]
+    },
+    {
+      "id": "UC-CMP-0011",
+      "title": "Retain V1 board settings boundary",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current project access and an explicitly identified compatibility or modern project state."
+      ],
+      "steps": [
+        "Attempt legacy board-settings update in the current project mode."
+      ],
+      "expected": [
+        "Supported legacy edits obey the mode gate; richer native layouts are not silently round-tripped through an older editor."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "boards"
+      ],
+      "operations": [
+        "update_board"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Compatibility-surface case; do not infer a native browser control or full custom-choice support from this published operation."
+      ]
+    },
+    {
+      "id": "UC-CMP-0012",
+      "title": "Compatibility list_pictures",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Invoke list_pictures in its currently supported authorized context."
+      ],
+      "expected": [
+        "The published adapter provides current gallery plus permitted own draft discovery; canonical general-file/resumable operations remain a separate contract."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "pictures"
+      ],
+      "operations": [
+        "list_pictures"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Current native attachment UI uses unified assets; legacy MIME/size/visibility constraints must be checked independently."
+      ]
+    },
+    {
+      "id": "UC-CMP-0013",
+      "title": "Compatibility get_picture",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Invoke get_picture in its currently supported authorized context."
+      ],
+      "expected": [
+        "The published adapter provides authorized picture metadata; canonical general-file/resumable operations remain a separate contract."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "pictures"
+      ],
+      "operations": [
+        "get_picture"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Current native attachment UI uses unified assets; legacy MIME/size/visibility constraints must be checked independently."
+      ]
+    },
+    {
+      "id": "UC-CMP-0014",
+      "title": "Compatibility download_picture",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Invoke download_picture in its currently supported authorized context."
+      ],
+      "expected": [
+        "The published adapter provides authorized whole-picture base64 download; canonical general-file/resumable operations remain a separate contract."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "pictures"
+      ],
+      "operations": [
+        "download_picture"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Current native attachment UI uses unified assets; legacy MIME/size/visibility constraints must be checked independently."
+      ]
+    },
+    {
+      "id": "UC-CMP-0015",
+      "title": "Compatibility upload_picture",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Invoke upload_picture in its currently supported authorized context."
+      ],
+      "expected": [
+        "The published adapter provides validated PNG/JPEG/WebP upload under the legacy 10 MiB boundary; canonical general-file/resumable operations remain a separate contract."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "pictures"
+      ],
+      "operations": [
+        "upload_picture"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Current native attachment UI uses unified assets; legacy MIME/size/visibility constraints must be checked independently."
+      ]
+    },
+    {
+      "id": "UC-CMP-0016",
+      "title": "Compatibility detach_gallery_picture",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Invoke detach_gallery_picture in its currently supported authorized context."
+      ],
+      "expected": [
+        "The published adapter provides gallery detachment while retained references survive; canonical general-file/resumable operations remain a separate contract."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "pictures"
+      ],
+      "operations": [
+        "detach_gallery_picture"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Current native attachment UI uses unified assets; legacy MIME/size/visibility constraints must be checked independently."
+      ]
+    },
+    {
+      "id": "UC-CMP-0017",
+      "title": "Compatibility list_attachments",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Invoke list_attachments in its currently supported authorized context."
+      ],
+      "expected": [
+        "The published adapter provides attached legacy document discovery; canonical general-file/resumable operations remain a separate contract."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "attachments"
+      ],
+      "operations": [
+        "list_attachments"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Current native attachment UI uses unified assets; legacy MIME/size/visibility constraints must be checked independently."
+      ]
+    },
+    {
+      "id": "UC-CMP-0018",
+      "title": "Compatibility get_attachment",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Invoke get_attachment in its currently supported authorized context."
+      ],
+      "expected": [
+        "The published adapter provides authorized legacy attachment metadata; canonical general-file/resumable operations remain a separate contract."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "attachments"
+      ],
+      "operations": [
+        "get_attachment"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Current native attachment UI uses unified assets; legacy MIME/size/visibility constraints must be checked independently."
+      ]
+    },
+    {
+      "id": "UC-CMP-0019",
+      "title": "Compatibility download_attachment",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Invoke download_attachment in its currently supported authorized context."
+      ],
+      "expected": [
+        "The published adapter provides authorized whole-document base64 download; canonical general-file/resumable operations remain a separate contract."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "attachments"
+      ],
+      "operations": [
+        "download_attachment"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Current native attachment UI uses unified assets; legacy MIME/size/visibility constraints must be checked independently."
+      ]
+    },
+    {
+      "id": "UC-CMP-0020",
+      "title": "Compatibility upload_attachment",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Invoke upload_attachment in its currently supported authorized context."
+      ],
+      "expected": [
+        "The published adapter provides validated legacy supported document upload under its 10 MiB boundary; canonical general-file/resumable operations remain a separate contract."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "attachments"
+      ],
+      "operations": [
+        "upload_attachment"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Current native attachment UI uses unified assets; legacy MIME/size/visibility constraints must be checked independently."
+      ]
+    },
+    {
+      "id": "UC-CMP-0021",
+      "title": "Compatibility detach_attachment",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Invoke detach_attachment in its currently supported authorized context."
+      ],
+      "expected": [
+        "The published adapter provides document detachment while retained bytes/references survive; canonical general-file/resumable operations remain a separate contract."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "service_only",
+      "evidence": [
+        "attachments"
+      ],
+      "operations": [
+        "detach_attachment"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Current native attachment UI uses unified assets; legacy MIME/size/visibility constraints must be checked independently."
+      ]
+    },
+    {
+      "id": "UC-CMP-0022",
+      "title": "Replay pre-activation accepted receipt",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Replay an unchanged previously accepted compatibility mutation after project promotion."
+      ],
+      "expected": [
+        "Its retained accepted result is replayed under current authorization without reseeding or duplicating the business effect."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "service_only",
+      "evidence": [
+        "receipts",
+        "boundary"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CMP-0023",
+      "title": "Keep current routes native",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Open first-party Issues or Boards for a legacy-marked project."
+      ],
+      "expected": [
+        "The current first-party native UI is used; canonical writes can promote project mode without an older editor route."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "boundary"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CMP-0024",
+      "title": "No public mode downgrade",
+      "actor": "operator",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Look for a public operation that downgrades a project to legacy mode."
+      ],
+      "expected": [
+        "No public downgrade endpoint is provided; a test must not assume this operation exists."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "not_implemented",
+      "evidence": [
+        "boundary"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CMP-0025",
+      "title": "Reject fresh get_issue in modern project",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current project access and the relevant project is in modern mode."
+      ],
+      "steps": [
+        "Invoke get_issue through its published V1 surface with otherwise valid arguments."
+      ],
+      "expected": [
+        "The V1 read rejects with client-version upgrade guidance rather than returning a lossy custom-choice projection."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "issues"
+      ],
+      "operations": [
+        "get_issue"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/compatibility_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Operation discovery does not imply compatibility with every modern project."
+      ]
+    },
+    {
+      "id": "UC-CMP-0026",
+      "title": "Reject fresh search_issues in modern project",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current project access and the relevant project is in modern mode."
+      ],
+      "steps": [
+        "Invoke search_issues through its published V1 surface with otherwise valid arguments."
+      ],
+      "expected": [
+        "V1 search rejects when its authorized project scope includes modern-mode work, rather than silently returning a partial or lossy search."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "search"
+      ],
+      "operations": [
+        "search_issues"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/compatibility_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Operation discovery does not imply compatibility with every modern project."
+      ]
+    },
+    {
+      "id": "UC-CMP-0027",
+      "title": "Reject fresh create_issue in modern project",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current project access and the relevant project is in modern mode."
+      ],
+      "steps": [
+        "Invoke create_issue through its published V1 surface with otherwise valid arguments."
+      ],
+      "expected": [
+        "A fresh V1 create is rejected with client-version guidance; a previously accepted matching receipt is treated separately."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "issues"
+      ],
+      "operations": [
+        "create_issue"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/compatibility_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Operation discovery does not imply compatibility with every modern project."
+      ]
+    },
+    {
+      "id": "UC-CMP-0028",
+      "title": "Reject fresh get_board in modern project",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current project access and the relevant project is in modern mode."
+      ],
+      "steps": [
+        "Invoke get_board through its published V1 surface with otherwise valid arguments."
+      ],
+      "expected": [
+        "A V1 board read is rejected with guidance to native board layout and identifier-based operations."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "boards"
+      ],
+      "operations": [
+        "get_board"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Operation discovery does not imply compatibility with every modern project."
+      ]
+    },
+    {
+      "id": "UC-CMP-0029",
+      "title": "Reject fresh create_board in modern project",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current project access and the relevant project is in modern mode."
+      ],
+      "steps": [
+        "Invoke create_board through its published V1 surface with otherwise valid arguments."
+      ],
+      "expected": [
+        "A fresh V1 board create rejects with guidance to create_board_v2."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "boards"
+      ],
+      "operations": [
+        "create_board"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Operation discovery does not imply compatibility with every modern project."
+      ]
+    },
+    {
+      "id": "UC-CMP-0030",
+      "title": "Reject fresh list_board_cards in modern project",
+      "actor": "mcp_client",
+      "preconditions": [
+        "The caller has current project access and the relevant project is in modern mode."
+      ],
+      "steps": [
+        "Invoke list_board_cards through its published V1 surface with otherwise valid arguments."
+      ],
+      "expected": [
+        "A V1 column-card read rejects for a modern project instead of mapping independent columns to legacy status tokens."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "boards"
+      ],
+      "operations": [
+        "list_board_cards"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Operation discovery does not imply compatibility with every modern project."
+      ]
+    }
+  ]
+}

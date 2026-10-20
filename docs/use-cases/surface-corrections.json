@@ -1,0 +1,3862 @@
+{
+  "version": 1,
+  "purpose": "Correct transport declarations without deleting or weakening expected behavior. Original stable IDs and exact expected text remain native web cases. New linked IDs preserve distinct stateless service business outcomes; relatedCases identify already canonical outcomes where no additional service action exists. This is catalog accuracy, not passing coverage evidence.",
+  "corrections": [
+    {
+      "id": "UC-AST-0025",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Correct protected image opens in preview dialog."
+      ],
+      "reason": "Only the native client opens/renders/closes this preview, owns its object URL, or explains a download fallback.",
+      "serviceCases": [
+        "UC-AST-0074"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0026",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Correct attachment preview dialog opens."
+      ],
+      "reason": "Only the native client opens/renders/closes this preview, owns its object URL, or explains a download fallback.",
+      "serviceCases": [
+        "UC-AST-0074"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0027",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Private PDF content renders in bounded preview frame."
+      ],
+      "reason": "Only the native client opens/renders/closes this preview, owns its object URL, or explains a download fallback.",
+      "serviceCases": [
+        "UC-AST-0074"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0028",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Download fallback is explained."
+      ],
+      "reason": "Only the native client opens/renders/closes this preview, owns its object URL, or explains a download fallback.",
+      "serviceCases": [
+        "UC-AST-0074"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0031",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Dialog closes and temporary object URL is released."
+      ],
+      "reason": "Only the native client opens/renders/closes this preview, owns its object URL, or explains a download fallback.",
+      "serviceCases": [
+        "UC-AST-0074"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0032",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Dialog closes without changing attachment."
+      ],
+      "reason": "Only the native client opens/renders/closes this preview, owns its object URL, or explains a download fallback.",
+      "serviceCases": [
+        "UC-AST-0074"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0029",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Authenticated content saves using original filename."
+      ],
+      "reason": "Saving a browser download with its suggested filename is a native action.",
+      "serviceCases": [
+        "UC-AST-0078"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0030",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Current private content saves using original filename."
+      ],
+      "reason": "The native preview/referral control and its retry/open state cannot be asserted by a stateless asset read.",
+      "serviceCases": [
+        "UC-AST-0074",
+        "UC-AST-0078"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0033",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Protected content lookup is retried."
+      ],
+      "reason": "The native preview/referral control and its retry/open state cannot be asserted by a stateless asset read.",
+      "serviceCases": [
+        "UC-AST-0074",
+        "UC-AST-0078"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0034",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Current-authorized metadata and preview open for retained asset."
+      ],
+      "reason": "The native preview/referral control and its retry/open state cannot be asserted by a stateless asset read.",
+      "serviceCases": [
+        "UC-AST-0074",
+        "UC-AST-0078"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0029",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Unsafe executable content does not execute in rendered document."
+      ],
+      "reason": "Nonexecution in a rendered document requires a browser.",
+      "serviceCases": [
+        "UC-COM-0122"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/description-editor/description-editor.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/description.go",
+          "line": 15
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0059",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Unsafe executable content does not execute in rendered document."
+      ],
+      "reason": "Nonexecution in a rendered comment requires a browser.",
+      "serviceCases": [
+        "UC-COM-0123"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-editor/comment-editor.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/comments/html.go",
+          "line": 248
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0074",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Latest first page and total replace prior discussion list."
+      ],
+      "reason": "Replacing an existing discussion list is client state.",
+      "serviceCases": [
+        "UC-COM-0124"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-thread/comment-thread.component.ts",
+          "line": 45
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0075",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Next oldest-first comments append."
+      ],
+      "reason": "Appending a page to already rendered records is client state.",
+      "serviceCases": [
+        "UC-COM-0125"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-thread/comment-thread.component.ts",
+          "line": 45
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0082",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "New retained version appears with Edited marker and version."
+      ],
+      "reason": "The Edited marker is a native presentation of the accepted revision.",
+      "serviceCases": [
+        "UC-COM-0126"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-thread/comment-thread.component.ts",
+          "line": 327
+        },
+        {
+          "path": "backend/internal/features/comments/service.go",
+          "line": 81
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0086",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Next history page replaces displayed version page."
+      ],
+      "reason": "Replacing the displayed version page is client state.",
+      "serviceCases": [
+        "UC-COM-0127"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-thread/comment-thread.component.ts",
+          "line": 45
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0088",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Latest version is offered; unsent draft remains."
+      ],
+      "reason": "Retaining an unsent draft and offering review are native editor behavior.",
+      "serviceCases": [
+        "UC-COM-0128"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-thread/comment-thread.component.ts",
+          "line": 327
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0089",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Draft remains and next save uses reviewed current revision."
+      ],
+      "reason": "The explicit rebase control owns a native unsent draft.",
+      "serviceCases": [
+        "UC-COM-0128",
+        "UC-COM-0126"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-thread/comment-thread.component.ts",
+          "line": 327
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0092",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Request error is surfaced rather than false successful empty discussion."
+      ],
+      "reason": "A stateless failed list request cannot preserve already rendered client records.",
+      "serviceCases": [
+        "UC-COM-0124"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-thread/comment-thread.component.ts",
+          "line": 45
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0093",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Forbidden/unavailable response clears rendered records and editor context."
+      ],
+      "reason": "Clearing an already rendered discussion/editor requires the native client.",
+      "serviceCases": [
+        "UC-COM-0129"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-thread/comment-thread.component.ts",
+          "line": 45
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0097",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Validation preserves draft and prevents empty record."
+      ],
+      "reason": "Preservation of the native source/draft is separate from service rejection.",
+      "serviceCases": [
+        "UC-COM-0130"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-editor/comment-editor.component.ts",
+          "line": 604
+        },
+        {
+          "path": "backend/internal/features/comments/html.go",
+          "line": 248
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0098",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Validation preserves draft."
+      ],
+      "reason": "Preservation of the native source/draft is separate from service rejection.",
+      "serviceCases": [
+        "UC-COM-0131"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-editor/comment-editor.component.ts",
+          "line": 604
+        },
+        {
+          "path": "backend/internal/features/comments/html.go",
+          "line": 248
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0099",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Validation preserves original source/draft."
+      ],
+      "reason": "Preservation of the native source/draft is separate from service rejection.",
+      "serviceCases": [
+        "UC-COM-0132"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-editor/comment-editor.component.ts",
+          "line": 425
+        },
+        {
+          "path": "backend/internal/features/comments/html.go",
+          "line": 248
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0103",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Validation requires legitimate selected/uploaded references; source remains."
+      ],
+      "reason": "Preservation of the native source/draft is separate from service rejection.",
+      "serviceCases": [
+        "UC-COM-0133"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-editor/comment-editor.component.ts",
+          "line": 425
+        },
+        {
+          "path": "backend/internal/features/comments/html.go",
+          "line": 248
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0114",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Current eligibility rejects new mention without losing draft."
+      ],
+      "reason": "Preservation of the native source/draft is separate from service rejection.",
+      "serviceCases": [
+        "UC-COM-0134"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/comments/mentions.go",
+          "line": 10
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0104",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Rendered content makes no remote image request."
+      ],
+      "reason": "Actual suppression of outbound image fetching must be observed in a browser.",
+      "serviceCases": [
+        "UC-COM-0122",
+        "UC-COM-0123"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/comments/html.go",
+          "line": 248
+        },
+        {
+          "path": "backend/internal/features/issues/description.go",
+          "line": 15
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0112",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Next eligible candidate page displays."
+      ],
+      "reason": "Replacing the displayed teammate page is client state.",
+      "serviceCases": [
+        "UC-COM-0135"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/mention-picker/mention-picker.component.ts",
+          "line": 26
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0118",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Only latest active query results render."
+      ],
+      "reason": "Only the client owns request generations and decides which result renders.",
+      "serviceCases": [
+        "UC-COM-0135"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/mention-picker/mention-picker.component.ts",
+          "line": 26
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0028",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Invalid number is rejected with draft retained."
+      ],
+      "reason": "Appending/displaying picker results or preserving/reviewing an editor draft is native client state.",
+      "serviceCases": [
+        "UC-FLD-0075"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/platform/command/field_values.go",
+          "line": 26
+        },
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/custom-fields.component.ts",
+          "line": 133
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0035",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Additional options append and enter local search."
+      ],
+      "reason": "Appending/displaying picker results or preserving/reviewing an editor draft is native client state.",
+      "serviceCases": [
+        "UC-FLD-0076"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/field-value-editor.component.ts",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0036",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Existing selected option remains visible with retired detail."
+      ],
+      "reason": "Appending/displaying picker results or preserving/reviewing an editor draft is native client state.",
+      "serviceCases": [
+        "UC-FLD-0077"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/field-value-editor.component.ts",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0040",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Next candidates append."
+      ],
+      "reason": "Appending/displaying picker results or preserving/reviewing an editor draft is native client state.",
+      "serviceCases": [
+        "UC-FLD-0078"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/field-value-editor.component.ts",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0048",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Historical value is rendered read-only."
+      ],
+      "reason": "Appending/displaying picker results or preserving/reviewing an editor draft is native client state.",
+      "serviceCases": [
+        "UC-FLD-0079"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/custom-fields.component.ts",
+          "line": 133
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0055",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Conflict preserves draft and requires review."
+      ],
+      "reason": "Appending/displaying picker results or preserving/reviewing an editor draft is native client state.",
+      "serviceCases": [
+        "UC-FLD-0080"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/custom-fields.component.ts",
+          "line": 133
+        },
+        {
+          "path": "backend/internal/features/issues/custom_fields.go",
+          "line": 152
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0062",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Definitions and actual stored values append."
+      ],
+      "reason": "Appending/displaying picker results or preserving/reviewing an editor draft is native client state.",
+      "serviceCases": [
+        "UC-FLD-0081"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/custom-fields.component.ts",
+          "line": 133
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0056",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Latest issue revision is used while edited values remain."
+      ],
+      "reason": "Reviewing a preserved local draft and applying its chosen revision is a native action.",
+      "serviceCases": [
+        "UC-FLD-0080",
+        "UC-FLD-0007"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/custom-fields.component.ts",
+          "line": 133
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0003",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Additional workflow transitions append."
+      ],
+      "reason": "Native selection, labels, popup reopening and appending are distinct from returned service state.",
+      "serviceCases": [
+        "UC-APR-0058"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0004",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Further names replace fallback identifiers."
+      ],
+      "reason": "Native selection, labels, popup reopening and appending are distinct from returned service state.",
+      "serviceCases": [
+        "UC-APR-0059"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0006",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Approved/required count is displayed."
+      ],
+      "reason": "Native selection, labels, popup reopening and appending are distinct from returned service state.",
+      "serviceCases": [
+        "UC-APR-0060"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0008",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Rejection is retained and Changes requested appears."
+      ],
+      "reason": "Native selection, labels, popup reopening and appending are distinct from returned service state.",
+      "serviceCases": [
+        "UC-APR-0061"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+          "line": 30
+        },
+        {
+          "path": "backend/internal/features/issues/approvals.go",
+          "line": 256
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0017",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Issue transitions separately from voting."
+      ],
+      "reason": "Native selection, labels, popup reopening and appending are distinct from returned service state.",
+      "serviceCases": [
+        "UC-APR-0062"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/issues/canonical_move.go",
+          "line": 78
+        },
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-status-menu/modern-issue-status-menu.component.ts",
+          "line": 89
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0047",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Past move / History only appears; no current voting."
+      ],
+      "reason": "Native selection, labels, popup reopening and appending are distinct from returned service state.",
+      "serviceCases": [
+        "UC-APR-0063"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+          "line": 30
+        },
+        {
+          "path": "backend/internal/features/issues/approvals.go",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0048",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Eligible current versus previous/ineligible decisions are labeled."
+      ],
+      "reason": "Native selection, labels, popup reopening and appending are distinct from returned service state.",
+      "serviceCases": [
+        "UC-APR-0064"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+          "line": 30
+        },
+        {
+          "path": "backend/internal/features/issues/approvals.go",
+          "line": 80
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0049",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Next newest-first history page appends without losing revision contexts."
+      ],
+      "reason": "Native selection, labels, popup reopening and appending are distinct from returned service state.",
+      "serviceCases": [
+        "UC-APR-0065"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+          "line": 30
+        },
+        {
+          "path": "backend/internal/features/issues/approval_queries.sql",
+          "line": 6
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0054",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Fresh transition read reflects current approval eligibility."
+      ],
+      "reason": "Native selection, labels, popup reopening and appending are distinct from returned service state.",
+      "serviceCases": [
+        "UC-APR-0066"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-status-menu/modern-issue-status-menu.component.ts",
+          "line": 89
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0051",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Original transition/body/reference is reused."
+      ],
+      "reason": "Reuse of the frozen native pending-action object is client ownership.",
+      "serviceCases": [
+        "UC-APR-0067"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+          "line": 308
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0052",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Pending intent clears and fresh context loads."
+      ],
+      "reason": "Clearing a native pending intent is not a stateless read operation.",
+      "serviceCases": [
+        "UC-APR-0002"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+          "line": 308
+        }
+      ]
+    },
+    {
+      "id": "UC-LBL-0001",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Project label is created and selected in local issue draft."
+      ],
+      "reason": "Live typing, direction rendering and selected-chip state require the native controls.",
+      "serviceCases": [
+        "UC-LBL-0023"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts",
+          "line": 27
+        },
+        {
+          "path": "backend/internal/features/issues/dates_labels.go",
+          "line": 48
+        }
+      ]
+    },
+    {
+      "id": "UC-LBL-0002",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Accepted name displays with automatic direction."
+      ],
+      "reason": "Live typing, direction rendering and selected-chip state require the native controls.",
+      "serviceCases": [
+        "UC-LBL-0024"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts",
+          "line": 27
+        },
+        {
+          "path": "backend/internal/features/issues/dates_labels.go",
+          "line": 48
+        }
+      ]
+    },
+    {
+      "id": "UC-LBL-0009",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Case-folded matching choices update without search click."
+      ],
+      "reason": "Live typing, direction rendering and selected-chip state require the native controls.",
+      "serviceCases": [
+        "UC-LBL-0025"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts",
+          "line": 27
+        },
+        {
+          "path": "backend/internal/features/issues/dates_labels.go",
+          "line": 97
+        }
+      ]
+    },
+    {
+      "id": "UC-LBL-0010",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Next scoped page appends while selected labels remain."
+      ],
+      "reason": "Live typing, direction rendering and selected-chip state require the native controls.",
+      "serviceCases": [
+        "UC-LBL-0026"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts",
+          "line": 27
+        },
+        {
+          "path": "backend/internal/features/issues/dates_labels.go",
+          "line": 97
+        }
+      ]
+    },
+    {
+      "id": "UC-LBL-0015",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "All selected labels are required and create-label control is absent."
+      ],
+      "reason": "Live typing, direction rendering and selected-chip state require the native controls.",
+      "serviceCases": [
+        "UC-LBL-0027"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-LBL-0013",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Label is saved reusable; user must remove one before selecting it."
+      ],
+      "reason": "The service cannot observe the unsaved local ten-label selection capacity.",
+      "serviceCases": [
+        "UC-LBL-0023"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts",
+          "line": 27
+        },
+        {
+          "path": "backend/internal/features/issues/dates_labels.go",
+          "line": 48
+        }
+      ]
+    },
+    {
+      "id": "UC-LBL-0019",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Latest choices remain."
+      ],
+      "reason": "Only the client can reject an earlier lookup completion from its visible state.",
+      "serviceCases": [
+        "UC-LBL-0025"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0021",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The same created issue is reused while remaining uploads finish."
+      ],
+      "reason": "The created-issue/upload queue recovery receipt is local orchestration, not one create tool call.",
+      "serviceCases": [
+        "UC-ISS-0022",
+        "UC-AST-0064"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 528
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0044",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The assignee filter changes to self and results refresh."
+      ],
+      "reason": "My Issues changes the native filter controls.",
+      "serviceCases": [
+        "UC-ISS-0043"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.html",
+          "line": 24
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 366
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0059",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Other issue filters remain without the parent constraint."
+      ],
+      "reason": "Clearing only the native parent filter retains other client controls.",
+      "serviceCases": [
+        "UC-ISS-0058"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.html",
+          "line": 24
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 366
+        },
+        {
+          "path": "frontend/src/app/features/issues/components/parent-filter/parent-filter.component.ts",
+          "line": 150
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0068",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Query and advanced/saved filter overlays clear."
+      ],
+      "reason": "Reset removes local query/advanced/saved overlays, not server records.",
+      "serviceCases": [
+        "UC-ISS-0031"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.html",
+          "line": 24
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 366
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0104",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "The completed date saves before closing."
+      ],
+      "reason": "Blur and popup-close ordering only exist in the native date control.",
+      "serviceCases": [
+        "UC-ISS-0102"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-field-editor/modern-issue-field-editor.component.ts",
+          "line": 321
+        },
+        {
+          "path": "backend/internal/features/issues/canonical_field_patch.go",
+          "line": 45
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0121",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "No issue mutation is submitted."
+      ],
+      "reason": "Not submitting a mutation is a native choice-control behavior.",
+      "serviceCases": [
+        "UC-ISS-0120"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-status-menu/modern-issue-status-menu.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/canonical_move.go",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0124",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Transition lookup runs again."
+      ],
+      "reason": "Retrying a native failed stage lookup is client orchestration.",
+      "serviceCases": [
+        "UC-ISS-0123"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-status-menu/modern-issue-status-menu.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/canonical_move.go",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0145",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Its complete stored filters apply."
+      ],
+      "reason": "Applying a saved filter set to current native controls is client state.",
+      "serviceCases": [
+        "UC-ISS-0149"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/saved-searches/saved-searches.component.ts",
+          "line": 28
+        },
+        {
+          "path": "backend/internal/features/issues/organization.go",
+          "line": 298
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 487
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0151",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Draft name and pending request remain."
+      ],
+      "reason": "A same-tab saved-search draft/pending request is client memory.",
+      "serviceCases": [
+        "UC-ISS-0144"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/saved-searches/saved-searches.component.ts",
+          "line": 28
+        },
+        {
+          "path": "backend/internal/features/issues/organization.go",
+          "line": 298
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 487
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0160",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Selection remains locked to the original request."
+      ],
+      "reason": "Freezing a native selection to an in-flight intent is client state.",
+      "serviceCases": [
+        "UC-ISS-0159"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/issues/canonical_field_patch.go",
+          "line": 45
+        },
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-field-editor/modern-issue-field-editor.component.ts",
+          "line": 525
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0163",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Draft restores with original revision for conflict checking."
+      ],
+      "reason": "Inline same-tab draft restoration is client memory.",
+      "serviceCases": [
+        "UC-ISS-0157"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-detail/modern-issue-detail.page.html",
+          "line": 18
+        },
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-field-editor/modern-issue-field-editor.component.ts",
+          "line": 525
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0164",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Original values/references remain and filters/actions/selection freeze."
+      ],
+      "reason": "Bulk filters/actions/selection freezing is native orchestration.",
+      "serviceCases": [
+        "UC-ISS-0130"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/bulk-actions/modern-bulk-actions.component.ts",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0165",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Accepted items replay without duplicate changes; unresolved items remain."
+      ],
+      "reason": "Aggregate unresolved-item retry state belongs to the native bulk editor.",
+      "serviceCases": [
+        "UC-ISS-0159"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/bulk-actions/modern-bulk-actions.component.ts",
+          "line": 41
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0025",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "A validation error preserves the draft."
+      ],
+      "reason": "The native copy/draft/display behavior is separate from the accepted/rejected service outcome.",
+      "serviceCases": [
+        "UC-ISS-0188"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-form/modern-issue-form.component.ts",
+          "line": 61
+        },
+        {
+          "path": "backend/internal/features/issues/canonical_contracts.go",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0032",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Results update without a search-button click."
+      ],
+      "reason": "The native copy/draft/display behavior is separate from the accepted/rejected service outcome.",
+      "serviceCases": [
+        "UC-ISS-0189"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.html",
+          "line": 24
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 366
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0069",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Next cursor page appends and shown count grows."
+      ],
+      "reason": "The native copy/draft/display behavior is separate from the accepted/rejected service outcome.",
+      "serviceCases": [
+        "UC-ISS-0190"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.html",
+          "line": 24
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 366
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0071",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "No-match copy appears after pending lookup completes."
+      ],
+      "reason": "The native copy/draft/display behavior is separate from the accepted/rejected service outcome.",
+      "serviceCases": [
+        "UC-ISS-0191"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.html",
+          "line": 24
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 366
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0149",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "All saved values remain active even when visible controls are single-select."
+      ],
+      "reason": "The native copy/draft/display behavior is separate from the accepted/rejected service outcome.",
+      "serviceCases": [
+        "UC-ISS-0192"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/saved-searches/saved-searches.component.ts",
+          "line": 28
+        },
+        {
+          "path": "backend/internal/features/issues/organization.go",
+          "line": 298
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 487
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0158",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Conflict retains draft and requires explicit current-state review."
+      ],
+      "reason": "The native copy/draft/display behavior is separate from the accepted/rejected service outcome.",
+      "serviceCases": [
+        "UC-ISS-0193"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/issues/canonical_field_patch.go",
+          "line": 45
+        },
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-field-editor/modern-issue-field-editor.component.ts",
+          "line": 525
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0162",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Latest issue is offered for review and form draft remains."
+      ],
+      "reason": "The native copy/draft/display behavior is separate from the accepted/rejected service outcome.",
+      "serviceCases": [
+        "UC-ISS-0194"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-detail/modern-issue-detail.page.html",
+          "line": 18
+        },
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-field-editor/modern-issue-field-editor.component.ts",
+          "line": 525
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0167",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Latest searches load while current draft remains."
+      ],
+      "reason": "The native copy/draft/display behavior is separate from the accepted/rejected service outcome.",
+      "serviceCases": [
+        "UC-ISS-0195"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/saved-searches/saved-searches.component.ts",
+          "line": 28
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0170",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Current permission rejects save; draft remains."
+      ],
+      "reason": "The native copy/draft/display behavior is separate from the accepted/rejected service outcome.",
+      "serviceCases": [
+        "UC-ISS-0196"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/issues/canonical_update.go",
+          "line": 34
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0032",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Exact project issue is found without search click."
+      ],
+      "reason": "Live numeric typing without a submit click is native behavior.",
+      "serviceCases": [
+        "UC-REL-0079"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/dependencies/dependencies.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/dependencies.go",
+          "line": 201
+        },
+        {
+          "path": "backend/internal/features/issues/dependencies.go",
+          "line": 106
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0045",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Same search is retried without selecting stale result."
+      ],
+      "reason": "Retrying without selecting an earlier stale result is native client state.",
+      "serviceCases": [
+        "UC-REL-0079"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/dependencies/dependencies.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/dependencies.go",
+          "line": 201
+        },
+        {
+          "path": "backend/internal/features/issues/dependencies.go",
+          "line": 106
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0056",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Conflict preserves selected blocker for explicit review."
+      ],
+      "reason": "Preserving the selected blocker during explicit conflict review is native state.",
+      "serviceCases": [
+        "UC-REL-0080"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/dependencies/dependencies.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/dependencies.go",
+          "line": 201
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 142
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0057",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Latest issue/graph state reloads before retry."
+      ],
+      "reason": "The review control owns the pending link intention; graph reads remain separate.",
+      "serviceCases": [
+        "UC-REL-0043"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/dependencies/dependencies.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/dependencies.go",
+          "line": 201
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 142
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0060",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Late result cannot reopen canceled panel."
+      ],
+      "reason": "A late result cannot reopen a native panel; the service has no panel lifetime.",
+      "serviceCases": [
+        "UC-REL-0079"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/dependencies/dependencies.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/dependencies.go",
+          "line": 201
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 142
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0062",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Intended blocker is confirmed and linked."
+      ],
+      "reason": "Narrow-screen keyboard selection cannot be tested with stateless API calls.",
+      "serviceCases": [
+        "UC-REL-0036"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/dependencies/dependencies.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/dependencies.go",
+          "line": 201
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 142
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0010",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Available accepting workflow choices update for that type."
+      ],
+      "reason": "Refreshing creation workflow choices after type changes is native form state.",
+      "serviceCases": [
+        "UC-ISS-0008",
+        "UC-ISS-0009"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-form/modern-issue-form.component.ts",
+          "line": 61
+        },
+        {
+          "path": "backend/internal/features/issues/canonical_choices.go",
+          "line": 85
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0020",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Uploads finish on the created issue before final navigation."
+      ],
+      "reason": "Finishing the local upload queue before final navigation is multi-step native orchestration.",
+      "serviceCases": [
+        "UC-AST-0060",
+        "UC-AST-0064"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 528
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0070",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Old cursor is discarded and first-page results replace prior rows."
+      ],
+      "reason": "Resetting a retained cursor after a filter change is native list ownership.",
+      "serviceCases": [
+        "UC-ISS-0190"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.html",
+          "line": 24
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 366
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0072",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Controls/results match query, project, status, assignee, view, sort, blocked and parent parameters."
+      ],
+      "reason": "Route parameter initialization is a browser-router behavior.",
+      "serviceCases": [
+        "UC-ISS-0067"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.html",
+          "line": 24
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 366
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0073",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Current URL filters replace the reused route state."
+      ],
+      "reason": "Reusing a route component after URL changes is a browser-router behavior.",
+      "serviceCases": [
+        "UC-ISS-0067"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.html",
+          "line": 24
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 366
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0078",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Only latest query results update the list."
+      ],
+      "reason": "Ignoring an earlier completed search is native request-generation ownership.",
+      "serviceCases": [
+        "UC-ISS-0189"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 366
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0079",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "An error state is exposed without presenting it as successful new results."
+      ],
+      "reason": "Presenting a recoverable list error rather than replacement rows is native presentation.",
+      "serviceCases": [
+        "UC-ISS-0191"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.html",
+          "line": 24
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 366
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0090",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Issue read is retried with actionable error state."
+      ],
+      "reason": "A retry action and its actionable error state require native controls.",
+      "serviceCases": [
+        "UC-ISS-0172"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-detail/modern-issue-detail.page.html",
+          "line": 18
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0166",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Original name, filters and reference stay pending."
+      ],
+      "reason": "Freezing an unsent name/filter draft with an uncertain retry intention is client memory.",
+      "serviceCases": [
+        "UC-ISS-0144",
+        "UC-ISS-0195"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/saved-searches/saved-searches.component.ts",
+          "line": 28
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0168",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Previous success message clears while next write is pending."
+      ],
+      "reason": "Clearing the previous success message during a later pending write is client presentation.",
+      "serviceCases": [
+        "UC-ISS-0146"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/saved-searches/saved-searches.component.ts",
+          "line": 28
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0059",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Newer candidate set remains."
+      ],
+      "reason": "Suppressing a late candidate search completion is native request-generation ownership.",
+      "serviceCases": [
+        "UC-REL-0079"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/dependencies/dependencies.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/dependencies.go",
+          "line": 201
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 142
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0061",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Active candidate and confirmation remain keyboard accessible."
+      ],
+      "reason": "Keyboard candidate focus and confirmation are browser interaction.",
+      "serviceCases": [
+        "UC-REL-0036"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/dependencies/dependencies.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/dependencies.go",
+          "line": 201
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 142
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0046",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Matching project teammates appear automatically."
+      ],
+      "reason": "Automatically updating teammate candidates while typing is native picker behavior.",
+      "serviceCases": [
+        "UC-ISS-0197"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.html",
+          "line": 24
+        },
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 366
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0098",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Latest matching eligible choices appear."
+      ],
+      "reason": "Displaying only the latest eligible choice response is native picker state.",
+      "serviceCases": [
+        "UC-ISS-0197"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-field-editor/modern-issue-field-editor.component.html",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0119",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Current stage and current-workflow transition targets appear."
+      ],
+      "reason": "Opening the status menu and its current selection is a native action.",
+      "serviceCases": [
+        "UC-ISS-0198"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-status-menu/modern-issue-status-menu.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/canonical_move.go",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0122",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Administrator or approval requirement is explained and selection disabled."
+      ],
+      "reason": "Explaining and disabling a menu option requires native controls.",
+      "serviceCases": [
+        "UC-ISS-0198",
+        "UC-APR-0027"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-status-menu/modern-issue-status-menu.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/canonical_move.go",
+          "line": 36
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0075",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Current issue is offered for deliberate review."
+      ],
+      "reason": "Offering deliberate review of a current issue after a rejected related-link edit is native conflict UI.",
+      "serviceCases": [
+        "UC-REL-0081"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-actions/modern-issue-actions.component.ts",
+          "line": 113
+        },
+        {
+          "path": "backend/internal/features/issues/organization.go",
+          "line": 178
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0022",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Published pictures and files share one list/count."
+      ],
+      "reason": "The unified panel presentation requires the native client.",
+      "serviceCases": [
+        "UC-AST-0079"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0023",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "List and matching count refresh."
+      ],
+      "reason": "Refreshing or appending the visible unified attachment panel is native client state.",
+      "serviceCases": [
+        "UC-AST-0079"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0024",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Next cursor page appends."
+      ],
+      "reason": "Refreshing or appending the visible unified attachment panel is native client state.",
+      "serviceCases": [
+        "UC-AST-0079"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0035",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Attachment unavailable message appears without exposing content."
+      ],
+      "reason": "Showing an unavailable reference message is native presentation.",
+      "serviceCases": [
+        "UC-AST-0080"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/file-preview/file-preview.component.ts",
+          "line": 23
+        },
+        {
+          "path": "frontend/src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts",
+          "line": 27
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0037",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Current attachments/revision must be reviewed before retry."
+      ],
+      "reason": "Retaining visible attachments for deliberate stale-detach review is native client state.",
+      "serviceCases": [
+        "UC-AST-0081"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/issue-attachments/issue-attachments.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/attachments/assets.go",
+          "line": 130
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0109",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Eligible project candidates update live."
+      ],
+      "reason": "Live typing and candidate replacement are native mention-picker behavior.",
+      "serviceCases": [
+        "UC-COM-0136"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/mention-picker/mention-picker.component.ts",
+          "line": 26
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0039",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Latest eligible project person candidates load live."
+      ],
+      "reason": "Displaying the latest eligible people while typing is native custom-person picker behavior.",
+      "serviceCases": [
+        "UC-COM-0136"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/field-value-editor.component.ts",
+          "line": 29
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0065",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Values readable, editors disabled, direct write rejected."
+      ],
+      "reason": "Disabled editor controls require native proof independently of service authorization.",
+      "serviceCases": [
+        "UC-FLD-0082"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/custom-fields.component.ts",
+          "line": 133
+        },
+        {
+          "path": "backend/internal/features/issues/custom_fields.go",
+          "line": 152
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0065",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Next candidate page appears."
+      ],
+      "reason": "Choosing More related issues and appending its visible candidates is native UI state.",
+      "serviceCases": [
+        "UC-REL-0082"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-actions/modern-issue-actions.component.ts",
+          "line": 113
+        },
+        {
+          "path": "backend/internal/features/issues/organization.go",
+          "line": 178
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0064",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Matching same-project issues excluding self appear."
+      ],
+      "reason": "Excluding self from the related picker is a native filter; stateless search has no generic self-exclusion argument.",
+      "serviceCases": [
+        "UC-REL-0083"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-actions/modern-issue-actions.component.ts",
+          "line": 113
+        },
+        {
+          "path": "backend/internal/features/issues/organization.go",
+          "line": 178
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0030",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Matching same-project candidates update automatically."
+      ],
+      "reason": "Automatically replacing displayed blocker candidates while typing is native request ownership.",
+      "serviceCases": [
+        "UC-REL-0084"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/dependencies/dependencies.component.html",
+          "line": 1
+        },
+        {
+          "path": "backend/internal/features/issues/dependencies.go",
+          "line": 201
+        },
+        {
+          "path": "backend/internal/features/issues/dependencies.go",
+          "line": 106
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0028",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "UI has no write action and server rejects mutation."
+      ],
+      "reason": "Absence of a native write action requires browser assertions independently of server denial.",
+      "serviceCases": [
+        "UC-REL-0085"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 92
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 50
+        },
+        {
+          "path": "backend/internal/features/issues/canonical_create.go",
+          "line": 49
+        },
+        {
+          "path": "backend/internal/features/issues/canonical_contracts.go",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0025",
+      "beforeOperations": [
+        "create_issue_v2"
+      ],
+      "afterOperations": [
+        "update_issue_v2"
+      ],
+      "surfacesPreserved": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Parent relationship cannot be reassigned."
+      ],
+      "reason": "The original steps describe ordinary issue edit, not creation. Parent is immutable at the update contract boundary.",
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 92
+        },
+        {
+          "path": "backend/internal/features/issues/prerequisites.go",
+          "line": 50
+        },
+        {
+          "path": "backend/internal/features/issues/canonical_create.go",
+          "line": 49
+        },
+        {
+          "path": "backend/internal/features/issues/canonical_contracts.go",
+          "line": 7
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0070",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "User is told to choose file/start again."
+      ],
+      "reason": "Telling the user to choose a file/start again is native queue presentation; the service returns a terminal state and rejects writes.",
+      "serviceCases": [
+        "UC-AST-0082"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "backend/internal/features/attachments/asset_mcp.go",
+          "line": 31
+        },
+        {
+          "path": "backend/internal/features/attachments/asset_types.go",
+          "line": 32
+        },
+        {
+          "path": "frontend/src/app/features/attachments/resumable-upload.ts",
+          "line": 18
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0013",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Validated protected image appears in unified panel with thumbnail."
+      ],
+      "reason": "Rendering the accepted image thumbnail in the unified panel requires the native browser.",
+      "serviceCases": [
+        "UC-AST-0083"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/file-queue/file-queue.component.ts",
+          "line": 90
+        },
+        {
+          "path": "backend/internal/features/attachments/asset_upload.go",
+          "line": 193
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0014",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Validated protected image appears in unified panel with thumbnail."
+      ],
+      "reason": "Rendering the accepted image thumbnail in the unified panel requires the native browser.",
+      "serviceCases": [
+        "UC-AST-0084"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/file-queue/file-queue.component.ts",
+          "line": 90
+        },
+        {
+          "path": "backend/internal/features/attachments/asset_upload.go",
+          "line": 193
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0015",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "web"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Validated protected image appears in unified panel with thumbnail."
+      ],
+      "reason": "Rendering the accepted image thumbnail in the unified panel requires the native browser.",
+      "serviceCases": [
+        "UC-AST-0085"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/components/file-queue/file-queue.component.ts",
+          "line": 90
+        },
+        {
+          "path": "backend/internal/features/attachments/asset_upload.go",
+          "line": 193
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0174",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Parent relationship and behavior cannot be reassigned."
+      ],
+      "reason": "The type selector filters by the current immutable standard/subtask behavior. It cannot submit a behavior-changing type through a native choice; arbitrary discriminator identifiers are typed REST/MCP request validation.",
+      "nativeCases": [
+        "UC-ISS-0199"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-form/modern-issue-form.component.ts",
+          "line": 341
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0022",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Nested subtask is rejected."
+      ],
+      "reason": "A child renders its fixed parent link instead of an Add subtask form. Nested parent IDs are raw typed creation request validation.",
+      "nativeCases": [
+        "UC-REL-0090"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/subtasks/subtasks.component.ts",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0025",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Parent relationship cannot be reassigned."
+      ],
+      "reason": "The native complete edit form has no writable parent field. Rejection of an extra editable.parentId property belongs to the published REST/MCP schema; native immutable-parent absence remains independently covered.",
+      "nativeCases": [
+        "UC-REL-0076"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-form/modern-issue-form.component.ts",
+          "line": 62
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0050",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Validation rejects self-cycle."
+      ],
+      "reason": "The blocker chooser excludes the current issue. Supplying its own UUID as blockerId is a raw REST/MCP argument case rather than a reachable native selection.",
+      "nativeCases": [
+        "UC-REL-0034"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/dependencies/dependencies.component.ts",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0055",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Scoped validation rejects without leaking foreign issue."
+      ],
+      "reason": "The blocker lookup is scoped to the current project and the issue project cannot be reassigned. A foreign blocker UUID cannot be selected through this native control.",
+      "nativeCases": [
+        "UC-REL-0087"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/dependencies/dependencies.component.ts",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0071",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Validation rejects."
+      ],
+      "reason": "Native related search filters out the current issue before rendering Link issue controls. Self target UUID validation is a distinct REST/MCP boundary.",
+      "nativeCases": [
+        "UC-REL-0089"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-actions/modern-issue-actions.component.ts",
+          "line": 328
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0072",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Validation rejects."
+      ],
+      "reason": "Native related lookup always sends the current project scope; a foreign-project target is not offered as a Link issue control.",
+      "nativeCases": [
+        "UC-REL-0088"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-actions/modern-issue-actions.component.ts",
+          "line": 326
+        }
+      ]
+    },
+    {
+      "id": "UC-REL-0073",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Validation rejects."
+      ],
+      "reason": "The native relation select has exactly relates_to and duplicates options; an arbitrary blocks relation token is a raw typed REST/MCP argument.",
+      "nativeCases": [
+        "UC-REL-0086"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-actions/modern-issue-actions.component.ts",
+          "line": 151
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0029",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Typed text validation rejects."
+      ],
+      "reason": "The native text input has maxlength 5000 and does not send an overlong text draft through ordinary typing. The original raw Unicode text validation remains required on REST/MCP.",
+      "nativeCases": [
+        "UC-FLD-0086"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/field-value-editor.component.ts",
+          "line": 70
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0030",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Typed date validation rejects."
+      ],
+      "reason": "The native calendar input uses type=date; an impossible calendar string is not a selectable native value. The original typed calendar rejection remains required on REST/MCP.",
+      "nativeCases": [
+        "UC-FLD-0012",
+        "UC-FLD-0013"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/field-value-editor.component.ts",
+          "line": 68
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0031",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "No field changes commit."
+      ],
+      "reason": "Each native field renders the control selected by its fixed definition kind; there is no value-kind selector. A mismatching discriminated value is a raw REST/MCP boundary.",
+      "nativeCases": [
+        "UC-FLD-0006",
+        "UC-FLD-0009",
+        "UC-FLD-0012",
+        "UC-FLD-0015",
+        "UC-FLD-0018"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/field-value-editor.component.ts",
+          "line": 30
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0038",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Scope validation rejects."
+      ],
+      "reason": "Native choice lookup uses the current definition field and project scope. Options owned by another field/project cannot be selected; raw foreign option identifiers remain rejected by REST/MCP.",
+      "nativeCases": [
+        "UC-FLD-0083"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/field-value-editor.component.ts",
+          "line": 181
+        }
+      ]
+    },
+    {
+      "id": "UC-FLD-0066",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "No values commit."
+      ],
+      "reason": "Native issue fields are loaded only from the owning project and expose no arbitrary field identifier input. Foreign field assignment rejection remains required on REST/MCP.",
+      "nativeCases": [
+        "UC-FLD-0085"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/custom-fields.component.ts",
+          "line": 133
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0044",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Review action rejects invalid current context."
+      ],
+      "reason": "The native review move selector loads only the issue assigned workflow. It cannot submit a foreign workflow transition identifier; that invalid current-context service boundary remains required on REST/MCP.",
+      "nativeCases": [
+        "UC-APR-0001"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+          "line": 226
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0045",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Review action rejects invalid current context."
+      ],
+      "reason": "Native non-current transition context is History only and hides review actions. Sending vote/resubmit for such a transition remains a separate REST/MCP rejection boundary.",
+      "nativeCases": [
+        "UC-APR-0047"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+          "line": 59
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0046",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Validation rejects unnecessary new review context."
+      ],
+      "reason": "Native approval action buttons render only for a current transition with required > 0. No unnecessary resubmit button is offered; the raw service request remains validated on REST/MCP.",
+      "nativeCases": [
+        "UC-APR-0068"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+          "line": 68
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0153",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Validation rejects."
+      ],
+      "reason": "The native saved-search name input has maxlength 80 and cannot submit an overlong name by ordinary typing. The original greater-than-80 raw request rejection remains required on REST/MCP.",
+      "nativeCases": [
+        "UC-ISS-0200"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/pages/issue-list/modern-issue-list.page.ts",
+          "line": 203
+        }
+      ]
+    },
+    {
+      "id": "UC-ISS-0177",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Issue must first return to unstarted stage."
+      ],
+      "reason": "The native More actions menu renders Move to backlog only while the current stage category is todo. Started work cannot submit this fresh native action; raw REST/MCP validation remains unchanged. A stale todo editor instead exercises revision conflict.",
+      "nativeCases": [
+        "UC-ISS-0201"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/modern-issue-actions/modern-issue-actions.component.ts",
+          "line": 87
+        }
+      ]
+    },
+    {
+      "id": "UC-COM-0094",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Current author-only write rule rejects mutation."
+      ],
+      "reason": "Native comment records expose Edit comment only when the current actor is the author. Administrators can read another author content and history but cannot invoke an edit through ordinary controls; direct author-only mutation rejection remains on REST/MCP.",
+      "nativeCases": [
+        "UC-COM-0137"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/comments/components/comment-thread/comment-thread.component.ts",
+          "line": 140
+        }
+      ]
+    },
+    {
+      "id": "UC-APR-0028",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Vote rejects and retained reporter decision does not count."
+      ],
+      "reason": "The native approval context marks the reporter ineligible when reporter exclusion is enabled and therefore offers no vote action. Policy changes also change the review revision token, so a stale native request exercises context conflict; direct reporter-ineligible request rejection remains independently required on REST/MCP.",
+      "nativeCases": [
+        "UC-APR-0069"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/custom-fields/issue-review.component.ts",
+          "line": 73
+        },
+        {
+          "path": "backend/internal/features/issues/approvals.go",
+          "line": 112
+        }
+      ]
+    },
+    {
+      "id": "UC-LBL-0017",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Assignment rejects atomically."
+      ],
+      "reason": "The native label picker scopes lookup and existing issue draft to its fixed project. Label definitions cannot change owning project, so a foreign UUID cannot be selected or introduced through ordinary controls. The original atomic foreign-identifier assignment rejection remains required on REST/MCP.",
+      "nativeCases": [
+        "UC-LBL-0028"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/issues/components/date-label-fields/date-label-fields.component.ts",
+          "line": 201
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0062",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "Accepted bytes are not appended twice."
+      ],
+      "reason": "The native resumable uploader first reads the authoritative session after a lost chunk acknowledgement and skips committed offsets. Its ordinary retry does not resend that accepted chunk with its original reference; exact same-reference replay remains a REST/MCP operation boundary and the native resume outcome is preserved separately.",
+      "nativeCases": [
+        "UC-AST-0086"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/resumable-upload.ts",
+          "line": 52
+        }
+      ]
+    },
+    {
+      "id": "UC-AST-0063",
+      "before": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "after": [
+        "rest",
+        "mcp"
+      ],
+      "expectedBehaviorsPreserved": [
+        "One committed asset is returned without duplicate publication."
+      ],
+      "reason": "The native resumable uploader reads an already committed session and fetches its existing asset after a lost finalize acknowledgement. It does not resubmit the original finalize request in this reachable flow; exact finalize reference replay remains required on REST/MCP and committed-session native recovery is separately preserved.",
+      "nativeCases": [
+        "UC-AST-0064"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "frontend/src/app/features/attachments/resumable-upload.ts",
+          "line": 52
+        }
+      ]
+    }
+  ],
+  "testMappingCorrections": [
+    {
+      "file": "frontend/e2e/coverage-issues.spec.ts",
+      "beforeCase": "UC-REL-0028",
+      "afterCase": "UC-REL-0085",
+      "surface": "rest",
+      "reason": "This existing request checks server-side viewer creation denial. The native no-Add-subtask case remains UC-REL-0028; the previously split atomic service counterpart is UC-REL-0085. No surface is inferred from this remapping."
+    }
+  ]
+}

@@ -1,0 +1,3267 @@
+{
+  "area": "configuration",
+  "title": "Project taxonomy, typed custom fields and safe activation",
+  "summary": "Workflow/stage/transition/binding/migration and review-policy setup are canonical in workflows; this area retains taxonomy, defaults, custom-field lifecycle and activation guards. Existing test references do not certify execution or per-case coverage.",
+  "sources": {
+    "ui": {
+      "path": "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.html",
+      "line": 51
+    },
+    "editor": {
+      "path": "frontend/src/app/features/projects/pages/project-configuration/project-configuration.page.ts",
+      "line": 41
+    },
+    "service": {
+      "path": "backend/internal/features/configuration/service.go",
+      "line": 128
+    },
+    "reads": {
+      "path": "backend/internal/features/configuration/reads.go",
+      "line": 23
+    },
+    "defaults": {
+      "path": "backend/internal/features/configuration/taxonomy.go",
+      "line": 270
+    },
+    "type": {
+      "path": "backend/internal/features/configuration/taxonomy.go",
+      "line": 41
+    },
+    "priority": {
+      "path": "backend/internal/features/configuration/taxonomy.go",
+      "line": 165
+    },
+    "fieldUi": {
+      "path": "frontend/src/app/features/projects/pages/project-fields/project-fields.page.ts",
+      "line": 210
+    },
+    "field": {
+      "path": "backend/internal/features/configuration/fields.go",
+      "line": 57
+    },
+    "option": {
+      "path": "backend/internal/features/configuration/fields.go",
+      "line": 211
+    },
+    "fieldRead": {
+      "path": "backend/internal/features/configuration/field_reads.go",
+      "line": 18
+    },
+    "backfill": {
+      "path": "backend/internal/features/configuration/fields.go",
+      "line": 293
+    },
+    "activation": {
+      "path": "backend/internal/features/configuration/activation.go",
+      "line": 37
+    },
+    "activate": {
+      "path": "backend/internal/features/configuration/activation.go",
+      "line": 123
+    },
+    "activationUi": {
+      "path": "frontend/src/app/features/projects/components/project-activation/project-activation.component.ts",
+      "line": 122
+    },
+    "route": {
+      "path": "frontend/src/app/features/projects/projects.routes.ts",
+      "line": 29
+    },
+    "guard": {
+      "path": "frontend/src/app/core/auth/auth.guards.ts",
+      "line": 31
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-CFG-0001",
+      "title": "Read project configuration",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Open issue configuration for the current project."
+      ],
+      "expected": [
+        "Current revision, creation defaults, mode and manage capability load."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "service"
+      ],
+      "operations": [
+        "get_project_configuration"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0002",
+      "title": "Page project issue types",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Request another issue-type page."
+      ],
+      "expected": [
+        "Bounded type choices retain behavior, default and retired flags."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reads"
+      ],
+      "operations": [
+        "list_issue_types"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0003",
+      "title": "Include retired issue types",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Read issue types with includeRetired true."
+      ],
+      "expected": [
+        "Retired identities remain inspectable for historical work."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "reads"
+      ],
+      "operations": [
+        "list_issue_types"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0004",
+      "title": "Page priorities",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Request another priority page."
+      ],
+      "expected": [
+        "Choices return with exact positive order and default/retired flags."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "reads"
+      ],
+      "operations": [
+        "list_priorities"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0005",
+      "title": "Include retired priorities",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Request priorities including retired records."
+      ],
+      "expected": [
+        "Historical priorities remain readable without becoming new active choices."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "reads"
+      ],
+      "operations": [
+        "list_priorities"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0006",
+      "title": "Create standard issue type",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a new stable-key type with Standard behavior."
+      ],
+      "expected": [
+        "The new project-scoped type can represent standard issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "type",
+        "ui"
+      ],
+      "operations": [
+        "save_issue_type"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0007",
+      "title": "Create subtask issue type",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a new type with Subtask behavior."
+      ],
+      "expected": [
+        "The type is retained as a subtask behavior choice."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "type",
+        "ui"
+      ],
+      "operations": [
+        "save_issue_type"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0008",
+      "title": "Rename issue type",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Edit only the type display name."
+      ],
+      "expected": [
+        "The new name appears and stable identity/key remain unchanged."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "type"
+      ],
+      "operations": [
+        "save_issue_type"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0009",
+      "title": "Retire nondefault type",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Retire an active type that is not the current creation default."
+      ],
+      "expected": [
+        "New use is disabled while historical type references remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "type"
+      ],
+      "operations": [
+        "save_issue_type"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0010",
+      "title": "Retire default type with replacement",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Retire a creation default while selecting another active same-behavior type."
+      ],
+      "expected": [
+        "The replacement becomes the creation default atomically."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "type"
+      ],
+      "operations": [
+        "save_issue_type"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0011",
+      "title": "Reject missing default-type replacement",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Retire the current default without an eligible replacement."
+      ],
+      "expected": [
+        "The command is rejected rather than leaving invalid defaults."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "type"
+      ],
+      "operations": [
+        "save_issue_type"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0012",
+      "title": "Reject wrong-behavior replacement",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Supply a standard type as a subtask-default replacement or vice versa."
+      ],
+      "expected": [
+        "The replacement is rejected."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "type"
+      ],
+      "operations": [
+        "save_issue_type"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: Replacement controls enumerate only active types with the same behavior; a wrong-behavior ID cannot be submitted through this control."
+      ]
+    },
+    {
+      "id": "UC-CFG-0013",
+      "title": "Restore retired type",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Clear retirement on a retained type."
+      ],
+      "expected": [
+        "The same type identity becomes active again."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "type"
+      ],
+      "operations": [
+        "save_issue_type"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0014",
+      "title": "Keep type stable key immutable",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Attempt to rename the key of a saved type."
+      ],
+      "expected": [
+        "Validation requires changing display name instead."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "type"
+      ],
+      "operations": [
+        "save_issue_type"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: The type editor has no stable-key input and retains the existing key internally; this literal raw-key rename is an API boundary."
+      ]
+    },
+    {
+      "id": "UC-CFG-0015",
+      "title": "Protect used type behavior",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Change behavior of a used or default type."
+      ],
+      "expected": [
+        "The change is rejected; a separate type is required."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "type"
+      ],
+      "operations": [
+        "save_issue_type"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0016",
+      "title": "Reject invalid taxonomy key",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Submit a key outside the lowercase stable-key pattern."
+      ],
+      "expected": [
+        "The type or priority save is rejected."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "type",
+        "priority"
+      ],
+      "operations": [
+        "save_issue_type",
+        "save_priority"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: Type and priority stable keys are generated from the entered display name; the native editor exposes no raw taxonomy-key input."
+      ]
+    },
+    {
+      "id": "UC-CFG-0017",
+      "title": "Reject empty or long taxonomy name",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Submit a blank or over-60-character type/priority name."
+      ],
+      "expected": [
+        "Validation rejects the save."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "type",
+        "priority"
+      ],
+      "operations": [
+        "save_issue_type",
+        "save_priority"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0018",
+      "title": "Preserve Arabic taxonomy names",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Create a type or priority with an Arabic display name."
+      ],
+      "expected": [
+        "Its Unicode name remains intact across reload and display."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "type",
+        "priority"
+      ],
+      "operations": [
+        "save_issue_type",
+        "save_priority"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0019",
+      "title": "Create custom priority",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a new project priority with stable key and positive order."
+      ],
+      "expected": [
+        "The priority becomes an active configured choice."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "priority",
+        "ui"
+      ],
+      "operations": [
+        "save_priority"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0020",
+      "title": "Rename priority",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Edit a priority display name."
+      ],
+      "expected": [
+        "The name changes while existing issue references retain the same priority identity."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "priority"
+      ],
+      "operations": [
+        "save_priority"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0021",
+      "title": "Reorder priority precisely",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a positive decimal-string position beyond JavaScript safe integer range."
+      ],
+      "expected": [
+        "The exact order representation is preserved."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "priority"
+      ],
+      "operations": [
+        "save_priority"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0022",
+      "title": "Reject nonpositive priority position",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Supply zero or negative priority order."
+      ],
+      "expected": [
+        "The save is rejected."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "priority"
+      ],
+      "operations": [
+        "save_priority"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0023",
+      "title": "Protect priority stable key",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Change an existing priority stable key."
+      ],
+      "expected": [
+        "The service rejects the rename."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "priority"
+      ],
+      "operations": [
+        "save_priority"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: The priority editor has no stable-key input and retains the stored key internally."
+      ]
+    },
+    {
+      "id": "UC-CFG-0024",
+      "title": "Retire nondefault priority",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Retire an active nondefault priority."
+      ],
+      "expected": [
+        "Existing issue references remain readable but the choice is retired for new use."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "priority"
+      ],
+      "operations": [
+        "save_priority"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0025",
+      "title": "Retire default priority with replacement",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Choose another active default while retiring the current default."
+      ],
+      "expected": [
+        "The replacement default and retirement save together."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "priority"
+      ],
+      "operations": [
+        "save_priority"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0026",
+      "title": "Reject default-priority retirement without replacement",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Retire the creation default without an eligible replacement."
+      ],
+      "expected": [
+        "The service rejects the change."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "priority"
+      ],
+      "operations": [
+        "save_priority"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0027",
+      "title": "Restore priority",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Unretire a retained priority."
+      ],
+      "expected": [
+        "The same priority identity becomes available again."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "priority"
+      ],
+      "operations": [
+        "save_priority"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0028",
+      "title": "Set creation defaults",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Select active standard type, subtask type and priority defaults."
+      ],
+      "expected": [
+        "New work resolves omitted choices from the saved project defaults."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "defaults",
+        "ui"
+      ],
+      "operations": [
+        "set_project_defaults"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0029",
+      "title": "Reject retired or foreign defaults",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Choose a default belonging to another project or a retired/ineligible choice."
+      ],
+      "expected": [
+        "The defaults change is rejected."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "defaults"
+      ],
+      "operations": [
+        "set_project_defaults"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: Default selectors enumerate scoped active choices; a foreign or retired raw default ID is not a native option."
+      ]
+    },
+    {
+      "id": "UC-CFG-0030",
+      "title": "Reject default changes before native mode",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Change native creation defaults while legacy mode is active."
+      ],
+      "expected": [
+        "The service asks for modern access rather than silently changing fixed legacy behavior."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "defaults"
+      ],
+      "operations": [
+        "set_project_defaults"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0031",
+      "title": "List typed fields",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Open Custom fields."
+      ],
+      "expected": [
+        "Field names, value kinds, requirements and retirement flags are listed."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldRead"
+      ],
+      "operations": [
+        "list_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0032",
+      "title": "Page fields",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Request another field-definition page."
+      ],
+      "expected": [
+        "Further project-scoped definitions load with a scoped cursor."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldRead"
+      ],
+      "operations": [
+        "list_fields"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-options-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0033",
+      "title": "Create text field",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a new text field with optional text default."
+      ],
+      "expected": [
+        "A text-kind definition is retained."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "field",
+        "fieldUi"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0034",
+      "title": "Create decimal field",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a number field using a precise decimal default."
+      ],
+      "expected": [
+        "The decimal is retained as typed data without binary-float rounding."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "field",
+        "fieldUi"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0035",
+      "title": "Create date field",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a date field with a valid calendar-date default."
+      ],
+      "expected": [
+        "The date remains a calendar date across reads."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "field",
+        "fieldUi"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0036",
+      "title": "Create choice field",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a new choice field without an unsaved option default."
+      ],
+      "expected": [
+        "The definition is created before options can be selected as defaults."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "field",
+        "fieldUi"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-options-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0037",
+      "title": "Create person field",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a user-kind field with eligible person default."
+      ],
+      "expected": [
+        "The typed user reference is retained."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "field",
+        "fieldUi"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0038",
+      "title": "Rename field",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Change a custom field display name."
+      ],
+      "expected": [
+        "The field identity and stable key remain unchanged."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0039",
+      "title": "Change field default",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a new valid typed creation default."
+      ],
+      "expected": [
+        "Future creation receives the default without overwriting existing issue values."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0040",
+      "title": "Clear field default",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a null default on an optional field."
+      ],
+      "expected": [
+        "No default value is configured for future work."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0041",
+      "title": "Reject field stable-key rename",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Change the key of a saved field."
+      ],
+      "expected": [
+        "The service rejects changing its stable key."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: The saved custom-field key input is readonly; the exact raw key-rewrite rejection belongs to REST/MCP."
+      ]
+    },
+    {
+      "id": "UC-CFG-0042",
+      "title": "Change unused field kind",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Change a field kind before any values, options or transition rules use it."
+      ],
+      "expected": [
+        "The kind changes with a compatible default."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0043",
+      "title": "Reject used field-kind change",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Change kind after values, options or transition rules use the field."
+      ],
+      "expected": [
+        "The service retains the original kind and rejects the mutation."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0044",
+      "title": "Reject mismatched default kind",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a default whose typed kind differs from its field."
+      ],
+      "expected": [
+        "The save is rejected."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: The default editor constructs its discriminated value from the selected field kind and clears it on a kind change; it cannot submit a mismatched discriminator."
+      ]
+    },
+    {
+      "id": "UC-CFG-0045",
+      "title": "Reject invalid default option",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Select a retired, foreign or missing option as a default."
+      ],
+      "expected": [
+        "The field save is rejected."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: The choice picker exposes current scoped active option identities; raw foreign/missing option IDs cannot be selected."
+      ]
+    },
+    {
+      "id": "UC-CFG-0046",
+      "title": "Reject ineligible person default",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Choose a person who is not eligible in the project."
+      ],
+      "expected": [
+        "The default is rejected."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0047",
+      "title": "Reject blank required-text default",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Supply whitespace-only text as the default of a required text field."
+      ],
+      "expected": [
+        "The save is rejected."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0048",
+      "title": "Require native model for global field requirement",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Enable Required on every issue before native mode is active."
+      ],
+      "expected": [
+        "The service rejects the requirement until native access is enabled."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0049",
+      "title": "Require backfill before global requirement",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Enable a global requirement while existing issues lack a value."
+      ],
+      "expected": [
+        "The change is rejected with preparation/backfill guidance."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0050",
+      "title": "Enable completed field requirement",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Enable a requirement after missing values have been filled."
+      ],
+      "expected": [
+        "The field becomes globally required for issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0051",
+      "title": "Disable global requirement",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Clear Required on every issue."
+      ],
+      "expected": [
+        "The field becomes optional while values remain stored."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0052",
+      "title": "Reject retirement while globally required",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Retire a field with a global requirement still enabled."
+      ],
+      "expected": [
+        "The service rejects incompatible requirement/retirement state."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0053",
+      "title": "Reject retirement while transition-required",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Retire a field used by an active transition requirement."
+      ],
+      "expected": [
+        "The service requires removing that transition requirement first."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Transition-policy configuration is canonical in the workflows area."
+      ]
+    },
+    {
+      "id": "UC-CFG-0054",
+      "title": "Retire optional custom field",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Retire an optional field with no active transition requirement."
+      ],
+      "expected": [
+        "The definition/history remain retained while future use is disabled."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "field"
+      ],
+      "operations": [
+        "save_field"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0055",
+      "title": "List choice options",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Open options for an active choice field."
+      ],
+      "expected": [
+        "Names, positions and active/retired state load."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldRead"
+      ],
+      "operations": [
+        "list_field_options"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-options-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0056",
+      "title": "Page choice options",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Request More options."
+      ],
+      "expected": [
+        "Further bounded option records are returned."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "fieldUi",
+        "fieldRead"
+      ],
+      "operations": [
+        "list_field_options"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-options-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0057",
+      "title": "Add choice option",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a new option with name and positive position."
+      ],
+      "expected": [
+        "The option becomes a usable project-field choice."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "option",
+        "fieldUi"
+      ],
+      "operations": [
+        "save_field_option"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-options-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0058",
+      "title": "Rename choice option",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Edit an option name."
+      ],
+      "expected": [
+        "The name changes while issue values retain its identity."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "option"
+      ],
+      "operations": [
+        "save_field_option"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-options-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0059",
+      "title": "Reorder choice option",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a new positive exact option position."
+      ],
+      "expected": [
+        "The option sorts using its retained precise position."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "option"
+      ],
+      "operations": [
+        "save_field_option"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-options-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0060",
+      "title": "Retire choice option",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Retire a nondefault option."
+      ],
+      "expected": [
+        "New selection is disabled while history remains readable."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "option"
+      ],
+      "operations": [
+        "save_field_option"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-options-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0061",
+      "title": "Reject retiring default option",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Retire the option still selected as field default."
+      ],
+      "expected": [
+        "The service requires replacing or clearing the default first."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "option"
+      ],
+      "operations": [
+        "save_field_option"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-options-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0062",
+      "title": "Restore choice option",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Clear retirement on a retained option."
+      ],
+      "expected": [
+        "The same option identity becomes active again."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "option"
+      ],
+      "operations": [
+        "save_field_option"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-options-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0063",
+      "title": "Reject options on other field kinds",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save an option for a text/number/date/user field or retired field."
+      ],
+      "expected": [
+        "The service requires an active choice field."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "option"
+      ],
+      "operations": [
+        "save_field_option"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0064",
+      "title": "Reject invalid option metadata",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Submit missing IDs, empty or long name, stale missing revision or nonpositive position."
+      ],
+      "expected": [
+        "The option save is rejected."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "option"
+      ],
+      "operations": [
+        "save_field_option"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: This aggregate raw-input case includes missing generated IDs/revisions that the native option form never exposes. Native name/order validation is tested independently."
+      ]
+    },
+    {
+      "id": "UC-CFG-0065",
+      "title": "Backfill one bounded batch",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Choose Fill missing values for a field with default."
+      ],
+      "expected": [
+        "Up to 100 missing issue values are filled and changed/remaining counts returned."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "backfill",
+        "fieldUi"
+      ],
+      "operations": [
+        "backfill_field_defaults"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0066",
+      "title": "Continue default backfill",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Repeat batches with current state until remaining reaches zero."
+      ],
+      "expected": [
+        "Only missing values are filled and existing values are preserved."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "backfill",
+        "fieldUi"
+      ],
+      "operations": [
+        "backfill_field_defaults"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-fields-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0067",
+      "title": "Reject invalid backfill size",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Request fewer than one or more than 100 issues."
+      ],
+      "expected": [
+        "The service rejects the batch."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "backfill"
+      ],
+      "operations": [
+        "backfill_field_defaults"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: The native backfill action always requests a fixed bounded batch; there is no editable batch-size input."
+      ]
+    },
+    {
+      "id": "UC-CFG-0068",
+      "title": "Reject legacy backfill",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Request field-default backfill before native issue mode."
+      ],
+      "expected": [
+        "The service requires the native issue model."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "backfill"
+      ],
+      "operations": [
+        "backfill_field_defaults"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0069",
+      "title": "Review configuration conflict",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save against an outdated configuration revision."
+      ],
+      "expected": [
+        "The draft is retained and the UI offers current configuration review before saving again."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "editor",
+        "fieldUi"
+      ],
+      "operations": [
+        "save_field",
+        "save_issue_type",
+        "save_priority",
+        "set_project_defaults"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0070",
+      "title": "Retain draft when conflict refresh fails",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Select Review current configuration while its reload fails."
+      ],
+      "expected": [
+        "The draft remains visible and stale save remains blocked."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "editor",
+        "fieldUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Browser draft/transport ownership is exercised only through real browser controls. Atomic service concurrency and replay boundaries are recorded separately as UC-CFG-0089 and UC-CFG-0090."
+      ]
+    },
+    {
+      "id": "UC-CFG-0071",
+      "title": "Retry uncertain configuration save",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Retry a lost accepted save using the frozen original payload/reference."
+      ],
+      "expected": [
+        "The original accepted mutation is returned without duplication."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "editor",
+        "fieldUi"
+      ],
+      "operations": [
+        "save_field",
+        "save_field_option",
+        "save_issue_type",
+        "save_priority"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Browser draft/transport ownership is exercised only through real browser controls. Atomic service concurrency and replay boundaries are recorded separately as UC-CFG-0089 and UC-CFG-0090."
+      ]
+    },
+    {
+      "id": "UC-CFG-0072",
+      "title": "Protect draft on navigation",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Leave settings with an unsaved draft and cancel navigation."
+      ],
+      "expected": [
+        "The draft remains and the current editor stays open."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "route",
+        "fieldUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0073",
+      "title": "Discard settings draft explicitly",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Confirm leaving a dirty settings editor."
+      ],
+      "expected": [
+        "Navigation completes after explicit discard."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "route",
+        "fieldUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0074",
+      "title": "Separate project editor state",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Navigate between project settings routes with delayed option/configuration replies."
+      ],
+      "expected": [
+        "The new project cannot inherit old draft, choices or late reply data."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "editor",
+        "fieldUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0075",
+      "title": "Deny configuration mutation to reader",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Attempt to save configuration without project Configure permission."
+      ],
+      "expected": [
+        "The service rejects the mutation regardless of hidden web controls."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "save_field",
+        "save_issue_type",
+        "save_priority",
+        "set_project_defaults"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0076",
+      "title": "Read activation readiness",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Open native-mode activation readiness."
+      ],
+      "expected": [
+        "Configuration/project/default-board revisions, issue count and readiness problems are returned."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "activation",
+        "activationUi"
+      ],
+      "operations": [
+        "get_project_activation"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0077",
+      "title": "Explain missing default board",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Review readiness when the default board is missing or archived."
+      ],
+      "expected": [
+        "A default_board problem identifies the prerequisite."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "activation"
+      ],
+      "operations": [
+        "get_project_activation"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0078",
+      "title": "Explain filtered default board",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Review readiness when the default board has saved filters."
+      ],
+      "expected": [
+        "A default_filters problem requires complete project coverage."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "activation"
+      ],
+      "operations": [
+        "get_project_activation"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Defensive historical-data acceptance: ordinary current API writes cannot produce this state because the named PostgreSQL CHECK rejects it. A guarded disposable-database fixture captures that exact validated CHECK, changes only its owned retained row while dropping/restoring the identical CHECK NOT VALID in one transaction, proves later writes remain protected, and finally repairs the row and validates the CHECK. Actual Go readiness responses and rendered UI warnings are then tested; no normal-user corruption or production schema change is claimed."
+      ]
+    },
+    {
+      "id": "UC-CFG-0079",
+      "title": "Explain canonical-reference gap",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Review readiness before canonical issue references are complete."
+      ],
+      "expected": [
+        "A canonical_references problem is returned."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "activation"
+      ],
+      "operations": [
+        "get_project_activation"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Defensive historical-data acceptance: ordinary current API writes cannot produce this state because the named PostgreSQL CHECK rejects it. A guarded disposable-database fixture captures that exact validated CHECK, changes only its owned retained row while dropping/restoring the identical CHECK NOT VALID in one transaction, proves later writes remain protected, and finally repairs the row and validates the CHECK. Actual Go readiness responses and rendered UI warnings are then tested; no normal-user corruption or production schema change is claimed.",
+        "The retained null-reference fixture also captures and restores the exact enabled issues_canonical_shape trigger within the same locked transaction. Both its new-write rejection and the restored CHECK are proved before commit; finally the owned row is repaired and the identical CHECK validated."
+      ]
+    },
+    {
+      "id": "UC-CFG-0080",
+      "title": "Explain stage-coverage gap",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Review readiness while open/occupied stages lack default-board mapping."
+      ],
+      "expected": [
+        "A stage_coverage problem is returned."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "activation"
+      ],
+      "operations": [
+        "get_project_activation"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0081",
+      "title": "Explain invalid creation defaults",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Review readiness with retired or ineligible type/priority/default workflows."
+      ],
+      "expected": [
+        "A creation_defaults problem is returned."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "activation"
+      ],
+      "operations": [
+        "get_project_activation"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0082",
+      "title": "Explain invalid workflow progression",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Review readiness when live/new-work workflows lack an initial stage or path to Done."
+      ],
+      "expected": [
+        "A workflow_progression problem is returned."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "activation"
+      ],
+      "operations": [
+        "get_project_activation"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Workflow editing and progression repair belong to the workflows area."
+      ]
+    },
+    {
+      "id": "UC-CFG-0083",
+      "title": "Bound activation workflow review",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Review a project with over 1000 active workflows."
+      ],
+      "expected": [
+        "The configuration_limit problem requires review instead of unbounded inspection."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "activation"
+      ],
+      "operations": [
+        "get_project_activation"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0084",
+      "title": "Confirm ready activation",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Submit explicit confirmation and exact reviewed configuration/project/board revisions."
+      ],
+      "expected": [
+        "Canonical mode activates and an attributed change is recorded."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "activate",
+        "activationUi"
+      ],
+      "operations": [
+        "activate_project_core"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0085",
+      "title": "Reject unconfirmed activation",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Submit activation without confirmation."
+      ],
+      "expected": [
+        "Validation rejects the activation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "activate"
+      ],
+      "operations": [
+        "activate_project_core"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: The ready activation submit button is disabled until explicit confirmation. The exact confirm=false service request is not a native action."
+      ]
+    },
+    {
+      "id": "UC-CFG-0086",
+      "title": "Reject stale activation snapshot",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Change a relevant project/configuration/board revision after readiness then activate."
+      ],
+      "expected": [
+        "The stale command conflicts instead of activating unchecked state."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "activate"
+      ],
+      "operations": [
+        "activate_project_core"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0087",
+      "title": "Reject unready activation",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Confirm activation while readiness still has problems."
+      ],
+      "expected": [
+        "The service requires resolving and reviewing prerequisites."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "activate"
+      ],
+      "operations": [
+        "activate_project_core"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go",
+        "frontend/e2e/coverage-configuration-native-residual.spec.ts",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-CFG-0088",
+      "title": "Repeat already active mode",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Activate an already modern project using matching current snapshot."
+      ],
+      "expected": [
+        "The current configuration is returned without repeated activation effects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "service_only",
+      "evidence": [
+        "activate"
+      ],
+      "operations": [
+        "activate_project_core"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-configuration.spec.ts",
+        "frontend/e2e/fields-approvals.spec.ts",
+        "backend/internal/features/configuration/fields_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: Already-active projects show current mode and Open issues; they expose no repeat-activation submit action."
+      ]
+    },
+    {
+      "id": "UC-CFG-0089",
+      "title": "Return current configuration on stale service mutation",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Commit one configuration change, then send an earlier expectedRevision through the real service interface."
+      ],
+      "expected": [
+        "The service returns conflict with current configuration and leaves the newer taxonomy unchanged."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "editor",
+        "fieldUi"
+      ],
+      "operations": [
+        "save_field",
+        "save_issue_type",
+        "save_priority",
+        "set_project_defaults"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-configuration-mcp.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service boundary split from the browser-specific draft/retry journeys UC-CFG-0070 and UC-CFG-0071."
+      ]
+    },
+    {
+      "id": "UC-CFG-0090",
+      "title": "Replay accepted configuration command exactly once",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor has the stated role in a current project; mutations use its latest configuration revision unless a conflict case states otherwise."
+      ],
+      "steps": [
+        "Save a configuration change, then repeat the same accepted payload and retryReference."
+      ],
+      "expected": [
+        "The replay retains the original result, revision and event ID, marks its receipt replayed, and creates no duplicate taxonomy entry."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "editor",
+        "fieldUi"
+      ],
+      "operations": [
+        "save_field",
+        "save_issue_type",
+        "save_priority",
+        "set_project_defaults"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-configuration-mcp.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service boundary split from the browser-specific draft/retry journeys UC-CFG-0070 and UC-CFG-0071."
+      ]
+    }
+  ]
+}

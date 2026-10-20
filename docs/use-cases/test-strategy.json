@@ -1,0 +1,47 @@
+{
+  "target": {
+    "useCaseOutcomesPercent": 100,
+    "declaredSurfacesPercent": 100,
+    "frontendLinesPercent": 100,
+    "frontendBranchesPercent": 100,
+    "goStatementsPercent": 100
+  },
+  "status": "in_progress_not_100_percent",
+  "execution": "Playwright runs against the actual Angular app, Go API and MCP endpoint with isolated PostgreSQL databases. API-only assertions are not evidence of a web control. The full catalog can run as disjoint parallel shards, each with its own captured source and disposable database.",
+  "traceability": "Each useCase step names one stable catalog ID and the exercised surface. The reporter requires actual expect assertions, a passing complete test and no retry. Failed, skipped, flaky, unknown or assertion-free steps cannot satisfy full coverage.",
+  "sourceProvenance": "Every browser run captures source, tests, catalog and a SHA-256 manifest together. Reports carry catalog, application and per-case hashes. The published matrix rejects stale application or catalog evidence. Publishing also verifies the executed test files and shared browser helpers against the captured manifest; changed test assertions require a new run. Sharded aggregation requires all declared shards and a successful actual unfiltered CI=1 --list inventory, exact disjoint test identities, identical complete current captured inventories, actual attempt outcomes and unchanged per-case hashes. Skipped tests and provider boundaries remain unresolved.",
+  "measurements": {
+    "frontendUnit": "Vitest V8 with all handwritten frontend/src/**/*.ts, including src/main.ts bootstrap and files not loaded by tests. Excludes src/**/*.spec.ts and exactly src/app/api/generated/** plus src/app/api/fixture-generated/**. HTML/CSS/assets, build/test tooling and other packages are outside this TypeScript metric. Every successful full unfiltered Vitest run binds its actual discovered spec results, source, tests, configuration, installed dependency metadata and raw counters in a private proof. A newer running, aborted or failed attempt invalidates older successful unit evidence even when application bytes are unchanged; converter and publisher revalidate this latest-attempt identity.",
+    "frontendBrowser": "Chromium V8 with AST-aware mapping and exact original TypeScript content validation. Angular embedded CSS/template resources are not treated as TypeScript. Only loaded scripts are measured; document navigations and separately created browser contexts have collection limits. Repeated scripts are grouped only when pathname, compiled bytes, source-map bytes, complete function/range shape and range order match. Every original source is validated; only observed corresponding counters are summed. GATEGOLD_GROUP_BROWSER_COUNTERS=0 retains the reference path. A full565-archive comparison produced byte-identical browser and combined coverage JSON across all122 mapped files.",
+    "combination": "Keep standalone reports. An optional conservative combined report projects only identical source statement/function/branch spans onto the full Vitest denominator after validating original file hashes; incompatible compiler-generated spans receive no credit. Percentages are never added and the denominator is never expanded by the merge. Strict publishing also requires producer-bound unit/combined summary bytes and the complete current frontend source manifest. Unbound standalone summaries remain diagnostic and cannot pass the 100% source gate. The fixed TypeScript inventory includes bootstrap; an earlier src/app-only proof cannot validate this expanded frontend/src inventory. Browser mapping accepts only captured source members at known frontend roots or exact source-relative paths, rejecting node_modules and Angular extracted resources.",
+    "go": "Race-enabled Go unit/integration coverage and separately instrumented browser-server coverage. Exact block maps and captured source hashes must match before counter union; percentages are never added. Go built-in tooling measures statements, not branch percentages. The denominator currently includes generated Go and test-support packages selected by coverpkg=./..., as well as handwritten application code. A separate official Go instrumentation run selects no tests and independently establishes the complete package/block/statement inventory. Full test profile, inventory, successful logs, package-file hashes and captured backend hashes are bound in private provenance. Missing, truncated or changed artifacts cannot satisfy the full source gate; browser-only subset counts remain unverified."
+  },
+  "commands": {
+    "catalog": "python3 docs/use-cases/build_catalog.py --check",
+    "unit": "bash scripts/run-unit-coverage.sh",
+    "backend": "TEST_DATABASE_URL=<isolated-test-admin-connection> bash scripts/run-backend-coverage.sh",
+    "browser": "GATEGOLD_CAPTURE_CODE_COVERAGE=1 bash scripts/run-browser-tests.sh",
+    "browserPerformance": "RUN_BROWSER_PERFORMANCE=1 bash scripts/run-browser-tests.sh performance.spec.ts",
+    "fullGate": "make test-coverage-full",
+    "matrix": "python3 scripts/finalize-browser-coverage.py --run <browser-run> --go-unit-run <go-run> --output .local/coverage/browser",
+    "completeCoverage": "make test-coverage",
+    "browserShard": "CI=1 GATEGOLD_CAPTURE_CODE_COVERAGE=1 GATEGOLD_DEFER_BROWSER_COVERAGE_REPORT=1 GATEGOLD_BROWSER_RUN_INDEX=<private-shard-index> bash scripts/run-browser-tests.sh --shard=<number>/<total>",
+    "browserShardMerge": "python3 scripts/merge-browser-shards.py --shard-index <index-1> --shard-index <index-2> --inventory <actual-unsharded-reporter-list.json> --output <new-private-run> --index-output <combined-index>",
+    "goProvenance": "python3 scripts/go-coverage-provenance.py create --run <successful-full-go-run>"
+  },
+  "ci": "Runs frontend coverage and backend race/statement coverage. Browser matrix separates uninstrumented functional/performance acceptance from instrumented coverage. Runtime exceptions and invalid use-case evidence fail the suite. The 100% gate is explicit and must not be described as passing while residual cases/providers remain.",
+  "providerBoundaries": [
+    "Actual Auth0/Google company sign-in",
+    "Intended SMTP delivery and hosted scheduler",
+    "Verified Google service-account maintenance identity",
+    "Shared HTTPS hosting, GCS and actual managed plugin acceptance"
+  ],
+  "privateEvidence": "Disposable account passwords, bearer tokens, raw browser coverage, uploaded files, traces and server logs remain under private .local run directories. Public summaries contain case IDs, status, counts, source hashes and source locations only. Full unit-run proof, raw Vitest results and converter provenance remain private too. Publish only the curated case matrix, aggregate counters, hashes and pending-acceptance notes.",
+  "gate": "The full gate evaluates exact covered/total counters after source-matched unit/browser combination. Rounded 100% values, empty denominators, mismatched sources, failed/flaky scenarios, missing case surfaces and pending providers cannot pass.",
+  "measurementGaps": {
+    "goLines": "Not independently measured. Native Go coverage counters are statements, and source block spans are not treated as line execution proof.",
+    "goBranches": "Not measured. A separate Go decision/branch instrumentation plan is required before claiming whole-stack line/branch100%.",
+    "angularMapping": "The conservative exact-span combination can undercredit actual browser execution; incompatible compiler maps are not inferred to be covered.",
+    "otherRuntimePackages": "Identity-action and portable-plugin tests run independently; their source line/branch percentages are not included in the frontend TypeScript or Go statement metrics. No whole-stack source100% claim is made."
+  }
+}

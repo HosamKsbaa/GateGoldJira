@@ -1,0 +1,1406 @@
+{
+  "area": "backlog",
+  "title": "Backlog planning, ranking and activation",
+  "summary": "Planned work has ordering independent of active board columns. Browser bulk activation processes at most 100 selected issues through individual organization commands; it is not one atomic bulk transaction.",
+  "sources": {
+    "page": {
+      "path": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+      "line": 236
+    },
+    "service": {
+      "path": "backend/internal/features/issues/backlog.go",
+      "line": 63
+    },
+    "reorder": {
+      "path": "backend/internal/features/issues/backlog.go",
+      "line": 125
+    },
+    "organization": {
+      "path": "backend/internal/features/issues/organization.go",
+      "line": 50
+    },
+    "transport": {
+      "path": "backend/internal/features/issues/backlog_transport.go",
+      "line": 11
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-BLG-0001",
+      "title": "Read planned work",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open the project's Backlog page."
+      ],
+      "expected": [
+        "Ranked planned issues and a total count appear."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "list_backlog"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-backlog-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0002",
+      "title": "Read backlog issue metadata",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Inspect a planned row."
+      ],
+      "expected": [
+        "Key, title, category, assignee, due state, blockers and labels describe the issue."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0003",
+      "title": "Open a planned issue",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Follow a backlog issue link."
+      ],
+      "expected": [
+        "The dedicated issue route opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0004",
+      "title": "Load more planned work",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Choose More planned work."
+      ],
+      "expected": [
+        "The next cursor page appends without duplicate rows."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "list_backlog"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BLG-0037."
+      ],
+      "relatedCases": [
+        "UC-BLG-0037"
+      ]
+    },
+    {
+      "id": "UC-BLG-0005",
+      "title": "Read an empty backlog",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open a project with no planned work."
+      ],
+      "expected": [
+        "The empty state explains creating planned work or sending unstarted work to backlog."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0006",
+      "title": "Create planned work",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Create an issue using the backlog form."
+      ],
+      "expected": [
+        "The issue is created in backlog without briefly appearing as active board work."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0007",
+      "title": "Create planned work with attachments",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Create a backlog issue with queued files or pictures."
+      ],
+      "expected": [
+        "Uploads finish against the one created issue before the form completes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Binary transfer details are owned by the attachments catalog.",
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BLG-0006, UC-AST-0060."
+      ],
+      "relatedCases": [
+        "UC-BLG-0006",
+        "UC-AST-0060"
+      ]
+    },
+    {
+      "id": "UC-BLG-0008",
+      "title": "Cancel backlog creation",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Close creation and resolve its draft confirmation."
+      ],
+      "expected": [
+        "The form closes without creating another issue; focus returns to the create trigger."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0009",
+      "title": "Drag a planned issue earlier",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Drag a loaded row earlier in backlog."
+      ],
+      "expected": [
+        "The new backlog order survives refresh without changing active board ordering."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reorder"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BLG-0038."
+      ],
+      "relatedCases": [
+        "UC-BLG-0038"
+      ]
+    },
+    {
+      "id": "UC-BLG-0010",
+      "title": "Rank a planned issue earlier with keyboard controls",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Use the Rank earlier button."
+      ],
+      "expected": [
+        "The new backlog order is saved without requiring a drag gesture."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reorder"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BLG-0038."
+      ],
+      "relatedCases": [
+        "UC-BLG-0038"
+      ]
+    },
+    {
+      "id": "UC-BLG-0011",
+      "title": "Drag a planned issue later",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Drag a loaded row later in backlog."
+      ],
+      "expected": [
+        "The new backlog order survives refresh without changing active board ordering."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reorder"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BLG-0039."
+      ],
+      "relatedCases": [
+        "UC-BLG-0039"
+      ]
+    },
+    {
+      "id": "UC-BLG-0012",
+      "title": "Rank a planned issue later with keyboard controls",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Use the Rank later button."
+      ],
+      "expected": [
+        "The new backlog order is saved without requiring a drag gesture."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reorder"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BLG-0039."
+      ],
+      "relatedCases": [
+        "UC-BLG-0039"
+      ]
+    },
+    {
+      "id": "UC-BLG-0013",
+      "title": "Select one planned issue",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Select its checkbox."
+      ],
+      "expected": [
+        "The selected issue contributes to the activation count."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0014",
+      "title": "Deselect one planned issue",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Clear its selected checkbox."
+      ],
+      "expected": [
+        "The issue no longer contributes to the activation count."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0015",
+      "title": "Select loaded planned issues",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose Select loaded."
+      ],
+      "expected": [
+        "Up to 100 currently loaded rows are selected."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0016",
+      "title": "Clear backlog selection",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Turn off Select loaded."
+      ],
+      "expected": [
+        "Selection is cleared."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0017",
+      "title": "Activate one planned issue",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose Move to board for one backlog row."
+      ],
+      "expected": [
+        "The issue becomes active and disappears from backlog."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "organization"
+      ],
+      "operations": [
+        "organize_issue"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-boards.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-backlog-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0018",
+      "title": "Activate selected planned work",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose Move selected to board."
+      ],
+      "expected": [
+        "Each confirmed issue leaves backlog and the success count advances."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "organization"
+      ],
+      "operations": [
+        "organize_issue"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BLG-0017."
+      ],
+      "relatedCases": [
+        "UC-BLG-0017"
+      ]
+    },
+    {
+      "id": "UC-BLG-0019",
+      "title": "Preserve successful partial activation",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Retry after a later selected issue fails to activate."
+      ],
+      "expected": [
+        "Previously confirmed issues remain removed while unconfirmed work is available to retry."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "organize_issue"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BLG-0017, UC-BLG-0031."
+      ],
+      "relatedCases": [
+        "UC-BLG-0017",
+        "UC-BLG-0031"
+      ]
+    },
+    {
+      "id": "UC-BLG-0020",
+      "title": "Apply stage assignment on activation",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Activate planned work whose current stage has an enabled assignment rule."
+      ],
+      "expected": [
+        "The stage-entry assignment hook runs in the activation transaction."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "organization",
+        "page"
+      ],
+      "operations": [
+        "organize_issue"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-backlog-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BLG-0021",
+      "title": "Keep backlog read-only for viewers",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open backlog using viewer access."
+      ],
+      "expected": [
+        "Creation, selection, ranking and activation controls are unavailable."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reorder"
+      ],
+      "operations": [
+        "list_backlog"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BLG-0040."
+      ],
+      "relatedCases": [
+        "UC-BLG-0040"
+      ]
+    },
+    {
+      "id": "UC-BLG-0022",
+      "title": "Reject ranking by a viewer",
+      "actor": "writer",
+      "preconditions": [
+        "Actor has only viewer access."
+      ],
+      "steps": [
+        "Submit a reorder command without project write authority."
+      ],
+      "expected": [
+        "The server refuses the write."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "reorder",
+        "page"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/backlog_import_test.go",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-backlog-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BLG-0023",
+      "title": "Reject more than 100 selected issues",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Select issue 101 for one activation batch."
+      ],
+      "expected": [
+        "The extra selection is refused with a visible limit message."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0024",
+      "title": "Reject self-anchored backlog reorder",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Use the moving issue as its own neighbor."
+      ],
+      "expected": [
+        "Validation requires another planned issue."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "reorder"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/backlog_import_test.go",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0025",
+      "title": "Reject ranking active board work",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Rank an issue currently outside backlog."
+      ],
+      "expected": [
+        "Only current backlog work can be ranked."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "reorder"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/backlog_import_test.go",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0026",
+      "title": "Reject ranking an archived backlog issue",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Rank archived planned work."
+      ],
+      "expected": [
+        "Archived work cannot be ranked."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "reorder"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/backlog_import_test.go",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0027",
+      "title": "Reject an active-board reorder anchor",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose a neighbor outside backlog."
+      ],
+      "expected": [
+        "The anchor must be a current backlog issue."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "reorder"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/backlog_import_test.go",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0028",
+      "title": "Reject a foreign-project reorder anchor",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Choose a neighbor in another project."
+      ],
+      "expected": [
+        "The anchor is unavailable in this scoped operation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "reorder"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/backlog_import_test.go",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0029",
+      "title": "Reject a stale backlog order",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Reorder using an earlier backlog-order revision."
+      ],
+      "expected": [
+        "Conflict requires reloading current planning order."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "reorder",
+        "page"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/backlog_import_test.go",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-backlog-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BLG-0030",
+      "title": "Reject a cursor after backlog ordering changes",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Continue pagination using a cursor from an older backlog order."
+      ],
+      "expected": [
+        "The signed cursor scope refuses stale ordering."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "service",
+        "page"
+      ],
+      "operations": [
+        "list_backlog"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/backlog_import_test.go",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-backlog-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BLG-0031",
+      "title": "Retry uncertain backlog creation",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Retry after an accepted create response is lost."
+      ],
+      "expected": [
+        "The frozen original create/reference resolves to one backlog issue."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0032",
+      "title": "Retain one created issue during upload retry",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Retry after issue creation succeeds but a queued upload fails."
+      ],
+      "expected": [
+        "The existing issue ID is reused instead of issuing another create."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BLG-0031, UC-AST-0063."
+      ],
+      "relatedCases": [
+        "UC-BLG-0031",
+        "UC-AST-0063"
+      ]
+    },
+    {
+      "id": "UC-BLG-0033",
+      "title": "Ignore another project's delayed creation",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Navigate to another project before the old create returns."
+      ],
+      "expected": [
+        "The old result cannot mark or upload the destination project's draft."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0034",
+      "title": "Replace backlog context on project navigation",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Navigate to another project's backlog while a read is pending."
+      ],
+      "expected": [
+        "Old lists, selection and pending commands reset; stale replies are ignored."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-BLG-0035",
+      "title": "Bound backlog rank maintenance",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Reorder a dense ranking whose required rebalance exceeds the service bound."
+      ],
+      "expected": [
+        "A safe failure refuses unbounded rebalance work."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "reorder",
+        "page"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "backend/internal/features/issues/backlog_import_test.go",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source classification correction: the native action and its validation/recovery path are present. This records implementation availability, not a passing runtime coverage claim."
+      ]
+    },
+    {
+      "id": "UC-BLG-0036",
+      "title": "Retain Arabic planned titles",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Create and read planned work with Arabic text."
+      ],
+      "expected": [
+        "The exact title remains readable with automatic direction."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "create_issue_v2",
+        "list_backlog"
+      ],
+      "existingTests": [
+        "frontend/e2e/backlog-planning.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-BLG-0041."
+      ],
+      "relatedCases": [
+        "UC-BLG-0041"
+      ]
+    },
+    {
+      "id": "UC-BLG-0037",
+      "title": "Read another backlog cursor page",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request a bounded backlog page and its signed continuation."
+      ],
+      "expected": [
+        "The next distinct issue summaries retain ranked order, total and current order revision."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "service"
+      ],
+      "operations": [
+        "list_backlog"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BLG-0004."
+      ],
+      "relatedCases": [
+        "UC-BLG-0004"
+      ]
+    },
+    {
+      "id": "UC-BLG-0038",
+      "title": "Persist backlog rank before a neighbor",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Submit a revision-aware backlog reorder before another current planned issue."
+      ],
+      "expected": [
+        "A fresh backlog read retains the requested order without changing issue content or active-board rank."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reorder"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BLG-0009."
+      ],
+      "relatedCases": [
+        "UC-BLG-0009"
+      ]
+    },
+    {
+      "id": "UC-BLG-0039",
+      "title": "Persist backlog rank after a neighbor",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Submit a revision-aware backlog reorder after another current planned issue."
+      ],
+      "expected": [
+        "A fresh backlog read retains the requested order without changing issue content or active-board rank."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reorder"
+      ],
+      "operations": [
+        "reorder_backlog"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BLG-0011."
+      ],
+      "relatedCases": [
+        "UC-BLG-0011"
+      ]
+    },
+    {
+      "id": "UC-BLG-0040",
+      "title": "Enforce viewer backlog service access",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Read planned work as a viewer and attempt planned issue creation or activation."
+      ],
+      "expected": [
+        "The authorized read succeeds while current write permission rejects creation and activation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reorder"
+      ],
+      "operations": [
+        "list_backlog"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BLG-0021."
+      ],
+      "relatedCases": [
+        "UC-BLG-0021"
+      ]
+    },
+    {
+      "id": "UC-BLG-0041",
+      "title": "Retain Arabic planned text through service",
+      "actor": "writer",
+      "preconditions": [
+        "Signed in with write access to an active project."
+      ],
+      "steps": [
+        "Create planned work with an Arabic title and read the stored ranked issue."
+      ],
+      "expected": [
+        "The exact Unicode title and backlog identity persist."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "create_issue_v2",
+        "list_backlog"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-boards.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-BLG-0036."
+      ],
+      "relatedCases": [
+        "UC-BLG-0036"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,298 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GateGoldJira source-inspected use-case catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "version",
+    "catalogDate",
+    "timeZone",
+    "scope",
+    "runtimeVerification",
+    "testReferences",
+    "summary",
+    "areas",
+    "sourceFingerprint",
+    "cases"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "const": 1
+    },
+    "catalogDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "timeZone": {
+      "const": "Africa/Cairo"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "runtimeVerification": {
+      "const": "not_run"
+    },
+    "testReferences": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "object"
+    },
+    "areas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "area",
+          "title",
+          "summary",
+          "caseIds"
+        ],
+        "properties": {
+          "area": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "caseIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sourceFingerprint": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/case"
+      }
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "required": [
+        "path",
+        "line"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "actor",
+        "preconditions",
+        "steps",
+        "expected",
+        "surfaces",
+        "kind",
+        "implementation",
+        "evidence",
+        "operations",
+        "existingTests",
+        "gapIds",
+        "notes",
+        "area",
+        "runtimeVerification",
+        "sourceReferences"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^UC-[A-Z]{2,5}-[0-9]{4}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor": {
+          "enum": [
+            "anonymous",
+            "user",
+            "reader",
+            "writer",
+            "project_admin",
+            "company_admin",
+            "author",
+            "reviewer",
+            "mcp_client",
+            "plugin_user",
+            "operator",
+            "worker"
+          ]
+        },
+        "preconditions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "expected": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "surfaces": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "web",
+              "rest",
+              "mcp",
+              "plugin",
+              "background",
+              "operator",
+              "frontend_service"
+            ]
+          }
+        },
+        "kind": {
+          "enum": [
+            "happy_path",
+            "validation",
+            "permission",
+            "failure",
+            "concurrency",
+            "accessibility",
+            "localization",
+            "performance",
+            "lifecycle"
+          ]
+        },
+        "implementation": {
+          "enum": [
+            "implemented",
+            "service_only",
+            "external_pending",
+            "not_implemented",
+            "unclear"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "httpOperations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "existingTests": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "gapIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "relatedCases": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "area": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runtimeVerification": {
+          "const": "not_run"
+        },
+        "sourceReferences": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/source"
+          }
+        }
+      }
+    }
+  }
+}

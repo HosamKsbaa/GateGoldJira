@@ -1,0 +1,2786 @@
+{
+  "area": "workspace",
+  "title": "Workspace, navigation and shared controls",
+  "summary": "Current shell, workspace dashboard, global discovery, shared input behavior and foreground refresh. Domain-specific editors and permissions are documented in their own areas.",
+  "sources": {
+    "shell": {
+      "path": "frontend/src/app/app.component.ts",
+      "line": 30
+    },
+    "search": {
+      "path": "frontend/src/app/app.component.ts",
+      "line": 542
+    },
+    "navigation": {
+      "path": "frontend/src/app/app.component.ts",
+      "line": 456
+    },
+    "home": {
+      "path": "frontend/src/app/core/workspace/workspace.page.ts",
+      "line": 12
+    },
+    "dashboard": {
+      "path": "frontend/src/app/core/workspace/workspace.page.ts",
+      "line": 542
+    },
+    "picker": {
+      "path": "frontend/src/app/shared/ui/searchable-picker.component.ts",
+      "line": 26
+    },
+    "popup": {
+      "path": "frontend/src/app/shared/ui/position-anchored-popup.ts",
+      "line": 2
+    },
+    "drafts": {
+      "path": "frontend/src/app/core/drafts/drafts.service.ts",
+      "line": 64
+    },
+    "refresh": {
+      "path": "frontend/src/app/core/refresh/foreground-refresh.ts",
+      "line": 3
+    },
+    "routes": {
+      "path": "frontend/src/app/app.routes.ts",
+      "line": 5
+    },
+    "bulkOwnership": {
+      "path": "frontend/src/app/features/issues/components/bulk-actions/modern-bulk-actions.component.ts",
+      "line": 474
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-SHL-0001",
+      "title": "Open workspace",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Open the root workspace route."
+      ],
+      "expected": [
+        "The current display name, workspace navigation and accessible work summaries are displayed."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0002",
+      "title": "Workspace initial loading",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Open the workspace while dashboard reads are pending."
+      ],
+      "expected": [
+        "A loading status is displayed until the current dashboard result is available."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0003",
+      "title": "Workspace load failure",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Fail the dashboard request."
+      ],
+      "expected": [
+        "An actionable dashboard error and Refresh workspace control are displayed."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0004",
+      "title": "Retry workspace load",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Select Refresh workspace after a failed dashboard read."
+      ],
+      "expected": [
+        "The current workspace is requested again and the successful result replaces the error."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0005",
+      "title": "Open personal assigned work",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Assigned to me."
+      ],
+      "expected": [
+        "Issues opens with self-assignee and open-work filters."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0006",
+      "title": "Open review work",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Ready for review."
+      ],
+      "expected": [
+        "Issues opens with the review category filter across accessible projects."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0007",
+      "title": "Open blocked work",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Blocked work."
+      ],
+      "expected": [
+        "Issues opens with unfinished blocked-work filters."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0008",
+      "title": "Open accessible projects",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Active projects."
+      ],
+      "expected": [
+        "The authorized project directory opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0009",
+      "title": "Open dashboard project",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate a project title in Jump back into a project."
+      ],
+      "expected": [
+        "That exact project overview opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0010",
+      "title": "Open dashboard project boards",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Board on a dashboard project card."
+      ],
+      "expected": [
+        "The board directory for that project opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0011",
+      "title": "Open dashboard project issues",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Issues on a dashboard project card."
+      ],
+      "expected": [
+        "Issues opens with that project filter."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0012",
+      "title": "Dashboard project empty state",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account with no accessible projects."
+      ],
+      "steps": [
+        "Open the dashboard with no accessible projects."
+      ],
+      "expected": [
+        "A No projects yet explanation and project-directory action appear."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/coverage-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0013",
+      "title": "Open assigned issue from workspace",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate a row under My open work."
+      ],
+      "expected": [
+        "The selected issue detail opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/coverage-workspace-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0014",
+      "title": "Assigned work empty state",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Open the dashboard with no self-assigned open issues."
+      ],
+      "expected": [
+        "The caught-up state appears without fabricated work."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/coverage-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0015",
+      "title": "Read company timezone",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Inspect the workspace company-timezone label."
+      ],
+      "expected": [
+        "The approved identity company timezone is displayed."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0016",
+      "title": "Workspace administrator shortcut",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "As a company administrator, activate Manage users on the workspace."
+      ],
+      "expected": [
+        "The company account administration page opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "home"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0017",
+      "title": "Navigate using brand",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate the GateGoldJira brand."
+      ],
+      "expected": [
+        "The root workspace route opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0018",
+      "title": "Collapse desktop sidebar",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Collapse sidebar."
+      ],
+      "expected": [
+        "The sidebar is hidden and the trigger exposes its collapsed state."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0019",
+      "title": "Expand desktop sidebar",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Expand sidebar."
+      ],
+      "expected": [
+        "The sidebar returns with current project context."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0020",
+      "title": "Open mobile navigation",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Toggle navigation at a compact viewport."
+      ],
+      "expected": [
+        "Navigation opens as a modal region and the main content is inert."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0021",
+      "title": "Dismiss mobile backdrop",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Close navigation outside the mobile sidebar."
+      ],
+      "expected": [
+        "Navigation closes without changing the route."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0022",
+      "title": "Dismiss mobile navigation using Escape",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Press Escape inside the open mobile sidebar."
+      ],
+      "expected": [
+        "Navigation closes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0023",
+      "title": "Mobile navigation focus confinement",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Use Tab and Shift+Tab in open compact navigation."
+      ],
+      "expected": [
+        "Focus remains in the modal navigation until dismissal."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0024",
+      "title": "Mobile navigation closes after navigation",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Follow a sidebar route on a compact viewport."
+      ],
+      "expected": [
+        "The destination opens and the sidebar closes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0025",
+      "title": "Resize navigation mode",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Resize across the compact-navigation breakpoint."
+      ],
+      "expected": [
+        "Navigation mode updates and the open mobile sidebar resets."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0026",
+      "title": "Skip repeated navigation",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Focus and activate Skip to content."
+      ],
+      "expected": [
+        "Keyboard focus moves to main content."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0027",
+      "title": "Navigate current project issues",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Project issues in the current project navigation."
+      ],
+      "expected": [
+        "The list opens scoped to the current project."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0028",
+      "title": "Navigate current project backlog",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Project backlog."
+      ],
+      "expected": [
+        "The current project backlog opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0029",
+      "title": "Navigate current project planning",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Epics & releases."
+      ],
+      "expected": [
+        "Current project planning opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0030",
+      "title": "Navigate current project reports",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Project reports."
+      ],
+      "expected": [
+        "Current project reports open."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0031",
+      "title": "Navigate current project transfer",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Import & export."
+      ],
+      "expected": [
+        "Current project transfer opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0032",
+      "title": "Navigate project board directory",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Manage boards."
+      ],
+      "expected": [
+        "Current project board directory opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0033",
+      "title": "Navigate account MCP connections",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Account MCP tokens in the header."
+      ],
+      "expected": [
+        "The signed-in account connection-management route opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0034",
+      "title": "Navigate notification inbox",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate the notification bell."
+      ],
+      "expected": [
+        "The current account inbox opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0035",
+      "title": "Unread navigation indicator",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Receive an accessible unread notification and refresh the summary."
+      ],
+      "expected": [
+        "Header/sidebar unread indicators reflect current accessible unread count."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts",
+        "frontend/e2e/coverage-workspace-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0036",
+      "title": "Create from current writable project",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate global Create issue with a writable current project."
+      ],
+      "expected": [
+        "The Issues route opens its creation dialog for that project."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts",
+        "frontend/e2e/coverage-workspace-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0037",
+      "title": "Create fallback project",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate global Create issue while current project is archived or viewer-only and a loaded writable project exists."
+      ],
+      "expected": [
+        "A loaded active writable project is selected for creation."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts",
+        "frontend/e2e/coverage-workspace-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0038",
+      "title": "Hide unavailable global creation",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Open the shell with no loaded writable project."
+      ],
+      "expected": [
+        "Global Create issue is absent."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts",
+        "frontend/e2e/coverage-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0039",
+      "title": "Create from backlog context",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate global Create issue while viewing a backlog."
+      ],
+      "expected": [
+        "The creation navigation preserves the backlog destination."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0040",
+      "title": "Resolve project from issue deep link",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Open a full issue URL directly."
+      ],
+      "expected": [
+        "The shell resolves that issue project instead of relying on previously loaded directory rows."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0041",
+      "title": "Resolve project from board deep link",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Open a board URL directly."
+      ],
+      "expected": [
+        "The shell resolves the board project and board context."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts",
+        "frontend/e2e/coverage-workspace-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0042",
+      "title": "Ignore outdated project context",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Navigate from project A to B before A context reads complete."
+      ],
+      "expected": [
+        "A delayed result cannot replace B context."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts",
+        "frontend/e2e/coverage-workspace-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0043",
+      "title": "Clear inaccessible project context",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Open an inaccessible project or lose project access before its context loads."
+      ],
+      "expected": [
+        "The shell clears failed context without displaying unauthorized metadata."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts",
+        "frontend/e2e/coverage-workspace-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0044",
+      "title": "Unknown route fallback",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Open an unknown application route."
+      ],
+      "expected": [
+        "The configured fallback returns to the guarded workspace."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts",
+        "frontend/e2e/coverage-workspace-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0045",
+      "title": "Clear shell on sign-out",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Sign out while shell data and search are populated."
+      ],
+      "expected": [
+        "Project context, search content, account navigation and personal state clear."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "shell",
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/workspace-ux.spec.ts",
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0046",
+      "title": "Global numeric search",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Type a bare issue number into Search all issues."
+      ],
+      "expected": [
+        "Authorized numeric matches appear as typing results."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0047",
+      "title": "Global key search",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Type a complete issue key into Search all issues."
+      ],
+      "expected": [
+        "Authorized matching issues appear without a search-button click."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0048",
+      "title": "Global title search",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Type title text into Search all issues."
+      ],
+      "expected": [
+        "Authorized title matches appear without form submission."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0049",
+      "title": "Global Arabic search",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Type Arabic or mixed-direction title text."
+      ],
+      "expected": [
+        "Results preserve the text and readable bidirectional labels."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0050",
+      "title": "Clear global query",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Clear all nonwhitespace search text."
+      ],
+      "expected": [
+        "The popup closes and pending search is cancelled."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0051",
+      "title": "Global search pending state",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Keep the latest search request pending."
+      ],
+      "expected": [
+        "Searching issues is announced and stale matches are cleared."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0052",
+      "title": "Global search no matches",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Complete a successful query with no matches."
+      ],
+      "expected": [
+        "No matching issues appears after loading ends."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0053",
+      "title": "Global search failure",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Fail the current global search."
+      ],
+      "expected": [
+        "An error and Retry search control appear."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0054",
+      "title": "Retry global search",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Retry search after a current search error."
+      ],
+      "expected": [
+        "The current query is requested again."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0055",
+      "title": "Global result suggestion bound",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Search a query matching more than eight issues."
+      ],
+      "expected": [
+        "The popup shows at most eight suggestions and preserves the server total for View all results."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0056",
+      "title": "Open global suggestion",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate one popup issue link."
+      ],
+      "expected": [
+        "The correct issue opens and the popup closes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0057",
+      "title": "View all global results",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate View all results."
+      ],
+      "expected": [
+        "Issues opens with the current query."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0058",
+      "title": "Global search keyboard selection",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Use ArrowDown or ArrowUp and Enter on an available suggestion."
+      ],
+      "expected": [
+        "The active authorized suggestion opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0059",
+      "title": "Dismiss global popup",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Press Escape or dismiss the auto popover."
+      ],
+      "expected": [
+        "The popup closes without navigating to a suggestion."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0060",
+      "title": "Global search stale result",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Type query A then B and deliver A last."
+      ],
+      "expected": [
+        "Only B can populate matches or error state."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0061",
+      "title": "Global search session switch",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Change signed-in identity while search is pending."
+      ],
+      "expected": [
+        "Previous-account results cannot populate the new session."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0062",
+      "title": "Global popup viewport placement",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Open global suggestions near viewport boundaries, then resize or scroll the visual viewport."
+      ],
+      "expected": [
+        "The top-layer popup is repositioned within available visual viewport bounds."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "search",
+        "popup"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/global-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0063",
+      "title": "Shared picker open",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Focus a searchable picker."
+      ],
+      "expected": [
+        "A labelled choices popup opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "picker"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0064",
+      "title": "Shared picker remove selection",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate a selected chip remove control."
+      ],
+      "expected": [
+        "Only that selected value is removed through the owning control."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "picker"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0065",
+      "title": "Shared picker latest query",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Type a new query in a searchable picker."
+      ],
+      "expected": [
+        "The parent receives the query; loading state prevents selecting old choices."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "picker"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0066",
+      "title": "Shared picker load more",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Activate Load more choices when another page exists."
+      ],
+      "expected": [
+        "The owning feature is asked for its next page."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "picker"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0067",
+      "title": "Shared picker dismiss",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Use Done choosing, Escape or outside pointer dismissal."
+      ],
+      "expected": [
+        "The picker closes with no fabricated selection."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "picker"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/keyboard.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0068",
+      "title": "Popup flips above trigger",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Open a popup with insufficient room below and more room above."
+      ],
+      "expected": [
+        "The popup is placed above its trigger within viewport bounds."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "popup"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/keyboard.spec.ts",
+        "frontend/e2e/coverage-workspace-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0069",
+      "title": "RTL popup anchoring",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Open an anchored popup on an RTL trigger."
+      ],
+      "expected": [
+        "Preferred alignment follows the right edge while staying in the viewport."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "popup"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/keyboard.spec.ts",
+        "frontend/e2e/coverage-workspace-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0070",
+      "title": "Guard dirty navigation",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Navigate away while a supported editor has a registered dirty draft."
+      ],
+      "expected": [
+        "A leave confirmation protects the in-memory draft."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "drafts"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0071",
+      "title": "Cancel dirty navigation",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Decline the dirty-editor leave confirmation."
+      ],
+      "expected": [
+        "The current route and draft remain available."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "drafts"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0072",
+      "title": "Restore same-tab draft",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Leave then revisit a supported editor in the same signed-in tab."
+      ],
+      "expected": [
+        "Its retained draft can be restored according to the owning feature."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "drafts"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0073",
+      "title": "Clear drafts on session change",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Change the authentication session epoch."
+      ],
+      "expected": [
+        "Registered issue, comment, upload, planning, field, bulk, board and saved-search drafts clear."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "drafts"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-session-draft-matrix.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "The umbrella scenario encloses the complete native UI matrix in one recorded step: issue, comment and selected-file drafts, planning retry intent, custom-field input, bulk retry intent, board layout edits and saved-search retry intent. Each draft is first restored through ordinary navigation to prove registration; then visible sign out/sign in changes the account within the same SPA document. Native search/navigation reopens the scope, previous private intent is absent and actual service readbacks are unchanged. A partial family run does not claim the umbrella expectation."
+      ],
+      "relatedCases": [
+        "UC-SHL-0083",
+        "UC-SHL-0084",
+        "UC-SHL-0085",
+        "UC-SHL-0086",
+        "UC-SHL-0087",
+        "UC-SHL-0088",
+        "UC-SHL-0089",
+        "UC-SHL-0090"
+      ]
+    },
+    {
+      "id": "UC-SHL-0074",
+      "title": "Warn on browser reload with dirty draft",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Reload or close a tab with a registered dirty editor."
+      ],
+      "expected": [
+        "The browser receives the beforeunload warning request; accepting reload ends memory-only draft retention."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "drafts"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0075",
+      "title": "Foreground refresh visible and idle",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Allow the foreground timer while the document is visible, online and the owning feature permits refresh."
+      ],
+      "expected": [
+        "One refresh starts without overlapping an existing refresh."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "refresh"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0076",
+      "title": "Pause foreground refresh when hidden",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Hide the document during refresh timer ticks."
+      ],
+      "expected": [
+        "New periodic refresh work is skipped while hidden."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "refresh"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0077",
+      "title": "Resume refresh after reconnect",
+      "actor": "user",
+      "preconditions": [
+        "The actor is signed into an active approved account and has access to the relevant project."
+      ],
+      "steps": [
+        "Restore online or visible state when the feature allows refresh."
+      ],
+      "expected": [
+        "A refresh is attempted without discarding confirmed content on failure."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "refresh"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0078",
+      "title": "History back navigation",
+      "actor": "user",
+      "preconditions": [
+        "The account has access to the relevant project; preserve the described browser history, board pagination or role fixture."
+      ],
+      "steps": [
+        "Navigate across two supported routes, then use browser Back."
+      ],
+      "expected": [
+        "The preceding guarded route and its URL-driven context are restored."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "navigation",
+        "routes"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0079",
+      "title": "History forward navigation",
+      "actor": "user",
+      "preconditions": [
+        "The account has access to the relevant project; preserve the described browser history, board pagination or role fixture."
+      ],
+      "steps": [
+        "Use browser Forward after navigating back."
+      ],
+      "expected": [
+        "The forward guarded route and current context are restored."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "navigation",
+        "routes"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0080",
+      "title": "Find shell default board beyond first page",
+      "actor": "user",
+      "preconditions": [
+        "The account has access to the relevant project; preserve the described browser history, board pagination or role fixture."
+      ],
+      "steps": [
+        "Open a project whose default board sorts after the first board listing page."
+      ],
+      "expected": [
+        "The shell resolves the default board across paginated board listings and the Board shortcut opens that board."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "navigation"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [
+        "GAP-SHL-001"
+      ],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0081",
+      "title": "Project administrator automation navigation",
+      "actor": "project_admin",
+      "preconditions": [
+        "The account has access to the relevant project; preserve the described browser history, board pagination or role fixture."
+      ],
+      "steps": [
+        "Open a project as its project administrator and inspect the Automation navigation entry."
+      ],
+      "expected": [
+        "The project administrator sees the Automation shortcut and can open that project automation route."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "shell"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [
+        "GAP-SHL-002"
+      ],
+      "notes": []
+    },
+    {
+      "id": "UC-SHL-0082",
+      "title": "Closing global search safely restores focus",
+      "actor": "user",
+      "preconditions": [
+        "The user is signed in and the global search popover contains a current result."
+      ],
+      "steps": [
+        "Type an authorized issue query, then activate View all results or a result link while the search input is the popover focus-return target."
+      ],
+      "expected": [
+        "The destination opens, pending search is canceled and the popover remains closed. Focus restoration does not reenter showPopover or produce an application runtime error."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "search"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-workspace.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "The browser fixture fails on uncaught page errors and Angular runtime-error console events."
+      ]
+    },
+    {
+      "id": "UC-SHL-0083",
+      "title": "Clear issue drafts on same-SPA account switch",
+      "actor": "user",
+      "preconditions": [
+        "The first approved account has a registered unsaved issue draft in a supported editor.",
+        "A different approved account can access the underlying project after signing in."
+      ],
+      "steps": [
+        "Use the visible Sign out action, then sign in as the other account without reloading the SPA.",
+        "Reopen the same issue editor or scope."
+      ],
+      "expected": [
+        "The previous account issue draft is not restored into the new session; only current persisted data and new-session selections are shown."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "drafts"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-inline-editing.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic account-switch boundary for the issue draft family; UC-SHL-0073 remains the umbrella expectation for all eight families."
+      ],
+      "relatedCases": [
+        "UC-SHL-0073"
+      ]
+    },
+    {
+      "id": "UC-SHL-0084",
+      "title": "Clear comment drafts on same-SPA account switch",
+      "actor": "user",
+      "preconditions": [
+        "The first approved account has a registered unsaved comment draft in a supported editor.",
+        "A different approved account can access the underlying project after signing in."
+      ],
+      "steps": [
+        "Use the visible Sign out action, then sign in as the other account without reloading the SPA.",
+        "Reopen the same comment editor or scope."
+      ],
+      "expected": [
+        "The previous account comment draft is not restored into the new session; only current persisted data and new-session selections are shown."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "drafts"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-inline-editing.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic account-switch boundary for the comment draft family; UC-SHL-0073 remains the umbrella expectation for all eight families."
+      ],
+      "relatedCases": [
+        "UC-SHL-0073"
+      ]
+    },
+    {
+      "id": "UC-SHL-0085",
+      "title": "Clear upload drafts on same-SPA account switch",
+      "actor": "user",
+      "preconditions": [
+        "The first approved account has a registered unsaved upload draft in a supported editor.",
+        "A different approved account can access the underlying project after signing in."
+      ],
+      "steps": [
+        "Use the visible Sign out action, then sign in as the other account without reloading the SPA.",
+        "Reopen the same upload editor or scope."
+      ],
+      "expected": [
+        "The previous account upload draft is not restored into the new session; only current persisted data and new-session selections are shown."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "drafts"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/issue-inline-editing.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic account-switch boundary for the upload draft family; UC-SHL-0073 remains the umbrella expectation for all eight families."
+      ],
+      "relatedCases": [
+        "UC-SHL-0073"
+      ]
+    },
+    {
+      "id": "UC-SHL-0086",
+      "title": "Clear planning drafts on same-SPA account switch",
+      "actor": "user",
+      "preconditions": [
+        "The first approved account has a registered unsaved planning draft in a supported editor.",
+        "A different approved account can access the underlying project after signing in."
+      ],
+      "steps": [
+        "Use the visible Sign out action, then sign in as the other account without reloading the SPA.",
+        "Reopen the same planning editor or scope."
+      ],
+      "expected": [
+        "The previous account planning draft is not restored into the new session; only current persisted data and new-session selections are shown."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "drafts"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-planning.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic account-switch boundary for the planning draft family; UC-SHL-0073 remains the umbrella expectation for all eight families."
+      ],
+      "relatedCases": [
+        "UC-SHL-0073"
+      ]
+    },
+    {
+      "id": "UC-SHL-0087",
+      "title": "Clear field drafts on same-SPA account switch",
+      "actor": "user",
+      "preconditions": [
+        "The first approved account has a registered unsaved field draft in a supported editor.",
+        "A different approved account can access the underlying project after signing in."
+      ],
+      "steps": [
+        "Use the visible Sign out action, then sign in as the other account without reloading the SPA.",
+        "Reopen the same field editor or scope."
+      ],
+      "expected": [
+        "The previous account field draft is not restored into the new session; only current persisted data and new-session selections are shown."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "drafts"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-fields.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic account-switch boundary for the field draft family; UC-SHL-0073 remains the umbrella expectation for all eight families."
+      ],
+      "relatedCases": [
+        "UC-SHL-0073"
+      ]
+    },
+    {
+      "id": "UC-SHL-0088",
+      "title": "Clear bulk drafts on same-SPA account switch",
+      "actor": "user",
+      "preconditions": [
+        "The first approved account has a registered unsaved bulk draft in a supported editor.",
+        "A different approved account can access the underlying project after signing in."
+      ],
+      "steps": [
+        "Use the visible Sign out action, then sign in as the other account without reloading the SPA.",
+        "Reopen the same bulk editor or scope."
+      ],
+      "expected": [
+        "The previous account bulk draft is not restored into the new session; only current persisted data and new-session selections are shown."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "drafts"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-issue-discovery.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic account-switch boundary for the bulk draft family; UC-SHL-0073 remains the umbrella expectation for all eight families."
+      ],
+      "relatedCases": [
+        "UC-SHL-0073"
+      ]
+    },
+    {
+      "id": "UC-SHL-0089",
+      "title": "Clear board drafts on same-SPA account switch",
+      "actor": "user",
+      "preconditions": [
+        "The first approved account has a registered unsaved board draft in a supported editor.",
+        "A different approved account can access the underlying project after signing in."
+      ],
+      "steps": [
+        "Use the visible Sign out action, then sign in as the other account without reloading the SPA.",
+        "Reopen the same board editor or scope."
+      ],
+      "expected": [
+        "The previous account board draft is not restored into the new session; only current persisted data and new-session selections are shown."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "drafts"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-boards.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic account-switch boundary for the board draft family; UC-SHL-0073 remains the umbrella expectation for all eight families."
+      ],
+      "relatedCases": [
+        "UC-SHL-0073"
+      ]
+    },
+    {
+      "id": "UC-SHL-0090",
+      "title": "Clear saved-search drafts on same-SPA account switch",
+      "actor": "user",
+      "preconditions": [
+        "The first approved account has a registered unsaved saved-search draft in a supported editor.",
+        "A different approved account can access the underlying project after signing in."
+      ],
+      "steps": [
+        "Use the visible Sign out action, then sign in as the other account without reloading the SPA.",
+        "Reopen the same saved-search editor or scope."
+      ],
+      "expected": [
+        "The previous account saved-search draft is not restored into the new session; only current persisted data and new-session selections are shown."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "drafts"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-issue-discovery.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic account-switch boundary for the saved-search draft family; UC-SHL-0073 remains the umbrella expectation for all eight families."
+      ],
+      "relatedCases": [
+        "UC-SHL-0073"
+      ]
+    },
+    {
+      "id": "UC-SHL-0091",
+      "title": "Release destroyed bulk editor ownership after a late response",
+      "actor": "user",
+      "preconditions": [
+        "The signed-in writer has a same-tab retained native bulk draft after explicitly confirming navigation away.",
+        "The first bulk field write was accepted by the real service; its reply is held while the original bulk component has been destroyed and the clean Backlog route is active."
+      ],
+      "steps": [
+        "Deliver the accepted bulk reply after the original component is destroyed.",
+        "Use the visible Issues link to leave the clean Backlog route in the same signed-in tab."
+      ],
+      "expected": [
+        "The late completion does not re-register the destroyed bulk editor as active dirty work: the clean Backlog route leaves successfully without an unrelated draft confirmation."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "bulkOwnership",
+        "drafts"
+      ],
+      "operations": [
+        "patch_issue_field_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-bulk-destroyed-ownership.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "The browser fixture holds the actual accepted server reply and uses ordinary links and the native leave confirmation. No Angular internals or fabricated server responses are used.",
+        "This atomic case covers dirty-ownership release only. Same-tab draft restoration and exact accepted-item replay remain independently required by UC-SHL-0072 and UC-ISS-0165; they are not inferred from this case."
+      ],
+      "relatedCases": [
+        "UC-SHL-0070",
+        "UC-SHL-0072",
+        "UC-ISS-0165"
+      ]
+    }
+  ]
+}

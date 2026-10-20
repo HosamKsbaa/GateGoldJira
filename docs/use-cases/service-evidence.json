@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "coverageDefinition": "Supplemental deterministic service-layer evidence. These entries do not count as Playwright or web/rest/mcp surface verification.",
+  "cases": [
+    {
+      "id": "UC-AST-0054",
+      "layer": "go_service",
+      "status": "pending_current_execution",
+      "reason": "Supplemental Go interleavings cover account revocation after object I/O and membership revocation during upload. The separate native Playwright Linux regular-file lease scenario now proves the real local download boundary; its web evidence is recorded only by the browser reporter. Neither layer claims a Google Cloud Storage provider execution.",
+      "tests": [
+        {
+          "file": "backend/internal/features/attachments/assets_test.go",
+          "name": "TestNativeAssetBytesRecheckAccountAfterObjectIO",
+          "assertions": [
+            "The wrapped object store disables the reader after opening the object, before the final authorization recheck.",
+            "DownloadAssetChunk returns an error and an empty DataBase64 string; no buffered private bytes are returned."
+          ]
+        },
+        {
+          "file": "backend/internal/features/attachments/service_test.go",
+          "name": "TestUploadTransfersWithoutProjectLocksAndRechecksRevocation",
+          "assertions": [
+            "A blocked upload holds zero acquired database connections while storage I/O is pending.",
+            "Membership is removed during the blocked transfer; after release the upload returns an error.",
+            "The attachments table contains zero published partial uploads."
+          ]
+        }
+      ],
+      "execution": {
+        "reference": null,
+        "currentSourceRunRequired": true
+      }
+    }
+  ]
+}

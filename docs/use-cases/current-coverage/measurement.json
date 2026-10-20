@@ -1,0 +1,255 @@
+{
+  "provider": "Chromium V8 with AST-aware source mapping; Vitest reported separately",
+  "browserScope": "Loaded handwritten frontend/src TypeScript, including bootstrap, with exact captured-source validation; not a full source denominator",
+  "unitScope": "All handwritten frontend/src/**/*.ts, including src/main.ts; specs and the two generated API client directories are excluded",
+  "combinedCoverage": {
+    "lines": {
+      "total": 8639,
+      "covered": 7915,
+      "skipped": 0,
+      "pct": 91.61
+    },
+    "statements": {
+      "total": 9764,
+      "covered": 8697,
+      "skipped": 0,
+      "pct": 89.07
+    },
+    "functions": {
+      "total": 2067,
+      "covered": 882,
+      "skipped": 0,
+      "pct": 42.67
+    },
+    "branches": {
+      "total": 5576,
+      "covered": 4630,
+      "skipped": 0,
+      "pct": 83.03
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": "Unknown"
+    }
+  },
+  "frontendDenominator": {
+    "version": 1,
+    "kind": "validated_full_frontend_typescript_denominator",
+    "sources": {
+      "src/app/app.component.ts": "8339c77e67153ec80fd3a6efaf7eb843d50b69eb470ab0caa67b033a983cdf87",
+      "src/app/app.routes.ts": "64d2c8f7519f665068c8ec9be2d3c7a7d19f830ae94ab97365a3cf1f16f93d1e",
+      "src/app/core/api/api-result.ts": "f4f0fb1f68a27aabde4eb4aefbdd00185823c32193db5fe5e1e35d96a8f6c763",
+      "src/app/core/api/client.ts": "ca2042d258e16abc89c8a3c4d108334a2cab077ca590d36d8c9369bff46c726f",
+      "src/app/core/auth/auth.guards.ts": "3b4e103f44ead948eac3c7a7e52ea60443e9a6d8d4b347080cf4e322dea467b4",
+      "src/app/core/auth/auth.service.ts": "838cbd9a00f101c42550bf44c0a63d0328a83b0f5880f04ba4bffb660136d67d",
+      "src/app/core/auth/sign-in.page.ts": "ca649236d90cd52f0523a6430f8cc1a87c7ab2155191d704025b870bf36d5e9c",
+      "src/app/core/auth/sign-in.provider.ts": "ede94400de4101db1305be8d9b6f3d372583a2ae69886af3c2406cc5e49da2b1",
+      "src/app/core/config/config.service.ts": "353f0ab8669f79602ba31527867cb620d55e0fa4a6d86f2a605fede973407de4",
+      "src/app/core/drafts/drafts.service.ts": "d9112ac0bd7fd432c33759c62c95a1e178eef286f8fe42711b716c8feca6a91c",
+      "src/app/core/refresh/foreground-refresh.ts": "46cc47319973fca96d5c1e7d011dc4d116ac5b012ed88863512b5758095259fe",
+      "src/app/core/routing/project-editor-reuse.strategy.ts": "d522a6a1c0ef68cd7004109fa5450a8aec6db12da314ef8171e57866a0579b72",
+      "src/app/core/workspace/workspace-api.service.ts": "36117be530c10482ffc55f6cb966ab8ccbc75fd9a6bc28d42fc6bc6259a5333d",
+      "src/app/core/workspace/workspace.page.ts": "e73b7a526a7ea7510e2b8ae8521e1f4843badce714dc0723dc1d870bee586677",
+      "src/app/features/account/mcp-authorize.page.ts": "b00e009ff7f394ff5052ae49a38bb4c73c725500e2ee30d6f42a4941a28828b0",
+      "src/app/features/account/mcp-connection-config.ts": "68d3fe3088eb803ab32099fe15c667dbd1f3ed06f820da75d93069029d676e9f",
+      "src/app/features/account/mcp-tokens.api.ts": "20ae2775d0e4aa780fae58d494fdd388a50823abfbd0b629bdc799603d2062ae",
+      "src/app/features/account/mcp-tokens.page.ts": "8453a4b3b4afc93413b0860d80e083b435ece9f0aaf699660ed7dbaf8a9be2a5",
+      "src/app/features/administration/administration.api.ts": "d549d3aac22f7925d6453840a98cef2b8cc66322de2715d016f1588674f52f4f",
+      "src/app/features/administration/pages/activity/activity.page.ts": "c65d5ce10283e458f14d9c27abb74a16efbc9aa717515cd8c1f6139295d06b19",
+      "src/app/features/administration/pages/memberships/memberships.page.ts": "b6ea81e02906790d7ed0a80c6c9d5b01beb9fd9d4f7aec9750b5c2c05fd5515b",
+      "src/app/features/administration/pages/users/users.page.ts": "f02b9f26a826f6291c1c358506ee3214a96bc51fdbc0afe492b837076f171186",
+      "src/app/features/attachments/assets.api.ts": "170942770abe7ab989c87b1b627f63128cf3a2681ec99f4ed989fd2c1ab4ea33",
+      "src/app/features/attachments/attachment-files.ts": "2dae7bfc64c7e7874637f48541d4202b98c2b74da969e2a73cad49dea0795163",
+      "src/app/features/attachments/attachments.api.ts": "6efa85b21e3df5c9bfea611a93066fa60e2333e260aeed25c1508b07ffc078c4",
+      "src/app/features/attachments/binary-contract.ts": "5e1bdf48eb18a3cfe09d8bafbd08f1cef03f25e62508d966d0d308ee091a0310",
+      "src/app/features/attachments/components/attachment-reference/attachment-reference.component.ts": "7e5514c26a121088d6136994ba59f3a530a6a3277c8aac64bc79b3029412f3de",
+      "src/app/features/attachments/components/file-preview/file-preview.component.ts": "1638abc2781fb6f9e01310fc3ec636d5eafd9249b3b393087ca5431e7b7d2377",
+      "src/app/features/attachments/components/file-queue/file-queue.component.ts": "9ad386dad4669475a59583be0eabe70b55b789a4e06054378ccd8632b70f6561",
+      "src/app/features/attachments/components/issue-attachments/issue-attachments.component.ts": "4ee4cab4bad9eac44e39e81e651dc097c87581b674b35e833e41adbcd9990fcb",
+      "src/app/features/attachments/editor-attachment.ts": "992ac91facb86991e4daea60753d38bdb8d97e38a5c5e5d702e6d1e31cd0ee9d",
+      "src/app/features/attachments/resumable-upload.ts": "a36cb0b0e159fc61d82fa866c580a69db9573eec3846dd0546f88c8de360a0aa",
+      "src/app/features/boards/board-filter-key.ts": "c7d238f6d82b7ed40d2d94d58bafd394d96e868a9619138d953300178971d3cf",
+      "src/app/features/boards/board-lanes.ts": "6bbf4b6d60a2108c6c6a851b3cc385890a93be3a417490b798c32a6e3ded1396",
+      "src/app/features/boards/board-workflow.ts": "158e4ccd7e22cd6c544bd60df21b63a03c1e999a4321c204e1f2c3ee4adae545",
+      "src/app/features/boards/boards.api.ts": "f85d4b8c28baf1c4cc67dca26382e53a3c966a4364ca0d2a0d53a6fa2b958a47",
+      "src/app/features/boards/boards.routes.ts": "13c576ef38902b7e9f7889f3c4fc28dc44ebd066d5dcd2aff0d373c0d10852b6",
+      "src/app/features/boards/components/board-assignee-picker/board-assignee-picker.component.ts": "16179d15ad5b9c0a61ecd531b55b069117e785303e5002f096912590e0d4122c",
+      "src/app/features/boards/components/board-quick-filters/board-quick-filters.component.ts": "d97a77fb551d699be36939e6722453707ad606998d888f76b2addf3b784688cb",
+      "src/app/features/boards/components/native-board-filters/native-board-filters.component.ts": "09ae0c8e58db552a78bfefa2a5895f3f31e58b2c7a6107cc1839b6bff2fe69fb",
+      "src/app/features/boards/components/native-issue-card/native-issue-card.component.ts": "700984a48d445fe5903d7671b7a2113c3994a93e36118f2d8af36e399844426c",
+      "src/app/features/boards/modern-boards.api.ts": "39db3a15f5fbe9ad69cd71282d91a6a0599bf4c9325dc4195d691aa5f5f97e5b",
+      "src/app/features/boards/modern-boards.store.ts": "c77782867dff8b81aa7f96fbd655ea9f17e31dc1c29a3a861d9f33ddbfd6fb93",
+      "src/app/features/boards/native-board-lanes.ts": "5e227e341c6ad27b5bcbe6f7df5f84ad85522dbf34d3fa099d1b4adc23791cdd",
+      "src/app/features/boards/pages/modern-board-settings/modern-board-settings.page.ts": "3e90056c50505c80557fbf0c2325a759c9e1269c865616c07c68f739bcdc951e",
+      "src/app/features/boards/pages/modern-kanban/modern-kanban.page.ts": "76b7cac79812a45c2b61103f1929e12e3de666c2c730cddb57cafc2f15e3a5b5",
+      "src/app/features/comments/comment-renderer.ts": "5aed38725f93c9eec9422d6d01159a71a068db3aaf0649b8f5cbdee115a69d8f",
+      "src/app/features/comments/comments.api.ts": "98861a59b3015e0ae5434990e269b0af91c84ded79cc70dd14ec5c24d1f5c10d",
+      "src/app/features/comments/components/comment-editor/comment-editor.component.ts": "4f8909b837742b4cc189460ea75387ed633eecbbc9a5b49a3346a5c4795a82f8",
+      "src/app/features/comments/components/comment-thread/comment-nodes.component.ts": "b2bc49460af999700e21c6a05b56633765d352ecf3437f088181f2f6f0758a8e",
+      "src/app/features/comments/components/comment-thread/comment-thread.component.ts": "50d62c0293d947fe982dd33cc8e5ce0b3855bf70b12edfba6977af7e722ad603",
+      "src/app/features/comments/components/mention-picker/mention-picker.component.ts": "796f5ca7900c18ec106484abc6b11f47b5095418b316b67baae0fbdce51af3e9",
+      "src/app/features/comments/rich-text-blocks.ts": "62c8c7f7924f3ea8dd84581d2427fc21dd8d06017fb7e494ba7bdcf42440b460",
+      "src/app/features/import-export/csv-columns.ts": "ce093368606f5e58d319abbad2fee3fb7797149e4520fe4e57fd8e628c3cd595",
+      "src/app/features/import-export/import-drafts.service.ts": "c2080be9383d21da87cbafb1b90b45ffcddc2016fdd3e161b4fbc6201c9fb405",
+      "src/app/features/import-export/import-export.api.ts": "d86f6df5652da7c92e9a28690aae67e57cf0e60ee77f84f18fca610cedd2ea19",
+      "src/app/features/import-export/pages/import-export/import-export.page.ts": "d201eade09e464ee89d1181de56fb4739d3751ab48d2f24e95e38bcc758b4eaa",
+      "src/app/features/integrations/automation-rules.page.ts": "05b7e3a5bd773275cdb31c9202f3dc4eca7ff64b8fb02c3cecced43efd98dfa4",
+      "src/app/features/integrations/development-links.component.ts": "0b8e4d3fae4007c52068c836af6177c94559b2b6c118d0cdbf006ba60bb084f1",
+      "src/app/features/integrations/integrations.api.ts": "167de2416cd0f5ae976062711754d28bfaa650c5d58420ea6a3160cdfdab09b8",
+      "src/app/features/issues/backlog.api.ts": "62e8cc8946c2d7941b3b421873ca03691105e0116d1929d4ddcf648392243476",
+      "src/app/features/issues/components/bulk-actions/bulk-targets.ts": "295cb2ec874d6d6d05953e4d8c8377cc9c310123bf3383413c5c422987ea83fa",
+      "src/app/features/issues/components/bulk-actions/modern-bulk-actions.component.ts": "a00b8d674ef094b5bea58087d4300fff2c2d0209d916cbc7e8905066d9d94d08",
+      "src/app/features/issues/components/custom-fields/custom-fields.component.ts": "10234c9c4103da7e6e0c031515e8cf38115d4eec7522857b80848a65182b7e2c",
+      "src/app/features/issues/components/custom-fields/field-value-editor.component.ts": "0039c48d9297c2ffd28c359197c92b1d3d0f44933d78669fa6eb08138989a220",
+      "src/app/features/issues/components/custom-fields/field-value.ts": "b95f3c7adc2c4b52ecefbd590be42a8ea6ac07766a3432b171f6871cac68bdfa",
+      "src/app/features/issues/components/custom-fields/issue-review.component.ts": "60aa232ca1b52a4d15867686b00860eb460e8bf613d769f7477ecc3fe736eb5e",
+      "src/app/features/issues/components/date-label-fields/date-label-fields.component.ts": "121bb9cf50703f9b6fa3c86a1c1cc21c3d3d3220fd9c4ef9fd125bf271ff6afc",
+      "src/app/features/issues/components/dependencies/dependencies.component.ts": "b966fb97e318aebaf2d58b1b2f65bd54e3c4dc4ece969dbf934689bba8382fa2",
+      "src/app/features/issues/components/description-editor/description-editor.component.ts": "95ff9133fb3eec1ec7005beb3e7fce6043fe45cb964262ac22730651a07582b7",
+      "src/app/features/issues/components/issue-history/issue-history.component.ts": "22facf5b132af5055db31821edaf0b8eb585361124671f58d8c67c5281585bb3",
+      "src/app/features/issues/components/modern-issue-actions/modern-issue-actions.component.ts": "584b0669ba260c15ca681acb91648da6004f2ac5548d0ddca7bc40adb2bebd99",
+      "src/app/features/issues/components/modern-issue-field-editor/modern-issue-field-editor.component.ts": "d6f246c3715a5daad3154354db823d7def8ab410976d9485c1d8f87dae3a41d2",
+      "src/app/features/issues/components/modern-issue-form/modern-issue-form.component.ts": "48600c21f10fba6ccd0f6f7c789d69d1f4e6c9b8f41ed03129d675efcdb4a5b9",
+      "src/app/features/issues/components/modern-issue-status-menu/modern-issue-status-menu.component.ts": "14f23a22c5807e3708805aba622a9bfc7ed5852fa7e249b3c417b2701feebd90",
+      "src/app/features/issues/components/modern-issue-status-menu/stage-order.ts": "aa0ecf460712038a31357b108081f9d581aed01b9323cbe61c392554b1a6feb7",
+      "src/app/features/issues/components/parent-filter/parent-filter.component.ts": "24e4a490bf07a6093951b1e22cdd1d4e67be0960ec66fc781f03c0fef7b44f2a",
+      "src/app/features/issues/components/related-issue-row/related-issue-row.component.ts": "e6bca7486d5fc4b0a5ec3e13823f4ed1408c4421404a70553bcb6aa2166c0bcb",
+      "src/app/features/issues/components/saved-searches/saved-searches.component.ts": "368d812c774ecbc24aa20f0efc21f6dbf3989bb3f112109cb83e2caa2067927c",
+      "src/app/features/issues/components/subtasks/subtasks.component.ts": "9c9ecfe275967442ed2a11373a1d1e751404ee6dc9f089c9e3d2a8dac69034a1",
+      "src/app/features/issues/issue-choice-cache.service.ts": "88037976e9bc80d72a59fc40fd55f1c87e1066113cf12e081f67bc8af7441cf3",
+      "src/app/features/issues/issue-fields.api.ts": "ee0bd905961e5c81982948c0863f67d9df1a0c00abb41aa6c310eb3fd0984254",
+      "src/app/features/issues/issue-model.ts": "89c41cc35e10d1317b0a9226e95b32d2be2db748c90eb60ebd2df9e7971b4540",
+      "src/app/features/issues/issue-route-filters.ts": "5b5d7cc455ea0f6c6d4aecc8dc160aee9a1111ac7b98329c1e0e14d4904b00f8",
+      "src/app/features/issues/issues.api.ts": "4c0c1f56e6b0db6d0b179f8a51dd245056cf2430c433210c5472beeea43e0f23",
+      "src/app/features/issues/issues.routes.ts": "47cdc7e3e1520de661f46d129f072121a148e2efe9d24968d132ee270ac855e7",
+      "src/app/features/issues/modern-issues.api.ts": "d5213c20ffa5def3d5e03f1c5c04e1f7aa089f911f9ade0fc095c56b071dea14",
+      "src/app/features/issues/pages/backlog/backlog.page.ts": "a591bcb1a57f12240e74e7449184ff156fa1d76ff1e7a958dbb42f5a02d80a59",
+      "src/app/features/issues/pages/issue-detail/modern-issue-detail.page.ts": "a624daabcc9def9952fddb89069418884ecceae296e2ca36ce9280f27659d9d5",
+      "src/app/features/issues/pages/issue-list/modern-issue-list.page.ts": "07320d908f1c31c003f9d9ca6e0ed362b3871fd84f6c6886b1b17dbc3a135894",
+      "src/app/features/notifications/components/notification-preferences.component.ts": "08b517f25c96d552f3bdd4c640616016eb56dddada96e15f97ff58d93e5b8135",
+      "src/app/features/notifications/notifications.api.ts": "8186560498a79371566c7052854285197b7b84cb3c8d77ff45ee00fe04de6e6d",
+      "src/app/features/notifications/notifications.routes.ts": "7334dd4ccc2784ea22b3818af69d47a4175ba0d0e568bf44c6a4b480660a1a95",
+      "src/app/features/notifications/pages/inbox/inbox.page.ts": "df7a73f7f9dddd97076d0df958539bdc2f72a854b36e0c13c6860bab38d1f11c",
+      "src/app/features/pictures/binary-contract.ts": "8398486bbc13e40aa4a89b26e6e00d44e90d007265a8853745abfc60538f0a6b",
+      "src/app/features/pictures/components/picture-image/picture-image.component.ts": "301c1db5f771659ba23c64be143f34e95416041f35f06e87800f10d503e6ba98",
+      "src/app/features/pictures/editor-picture.ts": "9a21fe159a91e8c2a81769826c1114d87c531581c762eec6915cb3c80a6901be",
+      "src/app/features/pictures/pictures.api.ts": "99cec0e1ebc9488c4a92c25899e78da31baa74a28f4e02947891a22e86a68743",
+      "src/app/features/planning/issue-planning.component.ts": "bc1b332c0ea0f23016259bdf215c2bc54e984fbfd08baaff23f45496ddd5f71a",
+      "src/app/features/planning/kanban-report.page.ts": "49532af5b7d9caaff55726859689021a4b671a3cfe4b1e328655545ea95c96c1",
+      "src/app/features/planning/planning.api.ts": "760f209bd39703224988c924486ca4cf136c23e8e235fa63f960646a18e2a5cf",
+      "src/app/features/planning/project-planning.page.ts": "375147d50a7b0e66075629a71bd8f6887fda24ce289193cdb44d389071d40df9",
+      "src/app/features/projects/components/project-activation/project-activation.component.ts": "85a7ca644a3b578a5565d19f5f5fd95df13452646f0470afaa38772f29be8a3a",
+      "src/app/features/projects/components/transition-policy.component.ts": "b27f5d39057f3f89d3be9e792169e5db93d7e5b757563931de252e04933cc2e3",
+      "src/app/features/projects/pages/project-configuration/project-configuration.page.ts": "8e10c82e1998b5dff59421ca313e2d756e1b3fc813a204dc2f9001985287008e",
+      "src/app/features/projects/pages/project-fields/project-fields.page.ts": "51d836dfe633c7141c5b11a778981d49e244aae8d016bcac620aea07d60c2110",
+      "src/app/features/projects/pages/project-list/project-list.page.ts": "a7bab44a1303ca5d4572ec352a7bb19b0d326253a6c23c282b2fefe00735e0c9",
+      "src/app/features/projects/pages/project-overview/project-overview.page.ts": "797a7ccf181364d926b0eb98d66866cc15ba904d27ba3e315b96c4dbae4a3561",
+      "src/app/features/projects/pages/project-workflows/project-workflows.page.ts": "12541a2751bfe0f9cdf40495883ffffdff36825e00f68e4a493a677a484b5be5",
+      "src/app/features/projects/project-configuration.api.ts": "4627096c5d617250a29a141cda7fe501bdc50786b0be99d1dcdc64513c24ef11",
+      "src/app/features/projects/project-directory-recents.service.ts": "b98743203e110a7361da248ee33e76c2d524c59c6c1272e62613fc9fbd37e7eb",
+      "src/app/features/projects/project-fields.api.ts": "076ad45b729c1bc31dcb6312e2596c0e74aa12bb7382ddbe038345e4825ffe18",
+      "src/app/features/projects/project-workflows.api.ts": "0badf3c519d5f916b971dfee23ab7be0e36b23f100726d10d889040d5c18eb3c",
+      "src/app/features/projects/projects.api.ts": "5e23b6a295e1fd35ba88e4504a0b8af291b084429294c70d5e4605ae56e9a172",
+      "src/app/features/projects/projects.routes.ts": "28b2fc1b06d7bd7018866e5a26c1cc3df7d7319f2221ceb4e2622f0f8e105115",
+      "src/app/shared/forms/unicode.validators.ts": "000b99aab4e19dd1ac18c1e223c9ff18278c70db080b9ecd5aa7273122f08372",
+      "src/app/shared/ui/focus-after-render.ts": "c917e1c878cefe63c5e37757d8e003ab2bc4ede6a9f8c893c6a95e8176997ba7",
+      "src/app/shared/ui/icon.component.ts": "e3902a49dae5c68cb1646d0d5a6e9d374ecab0e59322727818a40e5da6abf8e3",
+      "src/app/shared/ui/position-anchored-popup.ts": "890df49243b6983fb85acc24b1528e163459fd5a0f15b188e848c3ec4f761714",
+      "src/app/shared/ui/request-state.ts": "22d2e4790cead31b1ab09d545eb9d66f211809fa69b12b9dc55e80645a452034",
+      "src/app/shared/ui/request-status.component.ts": "31f9bcb801e58941cdf075c0e0de716373e9b1839ae2c9f983a978708c518f86",
+      "src/app/shared/ui/searchable-picker.component.ts": "bedd907bfb508f41fcdaffbefb713d7756569edb694a882cd31582772d06c217",
+      "src/main.ts": "930d8c9324b16b5fb9c00641899e96b6b373c0a82add221679c63ac18517b498"
+    },
+    "summaries": {
+      "unit": {
+        "path": "unit/coverage-summary.json",
+        "sha256": "d4749eff3fcd93b871b0a0e08154b0b6fd119788cf486669f7b531c06b824a53"
+      },
+      "combined": {
+        "path": "combined/coverage-summary.json",
+        "sha256": "cac0a03b426ce1c1ab1ee3026b64d9080f494e7785f748e37ce9325de46a418d"
+      }
+    },
+    "unitRun": {
+      "path": "unit/provenance/unit-run-provenance.json",
+      "sha256": "6c37a8bbe1ed3492c9a0c602ac9040f92076af6be6c8c32198b4a133a5d78b50",
+      "runId": "6969c4dd02344ec5b862cd3322af7d91"
+    }
+  },
+  "combinedFiles": 123,
+  "combinedCoverageLimitation": "Conservative projection onto the full Vitest denominator: only exact statement/function/branch source spans with matching file hashes receive browser credit. Incompatible compiler-generated spans are not credited. Percentages are never added and the denominator does not grow.",
+  "navigationLimit": "Chromium may reset V8 counters on document navigation. SPA execution in captured page fixtures is measured; auxiliary contexts are not automatically captured.",
+  "records": 13930,
+  "convertedScripts": 2375,
+  "identicalScriptGrouping": true,
+  "files": 123,
+  "browserSummary": {
+    "lines": {
+      "total": 11002,
+      "covered": 10343,
+      "skipped": 0,
+      "pct": 94.01
+    },
+    "statements": {
+      "total": 14792,
+      "covered": 13430,
+      "skipped": 0,
+      "pct": 90.79
+    },
+    "functions": {
+      "total": 2477,
+      "covered": 2253,
+      "skipped": 0,
+      "pct": 90.95
+    },
+    "branches": {
+      "total": 6890,
+      "covered": 5473,
+      "skipped": 0,
+      "pct": 79.43
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": "Unknown"
+    }
+  },
+  "unitSummary": {
+    "lines": {
+      "total": 8639,
+      "covered": 3737,
+      "skipped": 0,
+      "pct": 43.25
+    },
+    "statements": {
+      "total": 9764,
+      "covered": 4203,
+      "skipped": 0,
+      "pct": 43.04
+    },
+    "functions": {
+      "total": 2067,
+      "covered": 869,
+      "skipped": 0,
+      "pct": 42.04
+    },
+    "branches": {
+      "total": 5576,
+      "covered": 2525,
+      "skipped": 0,
+      "pct": 45.28
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": "Unknown"
+    }
+  },
+  "excludedCompiledResources": 0,
+  "conversionErrors": [],
+  "completeSourceMapping": true
+}

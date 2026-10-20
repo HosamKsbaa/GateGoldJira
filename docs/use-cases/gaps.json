@@ -1,0 +1,437 @@
+[
+  {
+    "id": "GAP-ACC-001",
+    "title": "Real managed sign-in acceptance is pending",
+    "classification": "external_acceptance",
+    "detail": "Auth0/Google configuration is a candidate. Source and local identity fixtures cannot establish actual tenant, consent, verified-company identity or hosted refresh behavior.",
+    "treatment": "Keep production identity cases external_pending and separate local-login results.",
+    "sources": [
+      {
+        "path": "identity/auth0/README.md",
+        "line": 3
+      },
+      {
+        "path": "specs/002-scalable-core/validation/readiness.md",
+        "line": 29
+      }
+    ]
+  },
+  {
+    "id": "GAP-PRJ-001",
+    "title": "Project metadata directory editing remains company-administrator-only",
+    "classification": "confirmed_documentation_discrepancy",
+    "detail": "The shared service and corrected MCP description permit current Configure access. The project directory still shows Edit only to company administrators.",
+    "treatment": "Retain the browser affordance distinction without changing product permission policy. Verify REST and MCP permission behavior separately from discoverability.",
+    "sources": [
+      {
+        "path": "backend/internal/features/projects/service.go",
+        "line": 67
+      },
+      {
+        "path": "frontend/src/app/features/projects/pages/project-list/project-list.page.ts",
+        "line": 111
+      },
+      {
+        "path": "backend/internal/features/projects/mcp.go",
+        "line": 43
+      }
+    ]
+  },
+  {
+    "id": "GAP-PRJ-003",
+    "title": "Project search only covers loaded directory pages",
+    "classification": "current_boundary",
+    "detail": "The directory advertises Search loaded projects and applies local key/name filtering. A project outside loaded pages is not searched globally by that control.",
+    "treatment": "Document loaded-only search accurately and retain a case where the sought project is on a later page.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/projects/pages/project-list/project-list.page.ts",
+        "line": 57
+      }
+    ]
+  },
+  {
+    "id": "GAP-PRJ-004",
+    "title": "Membership MCP permission description corrected",
+    "classification": "resolved_local_documentation_defect",
+    "detail": "The list_memberships description now explicitly permits company Administrator or project administrator with current Configure access, matching the unchanged shared service guard.",
+    "treatment": "Retain the correction record and real REST/MCP project-administrator regression assertions. Do not infer browser or hosted-provider acceptance from tool metadata.",
+    "sources": [
+      {
+        "path": "backend/internal/features/identity/mcp.go",
+        "line": 55
+      },
+      {
+        "path": "backend/internal/features/identity/reads.go",
+        "line": 80
+      }
+    ]
+  },
+  {
+    "id": "GAP-CSV-001",
+    "title": "Import help describes fixed choices rather than canonical configuration",
+    "classification": "confirmed_documentation_discrepancy",
+    "detail": "Import help mentions Task/Bug and Low/Medium/High, while the canonical resolver handles eligible configured project choices and stages.",
+    "treatment": "Use current resolver behavior in service cases and explicitly record the older visible guidance.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/import-export/pages/import-export/import-export.page.html",
+        "line": 99
+      },
+      {
+        "path": "backend/internal/features/issues/canonical_import.go",
+        "line": 49
+      }
+    ]
+  },
+  {
+    "id": "GAP-MCP-001",
+    "title": "Native plugin issue search requires submission",
+    "classification": "current_boundary",
+    "detail": "The Antigravity panel currently submits a search form. The web app live-search interaction does not establish live plugin search.",
+    "treatment": "Keep plugin search submit-based in current cases; record the difference from the earlier all-search-live preference.",
+    "sources": [
+      {
+        "path": "integrations/antigravity/src/ui.ts",
+        "line": 154
+      }
+    ]
+  },
+  {
+    "id": "GAP-MCP-002",
+    "title": "Hosted native plugin and OAuth acceptance is not established",
+    "classification": "external_acceptance",
+    "detail": "The native panel/bridge and browser OAuth source exist. Shared HTTPS access, actual managed identity and supported-host compatibility need their real deployment/provider evidence.",
+    "treatment": "Mark external hosted flows external_pending and distinguish local plugin fixtures from real-host acceptance.",
+    "sources": [
+      {
+        "path": "integrations/antigravity/README.md",
+        "line": 70
+      },
+      {
+        "path": "docs/mcp-onboarding.md",
+        "line": 38
+      }
+    ]
+  },
+  {
+    "id": "GAP-NTF-001",
+    "title": "Real SMTP and hosted scheduled delivery acceptance is pending",
+    "classification": "external_acceptance",
+    "detail": "Sender, preferences, retries and scheduled processing exist in source; successful delivery through the intended SMTP and hosted scheduler is not established by source inspection.",
+    "treatment": "Distinguish in-app reminders and local sink logic from external email-delivery acceptance.",
+    "sources": [
+      {
+        "path": "backend/internal/features/notifications/delivery.go",
+        "line": 17
+      },
+      {
+        "path": "backend/internal/features/notifications/smtp.go",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "GAP-NTF-002",
+    "title": "Email transport has an at-least-once delivery window",
+    "classification": "current_boundary",
+    "detail": "SMTP acceptance can succeed before the database commit records completion. A crash in that window can repeat an email despite stable Message-ID; the worker does not promise exactly-once SMTP.",
+    "treatment": "Do not encode an exactly-once email guarantee. Distinguish deduplicated in-app/queue records from external transport effects.",
+    "sources": [
+      {
+        "path": "backend/internal/features/notifications/delivery.go",
+        "line": 41
+      },
+      {
+        "path": "backend/internal/features/notifications/delivery.go",
+        "line": 208
+      }
+    ]
+  },
+  {
+    "id": "GAP-ISS-001",
+    "title": "Parent-search empty wording excludes custom standard types",
+    "classification": "confirmed_documentation_discrepancy",
+    "detail": "The empty state says No matching Task or Bug, but candidate eligibility is based on standard behavior and therefore includes custom standard types.",
+    "treatment": "Retain configured-type parent cases and flag misleading copy separately.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/issues/components/parent-filter/parent-filter.component.ts",
+        "line": 66
+      },
+      {
+        "path": "frontend/src/app/features/issues/components/parent-filter/parent-filter.component.ts",
+        "line": 174
+      }
+    ]
+  },
+  {
+    "id": "GAP-ISS-002",
+    "title": "Find standard parents before paging",
+    "classification": "resolved_local_defect",
+    "detail": "Reproduced a hidden parent behind a subtask-only first page. Typed native typeBehavior filtering now runs before SQL LIMIT/count and participates in cursor ownership.",
+    "treatment": "Retain the strict UC-ISS-0187 browser regression and current implementation; use the generated first-attempt evidence ledger for verification status.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/issues/components/parent-filter/parent-filter.component.ts",
+        "line": 172
+      }
+    ]
+  },
+  {
+    "id": "GAP-ISS-003",
+    "title": "Clone uses a limited field/text copy",
+    "classification": "current_boundary",
+    "detail": "Cloning flattens HTML description to plain text, omits custom values/planning/workflow selection and linked records, and cloning a subtask creates standard work.",
+    "treatment": "Document those actual copy boundaries explicitly; do not promise full-fidelity rich issue cloning.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/issues/components/modern-issue-actions/modern-issue-actions.component.ts",
+        "line": 379
+      }
+    ]
+  },
+  {
+    "id": "GAP-FLD-001",
+    "title": "Custom choice search searches loaded pages",
+    "classification": "current_boundary",
+    "detail": "Choice filtering is local to loaded options; custom person-field search performs server lookup. These controls do not have identical discovery scope.",
+    "treatment": "Document choice pagination plus loaded-page search and separate person lookup behavior.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/issues/components/custom-fields/field-value-editor.component.ts",
+        "line": 106
+      }
+    ]
+  },
+  {
+    "id": "GAP-FLD-002",
+    "title": "Retired custom references may display raw identifiers",
+    "classification": "resolved_local_defect",
+    "detail": "Authorized current custom-field pages now include a bounded display projection for retained person and choice references. Stored typed identifiers remain unchanged; retired names render without per-row requests or unauthorized lookup data.",
+    "treatment": "Retain the browser friendly-name regression and deterministic Go authorization/paging checks. Runtime results are recorded by source-stamped execution evidence.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/issues/components/custom-fields/custom-fields.component.ts",
+        "line": 36
+      }
+    ]
+  },
+  {
+    "id": "GAP-FLD-003",
+    "title": "Custom-field conflict review may retain old definitions and options",
+    "classification": "resolved_local_defect",
+    "detail": "Conflict Review reloads current definitions and eligible options while retaining the editable draft and original stored values. Renamed/new fields and retired choices no longer leave the editor on stale metadata.",
+    "treatment": "Retain the real conflict/review browser scenario, including a renamed field, new field, retired option and newly eligible option. Do not infer applying retired field definitions from draft retention.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/issues/components/custom-fields/custom-fields.component.ts",
+        "line": 226
+      }
+    ]
+  },
+  {
+    "id": "GAP-AST-001",
+    "title": "Attachment limits differ between current surfaces",
+    "classification": "current_boundary",
+    "detail": "General resumable files use configured upload policy, images remain limited to 10 MiB, and direct base64/legacy upload schemas have their own smaller limits and MIME support.",
+    "treatment": "Keep per-surface limits in cases; do not turn the maximum policy ceiling into an upload promise for every endpoint.",
+    "sources": [
+      {
+        "path": "backend/internal/features/attachments/asset_types.go",
+        "line": 1
+      },
+      {
+        "path": "frontend/src/app/features/attachments/components/file-queue/file-queue.component.ts",
+        "line": 90
+      }
+    ]
+  },
+  {
+    "id": "GAP-BRD-001",
+    "title": "Clear old quick-filter success during a new save",
+    "classification": "resolved_local_defect",
+    "detail": "Reproduced stale success feedback in the browser; the send path now clears its notice before each request.",
+    "treatment": "Retain the strict UC-BRD-0093 browser regression and current implementation; use the generated first-attempt evidence ledger for verification status.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/boards/components/board-quick-filters/board-quick-filters.component.ts",
+        "line": 310
+      }
+    ]
+  },
+  {
+    "id": "GAP-BRD-002",
+    "title": "Debounce expanded board query typing",
+    "classification": "resolved_local_defect",
+    "detail": "A 12-character input reproduced 12 metadata requests. The expanded text control now debounces before emitting filters.",
+    "treatment": "Retain the strict UC-BRD-0094 browser regression and current implementation; use the generated first-attempt evidence ledger for verification status.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/boards/components/native-board-filters/native-board-filters.component.ts",
+        "line": 190
+      },
+      {
+        "path": "frontend/src/app/features/boards/pages/modern-kanban/modern-kanban.page.ts",
+        "line": 196
+      }
+    ]
+  },
+  {
+    "id": "GAP-PLN-001",
+    "title": "Isolate late planning-item saves",
+    "classification": "resolved_local_defect",
+    "detail": "Reproduced destination-editor closure; saves now retain project, session, editor-generation and component ownership.",
+    "treatment": "Retain the strict UC-PLN-0077 browser regression and current implementation; use the generated first-attempt evidence ledger for verification status.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/planning/project-planning.page.ts",
+        "line": 499
+      }
+    ]
+  },
+  {
+    "id": "GAP-PLN-002",
+    "title": "Confirm discarding a dirty planning editor",
+    "classification": "resolved_local_defect",
+    "detail": "Reproduced silent dirty navigation. Planning now participates in a component-specific route discard guard and browser unload warning.",
+    "treatment": "Retain the strict UC-PLN-0078 browser regression and current implementation; use the generated first-attempt evidence ledger for verification status.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/planning/project-planning.page.ts",
+        "line": 475
+      },
+      {
+        "path": "frontend/src/app/features/projects/projects.routes.ts",
+        "line": 44
+      }
+    ]
+  },
+  {
+    "id": "GAP-PLN-003",
+    "title": "Show exact current stage names in planning and reports",
+    "classification": "resolved_local_defect",
+    "detail": "Reproduced Review instead of the custom name. Bounded SQL page projections now return additive stageName without per-issue requests.",
+    "treatment": "Retain the strict UC-PLN-0079 browser regression and current implementation; use the generated first-attempt evidence ledger for verification status.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/planning/project-planning.page.ts",
+        "line": 389
+      },
+      {
+        "path": "frontend/src/app/features/planning/kanban-report.page.ts",
+        "line": 373
+      }
+    ]
+  },
+  {
+    "id": "GAP-INT-001",
+    "title": "Automation stage discovery is independent of board pagination and layout",
+    "classification": "resolved_local_defect",
+    "detail": "Automation now pages active workflows and their stages, retaining canonical IDs and offering only active intake stages. Actual browser tests cover a default board beyond 26 named boards, a valid unmapped stage, closed-stage exclusion, real workflow/stage cursors and persisted rule selection.",
+    "treatment": "Retain UC-INT-0055 and UC-INT-0058 as implemented browser regressions; use the current evidence ledger for verification status.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/integrations/automation-rules.page.ts",
+        "line": 266
+      },
+      {
+        "path": "backend/internal/features/boards/queries.sql",
+        "line": 27
+      }
+    ]
+  },
+  {
+    "id": "GAP-INT-002",
+    "title": "Isolate development-link continuations",
+    "classification": "resolved_local_verification",
+    "detail": "The actual late read failure already remained isolated through native detail child recreation. Additional delayed-save/session checks retain that behavior as an explicit regression boundary.",
+    "treatment": "Retain the strict UC-INT-0056 browser regression and current implementation; use the generated first-attempt evidence ledger for verification status.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/integrations/development-links.component.ts",
+        "line": 219
+      },
+      {
+        "path": "frontend/src/app/features/integrations/development-links.component.ts",
+        "line": 253
+      }
+    ]
+  },
+  {
+    "id": "GAP-INT-003",
+    "title": "Isolate late automation saves",
+    "classification": "resolved_local_defect",
+    "detail": "Reproduced destination-editor closure; rule saves now check project, session, editor-generation and component ownership.",
+    "treatment": "Retain the strict UC-INT-0057 browser regression and current implementation; use the generated first-attempt evidence ledger for verification status.",
+    "sources": [
+      {
+        "path": "frontend/src/app/features/integrations/automation-rules.page.ts",
+        "line": 472
+      }
+    ]
+  },
+  {
+    "id": "GAP-SHL-001",
+    "title": "Shell default-board discovery reads one board page",
+    "classification": "resolved_local_defect",
+    "detail": "The shell now follows bounded board pages until it resolves the default board, and cancels obsolete project/session continuations.",
+    "treatment": "Retain UC-SHL-0080 as a later-page browser regression; passing runtime evidence is recorded separately.",
+    "sources": [
+      {
+        "path": "frontend/src/app/core/workspace/workspace-api.service.ts",
+        "line": 72
+      },
+      {
+        "path": "frontend/src/app/app.component.ts",
+        "line": 481
+      }
+    ]
+  },
+  {
+    "id": "GAP-SHL-002",
+    "title": "Automation navigation checks a narrower effective role string",
+    "classification": "resolved_local_defect",
+    "detail": "The shell Automation link and editor management controls now accept both administrator and project_admin, consistently with shared Configure access.",
+    "treatment": "Retain UC-SHL-0081 as a project-administrator navigation and editor-access regression.",
+    "sources": [
+      {
+        "path": "frontend/src/app/app.component.ts",
+        "line": 262
+      },
+      {
+        "path": "backend/internal/features/integrations/service.go",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "GAP-MCP-003",
+    "title": "Native plugin canonical issue discovery compatibility repaired locally",
+    "classification": "resolved_local_defect",
+    "detail": "Corrected on 2026-10-19: GateGoldClient.issues now calls search_issues_v2, validates canonical issue/stage results and preserves stage display names in the panel. Five new unit regressions and actual packaged sidecar/browser acceptance verified modern-only discovery and complete mixed-mode pagination across 28 issues.",
+    "treatment": "Retain the modern/mixed search regressions. Local isolated Go/PostgreSQL and native sidecar evidence does not close actual managed-provider, installed company-host or shared deployment acceptance; those remain tracked separately.",
+    "sources": [
+      {
+        "path": "integrations/antigravity/src/mcp.ts",
+        "line": 37
+      },
+      {
+        "path": "integrations/antigravity/src/models.ts",
+        "line": 47
+      },
+      {
+        "path": "integrations/antigravity/src/ui.ts",
+        "line": 120
+      },
+      {
+        "path": "integrations/antigravity/tests/mcp-search.test.ts",
+        "line": 32
+      },
+      {
+        "path": "frontend/e2e/antigravity-plugin.spec.ts",
+        "line": 130
+      }
+    ]
+  }
+]

@@ -1,0 +1,215 @@
+{
+  "version": 1,
+  "scope": "Correct impossible raw-argument native declarations without changing stable IDs or business expectations.",
+  "corrections": [
+    {
+      "id": "UC-BRD-0063",
+      "area": "boards",
+      "beforeSurfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "afterSurfaces": [
+        "rest",
+        "mcp"
+      ],
+      "expectedUnchanged": [
+        "Layout validation rejects the duplicate ID."
+      ],
+      "source": "frontend/src/app/features/boards/pages/modern-board-settings/modern-board-settings.page.ts",
+      "rationale": "addColumn always generates a fresh crypto.randomUUID; the column form exposes no identifier input and reorder/remove retain that generated identity. A duplicate raw ID can only be constructed outside native controls.",
+      "nativeCounterpart": "UC-BRD-0112"
+    },
+    {
+      "id": "UC-BRD-0066",
+      "area": "boards",
+      "beforeSurfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "afterSurfaces": [
+        "rest",
+        "mcp"
+      ],
+      "expectedUnchanged": [
+        "Layout validation refuses the foreign stage."
+      ],
+      "source": "frontend/src/app/features/boards/pages/modern-board-settings/modern-board-settings.page.ts",
+      "rationale": "loadWorkflows/loadStages retrieve choices from the current project and chooseStages receives only scoped picker option IDs; no raw or foreign stage input exists.",
+      "nativeCounterpart": "UC-BRD-0110"
+    },
+    {
+      "id": "UC-BRD-0067",
+      "area": "boards",
+      "beforeSurfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "afterSurfaces": [
+        "rest",
+        "mcp"
+      ],
+      "expectedUnchanged": [
+        "Layout validation refuses an empty board."
+      ],
+      "source": "frontend/src/app/features/boards/pages/modern-board-settings/modern-board-settings.page.ts",
+      "rationale": "removeColumn refuses when fewer than two columns remain, and the native Remove column button is disabled for the final column. Native controls cannot submit an empty column array.",
+      "nativeCounterpart": "UC-BRD-0109"
+    },
+    {
+      "id": "UC-BRD-0068",
+      "area": "boards",
+      "beforeSurfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "afterSurfaces": [
+        "rest",
+        "mcp"
+      ],
+      "expectedUnchanged": [
+        "The protected default name is retained."
+      ],
+      "source": "frontend/src/app/features/boards/pages/modern-board-settings/modern-board-settings.page.html",
+      "rationale": "Default-board name input is readonly. Raw attempted name mutation is a service rejection contract; a separate native readonly assertion can cover the UI boundary.",
+      "nativeCounterpart": "UC-BRD-0107"
+    },
+    {
+      "id": "UC-BRD-0069",
+      "area": "boards",
+      "beforeSurfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "afterSurfaces": [
+        "rest",
+        "mcp"
+      ],
+      "expectedUnchanged": [
+        "The unrestricted default saved view is retained."
+      ],
+      "source": "frontend/src/app/features/boards/pages/modern-board-settings/modern-board-settings.page.html",
+      "rationale": "Saved view editor is rendered only for nondefault boards, so the native default-board flow cannot construct a restricted savedFilters mutation.",
+      "nativeCounterpart": "UC-BRD-0108"
+    },
+    {
+      "id": "UC-BLG-0024",
+      "area": "backlog",
+      "beforeSurfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "afterSurfaces": [
+        "rest",
+        "mcp"
+      ],
+      "expectedUnchanged": [
+        "Validation requires another planned issue."
+      ],
+      "source": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+      "rationale": "Native rank buttons derive a distinct adjacent loaded row, and drag ignores an unchanged index; no self-anchor input exists.",
+      "nativeCounterpart": "Native prevention controls are tested separately when independently specified; this service rejection is not credited from an injected browser HTTP call."
+    },
+    {
+      "id": "UC-BLG-0025",
+      "area": "backlog",
+      "beforeSurfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "afterSurfaces": [
+        "rest",
+        "mcp"
+      ],
+      "expectedUnchanged": [
+        "Only current backlog work can be ranked."
+      ],
+      "source": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+      "rationale": "Native backlog ranking controls are rendered only for current planned rows, so an active issue cannot be chosen as the subject through native controls.",
+      "nativeCounterpart": "Native prevention controls are tested separately when independently specified; this service rejection is not credited from an injected browser HTTP call."
+    },
+    {
+      "id": "UC-BLG-0026",
+      "area": "backlog",
+      "beforeSurfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "afterSurfaces": [
+        "rest",
+        "mcp"
+      ],
+      "expectedUnchanged": [
+        "Archived work cannot be ranked."
+      ],
+      "source": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+      "rationale": "The native backlog endpoint and ranked list exclude archived work; archived subject IDs cannot be supplied by any native ranking control.",
+      "nativeCounterpart": "Native prevention controls are tested separately when independently specified; this service rejection is not credited from an injected browser HTTP call."
+    },
+    {
+      "id": "UC-BLG-0027",
+      "area": "backlog",
+      "beforeSurfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "afterSurfaces": [
+        "rest",
+        "mcp"
+      ],
+      "expectedUnchanged": [
+        "The anchor must be a current backlog issue."
+      ],
+      "source": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+      "rationale": "Native rank neighbors come only from the current project backlog rows. Active board anchors cannot be supplied by a native rank action.",
+      "nativeCounterpart": "Native prevention controls are tested separately when independently specified; this service rejection is not credited from an injected browser HTTP call."
+    },
+    {
+      "id": "UC-BLG-0028",
+      "area": "backlog",
+      "beforeSurfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "afterSurfaces": [
+        "rest",
+        "mcp"
+      ],
+      "expectedUnchanged": [
+        "The anchor is unavailable in this scoped operation."
+      ],
+      "source": "frontend/src/app/features/issues/pages/backlog/backlog.page.ts",
+      "rationale": "Native rank neighbors are scoped to the one project backlog; a foreign project anchor is not available as a native input.",
+      "nativeCounterpart": "Native prevention controls are tested separately when independently specified; this service rejection is not credited from an injected browser HTTP call."
+    },
+    {
+      "id": "UC-BRD-0076",
+      "area": "boards",
+      "beforeSurfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "afterSurfaces": [
+        "rest",
+        "mcp"
+      ],
+      "expectedUnchanged": [
+        "The default board remains active."
+      ],
+      "source": "frontend/src/app/features/boards/pages/modern-board-settings/modern-board-settings.page.html",
+      "rationale": "Archive/Restore controls render only when !view.board.default; native users cannot submit a default-board archive command.",
+      "nativeCounterpart": "UC-BRD-0111"
+    }
+  ]
+}

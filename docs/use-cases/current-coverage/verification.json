@@ -1,0 +1,290 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-20T01:29:09.290244+00:00",
+  "applicationSha256": "3fbda7e589b993005ff37410a86d1668d4305aeaefbe1454b42c183168025bc1",
+  "catalogSha256": "3e0706fb468ec62323178776d8f07304c38682c86b067d96fad34e6c7ef0a69f",
+  "sourceManifestSha256": "76eccaba993bc134c805a3e85d0e7b7bcf803410d4a1336f0860fedd8bf0a8b9",
+  "browserRunId": "full-v9-2026-10-20",
+  "goProofSourceRunId": "e3bf603e6efd49638f3b0d306c8e7abb",
+  "browserExecution": {
+    "suiteStatus": "passed",
+    "scope": "full_unfiltered",
+    "invalidEvidence": false,
+    "selected": 884,
+    "attempts": 884,
+    "passed": 883,
+    "failed": 0,
+    "skipped": 1,
+    "timedOut": 0,
+    "interrupted": 0,
+    "explicitTimingOptOuts": 1,
+    "browsers": [
+      "Chromium"
+    ],
+    "otherBrowserCoverage": "not measured"
+  },
+  "allDocumentedCases": {
+    "cases": 1772,
+    "passedCases": 1759,
+    "casesVerifiedOnEveryDeclaredSurface": 1759,
+    "outcomes": {
+      "not_run": 13,
+      "passed": 1759
+    },
+    "declaredSurfacePairs": 3388,
+    "verifiedDeclaredSurfacePairs": 3367,
+    "surfaceCounts": {
+      "background": {
+        "declared": 23,
+        "verified": 21
+      },
+      "frontend_service": {
+        "declared": 2,
+        "verified": 2
+      },
+      "mcp": {
+        "declared": 975,
+        "verified": 974
+      },
+      "operator": {
+        "declared": 17,
+        "verified": 10
+      },
+      "plugin": {
+        "declared": 29,
+        "verified": 27
+      },
+      "rest": {
+        "declared": 1022,
+        "verified": 1017
+      },
+      "web": {
+        "declared": 1320,
+        "verified": 1316
+      }
+    }
+  },
+  "documentedLocalCases": {
+    "cases": 1759,
+    "passedCases": 1759,
+    "casesVerifiedOnEveryDeclaredSurface": 1759,
+    "outcomes": {
+      "passed": 1759
+    },
+    "declaredSurfacePairs": 3367,
+    "verifiedDeclaredSurfacePairs": 3367,
+    "surfaceCounts": {
+      "background": {
+        "declared": 21,
+        "verified": 21
+      },
+      "frontend_service": {
+        "declared": 2,
+        "verified": 2
+      },
+      "mcp": {
+        "declared": 974,
+        "verified": 974
+      },
+      "operator": {
+        "declared": 10,
+        "verified": 10
+      },
+      "plugin": {
+        "declared": 27,
+        "verified": 27
+      },
+      "rest": {
+        "declared": 1017,
+        "verified": 1017
+      },
+      "web": {
+        "declared": 1316,
+        "verified": 1316
+      }
+    }
+  },
+  "externalPending": {
+    "count": 13,
+    "ids": [
+      "UC-ACC-0032",
+      "UC-ACC-0033",
+      "UC-ACC-0034",
+      "UC-ACC-0058",
+      "UC-MCP-0075",
+      "UC-MCP-0085",
+      "UC-MCP-0111",
+      "UC-NTF-0065",
+      "UC-NTF-0066",
+      "UC-SYS-0028",
+      "UC-SYS-0030",
+      "UC-SYS-0031",
+      "UC-SYS-0032"
+    ],
+    "actualProviderOrSupportedHostAcceptance": "not verified"
+  },
+  "frontend": {
+    "sourceFiles": 123,
+    "scope": "All handwritten frontend/src/**/*.ts, including src/main.ts.",
+    "excluded": [
+      "**/*.spec.ts",
+      "src/app/api/generated/**",
+      "src/app/api/fixture-generated/**"
+    ],
+    "denominatorVerified": true,
+    "unit": {
+      "lines": {
+        "total": 8639,
+        "covered": 3737,
+        "skipped": 0,
+        "pct": 43.25
+      },
+      "statements": {
+        "total": 9764,
+        "covered": 4203,
+        "skipped": 0,
+        "pct": 43.04
+      },
+      "functions": {
+        "total": 2067,
+        "covered": 869,
+        "skipped": 0,
+        "pct": 42.04
+      },
+      "branches": {
+        "total": 5576,
+        "covered": 2525,
+        "skipped": 0,
+        "pct": 45.28
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "combined": {
+      "lines": {
+        "total": 8639,
+        "covered": 7915,
+        "skipped": 0,
+        "pct": 91.61
+      },
+      "statements": {
+        "total": 9764,
+        "covered": 8697,
+        "skipped": 0,
+        "pct": 89.07
+      },
+      "functions": {
+        "total": 2067,
+        "covered": 882,
+        "skipped": 0,
+        "pct": 42.67
+      },
+      "branches": {
+        "total": 5576,
+        "covered": 4630,
+        "skipped": 0,
+        "pct": 83.03
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "successfulUnitTestRun": {
+      "runId": "6969c4dd02344ec5b862cd3322af7d91",
+      "passedTests": 781,
+      "files": 64
+    },
+    "browserLoadedSourceOnly": {
+      "lines": {
+        "total": 11002,
+        "covered": 10343,
+        "skipped": 0,
+        "pct": 94.01
+      },
+      "statements": {
+        "total": 14792,
+        "covered": 13430,
+        "skipped": 0,
+        "pct": 90.79
+      },
+      "functions": {
+        "total": 2477,
+        "covered": 2253,
+        "skipped": 0,
+        "pct": 90.95
+      },
+      "branches": {
+        "total": 6890,
+        "covered": 5473,
+        "skipped": 0,
+        "pct": 79.43
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "combination": "Conservative projection onto the full Vitest denominator: only exact statement/function/branch source spans with matching file hashes receive browser credit. Incompatible compiler-generated spans are not credited. Percentages are never added and the denominator does not grow.",
+    "browserNavigationLimit": "Chromium may reset V8 counters on document navigation. SPA execution in captured page fixtures is measured; auxiliary contexts are not automatically captured."
+  },
+  "go": {
+    "measurement": "statements only",
+    "denominatorVerified": true,
+    "covered": 13481,
+    "total": 16851,
+    "packageCount": 39,
+    "lineCoverage": "not measured by Go coverage",
+    "branchCoverage": "not measured by Go coverage"
+  },
+  "latestDragGestureCases": [
+    {
+      "id": "UC-BRD-0048",
+      "status": "passed",
+      "webVerified": true
+    },
+    {
+      "id": "UC-BRD-0052",
+      "status": "passed",
+      "webVerified": true
+    },
+    {
+      "id": "UC-BRD-0053",
+      "status": "passed",
+      "webVerified": true
+    },
+    {
+      "id": "UC-BRD-0077",
+      "status": "passed",
+      "webVerified": true
+    },
+    {
+      "id": "UC-BRD-0078",
+      "status": "passed",
+      "webVerified": true
+    }
+  ],
+  "unmeasuredSourceMetrics": [
+    "external identity provider runtime",
+    "native plugin/host source coverage"
+  ],
+  "githubActionsExecution": "not verified; local validation is not a hosted CI run",
+  "performance": "separate uninstrumented actual Chromium samples attached",
+  "full100Claimed": false,
+  "historicalInvestigations": {
+    "nativeProfileShutdownTimeout": "An earlier full cohort timed out during native-profile shutdown. Cause remains unknown; later passing evidence is reported separately and does not establish a causal repair.",
+    "dragDrop": "Earlier attempts recorded zero drop callbacks. The contribution of historical disabled controls versus clipping remains unknown. The latest captured cohort uses stronger gesture/readiness assertions; its passing outcomes do not retroactively diagnose those earlier attempts."
+  },
+  "publication": {
+    "rawProofsProfilesLogsSourceHtmlResultsCopied": false,
+    "measurementMetadataReferencesPrivateProofs": "References/hashes only; private proof artifacts are deliberately not copied."
+  }
+}

@@ -1,0 +1,1094 @@
+{
+  "area": "activity",
+  "title": "Company and issue activity history",
+  "summary": "Attributed retained history, scoped access, date/resource filters and non-executing change display. Issue detail can consume the same history service. Related tests are references only.",
+  "sources": {
+    "ui": {
+      "path": "frontend/src/app/features/administration/pages/activity/activity.page.ts",
+      "line": 52
+    },
+    "live": {
+      "path": "frontend/src/app/features/administration/pages/activity/activity.page.ts",
+      "line": 86
+    },
+    "service": {
+      "path": "backend/internal/features/activity/service.go",
+      "line": 67
+    },
+    "projection": {
+      "path": "backend/internal/features/activity/service.go",
+      "line": 321
+    },
+    "transport": {
+      "path": "backend/internal/features/activity/mcp.go",
+      "line": 11
+    },
+    "writer": {
+      "path": "backend/internal/features/activity/writer.go",
+      "line": 24
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-AUD-0001",
+      "title": "Read company activity",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Open Company activity as administrator."
+      ],
+      "expected": [
+        "Attributed company events show action, resource context and current readable labels."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0002",
+      "title": "Read web channel attribution",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Inspect a mutation initiated through the web app."
+      ],
+      "expected": [
+        "The event displays Web channel with its human actor."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "writer"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0003",
+      "title": "Read MCP channel attribution",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Inspect a mutation initiated through MCP."
+      ],
+      "expected": [
+        "The event displays MCP channel with the acting human account."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "writer"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0004",
+      "title": "Identify automated reminder",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Inspect scheduled due-reminder activity."
+      ],
+      "expected": [
+        "The page labels it Automated reminder rather than implying a human click."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0005",
+      "title": "Search complete issue key live",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Type a complete issue key into the history filter."
+      ],
+      "expected": [
+        "Matching history loads without clicking a search button."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "live",
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0006",
+      "title": "Reject incomplete issue key",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Enter a key not matching the complete project-number format."
+      ],
+      "expected": [
+        "Validation explains a complete issue key is required."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "service",
+        "live"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0007",
+      "title": "Filter by project",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Select a project."
+      ],
+      "expected": [
+        "Only that project matching events remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0008",
+      "title": "Page activity project choices",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Choose Load more projects in the filter panel."
+      ],
+      "expected": [
+        "Further accessible project options load without replacing the current event filter."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0009",
+      "title": "Filter starting date",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Set a From date."
+      ],
+      "expected": [
+        "The service applies the company-calendar lower bound."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Calendar-boundary integration fixtures retain a genuinely emitted owned event but move its timestamp as historical-data setup only in an exact disposable database. One transaction locks the table, captures the exact enabled append-only trigger, restores it before commit, and proves normal updates remain forbidden. No ordinary API timestamp edit is implied."
+      ]
+    },
+    {
+      "id": "UC-AUD-0010",
+      "title": "Filter ending date",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Set a To date."
+      ],
+      "expected": [
+        "The company-calendar upper bound applies."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Calendar-boundary integration fixtures retain a genuinely emitted owned event but move its timestamp as historical-data setup only in an exact disposable database. One transaction locks the table, captures the exact enabled append-only trigger, restores it before commit, and proves normal updates remain forbidden. No ordinary API timestamp edit is implied."
+      ]
+    },
+    {
+      "id": "UC-AUD-0011",
+      "title": "Reject reversed date range",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Choose an ending date before the starting date."
+      ],
+      "expected": [
+        "Validation rejects the range rather than returning misleading history."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0012",
+      "title": "Filter exact resource",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Supply resource kind and valid UUID together."
+      ],
+      "expected": [
+        "Only matching resource history is returned."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Calendar-boundary integration fixtures retain a genuinely emitted owned event but move its timestamp as historical-data setup only in an exact disposable database. One transaction locks the table, captures the exact enabled append-only trigger, restores it before commit, and proves normal updates remain forbidden. No ordinary API timestamp edit is implied."
+      ]
+    },
+    {
+      "id": "UC-AUD-0013",
+      "title": "Reject resource kind alone",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Supply kind without identifier."
+      ],
+      "expected": [
+        "Validation requires the paired kind and ID."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0014",
+      "title": "Reject identifier alone",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Supply resource UUID without kind."
+      ],
+      "expected": [
+        "Validation requires the pair."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0015",
+      "title": "Reject malformed resource identifier",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Supply an invalid or zero resource UUID."
+      ],
+      "expected": [
+        "The filter is rejected before history can be returned."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0016",
+      "title": "Inspect change details",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Expand View change details."
+      ],
+      "expected": [
+        "Field names and before/after values appear with explicit empty values."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "projection"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0017",
+      "title": "Follow issue history link",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Choose an issue key in an event."
+      ],
+      "expected": [
+        "Its issue route opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0018",
+      "title": "Read next history page",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Choose Next activity page."
+      ],
+      "expected": [
+        "A bounded later page in stable descending event order appears."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0019",
+      "title": "Return to first history page",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Choose First activity page."
+      ],
+      "expected": [
+        "The first page for current filters reloads."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0020",
+      "title": "Clear history filters",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Choose Clear history filters."
+      ],
+      "expected": [
+        "The filter form resets and current company history reloads."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "ui"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0021",
+      "title": "Retry failed history request",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Use Retry history search after a request failure."
+      ],
+      "expected": [
+        "The current intended filters are retried with visible feedback."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "ui"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0022",
+      "title": "Show history empty state",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Use valid filters with no events."
+      ],
+      "expected": [
+        "The page explains no activity matches those filters."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "ui"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0023",
+      "title": "Deny global activity to ordinary project reader",
+      "actor": "reader",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Request unscoped company history without company administrator access."
+      ],
+      "expected": [
+        "The service denies the request."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0024",
+      "title": "Read exact issue history as project reader",
+      "actor": "reader",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Request issue resourceKind and exact current accessible issue resourceId."
+      ],
+      "expected": [
+        "Relevant retained issue and related-change history is readable."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "service",
+        "transport"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0025",
+      "title": "Deny inaccessible issue history",
+      "actor": "reader",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Request exact history for an inaccessible or missing issue."
+      ],
+      "expected": [
+        "The unavailable outcome does not reveal unrelated activity."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0026",
+      "title": "Reject mismatched issue project",
+      "actor": "reader",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Supply an exact issue resource plus a different project filter."
+      ],
+      "expected": [
+        "The issue is unavailable rather than returning cross-project history."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0027",
+      "title": "Keep personal notification content out of issue history",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Change a personal inbox read state, then read exact issue history as a different authorized project user and inspect generic company notification audit as company administrator."
+      ],
+      "expected": [
+        "Notification read-state events are excluded from exact issue history, including the linked issue. Company administrators may inspect generic read-state audit metadata, but private inbox message bodies are not included in those projections."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "projection"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go",
+        "frontend/e2e/coverage-account.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "The company audit intentionally exposes generic notification read-state changes. Exact issue history explicitly excludes notification resources; this case does not claim administrators cannot see read-state metadata."
+      ]
+    },
+    {
+      "id": "UC-AUD-0028",
+      "title": "Preserve retained human attribution",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Read history after actor disable or project archive."
+      ],
+      "expected": [
+        "Retained events remain attributed rather than being deleted with lifecycle changes."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "writer",
+        "service"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0029",
+      "title": "Avoid false no-op history",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Repeat an accepted idempotent mutation or unchanged save."
+      ],
+      "expected": [
+        "The business services retain a single change effect rather than duplicate substantive history."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "writer"
+      ],
+      "operations": [
+        "list_activity"
+      ],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0030",
+      "title": "Discard stale history result",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Change filters or account before an older search response arrives."
+      ],
+      "expected": [
+        "The current filter/account result cannot be replaced by obsolete data."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "live"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0031",
+      "title": "Render Arabic history values",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Inspect Arabic actor names, resource names and before/after text."
+      ],
+      "expected": [
+        "Bidi isolation and automatic direction preserve readable text."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "ui"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-AUD-0032",
+      "title": "Render change text safely",
+      "actor": "company_admin",
+      "preconditions": [
+        "Company-wide history requires a company administrator; exact issue history cases use a currently authorized project reader."
+      ],
+      "steps": [
+        "Inspect a change value containing HTML-looking or script-looking text."
+      ],
+      "expected": [
+        "The text is displayed as data rather than executed as markup."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "ui",
+        "projection"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/activity.spec.ts",
+        "frontend/e2e/activity-live-search.spec.ts",
+        "backend/internal/features/activity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    }
+  ]
+}

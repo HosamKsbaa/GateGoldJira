@@ -1,0 +1,3369 @@
+{
+  "area": "relationships",
+  "title": "Subtasks, blockers and retained issue relations",
+  "summary": "Independent child work, guarded prerequisite graph, live candidate lookup and relates-to/duplicate links.",
+  "sources": {
+    "subtaskUi": {
+      "path": "frontend/src/app/features/issues/components/subtasks/subtasks.component.html",
+      "line": 1
+    },
+    "subtaskLogic": {
+      "path": "frontend/src/app/features/issues/components/subtasks/subtasks.component.ts",
+      "line": 1
+    },
+    "nativeCreate": {
+      "path": "backend/internal/features/issues/canonical_create.go",
+      "line": 49
+    },
+    "parentRules": {
+      "path": "backend/internal/features/issues/prerequisites.go",
+      "line": 92
+    },
+    "completion": {
+      "path": "backend/internal/features/issues/prerequisites.go",
+      "line": 50
+    },
+    "dependenciesUi": {
+      "path": "frontend/src/app/features/issues/components/dependencies/dependencies.component.html",
+      "line": 1
+    },
+    "dependencies": {
+      "path": "backend/internal/features/issues/dependencies.go",
+      "line": 201
+    },
+    "dependencyPages": {
+      "path": "backend/internal/features/issues/dependencies.go",
+      "line": 106
+    },
+    "dependencyRules": {
+      "path": "backend/internal/features/issues/prerequisites.go",
+      "line": 142
+    },
+    "linksUi": {
+      "path": "frontend/src/app/features/issues/components/modern-issue-actions/modern-issue-actions.component.ts",
+      "line": 113
+    },
+    "links": {
+      "path": "backend/internal/features/issues/organization.go",
+      "line": 178
+    },
+    "moves": {
+      "path": "backend/internal/features/issues/canonical_move.go",
+      "line": 119
+    },
+    "contracts": {
+      "path": "backend/internal/features/issues/canonical_contracts.go",
+      "line": 7
+    },
+    "legacyChild": {
+      "path": "backend/internal/features/issues/subtasks.go",
+      "line": 38
+    },
+    "legacyMode": {
+      "path": "backend/internal/features/issues/compatibility.go",
+      "line": 8
+    },
+    "legacyChildMcp": {
+      "path": "backend/internal/features/issues/mcp.go",
+      "line": 47
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-REL-0001",
+      "title": "Open subtask creation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Add subtask."
+      ],
+      "expected": [
+        "Inline child creation form opens under current parent."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0002",
+      "title": "Create independent subtask",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create a valid child."
+      ],
+      "expected": [
+        "Distinct key/issue is created with fixed parent and default subtask type."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0003",
+      "title": "Assign subtask independently",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create/edit child with its own assignee."
+      ],
+      "expected": [
+        "Child assignment does not replace parent assignment."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0004",
+      "title": "Prioritize subtask independently",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create/edit child priority."
+      ],
+      "expected": [
+        "Child priority remains independent."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0005",
+      "title": "Schedule subtask independently",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create/edit child due date."
+      ],
+      "expected": [
+        "Child calendar date remains independent."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0006",
+      "title": "Label subtask independently",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create/edit child labels."
+      ],
+      "expected": [
+        "Child retains its own selected labels."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0007",
+      "title": "Describe subtask independently",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create/edit child description."
+      ],
+      "expected": [
+        "Child has its own saved content."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0008",
+      "title": "Discuss subtask independently",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post comment on child."
+      ],
+      "expected": [
+        "Child discussion remains separate from parent."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0009",
+      "title": "Attach files to subtask",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Upload file to child."
+      ],
+      "expected": [
+        "Attachment belongs to child issue."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0010",
+      "title": "Cancel subtask creation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Cancel child creation form."
+      ],
+      "expected": [
+        "No child is created and dirty draft confirmation applies."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0011",
+      "title": "Restore child draft",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Reopen retained same-tab draft for this parent."
+      ],
+      "expected": [
+        "Draft restores in correct parent scope."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0012",
+      "title": "Reload subtasks",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Reload subtasks and progress."
+      ],
+      "expected": [
+        "Current child list and progress return."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [
+        "list_subtasks"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0013",
+      "title": "Page subtasks",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Next subtasks page."
+      ],
+      "expected": [
+        "Further children display."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [
+        "list_subtasks"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0014",
+      "title": "Open child detail",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Activate child issue row."
+      ],
+      "expected": [
+        "Correct child detail opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0015",
+      "title": "Open parent from child",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Open parent."
+      ],
+      "expected": [
+        "Correct fixed parent opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0016",
+      "title": "Filter all children",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose View all in parent subtasks section."
+      ],
+      "expected": [
+        "Issues opens with project and parent filter."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0017",
+      "title": "Complete one child",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move child to Done."
+      ],
+      "expected": [
+        "Parent completed/total progress updates."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0018",
+      "title": "Complete final child",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Complete last unfinished child."
+      ],
+      "expected": [
+        "Parent progress reaches total without automatically completing parent."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0019",
+      "title": "Reopen completed child",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Reopen child of unfinished parent."
+      ],
+      "expected": [
+        "Parent completed count decreases."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0020",
+      "title": "Complete ready parent explicitly",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move parent with all prerequisites finished to Done."
+      ],
+      "expected": [
+        "Parent completes only through explicit transition."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "subtaskUi",
+        "subtaskLogic",
+        "nativeCreate"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "General child field/comment/file details are owned by corresponding issue/collaboration/asset cases."
+      ]
+    },
+    {
+      "id": "UC-REL-0021",
+      "title": "Reject unfinished child completion guard",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move parent to Done with unfinished child."
+      ],
+      "expected": [
+        "Move rejects and identifies prerequisite work."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "parentRules",
+        "completion",
+        "nativeCreate",
+        "contracts"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0022",
+      "title": "Reject nested child",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create subtask beneath a subtask."
+      ],
+      "expected": [
+        "Nested subtask is rejected."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "parentRules",
+        "completion",
+        "nativeCreate",
+        "contracts"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: A child renders its fixed parent link instead of an Add subtask form. Nested parent IDs are raw typed creation request validation. All original expected behavior remains unchanged on its declared service transports."
+      ],
+      "relatedCases": [
+        "UC-REL-0090"
+      ]
+    },
+    {
+      "id": "UC-REL-0023",
+      "title": "Reject child on completed parent",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create child while parent is Done."
+      ],
+      "expected": [
+        "Parent must be reopened first."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "parentRules",
+        "completion",
+        "nativeCreate",
+        "contracts"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0024",
+      "title": "Reject child reopen under done parent",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Reopen completed child while parent remains Done."
+      ],
+      "expected": [
+        "Reopen is rejected until parent reopens."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "parentRules",
+        "completion",
+        "nativeCreate",
+        "contracts"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0025",
+      "title": "Reject immutable reparenting",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Edit child parent through ordinary issue edit."
+      ],
+      "expected": [
+        "Parent relationship cannot be reassigned."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "parentRules",
+        "completion",
+        "nativeCreate",
+        "contracts"
+      ],
+      "operations": [
+        "update_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Operation correction: ordinary parent reassignment is tested through update_issue_v2, whose editable contract excludes a writable parent.",
+        "Surface correction: The native complete edit form has no writable parent field. Rejection of an extra editable.parentId property belongs to the published REST/MCP schema; native immutable-parent absence remains independently covered. All original expected behavior remains unchanged on its declared service transports."
+      ],
+      "relatedCases": [
+        "UC-REL-0076"
+      ]
+    },
+    {
+      "id": "UC-REL-0026",
+      "title": "Reject stale parent creation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Create child using outdated parent revision."
+      ],
+      "expected": [
+        "Conflict prevents blind child creation."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "parentRules",
+        "completion",
+        "nativeCreate",
+        "contracts"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-relationship-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0027",
+      "title": "Retry uncertain child creation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Retry original child request after lost accepted response."
+      ],
+      "expected": [
+        "Original reference yields one child."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "parentRules",
+        "completion",
+        "nativeCreate",
+        "contracts"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0028",
+      "title": "Prevent viewer child creation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Attempt Add subtask as viewer."
+      ],
+      "expected": [
+        "UI has no write action and server rejects mutation."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "parentRules",
+        "completion",
+        "nativeCreate",
+        "contracts"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/subtasks.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Absence of a native write action requires browser assertions independently of server denial. All original expected behavior remains on the native case."
+      ],
+      "relatedCases": [
+        "UC-REL-0085"
+      ]
+    },
+    {
+      "id": "UC-REL-0029",
+      "title": "Open blocker search",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Add blocker."
+      ],
+      "expected": [
+        "Search panel opens with initial lookup."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0030",
+      "title": "Search blocker title live",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Type title fragment."
+      ],
+      "expected": [
+        "Matching same-project candidates update automatically."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Automatically replacing displayed blocker candidates while typing is native request ownership. All original expected behavior remains on the native case."
+      ],
+      "relatedCases": [
+        "UC-REL-0084"
+      ]
+    },
+    {
+      "id": "UC-REL-0031",
+      "title": "Search blocker key live",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Type issue key."
+      ],
+      "expected": [
+        "Matching same-project candidate appears."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0032",
+      "title": "Search blocker number live",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Type bare numeric issue number."
+      ],
+      "expected": [
+        "Exact project issue is found without search click."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Live numeric typing without a submit click is native behavior. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-REL-0079"
+      ]
+    },
+    {
+      "id": "UC-REL-0033",
+      "title": "Search leading-zero number",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Type issue number with leading zeros."
+      ],
+      "expected": [
+        "Equivalent issue number is found."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0034",
+      "title": "Exclude current issue from blockers",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Search for current issue."
+      ],
+      "expected": [
+        "Current issue is not a selectable blocker."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0035",
+      "title": "Select blocker candidate",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Select for a candidate."
+      ],
+      "expected": [
+        "Confirmation identifies selected blocker key."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0036",
+      "title": "Confirm blocker link",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Add selected blocker."
+      ],
+      "expected": [
+        "Blocked By relationship appears with blocker status and responsible developer."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "add_dependency"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0037",
+      "title": "Inspect inverse blocked work",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open blocker issue."
+      ],
+      "expected": [
+        "Blocks section shows dependent issue."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "list_dependencies"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0038",
+      "title": "Cancel blocker selection",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Cancel adding blocker."
+      ],
+      "expected": [
+        "Panel closes without linking."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0039",
+      "title": "Page blocker candidates",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose More blocker candidates."
+      ],
+      "expected": [
+        "Further candidate page appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0040",
+      "title": "Page direct blockers",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose More blockers."
+      ],
+      "expected": [
+        "Further Blocked By relationships appear."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "list_dependencies"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0041",
+      "title": "Page dependents",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose More dependent issues."
+      ],
+      "expected": [
+        "Further Blocks relationships appear."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "list_dependencies"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0042",
+      "title": "Remove direct blocker",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Remove blocker."
+      ],
+      "expected": [
+        "Relationship is removed and blocked count refreshes."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "remove_dependency"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0043",
+      "title": "Refresh relationships",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose Reload dependencies."
+      ],
+      "expected": [
+        "Current graph revision and both directions reload."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "list_dependencies"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0044",
+      "title": "Show empty blocker search",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Type nonmatching query."
+      ],
+      "expected": [
+        "No matching other issues appears after search settles."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0045",
+      "title": "Retry blocker lookup",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Retry search after request failure."
+      ],
+      "expected": [
+        "Same search is retried without selecting stale result."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Retrying without selecting an earlier stale result is native client state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-REL-0079"
+      ]
+    },
+    {
+      "id": "UC-REL-0046",
+      "title": "Complete blocker",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move unfinished blocker to Done."
+      ],
+      "expected": [
+        "Dependent becomes unblocked when no unfinished blockers remain."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0047",
+      "title": "Reopen blocker",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Reopen completed blocker."
+      ],
+      "expected": [
+        "Dependent unfinished-blocker state increases."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0048",
+      "title": "Complete unblocked dependent",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move dependent after blockers finish."
+      ],
+      "expected": [
+        "Dependent still requires its own explicit completion move."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0049",
+      "title": "Guard unfinished blocker",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Move dependent to Done while blocker unfinished."
+      ],
+      "expected": [
+        "Move fails with blocking issue details."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "move_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0050",
+      "title": "Reject dependency self-link",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Link issue as its own blocker."
+      ],
+      "expected": [
+        "Validation rejects self-cycle."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "add_dependency"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The blocker chooser excludes the current issue. Supplying its own UUID as blockerId is a raw REST/MCP argument case rather than a reachable native selection. All original expected behavior remains unchanged on its declared service transports."
+      ],
+      "relatedCases": [
+        "UC-REL-0034"
+      ]
+    },
+    {
+      "id": "UC-REL-0051",
+      "title": "Reject direct graph cycle",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Add inverse dependency creating two-issue cycle."
+      ],
+      "expected": [
+        "Validation rejects cycle."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "add_dependency"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0052",
+      "title": "Reject indirect graph cycle",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Add edge creating longer cycle."
+      ],
+      "expected": [
+        "Validation rejects transitive cycle."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "add_dependency"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0053",
+      "title": "Reject parent-child graph cycle",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Add edge creating cycle through parent/child prerequisite."
+      ],
+      "expected": [
+        "Validation rejects combined graph cycle."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "add_dependency"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-relationship-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0054",
+      "title": "Reject unfinished blocker on done work",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Add unfinished blocker to completed dependent."
+      ],
+      "expected": [
+        "Dependent must be reopened first."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "add_dependency"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-relationship-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0055",
+      "title": "Reject foreign project blocker",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit blocker from different project."
+      ],
+      "expected": [
+        "Scoped validation rejects without leaking foreign issue."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "add_dependency"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The blocker lookup is scoped to the current project and the issue project cannot be reassigned. A foreign blocker UUID cannot be selected through this native control. All original expected behavior remains unchanged on its declared service transports."
+      ],
+      "relatedCases": [
+        "UC-REL-0087"
+      ]
+    },
+    {
+      "id": "UC-REL-0056",
+      "title": "Review stale graph link",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Add/remove with stale issue/graph/relationship revisions."
+      ],
+      "expected": [
+        "Conflict preserves selected blocker for explicit review."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "add_dependency"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Preserving the selected blocker during explicit conflict review is native state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-REL-0080"
+      ]
+    },
+    {
+      "id": "UC-REL-0057",
+      "title": "Review current relationships",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Review current relationships."
+      ],
+      "expected": [
+        "Latest issue/graph state reloads before retry."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "list_dependencies"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The review control owns the pending link intention; graph reads remain separate. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-REL-0043"
+      ]
+    },
+    {
+      "id": "UC-REL-0058",
+      "title": "Reject stale dependency cursor",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Continue paged dependencies after graph changes."
+      ],
+      "expected": [
+        "Conflict instructs first-page reload."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "list_dependencies"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-relationship-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0059",
+      "title": "Ignore slow earlier candidate",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Let previous query return after newer query."
+      ],
+      "expected": [
+        "Newer candidate set remains."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Suppressing a late candidate search completion is native request-generation ownership. Original expected behavior is unchanged and requires native-client assertions."
+      ],
+      "relatedCases": [
+        "UC-REL-0079"
+      ]
+    },
+    {
+      "id": "UC-REL-0060",
+      "title": "Keep canceled search closed",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Complete lookup after Add blocker panel closes."
+      ],
+      "expected": [
+        "Late result cannot reopen canceled panel."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts",
+        "frontend/e2e/coverage-issue-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: A late result cannot reopen a native panel; the service has no panel lifetime. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-REL-0079"
+      ]
+    },
+    {
+      "id": "UC-REL-0061",
+      "title": "Navigate blocker candidates",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Use arrows and Enter with blocker combo."
+      ],
+      "expected": [
+        "Active candidate and confirmation remain keyboard accessible."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "add_dependency"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Keyboard candidate focus and confirmation are browser interaction. Original expected behavior is unchanged and requires native-client assertions."
+      ],
+      "relatedCases": [
+        "UC-REL-0036"
+      ]
+    },
+    {
+      "id": "UC-REL-0062",
+      "title": "Preserve mobile numeric selection",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Select numeric result using narrow-screen keyboard interaction."
+      ],
+      "expected": [
+        "Intended blocker is confirmed and linked."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "add_dependency"
+      ],
+      "existingTests": [
+        "frontend/e2e/dependencies.spec.ts",
+        "frontend/e2e/blocker-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Narrow-screen keyboard selection cannot be tested with stateless API calls. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-REL-0036"
+      ]
+    },
+    {
+      "id": "UC-REL-0063",
+      "title": "Open related issues",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Expand Related issues."
+      ],
+      "expected": [
+        "Saved relations and current live search are exposed."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/automatic-work-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0064",
+      "title": "Search related work",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Type title/key/number in related issue search."
+      ],
+      "expected": [
+        "Matching same-project issues excluding self appear."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/automatic-work-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Excluding self from the related picker is a native filter; stateless search has no generic self-exclusion argument. All original expected behavior remains on the native case."
+      ],
+      "relatedCases": [
+        "UC-REL-0083"
+      ]
+    },
+    {
+      "id": "UC-REL-0065",
+      "title": "Page related candidates",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose More related issues."
+      ],
+      "expected": [
+        "Next candidate page appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/automatic-work-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Choosing More related issues and appending its visible candidates is native UI state. All original expected behavior remains on the native case."
+      ],
+      "relatedCases": [
+        "UC-REL-0082"
+      ]
+    },
+    {
+      "id": "UC-REL-0066",
+      "title": "Add relates-to relation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Relates to and Link issue."
+      ],
+      "expected": [
+        "Relation appears on both issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "set_issue_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/automatic-work-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0067",
+      "title": "Add duplicates relation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Duplicates and Link issue."
+      ],
+      "expected": [
+        "Source says Duplicates and target says Duplicated by."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "set_issue_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/automatic-work-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0068",
+      "title": "Remove relates-to relation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Remove a retained relates-to link."
+      ],
+      "expected": [
+        "Relation disappears without deleting issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "set_issue_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/automatic-work-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0069",
+      "title": "Remove duplicates relation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Remove a retained duplicates link."
+      ],
+      "expected": [
+        "Direction-aware source unlink removes relation."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "set_issue_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/automatic-work-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0070",
+      "title": "Follow related issue",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Activate linked key/title."
+      ],
+      "expected": [
+        "Correct related issue detail opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/automatic-work-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0071",
+      "title": "Reject self related link",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit related issue equal to source."
+      ],
+      "expected": [
+        "Validation rejects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "set_issue_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/automatic-work-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native related search filters out the current issue before rendering Link issue controls. Self target UUID validation is a distinct REST/MCP boundary. All original expected behavior remains unchanged on its declared service transports."
+      ],
+      "relatedCases": [
+        "UC-REL-0089"
+      ]
+    },
+    {
+      "id": "UC-REL-0072",
+      "title": "Reject cross-project related link",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit target from another project."
+      ],
+      "expected": [
+        "Validation rejects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "set_issue_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/automatic-work-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native related lookup always sends the current project scope; a foreign-project target is not offered as a Link issue control. All original expected behavior remains unchanged on its declared service transports."
+      ],
+      "relatedCases": [
+        "UC-REL-0088"
+      ]
+    },
+    {
+      "id": "UC-REL-0073",
+      "title": "Reject unsupported relation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit unsupported relation kind."
+      ],
+      "expected": [
+        "Validation rejects."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "set_issue_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/automatic-work-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The native relation select has exactly relates_to and duplicates options; an arbitrary blocks relation token is a raw typed REST/MCP argument. All original expected behavior remains unchanged on its declared service transports."
+      ],
+      "relatedCases": [
+        "UC-REL-0086"
+      ]
+    },
+    {
+      "id": "UC-REL-0074",
+      "title": "Limit related links",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Add relation when either issue already has 100."
+      ],
+      "expected": [
+        "Validation rejects additional relation."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "set_issue_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/automatic-work-search.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-relationship-native-validation.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-REL-0075",
+      "title": "Review concurrent related change",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Link/unlink against stale issue revision."
+      ],
+      "expected": [
+        "Current issue is offered for deliberate review."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "set_issue_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/automatic-work-search.spec.ts",
+        "frontend/e2e/coverage-issue-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Offering deliberate review of a current issue after a rejected related-link edit is native conflict UI. Original expected behavior is unchanged and requires native-client assertions."
+      ],
+      "relatedCases": [
+        "UC-REL-0081"
+      ]
+    },
+    {
+      "id": "UC-REL-0076",
+      "title": "Reparent existing issue",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Attempt changing an existing child parent."
+      ],
+      "expected": [
+        "No native reparent action is implemented; ordinary edit keeps parent immutable."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "not_implemented",
+      "evidence": [
+        "contracts",
+        "subtaskUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-issue-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "actor": "mcp_client",
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "implementation": "service_only",
+      "operations": [
+        "create_subtask"
+      ],
+      "gapIds": [],
+      "existingTests": [
+        "backend/internal/features/issues/subtasks_test.go",
+        "backend/internal/features/issues/subtasks_transport_test.go",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "notes": [
+        "Native child creation uses create_issue_v2. This compatibility action uses fixed legacy Subtask type, low/medium/high priorities (omitted priority becomes medium), no canonical type/workflow identifiers, and current expectedParentRevision. Parent identity and Subtask behavior remain fixed."
+      ],
+      "id": "UC-REL-0077",
+      "title": "Create legacy compatibility child",
+      "preconditions": [
+        "Authenticated caller has current project write access.",
+        "Parent project remains in legacy mode; parent is a current non-Done top-level Task or Bug.",
+        "Caller has the current parent revision and a fresh retry reference."
+      ],
+      "steps": [
+        "Call create_subtask with a valid title and current expectedParentRevision."
+      ],
+      "expected": [
+        "One independent Subtask is created under the fixed parent in the project initial stage, with its own key/reporter and optional independent fields; nested or completed parents are rejected."
+      ],
+      "kind": "happy_path",
+      "evidence": [
+        "legacyChild",
+        "legacyMode",
+        "legacyChildMcp",
+        "parentRules"
+      ]
+    },
+    {
+      "actor": "mcp_client",
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "implementation": "service_only",
+      "operations": [
+        "create_subtask"
+      ],
+      "gapIds": [],
+      "existingTests": [
+        "backend/internal/features/issues/subtasks_test.go",
+        "backend/internal/features/issues/subtasks_transport_test.go",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "notes": [
+        "Native child creation uses create_issue_v2. This compatibility action uses fixed legacy Subtask type, low/medium/high priorities (omitted priority becomes medium), no canonical type/workflow identifiers, and current expectedParentRevision. Parent identity and Subtask behavior remain fixed."
+      ],
+      "id": "UC-REL-0078",
+      "title": "Reject fresh compatibility child in modern mode",
+      "preconditions": [
+        "Authenticated caller has current project write access.",
+        "Parent project uses modern core mode.",
+        "Caller supplies valid child fields and a fresh retry reference."
+      ],
+      "steps": [
+        "Call create_subtask for the modern-mode parent."
+      ],
+      "expected": [
+        "No child is created; validation_failed on clientVersion directs caller to the version 2 issue API so canonical choice/workflow identities are preserved."
+      ],
+      "kind": "validation",
+      "evidence": [
+        "legacyChild",
+        "legacyMode",
+        "legacyChildMcp",
+        "parentRules"
+      ]
+    },
+    {
+      "id": "UC-REL-0079",
+      "title": "Read exact numeric blocker candidates",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Search the current project using a bare issue number."
+      ],
+      "expected": [
+        "The exact numbered authorized issue is returned as a candidate."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-REL-0032. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-REL-0032"
+      ]
+    },
+    {
+      "id": "UC-REL-0080",
+      "title": "Reject stale dependency graph command",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Add or remove a dependency using stale issue/graph/relationship revisions."
+      ],
+      "expected": [
+        "Conflict rejects the stale graph mutation without changing the accepted relationships."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [
+        "add_dependency",
+        "remove_dependency"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-REL-0056. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-REL-0056"
+      ]
+    },
+    {
+      "id": "UC-REL-0081",
+      "title": "Reject stale related-link command",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit a related-link change with an outdated issue revision."
+      ],
+      "expected": [
+        "The conflict reports the current issue and retains the winning relation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "set_issue_link"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-REL-0075."
+      ],
+      "relatedCases": [
+        "UC-REL-0075"
+      ]
+    },
+    {
+      "id": "UC-REL-0082",
+      "title": "Read related-search cursor pages",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Read same-project matching issue summaries with a bounded cursor page, then advance its cursor."
+      ],
+      "expected": [
+        "Distinct later matching summaries retain the project/query/sort scope without duplicates."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native case UC-REL-0065. Browser behavior and its stable ID are unchanged."
+      ],
+      "relatedCases": [
+        "UC-REL-0065"
+      ]
+    },
+    {
+      "id": "UC-REL-0083",
+      "title": "Read scoped potential related summaries",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Query potential related issue summaries by current project and matching text."
+      ],
+      "expected": [
+        "Returned summaries match the requested authorized project and text."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native case UC-REL-0064. Browser behavior and its stable ID are unchanged."
+      ],
+      "relatedCases": [
+        "UC-REL-0064"
+      ]
+    },
+    {
+      "id": "UC-REL-0084",
+      "title": "Read matching blocker titles",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Query authorized same-project issue title fragments."
+      ],
+      "expected": [
+        "Matching same-project summaries return with their current title and key."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyPages"
+      ],
+      "operations": [
+        "search_issues_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native case UC-REL-0030. Browser behavior and its stable ID are unchanged."
+      ],
+      "relatedCases": [
+        "UC-REL-0030"
+      ]
+    },
+    {
+      "id": "UC-REL-0085",
+      "title": "Deny viewer subtask creation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Attempt to create a subtask as a current project viewer."
+      ],
+      "expected": [
+        "The forbidden command creates no child and leaves parent progress unchanged."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "parentRules",
+        "completion",
+        "nativeCreate",
+        "contracts"
+      ],
+      "operations": [
+        "create_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-issues.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native case UC-REL-0028. Browser behavior and its stable ID are unchanged."
+      ],
+      "relatedCases": [
+        "UC-REL-0028"
+      ]
+    },
+    {
+      "id": "UC-REL-0086",
+      "title": "Offer supported native relation kinds",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Open related work and inspect the relation selector."
+      ],
+      "expected": [
+        "Only Relates to and Duplicates are offered; no unsupported relation token can be selected."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-relationship-ui.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native counterpart of UC-REL-0073. This case preserves the actual control behavior separately from raw REST/MCP argument validation."
+      ],
+      "relatedCases": [
+        "UC-REL-0073"
+      ]
+    },
+    {
+      "id": "UC-REL-0087",
+      "title": "Scope native blocker candidates to the project",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Search for a matching issue that exists in another project."
+      ],
+      "expected": [
+        "The foreign issue is absent from selectable blocker candidates."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "dependenciesUi",
+        "dependencies",
+        "dependencyRules",
+        "completion"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-relationship-ui.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native counterpart of UC-REL-0055. This case preserves the actual control behavior separately from raw REST/MCP argument validation."
+      ],
+      "relatedCases": [
+        "UC-REL-0055"
+      ]
+    },
+    {
+      "id": "UC-REL-0088",
+      "title": "Scope native related candidates to the project",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Search related work using a query matching current-project and foreign-project work."
+      ],
+      "expected": [
+        "Only current-project issues appear as selectable related candidates."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-relationship-ui.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native counterpart of UC-REL-0072. This case preserves the actual control behavior separately from raw REST/MCP argument validation."
+      ],
+      "relatedCases": [
+        "UC-REL-0072"
+      ]
+    },
+    {
+      "id": "UC-REL-0089",
+      "title": "Exclude the current issue from related candidates",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Search related work for the current issue key."
+      ],
+      "expected": [
+        "The current issue is absent from Link issue controls and the no-other-issues state is shown."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "linksUi",
+        "links"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-relationship-ui.spec.ts",
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native counterpart of UC-REL-0071. This case preserves the actual control behavior separately from raw REST/MCP argument validation."
+      ],
+      "relatedCases": [
+        "UC-REL-0071"
+      ]
+    },
+    {
+      "id": "UC-REL-0090",
+      "title": "Hide nested subtask creation",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Open an existing subtask."
+      ],
+      "expected": [
+        "The fixed parent link is visible; Add subtask and Create subtask controls are absent."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "parentRules",
+        "completion",
+        "nativeCreate",
+        "contracts"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-relationship-native-lifecycle.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native counterpart of UC-REL-0022. This case preserves the actual control behavior separately from raw REST/MCP argument validation."
+      ],
+      "relatedCases": [
+        "UC-REL-0022"
+      ]
+    }
+  ]
+}

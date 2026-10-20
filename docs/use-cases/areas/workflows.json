@@ -1,0 +1,3410 @@
+{
+  "area": "workflows",
+  "title": "Workflows, stages, transitions, policies and migration",
+  "summary": "Canonical owner for workflow configuration, type bindings and transition-policy configuration. Board columns map these stages but do not define workflows. Review requests and votes belong to issue collaboration.",
+  "sources": {
+    "page": {
+      "path": "frontend/src/app/features/projects/pages/project-workflows/project-workflows.page.ts",
+      "line": 61
+    },
+    "workflow": {
+      "path": "backend/internal/features/configuration/workflows.go",
+      "line": 118
+    },
+    "safety": {
+      "path": "backend/internal/features/configuration/workflows.go",
+      "line": 226
+    },
+    "stage": {
+      "path": "backend/internal/features/configuration/stages.go",
+      "line": 15
+    },
+    "transition": {
+      "path": "backend/internal/features/configuration/stages.go",
+      "line": 125
+    },
+    "bindings": {
+      "path": "backend/internal/features/configuration/bindings.go",
+      "line": 14
+    },
+    "migration": {
+      "path": "backend/internal/features/configuration/migration.go",
+      "line": 22
+    },
+    "policy": {
+      "path": "backend/internal/features/configuration/transition_policy.go",
+      "line": 56
+    },
+    "policyEditor": {
+      "path": "frontend/src/app/features/projects/components/transition-policy.component.ts",
+      "line": 205
+    },
+    "reads": {
+      "path": "backend/internal/features/configuration/workflow_reads.go",
+      "line": 18
+    },
+    "mcp": {
+      "path": "backend/internal/features/configuration/workflow_mcp.go",
+      "line": 9
+    },
+    "policyRead": {
+      "path": "backend/internal/features/configuration/transition_policy.go",
+      "line": 130
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-WFL-0001",
+      "title": "Read workflows",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open or request the project's workflows."
+      ],
+      "expected": [
+        "Accessible retained configuration is returned with stable identities and cursor state."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_workflows"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0002",
+      "title": "Page workflows",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request the next cursor page of workflows."
+      ],
+      "expected": [
+        "The next bounded page appends to the corresponding list."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_workflows"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-WFL-0091."
+      ],
+      "relatedCases": [
+        "UC-WFL-0091"
+      ]
+    },
+    {
+      "id": "UC-WFL-0003",
+      "title": "Read stages",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open or request the project's stages."
+      ],
+      "expected": [
+        "Accessible retained configuration is returned with stable identities and cursor state."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_workflow_stages"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0004",
+      "title": "Page stages",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request the next cursor page of stages."
+      ],
+      "expected": [
+        "The next bounded page appends to the corresponding list."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_workflow_stages"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-WFL-0092."
+      ],
+      "relatedCases": [
+        "UC-WFL-0092"
+      ]
+    },
+    {
+      "id": "UC-WFL-0005",
+      "title": "Read transitions",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open or request the project's transitions."
+      ],
+      "expected": [
+        "Accessible retained configuration is returned with stable identities and cursor state."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_workflow_transitions"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0006",
+      "title": "Page transitions",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request the next cursor page of transitions."
+      ],
+      "expected": [
+        "The next bounded page appends to the corresponding list."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_workflow_transitions"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-WFL-0093."
+      ],
+      "relatedCases": [
+        "UC-WFL-0093"
+      ]
+    },
+    {
+      "id": "UC-WFL-0007",
+      "title": "Read type workflow bindings",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Open or request the project's type workflow bindings."
+      ],
+      "expected": [
+        "Accessible retained configuration is returned with stable identities and cursor state."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_type_workflow_bindings"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-workflows.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-board-missing-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0008",
+      "title": "Page type workflow bindings",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request the next cursor page of type workflow bindings."
+      ],
+      "expected": [
+        "The next bounded page appends to the corresponding list."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_type_workflow_bindings"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-WFL-0094."
+      ],
+      "relatedCases": [
+        "UC-WFL-0094"
+      ]
+    },
+    {
+      "id": "UC-WFL-0009",
+      "title": "Select a different workflow",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Select another workflow in settings."
+      ],
+      "expected": [
+        "Its stages and transitions replace the previous selection."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0010",
+      "title": "Select a type's bindings",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Choose another issue type."
+      ],
+      "expected": [
+        "The selected type's allowed and default workflow bindings load."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "bindings"
+      ],
+      "operations": [
+        "list_type_workflow_bindings"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-WFL-0007."
+      ],
+      "relatedCases": [
+        "UC-WFL-0007"
+      ]
+    },
+    {
+      "id": "UC-WFL-0011",
+      "title": "Create a workflow",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save a new workflow name."
+      ],
+      "expected": [
+        "An active workflow is created without moving existing issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "workflow"
+      ],
+      "operations": [
+        "save_workflow"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0012",
+      "title": "Rename a workflow",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save a new name for an existing workflow."
+      ],
+      "expected": [
+        "The stable workflow identity retains its issues and receives the new name."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "workflow"
+      ],
+      "operations": [
+        "save_workflow"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0013",
+      "title": "Retire an eligible workflow",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Retire a workflow with no creation-default binding."
+      ],
+      "expected": [
+        "New-work bindings close while existing identities are retained."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "workflow"
+      ],
+      "operations": [
+        "save_workflow"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0014",
+      "title": "Restore a retained workflow",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Clear retirement on a retained workflow and save valid configuration."
+      ],
+      "expected": [
+        "The workflow becomes active; bindings still require explicit eligible settings."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "service_only",
+      "evidence": [
+        "workflow",
+        "page"
+      ],
+      "operations": [
+        "save_workflow"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "The service permits clearing retirement, but the current web editor disables Edit workflow when the workflow is retired. Web restoration is not claimed."
+      ]
+    },
+    {
+      "id": "UC-WFL-0015",
+      "title": "Create a named custom stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save a new stage in the selected active workflow."
+      ],
+      "expected": [
+        "The stage receives a stable project/workflow-scoped identity."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "stage"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0016",
+      "title": "Create an Arabic-named stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save an Arabic stage name."
+      ],
+      "expected": [
+        "The exact Unicode name is retained and displayed."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "stage"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0017",
+      "title": "Rename a stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save a changed stage name."
+      ],
+      "expected": [
+        "Existing issues keep stage identity while its display name changes."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "stage"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0018",
+      "title": "Create a todo category stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Choose todo while creating a new stage."
+      ],
+      "expected": [
+        "The stage uses that base category for completion and reporting semantics."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0019",
+      "title": "Create a in_progress category stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Choose in_progress while creating a new stage."
+      ],
+      "expected": [
+        "The stage uses that base category for completion and reporting semantics."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0020",
+      "title": "Create a review category stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Choose review while creating a new stage."
+      ],
+      "expected": [
+        "The stage uses that base category for completion and reporting semantics."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0021",
+      "title": "Create a done category stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Choose done while creating a new stage."
+      ],
+      "expected": [
+        "The stage uses that base category for completion and reporting semantics."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0022",
+      "title": "Reorder a stage by precise position",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save another positive integer stage position."
+      ],
+      "expected": [
+        "Stage ordering retains exact integer precision."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0023",
+      "title": "Set the initial stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Mark an open To do stage as initial."
+      ],
+      "expected": [
+        "It becomes the workflow's initial stage and the old designation clears."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0024",
+      "title": "Open stage intake",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Enable Accepts entries for an eligible stage."
+      ],
+      "expected": [
+        "Normal eligible transitions can enter the stage."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0025",
+      "title": "Close stage intake",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Disable Accepts entries while preserving a valid workflow."
+      ],
+      "expected": [
+        "Existing issues remain in the stage; new entries stop."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0026",
+      "title": "Retire a closed unused stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Retire a closed stage after references are removed."
+      ],
+      "expected": [
+        "Retained stage identity becomes retired and stays closed."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0027",
+      "title": "Restore a retained stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Clear retirement on a stage in an active workflow with safe coverage."
+      ],
+      "expected": [
+        "The stage is active again; its explicit intake flag controls entries."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0028",
+      "title": "Create a directed transition",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save a source-to-destination stage edge in one workflow."
+      ],
+      "expected": [
+        "The directed move is retained for eligibility checks."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "transition",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_transition"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0029",
+      "title": "Require member transition permission",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Set the move's permission to member."
+      ],
+      "expected": [
+        "The move exposes and enforces the selected actor permission."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "transition",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_transition"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0030",
+      "title": "Require administrator transition permission",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Set the move's permission to project_admin."
+      ],
+      "expected": [
+        "The move exposes and enforces the selected actor permission."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "transition",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_transition"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0031",
+      "title": "Clear an extra transition permission",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Clear the configured required permission."
+      ],
+      "expected": [
+        "The move returns to ordinary project-write authorization requirements."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "transition",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_transition"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0032",
+      "title": "Retire a transition",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Retire an edge while preserving required completion paths."
+      ],
+      "expected": [
+        "The directed move is no longer eligible."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "transition",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_transition"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0033",
+      "title": "Restore a transition",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Clear retirement on a valid retained edge."
+      ],
+      "expected": [
+        "The directed move becomes available under its current guards."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "transition",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_transition"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0034",
+      "title": "Allow a workflow for an issue type",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save an eligible type-to-workflow binding with intake open."
+      ],
+      "expected": [
+        "The type may use that workflow for new work."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "bindings",
+        "page"
+      ],
+      "operations": [
+        "set_type_workflow_binding"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0035",
+      "title": "Change a type's creation-default workflow",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Choose another eligible binding as default."
+      ],
+      "expected": [
+        "Future creation uses the new default; existing issues are not migrated."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "bindings",
+        "page"
+      ],
+      "operations": [
+        "set_type_workflow_binding"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0036",
+      "title": "Close a nondefault binding intake",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Disable new-work intake on a nondefault binding."
+      ],
+      "expected": [
+        "Existing issues retain their workflow while new issues cannot choose that binding."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "bindings",
+        "page"
+      ],
+      "operations": [
+        "set_type_workflow_binding"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0037",
+      "title": "Select workflow migration targets",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Choose a destination workflow in the migration editor."
+      ],
+      "expected": [
+        "Its stage choices load and paginate independently."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "list_workflow_stages"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-WFL-0003, UC-WFL-0092."
+      ],
+      "relatedCases": [
+        "UC-WFL-0003",
+        "UC-WFL-0092"
+      ]
+    },
+    {
+      "id": "UC-WFL-0038",
+      "title": "Migrate a same-category issue batch",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Migrate 1–100 issues from a closed source into an eligible same-category target."
+      ],
+      "expected": [
+        "The batch commits atomically and reports moved/remaining counts."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "migration",
+        "page"
+      ],
+      "operations": [
+        "migrate_workflow_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/daily-workflow.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-migration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0039",
+      "title": "Continue a remaining migration",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Submit a new migration operation for remaining source work."
+      ],
+      "expected": [
+        "Another bounded batch moves without duplicating the previous operation."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "migration",
+        "page"
+      ],
+      "operations": [
+        "migrate_workflow_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-migration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0040",
+      "title": "Require assignee for a transition",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Enable the assignee system-field requirement."
+      ],
+      "expected": [
+        "The saved transition policy includes that field and movement validates its presence."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "policy",
+        "policyEditor"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0041",
+      "title": "Require due date for a transition",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Enable the due_date system-field requirement."
+      ],
+      "expected": [
+        "The saved transition policy includes that field and movement validates its presence."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "policy",
+        "policyEditor"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0042",
+      "title": "Require description for a transition",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Enable the description system-field requirement."
+      ],
+      "expected": [
+        "The saved transition policy includes that field and movement validates its presence."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "policy",
+        "policyEditor"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0043",
+      "title": "Require a custom field for a transition",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Select an active project custom field as a required value."
+      ],
+      "expected": [
+        "The saved policy retains its field ID and movement checks its value."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "policy",
+        "policyEditor"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0044",
+      "title": "Remove a transition field requirement",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Deselect one requirement and save."
+      ],
+      "expected": [
+        "That requirement is absent without removing unrelated policy settings."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "policy",
+        "policyEditor"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0045",
+      "title": "Require member approvals",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Set a positive approval count and member reviewer role."
+      ],
+      "expected": [
+        "The policy requires that number of eligible member approvals."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "policy",
+        "policyEditor"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0046",
+      "title": "Require administrator approvals",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Set a positive approval count and project administrator reviewer role."
+      ],
+      "expected": [
+        "The policy restricts qualifying approvals to eligible administrators."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "policy",
+        "policyEditor"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0047",
+      "title": "Exclude the issue reporter from approval",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Enable reporter exclusion."
+      ],
+      "expected": [
+        "The reporter cannot supply a qualifying approval under the policy."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "policy",
+        "policyEditor"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0048",
+      "title": "Disable required approval",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Set required approval count to zero and save."
+      ],
+      "expected": [
+        "The editor sends a null reviewer role and the saved policy no longer requires approvals."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "policy",
+        "policyEditor"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-native-residual.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-WFL-0095."
+      ],
+      "relatedCases": [
+        "UC-WFL-0095"
+      ]
+    },
+    {
+      "id": "UC-WFL-0049",
+      "title": "Reject nonadministrator workflow configuration",
+      "actor": "writer",
+      "preconditions": [
+        "Actor has project write access but no configuration authority."
+      ],
+      "steps": [
+        "Attempt any workflow configuration mutation."
+      ],
+      "expected": [
+        "Server project-configuration authority blocks the write."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "workflow",
+        "bindings",
+        "policy",
+        "page"
+      ],
+      "operations": [
+        "save_workflow",
+        "save_workflow_stage",
+        "save_workflow_transition",
+        "set_type_workflow_binding",
+        "migrate_workflow_issues",
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0050",
+      "title": "Reject blank workflow name",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save an empty or whitespace-only workflow name."
+      ],
+      "expected": [
+        "Validation requires a nonblank bounded name."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "workflow",
+        "page"
+      ],
+      "operations": [
+        "save_workflow"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0051",
+      "title": "Reject oversized workflow name",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save a workflow name longer than 100 Unicode characters."
+      ],
+      "expected": [
+        "Validation rejects the name."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "workflow",
+        "page"
+      ],
+      "operations": [
+        "save_workflow"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0052",
+      "title": "Reject blank stage name",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save an empty stage name."
+      ],
+      "expected": [
+        "Validation requires a nonblank bounded name."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0053",
+      "title": "Reject oversized stage name",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save a stage name longer than 60 Unicode characters."
+      ],
+      "expected": [
+        "Validation rejects the name."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0054",
+      "title": "Reject nonpositive stage position",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save position zero or a negative position."
+      ],
+      "expected": [
+        "Validation refuses an invalid position."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0055",
+      "title": "Reject changing an existing stage category",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Change a retained stage's base category."
+      ],
+      "expected": [
+        "A new stage must be created instead; retained identity is not rewritten."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0056",
+      "title": "Reject initial stage outside To do",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Mark a non-To-do stage initial."
+      ],
+      "expected": [
+        "Validation requires an open To do initial stage."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0057",
+      "title": "Reject a closed initial stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Close intake while retaining the initial designation."
+      ],
+      "expected": [
+        "Validation rejects the closed initial stage."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0058",
+      "title": "Reject retirement while stage intake is open",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Retire a stage whose current intake is open."
+      ],
+      "expected": [
+        "Close intake before retirement is required."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0059",
+      "title": "Reject retirement of an occupied stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Retire a closed stage that still contains issues."
+      ],
+      "expected": [
+        "Migration is required before retirement."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-migration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0060",
+      "title": "Reject retirement of a rule-referenced stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Retire a stage still referenced by assignment rules."
+      ],
+      "expected": [
+        "Rules must be remapped before retirement."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "stage",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-migration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0061",
+      "title": "Reject a self transition",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Use the same source and destination stage."
+      ],
+      "expected": [
+        "Validation refuses a self transition."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "transition",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_transition"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0062",
+      "title": "Reject a cross-workflow transition",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Use stages from different workflows."
+      ],
+      "expected": [
+        "Both endpoints must belong to the selected workflow."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "transition"
+      ],
+      "operations": [
+        "save_workflow_transition"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: Both transition endpoint selectors enumerate only the selected workflow stages; a cross-workflow raw endpoint is not selectable."
+      ]
+    },
+    {
+      "id": "UC-WFL-0063",
+      "title": "Reject rewriting transition endpoints",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Change endpoints on an existing transition ID."
+      ],
+      "expected": [
+        "The existing transition identity retains its original endpoints."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "transition",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_transition"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0064",
+      "title": "Preserve a completion path",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Remove the last path from retained work to a Done stage."
+      ],
+      "expected": [
+        "The configuration transaction is rejected."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "safety",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage",
+        "save_workflow_transition"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0065",
+      "title": "Preserve an open initial stage for an in-use workflow",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Remove the workflow's only eligible initial stage."
+      ],
+      "expected": [
+        "In-use workflow validation rejects the unsafe state."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "safety",
+        "page"
+      ],
+      "operations": [
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0066",
+      "title": "Reject a default binding without intake",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save a creation-default binding with acceptsNew false."
+      ],
+      "expected": [
+        "Default bindings must accept new issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "bindings",
+        "page"
+      ],
+      "operations": [
+        "set_type_workflow_binding"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0067",
+      "title": "Reject closing the current default binding",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Remove the current creation default before installing a replacement."
+      ],
+      "expected": [
+        "An eligible replacement must become default first."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "bindings",
+        "page"
+      ],
+      "operations": [
+        "set_type_workflow_binding"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0068",
+      "title": "Reject enabling a retired type binding",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Open intake for a retired issue type."
+      ],
+      "expected": [
+        "Only active types can accept new issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "bindings",
+        "page"
+      ],
+      "operations": [
+        "set_type_workflow_binding"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0069",
+      "title": "Reject enabling a retired workflow binding",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Open intake for a retired workflow."
+      ],
+      "expected": [
+        "Only active workflows can accept new issues."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "bindings",
+        "page"
+      ],
+      "operations": [
+        "set_type_workflow_binding"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-boundaries-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0070",
+      "title": "Require default-board stage coverage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Enable a workflow whose open or occupied stages are not mapped to the default board."
+      ],
+      "expected": [
+        "The workflow cannot accept work until coverage is valid."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "safety",
+        "page"
+      ],
+      "operations": [
+        "set_type_workflow_binding",
+        "save_workflow_stage"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0071",
+      "title": "Reject retirement of a creation-default workflow",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Retire a workflow still used by any creation-default binding."
+      ],
+      "expected": [
+        "Replace those defaults before retirement."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "workflow",
+        "page"
+      ],
+      "operations": [
+        "save_workflow"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-process-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0072",
+      "title": "Reject migration from open intake",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Migrate issues before closing source-stage intake."
+      ],
+      "expected": [
+        "Validation requires closed source intake."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "migration"
+      ],
+      "operations": [
+        "migrate_workflow_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: The migration source selector enumerates closed stages only; an open source ID is not a native option."
+      ]
+    },
+    {
+      "id": "UC-WFL-0073",
+      "title": "Reject migration to the same stage",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Choose the source stage as target."
+      ],
+      "expected": [
+        "Validation requires different stages."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "migration"
+      ],
+      "operations": [
+        "migrate_workflow_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: Migration targets enumerate open active stages, while the selected source is closed; the source cannot be submitted as its own target."
+      ]
+    },
+    {
+      "id": "UC-WFL-0074",
+      "title": "Reject cross-category migration",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Choose a destination with a different completion category."
+      ],
+      "expected": [
+        "Normal complete/reopen transitions are required before representation migration."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "migration",
+        "page"
+      ],
+      "operations": [
+        "migrate_workflow_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-migration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0075",
+      "title": "Reject migration into retired target",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Choose a retired target stage or workflow."
+      ],
+      "expected": [
+        "Target must be open and active."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "migration"
+      ],
+      "operations": [
+        "migrate_workflow_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: Migration target options exclude retired stages; the raw retired target rejection is a service boundary."
+      ]
+    },
+    {
+      "id": "UC-WFL-0076",
+      "title": "Reject incompatible type migration",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Migrate source work whose types do not permit the target workflow."
+      ],
+      "expected": [
+        "Every retained type must permit the target before migration."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "migration",
+        "page"
+      ],
+      "operations": [
+        "migrate_workflow_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-migration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0077",
+      "title": "Reject an oversized migration batch",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Request more than 100 issue moves in one migration."
+      ],
+      "expected": [
+        "Validation rejects the batch size."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "migration",
+        "page"
+      ],
+      "operations": [
+        "migrate_workflow_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-migration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0078",
+      "title": "Reject an empty migration batch size",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Request a migration limit of zero."
+      ],
+      "expected": [
+        "Validation requires at least one issue per batch limit."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "migration",
+        "page"
+      ],
+      "operations": [
+        "migrate_workflow_issues"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts",
+        "frontend/e2e/coverage-workflow-migration-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0079",
+      "title": "Reject duplicate field requirements",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Submit repeated system/custom-field IDs in a transition policy."
+      ],
+      "expected": [
+        "Policy normalization rejects duplicate requirements."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "policy"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: Native checkbox and multi-select state contains unique field identities; it cannot construct a duplicate-ID policy."
+      ]
+    },
+    {
+      "id": "UC-WFL-0080",
+      "title": "Reject foreign-project required fields",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Require a custom field outside the project."
+      ],
+      "expected": [
+        "Only scoped active project fields may be required."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "policy"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: The required-field picker reads only scoped project definitions; it has no input for an arbitrary foreign UUID."
+      ]
+    },
+    {
+      "id": "UC-WFL-0081",
+      "title": "Reject retired required fields",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Require a retired custom field."
+      ],
+      "expected": [
+        "The policy rejects retired field IDs."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "policy"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: The native required-field picker filters out retired definitions; a retired UUID cannot be selected as a new requirement."
+      ]
+    },
+    {
+      "id": "UC-WFL-0082",
+      "title": "Reject excessive approval count",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Set more than 100 required approvals."
+      ],
+      "expected": [
+        "Policy validation rejects the count."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "policy",
+        "policyEditor"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0083",
+      "title": "Reject negative approval count",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Set a negative required approval count."
+      ],
+      "expected": [
+        "Policy validation rejects the count."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "policy",
+        "policyEditor"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0084",
+      "title": "Reject approval role/count mismatch",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Submit zero approvals with a role, or a positive count without a role."
+      ],
+      "expected": [
+        "Role and count must form a valid policy."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "service_only",
+      "evidence": [
+        "policy"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Native surface correction: The native policy command sets approverRole=null when count=0 and supplies the selected role for positive counts; incompatible raw combinations are service boundaries."
+      ]
+    },
+    {
+      "id": "UC-WFL-0085",
+      "title": "Freeze an uncertain workflow save",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Retry after the server accepts a write but its response is lost."
+      ],
+      "expected": [
+        "The exact pending input and retry reference are reused while the form is frozen."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "save_workflow"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-WFL-0096."
+      ],
+      "relatedCases": [
+        "UC-WFL-0096"
+      ]
+    },
+    {
+      "id": "UC-WFL-0086",
+      "title": "Review a configuration revision conflict",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Review current configuration after a stale settings write."
+      ],
+      "expected": [
+        "The draft remains but cannot save until current configuration has been explicitly reviewed."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "save_workflow"
+      ],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction preserves this complete browser behavior; stateless service outcomes are recorded separately in UC-WFL-0097."
+      ],
+      "relatedCases": [
+        "UC-WFL-0097"
+      ]
+    },
+    {
+      "id": "UC-WFL-0087",
+      "title": "Protect a dirty workflow editor during navigation",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Attempt to leave after editing workflow settings."
+      ],
+      "expected": [
+        "The dirty-leave confirmation can retain the current editor instead of discarding it."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/code-quality-regressions.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0088",
+      "title": "Recreate project-scoped workflow editing context",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Navigate settings to another project using browser history."
+      ],
+      "expected": [
+        "The editor targets only the destination project and respects its access guards."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/code-quality-regressions.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0089",
+      "title": "Retain exact large stage positions",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Edit a position larger than JavaScript's exact-number range."
+      ],
+      "expected": [
+        "The string/BigInt editing path preserves precise integer position."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/project-workflows.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0090",
+      "title": "Read a transition policy",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator with an accessible workflow transition."
+      ],
+      "steps": [
+        "Read the requirements and approval policy for a selected workflow transition."
+      ],
+      "expected": [
+        "The current required system/custom fields, approval count and role, reporter exclusion, and configuration/workflow revisions are returned."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "policyRead",
+        "policyEditor"
+      ],
+      "operations": [
+        "get_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/fields-approvals.spec.ts",
+        "frontend/e2e/coverage-workflow-policy-native.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-WFL-0091",
+      "title": "Read another workflow cursor page",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request a bounded workflow page and its next cursor."
+      ],
+      "expected": [
+        "The later workflow identities are returned without overlapping the first page."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_workflows"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-workflows.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-WFL-0002."
+      ],
+      "relatedCases": [
+        "UC-WFL-0002"
+      ]
+    },
+    {
+      "id": "UC-WFL-0092",
+      "title": "Read another workflow-stage cursor page",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request a bounded stage page and its next cursor within one workflow."
+      ],
+      "expected": [
+        "The later stage identities and precise order are returned without overlapping the first page."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_workflow_stages"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-workflows.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-WFL-0004."
+      ],
+      "relatedCases": [
+        "UC-WFL-0004"
+      ]
+    },
+    {
+      "id": "UC-WFL-0093",
+      "title": "Read another transition cursor page",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request a bounded transition page and its next cursor within one workflow."
+      ],
+      "expected": [
+        "The later directed transition identities are returned without overlapping the first page."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_workflow_transitions"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-workflows.spec.ts",
+        "frontend/e2e/coverage-board-mcp.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-WFL-0006."
+      ],
+      "relatedCases": [
+        "UC-WFL-0006"
+      ]
+    },
+    {
+      "id": "UC-WFL-0094",
+      "title": "Read another type-binding cursor page",
+      "actor": "reader",
+      "preconditions": [
+        "Signed in with project read access."
+      ],
+      "steps": [
+        "Request a bounded binding page and its next cursor for one type."
+      ],
+      "expected": [
+        "The later type/workflow bindings are returned without overlapping the first page."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "page",
+        "reads"
+      ],
+      "operations": [
+        "list_type_workflow_bindings"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-WFL-0008."
+      ],
+      "relatedCases": [
+        "UC-WFL-0008"
+      ]
+    },
+    {
+      "id": "UC-WFL-0095",
+      "title": "Disable transition approvals through service",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Save approvalsRequired zero with approverRole null while retaining valid unrelated policy requirements."
+      ],
+      "expected": [
+        "The saved/read policy requires no approvals and retains its unrelated requirements."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "policy",
+        "policyEditor"
+      ],
+      "operations": [
+        "save_transition_policy"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-workflows.spec.ts",
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-WFL-0048."
+      ],
+      "relatedCases": [
+        "UC-WFL-0048"
+      ]
+    },
+    {
+      "id": "UC-WFL-0096",
+      "title": "Replay an accepted workflow configuration command",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Repeat the same accepted workflow body and retry reference."
+      ],
+      "expected": [
+        "The original result/event receipt is confirmed once without advancing configuration again."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "save_workflow"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-WFL-0085."
+      ],
+      "relatedCases": [
+        "UC-WFL-0085"
+      ]
+    },
+    {
+      "id": "UC-WFL-0097",
+      "title": "Reject stale workflow configuration revision",
+      "actor": "project_admin",
+      "preconditions": [
+        "Signed in as a project administrator in an active project."
+      ],
+      "steps": [
+        "Submit workflow configuration against a superseded project configuration revision."
+      ],
+      "expected": [
+        "Conflict preserves the accepted workflow and returns current revision information for a new operation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "page"
+      ],
+      "operations": [
+        "save_workflow"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-board-service-mcp-second.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-WFL-0086."
+      ],
+      "relatedCases": [
+        "UC-WFL-0086"
+      ]
+    }
+  ]
+}

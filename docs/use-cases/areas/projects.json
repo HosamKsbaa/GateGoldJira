@@ -1,0 +1,2528 @@
+{
+  "area": "projects",
+  "title": "Projects and project membership",
+  "summary": "Current project directory, lifecycle, read permissions, membership administration and eligible-person discovery. Workflow and board configuration have separate canonical areas.",
+  "sources": {
+    "directory": {
+      "path": "frontend/src/app/features/projects/pages/project-list/project-list.page.ts",
+      "line": 55
+    },
+    "projectUi": {
+      "path": "frontend/src/app/features/projects/pages/project-list/project-list.page.ts",
+      "line": 606
+    },
+    "overview": {
+      "path": "frontend/src/app/features/projects/pages/project-overview/project-overview.page.ts",
+      "line": 31
+    },
+    "service": {
+      "path": "backend/internal/features/projects/service.go",
+      "line": 58
+    },
+    "create": {
+      "path": "backend/internal/features/projects/service.go",
+      "line": 91
+    },
+    "read": {
+      "path": "backend/internal/features/projects/reads.go",
+      "line": 39
+    },
+    "membershipUi": {
+      "path": "frontend/src/app/features/administration/pages/memberships/memberships.page.ts",
+      "line": 40
+    },
+    "membership": {
+      "path": "backend/internal/features/identity/membership.go",
+      "line": 45
+    },
+    "roleSave": {
+      "path": "backend/internal/features/identity/membership.go",
+      "line": 97
+    },
+    "roleRemove": {
+      "path": "backend/internal/features/identity/membership.go",
+      "line": 145
+    },
+    "candidate": {
+      "path": "backend/internal/features/identity/reads.go",
+      "line": 121
+    },
+    "candidateSql": {
+      "path": "backend/internal/features/identity/queries.sql",
+      "line": 66
+    },
+    "memberRead": {
+      "path": "backend/internal/features/identity/reads.go",
+      "line": 75
+    },
+    "memberCandidate": {
+      "path": "backend/internal/features/identity/reads.go",
+      "line": 163
+    },
+    "guard": {
+      "path": "frontend/src/app/core/auth/auth.guards.ts",
+      "line": 31
+    },
+    "projectMcp": {
+      "path": "backend/internal/features/projects/mcp.go",
+      "line": 43
+    },
+    "membershipMcp": {
+      "path": "backend/internal/features/identity/mcp.go",
+      "line": 55
+    },
+    "transaction": {
+      "path": "backend/internal/platform/command/transaction.go",
+      "line": 216
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-PRJ-0001",
+      "title": "List accessible projects",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Open Projects while signed in."
+      ],
+      "expected": [
+        "Only accessible project metadata and the caller effective role are shown."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "directory",
+        "read"
+      ],
+      "operations": [
+        "list_projects"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0002",
+      "title": "Read project overview",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Open a current accessible project."
+      ],
+      "expected": [
+        "Its key, name, description, effective role and navigation links load."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "overview"
+      ],
+      "operations": [
+        "get_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0066."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0003",
+      "title": "Search loaded project names",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Type a loaded project name into Find a project."
+      ],
+      "expected": [
+        "Loaded matching rows update without a search button."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "directory"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "The current search is client-side over loaded rows."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0004",
+      "title": "Search loaded project keys",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Type a loaded project key."
+      ],
+      "expected": [
+        "Matching loaded project rows remain visible."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "directory"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0005",
+      "title": "Explain limited directory search",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Search while further project pages remain unloaded."
+      ],
+      "expected": [
+        "The interface identifies matches as coming from loaded projects."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "directory"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [
+        "GAP-PRJ-003"
+      ],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0006",
+      "title": "Append project directory page",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Choose More projects."
+      ],
+      "expected": [
+        "The next accessible bounded page is appended."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "directory",
+        "read"
+      ],
+      "operations": [
+        "list_projects"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0067."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0007",
+      "title": "Include archived projects",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Enable Include archived projects."
+      ],
+      "expected": [
+        "Accessible archived projects join the directory with read-only status."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "directory",
+        "read"
+      ],
+      "operations": [
+        "list_projects"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0008",
+      "title": "Exclude archived projects",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Turn Include archived projects off."
+      ],
+      "expected": [
+        "Archived rows are omitted from the current directory list."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "directory",
+        "read"
+      ],
+      "operations": [
+        "list_projects"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0009",
+      "title": "Reload project directory",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Choose Refresh projects."
+      ],
+      "expected": [
+        "The list reloads with busy/error feedback rather than retaining an unsupported success message."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "directory",
+        "projectUi"
+      ],
+      "operations": [
+        "list_projects"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0010",
+      "title": "Show empty project directory",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Open a directory with no accessible matching project."
+      ],
+      "expected": [
+        "A clear no-projects or no-matches message is shown."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "directory"
+      ],
+      "operations": [
+        "list_projects"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0011",
+      "title": "Create project",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Submit a valid project key, name and description."
+      ],
+      "expected": [
+        "The project and default All Issues board are created with the chosen metadata."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "create",
+        "projectUi"
+      ],
+      "operations": [
+        "create_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0012",
+      "title": "Normalize project key",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Create using lowercase letters in an otherwise valid project key."
+      ],
+      "expected": [
+        "The persisted project key is uppercase."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "create"
+      ],
+      "operations": [
+        "create_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Review correction: the shared service trims keys, but the published REST/MCP schema rejects surrounding whitespace before service normalization. Whitespace rejection is tracked independently in UC-PRJ-0064."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0013",
+      "title": "Reject malformed project key",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Submit a key outside 2–10 alphanumeric characters starting with a letter."
+      ],
+      "expected": [
+        "Project creation is rejected."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "create"
+      ],
+      "operations": [
+        "create_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0014",
+      "title": "Reject duplicate project key",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Create another project using an existing normalized key."
+      ],
+      "expected": [
+        "The second project is rejected without a duplicate key."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "create"
+      ],
+      "operations": [
+        "create_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0015",
+      "title": "Require project name",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Submit an empty or whitespace-only project name."
+      ],
+      "expected": [
+        "Creation or edit is rejected."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "create"
+      ],
+      "operations": [
+        "create_project",
+        "update_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0016",
+      "title": "Bound project name",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Submit more than 100 Unicode characters as the name."
+      ],
+      "expected": [
+        "The change is rejected."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "create"
+      ],
+      "operations": [
+        "create_project",
+        "update_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0017",
+      "title": "Bound project description",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Submit more than 2000 characters as description."
+      ],
+      "expected": [
+        "The project change is rejected."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "create"
+      ],
+      "operations": [
+        "create_project",
+        "update_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0018",
+      "title": "Preserve Arabic project metadata",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Create or edit Arabic name and description."
+      ],
+      "expected": [
+        "Text remains intact and displays with automatic direction."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "directory",
+        "projectUi"
+      ],
+      "operations": [
+        "create_project",
+        "update_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0065."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0019",
+      "title": "Keep newly created project reachable",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Create a project whose directory order is beyond the first page."
+      ],
+      "expected": [
+        "The created project remains reachable through the post-create directory handling."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "projectUi"
+      ],
+      "operations": [
+        "create_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0020",
+      "title": "Open create-issue action",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Open an active project as a writer and choose Create issue."
+      ],
+      "expected": [
+        "Issue creation opens scoped to that project."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "overview"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0021",
+      "title": "Hide create action for viewer",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Open the same overview as a viewer."
+      ],
+      "expected": [
+        "The create action is absent and the project remains readable."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "overview"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0022",
+      "title": "Edit project name",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Save a changed project name at its current revision."
+      ],
+      "expected": [
+        "The project name updates while its key remains unchanged."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "service",
+        "projectUi"
+      ],
+      "operations": [
+        "update_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0023",
+      "title": "Edit project description",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Save a changed project description."
+      ],
+      "expected": [
+        "The plain-text description updates without changing project identity."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "service",
+        "projectUi"
+      ],
+      "operations": [
+        "update_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0024",
+      "title": "Retain immutable project key",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Open an existing project edit form."
+      ],
+      "expected": [
+        "The key is retained and cannot be renamed through the edit body."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "projectUi",
+        "service"
+      ],
+      "operations": [
+        "update_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0069."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0025",
+      "title": "Update metadata as project administrator",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Call update_project with current scope as project administrator."
+      ],
+      "expected": [
+        "The shared service and published MCP description permit current company Administrator or project Configure access; the project directory edit affordance remains company-administrator-only."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "service_only",
+      "evidence": [
+        "service",
+        "projectMcp"
+      ],
+      "operations": [
+        "update_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go",
+        "frontend/e2e/coverage-access.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-PRJ-001"
+      ],
+      "notes": [
+        "The stale Administrator-only MCP description was corrected on 2026-10-19. REST and actual MCP project-administrator writes are verified separately; browser directory affordance remains a documented difference."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0026",
+      "title": "Deny project creation to ordinary user",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Attempt create_project as member or viewer."
+      ],
+      "expected": [
+        "Company administrator permission is required."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "service",
+        "create"
+      ],
+      "operations": [
+        "create_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0027",
+      "title": "Archive project",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Archive a current active project."
+      ],
+      "expected": [
+        "Work and settings are retained and normal project writes become read-only."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "service",
+        "projectUi"
+      ],
+      "operations": [
+        "archive_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0028",
+      "title": "Restore project",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Restore an archived project."
+      ],
+      "expected": [
+        "Retained content and memberships become usable again."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "service",
+        "projectUi"
+      ],
+      "operations": [
+        "restore_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0029",
+      "title": "Repeat archive safely",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Archive an already archived project with current revision."
+      ],
+      "expected": [
+        "The unchanged state is returned without another semantic change."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "archive_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0030",
+      "title": "Repeat restore safely",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Restore an already active project with current revision."
+      ],
+      "expected": [
+        "The unchanged state is returned."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "restore_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0031",
+      "title": "Deny lifecycle controls to project administrator",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Attempt archive or restore without company administrator status."
+      ],
+      "expected": [
+        "The command is denied even for a project administrator."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "archive_project",
+        "restore_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0032",
+      "title": "Review project conflict",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Save a stale project revision and review current values."
+      ],
+      "expected": [
+        "The current project is shown before another intentional edit."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "service",
+        "projectUi"
+      ],
+      "operations": [
+        "update_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0070."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0033",
+      "title": "Retry uncertain project change",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Repeat a project mutation with its original body and retry reference."
+      ],
+      "expected": [
+        "A previously accepted mutation is not duplicated."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "create_project",
+        "update_project",
+        "archive_project",
+        "restore_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0034",
+      "title": "Handle inaccessible project",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Request an unknown or inaccessible project ID."
+      ],
+      "expected": [
+        "An unavailable result does not expose its metadata."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "read"
+      ],
+      "operations": [
+        "get_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0035",
+      "title": "List project memberships",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Open Project access as authorized project administrator."
+      ],
+      "expected": [
+        "Names, roles and membership revisions load for that project."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "membershipUi",
+        "memberRead"
+      ],
+      "operations": [
+        "list_memberships"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go",
+        "frontend/e2e/coverage-access.spec.ts"
+      ],
+      "gapIds": [
+        "GAP-PRJ-004"
+      ],
+      "notes": [
+        "The published MCP description now names current Configure access. REST and actual MCP project-administrator reads are verified separately."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0036",
+      "title": "Page project memberships",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Request another membership page."
+      ],
+      "expected": [
+        "The next bounded membership page is returned."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "memberRead",
+        "membershipUi"
+      ],
+      "operations": [
+        "list_memberships"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0037",
+      "title": "Read removed membership history",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Request list_memberships with includeRemoved enabled."
+      ],
+      "expected": [
+        "Retained removed memberships are included without restoring access."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "memberRead"
+      ],
+      "operations": [
+        "list_memberships"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0038",
+      "title": "Read membership candidates",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Load approved people for project role assignment."
+      ],
+      "expected": [
+        "Only minimal names, IDs and active flags appear; global account emails are not exposed."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "memberCandidate",
+        "membershipUi"
+      ],
+      "operations": [
+        "list_membership_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0039",
+      "title": "Page membership candidates",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Choose More approved users."
+      ],
+      "expected": [
+        "Further bounded approved-user candidates load."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "membershipUi",
+        "memberCandidate"
+      ],
+      "operations": [
+        "list_membership_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0068."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0040",
+      "title": "Search membership candidates",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Request a candidate query by Arabic or mixed-language display name."
+      ],
+      "expected": [
+        "Matching minimal approved directory summaries are returned."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "memberCandidate"
+      ],
+      "operations": [
+        "list_membership_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0041",
+      "title": "Grant member role",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Choose an approved user and save Member."
+      ],
+      "expected": [
+        "The user gains write access in this project."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "roleSave",
+        "membershipUi"
+      ],
+      "operations": [
+        "set_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0042",
+      "title": "Grant viewer role",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Save Viewer for an approved user."
+      ],
+      "expected": [
+        "The user gains read-only project access."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "roleSave",
+        "membershipUi"
+      ],
+      "operations": [
+        "set_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0043",
+      "title": "Grant project administrator role",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Save Project admin for an approved user."
+      ],
+      "expected": [
+        "Project configuration and membership permissions are granted without company administration."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "roleSave",
+        "membershipUi"
+      ],
+      "operations": [
+        "set_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0044",
+      "title": "Change existing membership",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Save a different role using the current retained revision."
+      ],
+      "expected": [
+        "The same membership receives the new role and revision."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "roleSave"
+      ],
+      "operations": [
+        "set_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0045",
+      "title": "Remove project access",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Remove a current membership."
+      ],
+      "expected": [
+        "Access ends and assignments no longer eligible under any current role are cleared."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "roleRemove",
+        "membership"
+      ],
+      "operations": [
+        "remove_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0046",
+      "title": "Restore removed membership",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Save a role for a removed membership with its current revision."
+      ],
+      "expected": [
+        "The retained membership becomes active rather than creating a second membership."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "roleSave"
+      ],
+      "operations": [
+        "set_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0047",
+      "title": "Repeat unchanged membership",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Save the same active role at the current revision."
+      ],
+      "expected": [
+        "The current membership is returned as a no-op."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "roleSave"
+      ],
+      "operations": [
+        "set_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0048",
+      "title": "Review membership conflict",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Save using an outdated membership revision and choose Review current membership."
+      ],
+      "expected": [
+        "Current role/removal state appears and the form requires explicit review."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "roleSave",
+        "membershipUi"
+      ],
+      "operations": [
+        "set_membership",
+        "remove_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-PRJ-0071."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0049",
+      "title": "Retry uncertain membership mutation",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Repeat original membership save/removal intent and retry reference."
+      ],
+      "expected": [
+        "The original result is retained without duplicate changes."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "membership",
+        "membershipUi"
+      ],
+      "operations": [
+        "set_membership",
+        "remove_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0050",
+      "title": "Deny unrelated project administration",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Request memberships or mutate roles in another inaccessible project."
+      ],
+      "expected": [
+        "No memberships or role updates are exposed."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "membership",
+        "memberRead"
+      ],
+      "operations": [
+        "list_memberships",
+        "set_membership",
+        "remove_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0051",
+      "title": "Deny membership directory to viewer",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Request memberships or approved candidates as viewer."
+      ],
+      "expected": [
+        "Project Configure permission is required."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "memberRead",
+        "memberCandidate"
+      ],
+      "operations": [
+        "list_memberships",
+        "list_membership_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0052",
+      "title": "Reject invalid membership role",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Submit an unsupported role or missing/nonzero-invalid user/project identity."
+      ],
+      "expected": [
+        "Validation rejects the grant."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "roleSave"
+      ],
+      "operations": [
+        "set_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0053",
+      "title": "Keep membership editor project-scoped",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Switch from one membership route to another project."
+      ],
+      "expected": [
+        "The new route loads its own people, revisions and draft state."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "membershipUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0054",
+      "title": "Select another membership target",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Choose another approved user in the role form."
+      ],
+      "expected": [
+        "The selected membership revision and retry state update to that user."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "membershipUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0055",
+      "title": "Manage archived memberships as company administrator",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Save/remove memberships on an archived project as authorized administrator."
+      ],
+      "expected": [
+        "The company administrator can change or remove retained archived-project memberships through the lifecycle-safe service."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "membership",
+        "transaction"
+      ],
+      "operations": [
+        "set_membership",
+        "remove_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "AllowArchived permits archived writes only when the current actor is a company administrator; project administrators remain denied."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0056",
+      "title": "List eligible assignees",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Request list_assignees for an accessible project."
+      ],
+      "expected": [
+        "Active approved company administrators and project writers appear as minimal name/ID summaries."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "candidate",
+        "candidateSql"
+      ],
+      "operations": [
+        "list_assignees"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0057",
+      "title": "Exclude viewer from assignees",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Request assignee candidates when an approved person has only Viewer membership."
+      ],
+      "expected": [
+        "That person is absent from assignment candidates unless globally eligible as company administrator."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "candidateSql"
+      ],
+      "operations": [
+        "list_assignees"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0058",
+      "title": "List eligible mention readers",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Request list_mention_candidates."
+      ],
+      "expected": [
+        "Active approved project readers including viewers can be selected for mentions."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "candidate",
+        "candidateSql"
+      ],
+      "operations": [
+        "list_mention_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0059",
+      "title": "Exclude inactive people from candidates",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Search assignee or mention candidates for a disabled or removed person without other eligibility."
+      ],
+      "expected": [
+        "That person is excluded from eligible candidate results."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "candidateSql"
+      ],
+      "operations": [
+        "list_assignees",
+        "list_mention_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0060",
+      "title": "Search eligible person names",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Search candidate summaries using Arabic or mixed-language display text."
+      ],
+      "expected": [
+        "Matching names are returned without exposing email search or unrelated account details."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "candidate",
+        "candidateSql"
+      ],
+      "operations": [
+        "list_assignees",
+        "list_mention_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0061",
+      "title": "Page eligible people",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Follow the scoped assignee or mention cursor."
+      ],
+      "expected": [
+        "Bounded candidate pages preserve scope and order."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "candidate"
+      ],
+      "operations": [
+        "list_assignees",
+        "list_mention_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0062",
+      "title": "Bound people query",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Submit over 100 characters in a people query."
+      ],
+      "expected": [
+        "The service rejects the query."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "candidate",
+        "memberCandidate"
+      ],
+      "operations": [
+        "list_assignees",
+        "list_mention_candidates",
+        "list_membership_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-PRJ-0063",
+      "title": "Deny archived membership writes to project administrator",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is a project administrator without company administrator status in an archived project."
+      ],
+      "steps": [
+        "Attempt to save or remove a membership through the API or MCP."
+      ],
+      "expected": [
+        "The shared transaction guard returns Archived projects are read-only; AllowArchived alone does not permit this actor to write."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "service_only",
+      "evidence": [
+        "membership",
+        "transaction",
+        "guard"
+      ],
+      "operations": [
+        "set_membership",
+        "remove_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "This is a confirmed permission boundary, not a browser/backend permission mismatch."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0064",
+      "title": "Reject surrounding project-key whitespace at the public contract",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Submit a project key with leading or trailing whitespace through REST or MCP."
+      ],
+      "expected": [
+        "The published key pattern rejects the request; no project is created."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "create"
+      ],
+      "operations": [
+        "create_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source review and isolated Playwright integration confirmed that public schema validation runs before service trimming."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0065",
+      "title": "Preserve Arabic project text through service contracts",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Create or edit an Arabic project name and description."
+      ],
+      "expected": [
+        "Typed saved metadata and a subsequent project read preserve both exact strings."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "directory",
+        "projectUi"
+      ],
+      "operations": [
+        "create_project",
+        "update_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service counterpart split from UC-PRJ-0018; it does not claim browser rendering, form state, session epochs or download assembly."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0066",
+      "title": "Read current project metadata",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Read get_project for a currently accessible project."
+      ],
+      "expected": [
+        "The typed result returns its current key, name, description and caller effective role."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "overview"
+      ],
+      "operations": [
+        "get_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service counterpart split from UC-PRJ-0002; it does not claim browser rendering, form state, session epochs or download assembly."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0067",
+      "title": "Page accessible project metadata",
+      "actor": "reader",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Read list_projects with a bounded limit, then continue using its next cursor."
+      ],
+      "expected": [
+        "Pages retain the same filtered total, do not repeat returned records and expose only accessible project metadata."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "directory",
+        "read"
+      ],
+      "operations": [
+        "list_projects"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service counterpart split from UC-PRJ-0006; it does not claim browser rendering, form state, session epochs or download assembly."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0068",
+      "title": "Page approved membership candidates",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Read list_membership_candidates using a bounded limit and then its next cursor."
+      ],
+      "expected": [
+        "Further eligible approved candidates are returned without repeated records."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "membershipUi",
+        "memberCandidate"
+      ],
+      "operations": [
+        "list_membership_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service counterpart split from UC-PRJ-0039; it does not claim browser rendering, form state, session epochs or download assembly."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0069",
+      "title": "Keep project key immutable through update contracts",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Update existing project metadata; attempt a key property that is absent from the published update schema."
+      ],
+      "expected": [
+        "Accepted metadata changes retain the project key and an update body containing a replacement key is rejected."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "projectUi",
+        "service"
+      ],
+      "operations": [
+        "update_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service counterpart split from UC-PRJ-0024; it does not claim browser rendering, form state, session epochs or download assembly."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0070",
+      "title": "Return current project in a stale-write conflict",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Submit an outdated project revision."
+      ],
+      "expected": [
+        "A typed conflict returns current metadata and the stale change does not overwrite it."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "service",
+        "projectUi"
+      ],
+      "operations": [
+        "update_project"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service counterpart split from UC-PRJ-0032; it does not claim browser rendering, form state, session epochs or download assembly."
+      ]
+    },
+    {
+      "id": "UC-PRJ-0071",
+      "title": "Return current membership in a stale-write conflict",
+      "actor": "project_admin",
+      "preconditions": [
+        "The actor is an active approved account with the role stated in the case; project-scoped cases have a current accessible project unless the denial scenario says otherwise."
+      ],
+      "steps": [
+        "Save or remove access using an outdated membership revision."
+      ],
+      "expected": [
+        "A typed conflict returns current role and removal state; the stale intent does not overwrite it."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "roleSave",
+        "membershipUi"
+      ],
+      "operations": [
+        "set_membership",
+        "remove_membership"
+      ],
+      "existingTests": [
+        "frontend/e2e/projects.spec.ts",
+        "frontend/e2e/project-configuration.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service counterpart split from UC-PRJ-0048; it does not claim browser rendering, form state, session epochs or download assembly."
+      ]
+    }
+  ]
+}

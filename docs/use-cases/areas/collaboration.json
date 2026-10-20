@@ -1,0 +1,4376 @@
+{
+  "area": "collaboration",
+  "title": "Rich descriptions, discussion and selected mentions",
+  "summary": "Editor actions are documented independently for descriptions and comments because their capabilities differ. Notifications have their own area.",
+  "sources": {
+    "commentEditor": {
+      "path": "frontend/src/app/features/comments/components/comment-editor/comment-editor.component.html",
+      "line": 1
+    },
+    "commentActions": {
+      "path": "frontend/src/app/features/comments/components/comment-editor/comment-editor.component.ts",
+      "line": 108
+    },
+    "commentSource": {
+      "path": "frontend/src/app/features/comments/components/comment-editor/comment-editor.component.ts",
+      "line": 425
+    },
+    "commentSubmit": {
+      "path": "frontend/src/app/features/comments/components/comment-editor/comment-editor.component.ts",
+      "line": 604
+    },
+    "descriptionEditor": {
+      "path": "frontend/src/app/features/issues/components/description-editor/description-editor.component.html",
+      "line": 1
+    },
+    "descriptionActions": {
+      "path": "frontend/src/app/features/issues/components/description-editor/description-editor.component.ts",
+      "line": 102
+    },
+    "richBlocks": {
+      "path": "frontend/src/app/features/comments/rich-text-blocks.ts",
+      "line": 67
+    },
+    "thread": {
+      "path": "frontend/src/app/features/comments/components/comment-thread/comment-thread.component.ts",
+      "line": 45
+    },
+    "commentSave": {
+      "path": "frontend/src/app/features/comments/components/comment-thread/comment-thread.component.ts",
+      "line": 327
+    },
+    "mentions": {
+      "path": "frontend/src/app/features/comments/components/mention-picker/mention-picker.component.ts",
+      "line": 26
+    },
+    "mentionRules": {
+      "path": "backend/internal/features/comments/mentions.go",
+      "line": 10
+    },
+    "commentRules": {
+      "path": "backend/internal/features/comments/service.go",
+      "line": 81
+    },
+    "commentHtml": {
+      "path": "backend/internal/features/comments/html.go",
+      "line": 248
+    },
+    "descriptionHtml": {
+      "path": "backend/internal/features/issues/description.go",
+      "line": 15
+    },
+    "mcp": {
+      "path": "backend/internal/features/comments/mcp.go",
+      "line": 11
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-COM-0001",
+      "title": "Description: enter text",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Enter text."
+      ],
+      "expected": [
+        "Plain Unicode text and paragraph boundaries remain editable."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0002",
+      "title": "Description: toggle bold",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Toggle bold."
+      ],
+      "expected": [
+        "Selected/new text uses bold formatting."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0003",
+      "title": "Description: toggle italic",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Toggle italic."
+      ],
+      "expected": [
+        "Selected/new text uses italic formatting."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0004",
+      "title": "Description: toggle underline",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Toggle underline."
+      ],
+      "expected": [
+        "Selected/new text uses underline formatting."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0005",
+      "title": "Description: toggle bullet list",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Toggle bullet list."
+      ],
+      "expected": [
+        "Unordered list structure appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0006",
+      "title": "Description: toggle numbered list",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Toggle numbered list."
+      ],
+      "expected": [
+        "Ordered list structure appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0007",
+      "title": "Description: toggle quote",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Toggle quote."
+      ],
+      "expected": [
+        "Blockquote structure appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0008",
+      "title": "Description: toggle code block",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Toggle code block."
+      ],
+      "expected": [
+        "Code is represented literally rather than executed."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0009",
+      "title": "Description: toggle checklist",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Toggle checklist."
+      ],
+      "expected": [
+        "Editable checklist structure appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0010",
+      "title": "Description: change checklist completion",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Change checklist completion."
+      ],
+      "expected": [
+        "Checked state changes and remains in saved/reloaded document."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0011",
+      "title": "Description: insert table",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Insert table."
+      ],
+      "expected": [
+        "A 3 by 3 table with header row appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0012",
+      "title": "Description: add row below",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Add row below."
+      ],
+      "expected": [
+        "A new table row appears below the selected row."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0013",
+      "title": "Description: add column after",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Add column after."
+      ],
+      "expected": [
+        "A new table column appears after selected column."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0014",
+      "title": "Description: delete table row",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Delete table row."
+      ],
+      "expected": [
+        "Selected table row is removed without deleting surrounding document."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0015",
+      "title": "Description: delete table column",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Delete table column."
+      ],
+      "expected": [
+        "Selected table column is removed without deleting surrounding document."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0016",
+      "title": "Description: delete table",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Delete table."
+      ],
+      "expected": [
+        "Table is removed and surrounding text remains."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0017",
+      "title": "Description: insert http link",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Insert HTTP link."
+      ],
+      "expected": [
+        "Selected text becomes a safe HTTP hyperlink."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0018",
+      "title": "Description: insert https link",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Insert HTTPS link."
+      ],
+      "expected": [
+        "Selected text becomes a safe HTTPS hyperlink."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0019",
+      "title": "Description: open html source",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Open HTML source."
+      ],
+      "expected": [
+        "Current formatted document is exposed as source."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0020",
+      "title": "Description: preview supported html",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Preview supported HTML."
+      ],
+      "expected": [
+        "Supported source edits become editable visual content."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0021",
+      "title": "Description: return to visual editor",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Return to visual editor."
+      ],
+      "expected": [
+        "Valid source changes remain in visual document."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0022",
+      "title": "Description: choose automatic direction",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Choose automatic direction."
+      ],
+      "expected": [
+        "Block direction is automatic."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0023",
+      "title": "Description: choose rtl direction",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Choose RTL direction."
+      ],
+      "expected": [
+        "Block direction is explicitly right to left."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0024",
+      "title": "Description: choose ltr direction",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Choose LTR direction."
+      ],
+      "expected": [
+        "Block direction is explicitly left to right."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0025",
+      "title": "Description: paste picture",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Paste picture."
+      ],
+      "expected": [
+        "Picture enters protected upload/insertion flow; see asset catalog."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0026",
+      "title": "Description: attach file",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Attach file."
+      ],
+      "expected": [
+        "A protected file reference can be inserted after upload; see asset catalog."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0027",
+      "title": "Description: preserve Arabic text",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Type Arabic mixed with Latin text and digits, then save/reload."
+      ],
+      "expected": [
+        "Text and configured direction survive round-trip."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [
+        "update_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts",
+        "frontend/e2e/discussion.spec.ts",
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0028",
+      "title": "Description: reject unsafe link",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Try adding a non-HTTP(S) or malformed URL."
+      ],
+      "expected": [
+        "Editor reports invalid link and preserves the document."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0029",
+      "title": "Description: sanitize executable markup",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Save HTML containing script/event-handler/iframe/SVG markup."
+      ],
+      "expected": [
+        "Unsafe executable content does not execute in rendered document."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor",
+        "descriptionHtml"
+      ],
+      "operations": [
+        "update_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts",
+        "frontend/e2e/discussion.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Nonexecution in a rendered document requires a browser. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0122"
+      ]
+    },
+    {
+      "id": "UC-COM-0030",
+      "title": "Description: retain nested rich blocks",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Save nested checklist/table content and restore a draft."
+      ],
+      "expected": [
+        "Surrounding text, rich structures and checked state remain."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0031",
+      "title": "Comment: enter text",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Enter text."
+      ],
+      "expected": [
+        "Plain Unicode text and paragraph boundaries remain editable."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0032",
+      "title": "Comment: toggle bold",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Toggle bold."
+      ],
+      "expected": [
+        "Selected/new text uses bold formatting."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0033",
+      "title": "Comment: toggle italic",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Toggle italic."
+      ],
+      "expected": [
+        "Selected/new text uses italic formatting."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0034",
+      "title": "Comment: toggle underline",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Toggle underline."
+      ],
+      "expected": [
+        "Selected/new text uses underline formatting."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0035",
+      "title": "Comment: toggle bullet list",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Toggle bullet list."
+      ],
+      "expected": [
+        "Unordered list structure appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0036",
+      "title": "Comment: toggle numbered list",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Toggle numbered list."
+      ],
+      "expected": [
+        "Ordered list structure appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0037",
+      "title": "Comment: toggle quote",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Toggle quote."
+      ],
+      "expected": [
+        "Blockquote structure appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0038",
+      "title": "Comment: toggle code block",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Toggle code block."
+      ],
+      "expected": [
+        "Code is represented literally rather than executed."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0039",
+      "title": "Comment: toggle checklist",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Toggle checklist."
+      ],
+      "expected": [
+        "Editable checklist structure appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0040",
+      "title": "Comment: change checklist completion",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Change checklist completion."
+      ],
+      "expected": [
+        "Checked state changes and remains in saved/reloaded document."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0041",
+      "title": "Comment: insert table",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Insert table."
+      ],
+      "expected": [
+        "A 3 by 3 table with header row appears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0042",
+      "title": "Comment: add row below",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Add row below."
+      ],
+      "expected": [
+        "A new table row appears below the selected row."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0043",
+      "title": "Comment: add column after",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Add column after."
+      ],
+      "expected": [
+        "A new table column appears after selected column."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0044",
+      "title": "Comment: delete table row",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Delete table row."
+      ],
+      "expected": [
+        "Selected table row is removed without deleting surrounding document."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0045",
+      "title": "Comment: delete table column",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Delete table column."
+      ],
+      "expected": [
+        "Selected table column is removed without deleting surrounding document."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0046",
+      "title": "Comment: delete table",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Delete table."
+      ],
+      "expected": [
+        "Table is removed and surrounding text remains."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0047",
+      "title": "Comment: insert http link",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Insert HTTP link."
+      ],
+      "expected": [
+        "Selected text becomes a safe HTTP hyperlink."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0048",
+      "title": "Comment: insert https link",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Insert HTTPS link."
+      ],
+      "expected": [
+        "Selected text becomes a safe HTTPS hyperlink."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0049",
+      "title": "Comment: open html source",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Open HTML source."
+      ],
+      "expected": [
+        "Current formatted document is exposed as source."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0050",
+      "title": "Comment: preview supported html",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Preview supported HTML."
+      ],
+      "expected": [
+        "Supported source edits become editable visual content."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0051",
+      "title": "Comment: return to visual editor",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Return to visual editor."
+      ],
+      "expected": [
+        "Valid source changes remain in visual document."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0052",
+      "title": "Comment: choose automatic direction",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Choose automatic direction."
+      ],
+      "expected": [
+        "Block direction is automatic."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0053",
+      "title": "Comment: choose rtl direction",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Choose RTL direction."
+      ],
+      "expected": [
+        "Block direction is explicitly right to left."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0054",
+      "title": "Comment: choose ltr direction",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Choose LTR direction."
+      ],
+      "expected": [
+        "Block direction is explicitly left to right."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0055",
+      "title": "Comment: paste picture",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Paste picture."
+      ],
+      "expected": [
+        "Picture enters protected upload/insertion flow; see asset catalog."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0056",
+      "title": "Comment: attach file",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Attach file."
+      ],
+      "expected": [
+        "A protected file reference can be inserted after upload; see asset catalog."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts",
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Later persistence verification must save the containing description/comment and reload it; toolbar state alone does not establish persistence."
+      ]
+    },
+    {
+      "id": "UC-COM-0057",
+      "title": "Comment: preserve Arabic text",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Type Arabic mixed with Latin text and digits, then save/reload."
+      ],
+      "expected": [
+        "Text and configured direction survive round-trip."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts",
+        "frontend/e2e/discussion.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0058",
+      "title": "Comment: reject unsafe link",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Try adding a non-HTTP(S) or malformed URL."
+      ],
+      "expected": [
+        "Editor reports invalid link and preserves the document."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0059",
+      "title": "Comment: sanitize executable markup",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Save HTML containing script/event-handler/iframe/SVG markup."
+      ],
+      "expected": [
+        "Unsafe executable content does not execute in rendered document."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "commentHtml"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts",
+        "frontend/e2e/discussion.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Nonexecution in a rendered comment requires a browser. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0123"
+      ]
+    },
+    {
+      "id": "UC-COM-0060",
+      "title": "Comment: retain nested rich blocks",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Save nested checklist/table content and restore a draft."
+      ],
+      "expected": [
+        "Surrounding text, rich structures and checked state remain."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "richBlocks"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0061",
+      "title": "Choose description heading 2",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Heading 2."
+      ],
+      "expected": [
+        "Description block becomes H2."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0062",
+      "title": "Choose description heading 3",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Heading 3."
+      ],
+      "expected": [
+        "Description block becomes H3."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0063",
+      "title": "Choose comment heading 1",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Heading 1."
+      ],
+      "expected": [
+        "Comment block becomes H1."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0064",
+      "title": "Choose comment heading 2",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Heading 2."
+      ],
+      "expected": [
+        "Comment block becomes H2."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0065",
+      "title": "Choose comment heading 3",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Heading 3."
+      ],
+      "expected": [
+        "Comment block becomes H3."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0066",
+      "title": "Choose comment heading 4",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Heading 4."
+      ],
+      "expected": [
+        "Comment block becomes H4."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0067",
+      "title": "Choose comment heading 5",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Heading 5."
+      ],
+      "expected": [
+        "Comment block becomes H5."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0068",
+      "title": "Choose comment heading 6",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Heading 6."
+      ],
+      "expected": [
+        "Comment block becomes H6."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0069",
+      "title": "Reset heading to paragraph",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Paragraph in either editor."
+      ],
+      "expected": [
+        "Current block returns to paragraph structure."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "descriptionEditor"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0070",
+      "title": "Insert comment hard break",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Line break toolbar action."
+      ],
+      "expected": [
+        "A hard break is inserted."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentActions"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0071",
+      "title": "Remove comment hyperlink",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Remove link for linked selection."
+      ],
+      "expected": [
+        "Text remains without hyperlink formatting."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0072",
+      "title": "Open composer from issue action",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Add comment on issue."
+      ],
+      "expected": [
+        "Comment composer receives focus."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0073",
+      "title": "Post comment",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Submit a valid completed comment."
+      ],
+      "expected": [
+        "One comment appears with author/time and discussion count updates."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/discussion.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0074",
+      "title": "Reload comments",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose Reload comments."
+      ],
+      "expected": [
+        "Latest first page and total replace prior discussion list."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [
+        "list_comments"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Replacing an existing discussion list is client state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0124"
+      ]
+    },
+    {
+      "id": "UC-COM-0075",
+      "title": "Append comments page",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose Next comments page."
+      ],
+      "expected": [
+        "Next oldest-first comments append."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [
+        "list_comments"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Appending a page to already rendered records is client state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0125"
+      ]
+    },
+    {
+      "id": "UC-COM-0076",
+      "title": "Read empty discussion",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open issue with no comments."
+      ],
+      "expected": [
+        "Empty/read-only discussion remains understandable without invented records."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [
+        "list_comments"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0077",
+      "title": "Open own comment by body",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Click own editable comment body."
+      ],
+      "expected": [
+        "Inline edit opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0078",
+      "title": "Open own comment by edit action",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Choose Edit comment."
+      ],
+      "expected": [
+        "Inline edit opens for correct comment."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "thread",
+        "commentSave"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0079",
+      "title": "Keep comment links interactive",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Click a link in editable comment body."
+      ],
+      "expected": [
+        "Link behavior occurs without opening comment edit."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0080",
+      "title": "Keep comment media interactive",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Click comment picture or attachment reference."
+      ],
+      "expected": [
+        "Media action occurs without opening comment edit."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/rich-text-blocks.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0081",
+      "title": "Select comment text",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Select text in own comment."
+      ],
+      "expected": [
+        "Text selection does not force edit mode."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0082",
+      "title": "Save own comment revision",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Save edited comment."
+      ],
+      "expected": [
+        "New retained version appears with Edited marker and version."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave",
+        "commentRules"
+      ],
+      "operations": [
+        "update_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/discussion.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The Edited marker is a native presentation of the accepted revision. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0126"
+      ]
+    },
+    {
+      "id": "UC-COM-0083",
+      "title": "Cancel clean comment edit",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Choose Cancel comment edit on clean form."
+      ],
+      "expected": [
+        "Stored comment remains unchanged."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "commentSave"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0084",
+      "title": "Protect dirty comment edit",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Cancel a comment edit containing unsaved work."
+      ],
+      "expected": [
+        "Discard confirmation protects draft."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0085",
+      "title": "Read comment versions",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose Comment history."
+      ],
+      "expected": [
+        "Retained immutable versions display oldest first."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [
+        "list_comment_versions"
+      ],
+      "existingTests": [
+        "frontend/e2e/discussion.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0086",
+      "title": "Page comment versions",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose Next versions page."
+      ],
+      "expected": [
+        "Next history page replaces displayed version page."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [
+        "list_comment_versions"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Version history uses page replacement; comments use appending.",
+        "Surface correction: Replacing the displayed version page is client state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0127"
+      ]
+    },
+    {
+      "id": "UC-COM-0087",
+      "title": "Close comment versions",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Choose Close comment history."
+      ],
+      "expected": [
+        "History region closes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0088",
+      "title": "Review concurrent comment edit",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Save against an outdated comment revision."
+      ],
+      "expected": [
+        "Latest version is offered; unsent draft remains."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave"
+      ],
+      "operations": [
+        "update_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Retaining an unsent draft and offering review are native editor behavior. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0128"
+      ]
+    },
+    {
+      "id": "UC-COM-0089",
+      "title": "Rebase comment draft explicitly",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Choose Use current revision and keep my draft."
+      ],
+      "expected": [
+        "Draft remains and next save uses reviewed current revision."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave"
+      ],
+      "operations": [
+        "update_comment"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: The explicit rebase control owns a native unsent draft. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0128",
+        "UC-COM-0126"
+      ]
+    },
+    {
+      "id": "UC-COM-0090",
+      "title": "Replay uncertain comment post",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Retry accepted comment after lost response."
+      ],
+      "expected": [
+        "Original intention/reference yields one comment."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave",
+        "mcp"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/discussion.spec.ts",
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-comment-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0091",
+      "title": "Replay uncertain comment update",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Retry accepted edit after lost response."
+      ],
+      "expected": [
+        "Original intention/reference yields one accepted revision."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave",
+        "mcp"
+      ],
+      "operations": [
+        "update_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-comment-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0092",
+      "title": "Preserve comments on read failure",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Cause a discussion request to fail."
+      ],
+      "expected": [
+        "Request error is surfaced rather than false successful empty discussion."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [
+        "list_comments"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: A stateless failed list request cannot preserve already rendered client records. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0124"
+      ]
+    },
+    {
+      "id": "UC-COM-0093",
+      "title": "Clear inaccessible discussion",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Lose project access and reload comments."
+      ],
+      "expected": [
+        "Forbidden/unavailable response clears rendered records and editor context."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [
+        "list_comments"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Clearing an already rendered discussion/editor requires the native client. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0129"
+      ]
+    },
+    {
+      "id": "UC-COM-0094",
+      "title": "Reject nonauthor edit",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Attempt to edit another author comment, including as administrator."
+      ],
+      "expected": [
+        "Current author-only write rule rejects mutation."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "commentRules"
+      ],
+      "operations": [
+        "update_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Native comment records expose Edit comment only when the current actor is the author. Administrators can read another author content and history but cannot invoke an edit through ordinary controls; direct author-only mutation rejection remains on REST/MCP."
+      ],
+      "relatedCases": [
+        "UC-COM-0137"
+      ]
+    },
+    {
+      "id": "UC-COM-0095",
+      "title": "Show viewer discussion",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Open issue as viewer."
+      ],
+      "expected": [
+        "Comments/history are readable and composer is unavailable."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "thread",
+        "commentRules"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0096",
+      "title": "Reject comment in archived project",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post/update after project becomes archived."
+      ],
+      "expected": [
+        "Current project access prevents write."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "commentRules"
+      ],
+      "operations": [
+        "create_comment",
+        "update_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0097",
+      "title": "Reject empty visible comment",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post without meaningful comment content."
+      ],
+      "expected": [
+        "Validation preserves draft and prevents empty record."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSubmit",
+        "commentHtml"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Preservation of the native source/draft is separate from service rejection. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0130"
+      ]
+    },
+    {
+      "id": "UC-COM-0098",
+      "title": "Limit visible comment text",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post over 5000 visible Unicode characters."
+      ],
+      "expected": [
+        "Validation preserves draft."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSubmit",
+        "commentHtml"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Preservation of the native source/draft is separate from service rejection. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0131"
+      ]
+    },
+    {
+      "id": "UC-COM-0099",
+      "title": "Limit comment HTML bytes",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post more than 64 KiB HTML."
+      ],
+      "expected": [
+        "Validation preserves original source/draft."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSource",
+        "commentHtml"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Preservation of the native source/draft is separate from service rejection. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0132"
+      ]
+    },
+    {
+      "id": "UC-COM-0100",
+      "title": "Block post with pending uploads",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Post while queued files are unfinished."
+      ],
+      "expected": [
+        "Finish-upload guidance appears; unsent text remains."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSubmit"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0101",
+      "title": "Limit comment picture references",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post over five pictures."
+      ],
+      "expected": [
+        "Validation prevents publication."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSubmit",
+        "commentHtml"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-comment-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0102",
+      "title": "Limit comment file references",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post over twenty file references."
+      ],
+      "expected": [
+        "Validation prevents publication."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSubmit"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-comment-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0103",
+      "title": "Reject forged source references",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Insert unselected mention/picture/file references through HTML source."
+      ],
+      "expected": [
+        "Validation requires legitimate selected/uploaded references; source remains."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSource",
+        "commentHtml"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Preservation of the native source/draft is separate from service rejection. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0133"
+      ]
+    },
+    {
+      "id": "UC-COM-0104",
+      "title": "Suppress remote image fetching",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Render externally sourced image HTML."
+      ],
+      "expected": [
+        "Rendered content makes no remote image request."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentHtml",
+        "descriptionHtml"
+      ],
+      "operations": [
+        "create_comment",
+        "update_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/discussion.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Actual suppression of outbound image fetching must be observed in a browser. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0122",
+        "UC-COM-0123"
+      ]
+    },
+    {
+      "id": "UC-COM-0105",
+      "title": "Report sanitation changes",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Save comment containing removable unsupported markup."
+      ],
+      "expected": [
+        "Safe HTML and sanitation notices explain accepted changes."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave",
+        "commentHtml"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts",
+        "frontend/e2e/coverage-native-comment-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0106",
+      "title": "Handle editor loading failure",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Fail editor module loading."
+      ],
+      "expected": [
+        "Actionable editor-load error appears without silently dropping draft."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "commentActions",
+        "descriptionActions"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0107",
+      "title": "Open mention from at sign",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Type @ at supported mention position."
+      ],
+      "expected": [
+        "Teammate picker opens with current query."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentActions",
+        "mentions"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0108",
+      "title": "Open mention toolbar control",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Mention a teammate."
+      ],
+      "expected": [
+        "Picker opens at current insertion position."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "mentions"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0109",
+      "title": "Search mention teammates",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Type teammate name."
+      ],
+      "expected": [
+        "Eligible project candidates update live."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "mentions"
+      ],
+      "operations": [
+        "list_mention_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/teammate-label-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Live typing and candidate replacement are native mention-picker behavior. Original expected behavior is unchanged and requires native-client assertions."
+      ],
+      "relatedCases": [
+        "UC-COM-0136"
+      ]
+    },
+    {
+      "id": "UC-COM-0110",
+      "title": "Insert selected mention",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Select a candidate."
+      ],
+      "expected": [
+        "Canonical user identity and display label insert."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "mentions",
+        "commentActions"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0111",
+      "title": "Close mention selection",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Close teammate selection."
+      ],
+      "expected": [
+        "Ordinary text stays without invented mention."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "mentions"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0112",
+      "title": "Page mention candidates",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Choose Next teammates page."
+      ],
+      "expected": [
+        "Next eligible candidate page displays."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "mentions"
+      ],
+      "operations": [
+        "list_mention_candidates"
+      ],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Replacing the displayed teammate page is client state. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0135"
+      ]
+    },
+    {
+      "id": "UC-COM-0113",
+      "title": "Keep ordinary at-name text",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Type @name without selecting candidate and save."
+      ],
+      "expected": [
+        "Text remains ordinary text rather than forged selected mention."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentActions",
+        "mentionRules"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0114",
+      "title": "Reject newly ineligible mention",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post a newly selected mention after person loses access."
+      ],
+      "expected": [
+        "Current eligibility rejects new mention without losing draft."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "mentionRules"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-native-domain.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Preservation of the native source/draft is separate from service rejection. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0134"
+      ]
+    },
+    {
+      "id": "UC-COM-0115",
+      "title": "Retain previous mention snapshot",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Edit comment retaining an earlier mentioned user who lost access."
+      ],
+      "expected": [
+        "Saved label snapshot remains and does not send a new mention notification."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "mentionRules"
+      ],
+      "operations": [
+        "update_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts",
+        "frontend/e2e/coverage-native-comment-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0116",
+      "title": "Navigate mention candidates",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Use arrows and Enter in mention combobox."
+      ],
+      "expected": [
+        "Active candidate and selected user are exposed via accessible option state."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "mentions"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0117",
+      "title": "Escape mention picker",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Press Escape in teammate picker."
+      ],
+      "expected": [
+        "Picker closes and ordinary text remains."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "accessibility",
+      "implementation": "implemented",
+      "evidence": [
+        "mentions"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0118",
+      "title": "Ignore stale mention result",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Let earlier candidate query finish after a newer query."
+      ],
+      "expected": [
+        "Only latest active query results render."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "mentions"
+      ],
+      "operations": [
+        "list_mention_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/teammate-label-live-search.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: Only the client owns request generations and decides which result renders. Native UI assertions are required here; stateless tool data is not proof of this control or retained client state."
+      ],
+      "relatedCases": [
+        "UC-COM-0135"
+      ]
+    },
+    {
+      "id": "UC-COM-0119",
+      "title": "Ignore stale issue discussion",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Switch issue/session while comment request is pending."
+      ],
+      "expected": [
+        "Previous issue/session result cannot replace new discussion."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "thread",
+        "commentSave"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0120",
+      "title": "Read comment after frontend hostname change",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Open retained attachment links from old comment after hostname change."
+      ],
+      "expected": [
+        "ID-based reference uses current application media flow."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/unified-assets.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-COM-0121",
+      "title": "Delete comment",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Attempt ordinary comment deletion."
+      ],
+      "expected": [
+        "No native/service delete-comment action is implemented in current feature registrations."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "not_implemented",
+      "evidence": [
+        "mcp",
+        "thread"
+      ],
+      "operations": [],
+      "existingTests": [],
+      "gapIds": [],
+      "notes": [
+        "Version retention/edit is implemented; deletion is a separate absent capability."
+      ]
+    },
+    {
+      "id": "UC-COM-0122",
+      "title": "Sanitize stored description HTML at service boundary",
+      "actor": "writer",
+      "preconditions": [
+        "Description editor is open and editable."
+      ],
+      "steps": [
+        "Save a description containing executable markup."
+      ],
+      "expected": [
+        "The accepted stored/returned description removes script, event-handler, iframe and unsafe SVG content."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "descriptionEditor",
+        "descriptionHtml"
+      ],
+      "operations": [
+        "update_issue_v2"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0029. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0029"
+      ]
+    },
+    {
+      "id": "UC-COM-0123",
+      "title": "Sanitize stored comment HTML at service boundary",
+      "actor": "writer",
+      "preconditions": [
+        "Comment editor is open and editable."
+      ],
+      "steps": [
+        "Create or update a comment containing executable markup."
+      ],
+      "expected": [
+        "The accepted safe HTML removes executable tags and event attributes while retaining allowed visible content."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentEditor",
+        "commentHtml"
+      ],
+      "operations": [
+        "create_comment",
+        "update_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0059. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0059"
+      ]
+    },
+    {
+      "id": "UC-COM-0124",
+      "title": "Read current first comment page and total",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read the first comment page after another accepted comment."
+      ],
+      "expected": [
+        "The page contains the current oldest-first records and the current total without duplicating a comment."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [
+        "list_comments"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0074. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0074"
+      ]
+    },
+    {
+      "id": "UC-COM-0125",
+      "title": "Read successive comment cursor pages",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read a bounded comment page, then its next cursor."
+      ],
+      "expected": [
+        "Successive oldest-first pages have distinct comment IDs and together contain the expected records."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [
+        "list_comments"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0075. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0075"
+      ]
+    },
+    {
+      "id": "UC-COM-0126",
+      "title": "Retain accepted own-comment edit revision",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Update an owned comment using its current revision."
+      ],
+      "expected": [
+        "Exactly one next revision is retained with updated safe HTML, revision and edited timestamp."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave",
+        "commentRules"
+      ],
+      "operations": [
+        "update_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0082. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0082"
+      ]
+    },
+    {
+      "id": "UC-COM-0127",
+      "title": "Read successive retained comment version pages",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read a bounded retained-version page, then its next cursor."
+      ],
+      "expected": [
+        "Distinct immutable versions are returned in documented oldest-first order."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [
+        "list_comment_versions"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0086. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0086"
+      ]
+    },
+    {
+      "id": "UC-COM-0128",
+      "title": "Reject stale comment edit with current revision",
+      "actor": "author",
+      "preconditions": [
+        "The actor is the comment author with current project write access unless the case checks lost access."
+      ],
+      "steps": [
+        "Update a comment using an outdated revision."
+      ],
+      "expected": [
+        "The conflict identifies the current comment and creates no extra retained revision."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSave"
+      ],
+      "operations": [
+        "update_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0088. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0088"
+      ]
+    },
+    {
+      "id": "UC-COM-0129",
+      "title": "Deny comment reads after access revocation",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has current read access to the relevant project unless the case explicitly checks denied access."
+      ],
+      "steps": [
+        "Read comments after current project read access is removed."
+      ],
+      "expected": [
+        "The unavailable/forbidden result returns no private discussion records."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [
+        "list_comments"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0093. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0093"
+      ]
+    },
+    {
+      "id": "UC-COM-0130",
+      "title": "Reject empty comment at service boundary",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post a comment without meaningful visible content."
+      ],
+      "expected": [
+        "Validation rejects the empty comment without creating a record."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSubmit",
+        "commentHtml"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0097. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0097"
+      ]
+    },
+    {
+      "id": "UC-COM-0131",
+      "title": "Enforce service comment Unicode text limit",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post more than 5000 visible Unicode characters."
+      ],
+      "expected": [
+        "Validation rejects the comment without creating a record."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSubmit",
+        "commentHtml"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0098. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0098"
+      ]
+    },
+    {
+      "id": "UC-COM-0132",
+      "title": "Enforce service comment HTML byte limit",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post more than 64 KiB of HTML."
+      ],
+      "expected": [
+        "Validation rejects the HTML without creating a record."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSource",
+        "commentHtml"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0099. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0099"
+      ]
+    },
+    {
+      "id": "UC-COM-0133",
+      "title": "Reject forged comment reference body",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post HTML and explicit reference IDs that are not legitimate current-scope references."
+      ],
+      "expected": [
+        "Current scope/ownership/reference validation rejects publication."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "commentSource",
+        "commentHtml"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp.spec.ts",
+        "frontend/e2e/coverage-domain-rest.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0103. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0103"
+      ]
+    },
+    {
+      "id": "UC-COM-0134",
+      "title": "Reject newly ineligible mention at service boundary",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Post a newly referenced person after that person loses current eligibility."
+      ],
+      "expected": [
+        "The new mention is rejected without publishing a comment or new mention notification."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "mentionRules"
+      ],
+      "operations": [
+        "create_comment"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0114. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0114"
+      ]
+    },
+    {
+      "id": "UC-COM-0135",
+      "title": "Read eligible mention candidate cursor pages",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Read a scoped candidate page and its next cursor."
+      ],
+      "expected": [
+        "Each page returns eligible matching people; advancing reaches later distinct people."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "mentions"
+      ],
+      "operations": [
+        "list_mention_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from the native UI behavior in UC-COM-0112. Its browser behavior remains in the original stable case."
+      ],
+      "relatedCases": [
+        "UC-COM-0112"
+      ]
+    },
+    {
+      "id": "UC-COM-0136",
+      "title": "Read matching eligible mention candidates",
+      "actor": "writer",
+      "preconditions": [
+        "The actor is signed in with current project write access unless this case explicitly changes that access."
+      ],
+      "steps": [
+        "Query mention candidates within the current project."
+      ],
+      "expected": [
+        "Matching currently eligible project people are returned and foreign/ineligible people are excluded."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "mentions"
+      ],
+      "operations": [
+        "list_mention_candidates"
+      ],
+      "existingTests": [
+        "frontend/e2e/coverage-domain-mcp-extra.spec.ts",
+        "frontend/e2e/coverage-domain-rest-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service outcome separated from native UI case UC-COM-0109."
+      ],
+      "relatedCases": [
+        "UC-COM-0109"
+      ]
+    },
+    {
+      "id": "UC-COM-0137",
+      "title": "Omit editing controls on another author comment",
+      "actor": "company_admin",
+      "preconditions": [
+        "A member-authored comment exists and an administrator can read its project."
+      ],
+      "steps": [
+        "Open the issue as the administrator and click the other author displayed comment."
+      ],
+      "expected": [
+        "The retained comment and history remain readable; Edit comment and inline editor controls are absent and the original content is unchanged."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "thread"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/coverage-native-comment-extra.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic native control boundary distinct from direct author-only REST/MCP mutation rejection."
+      ],
+      "relatedCases": [
+        "UC-COM-0094"
+      ]
+    }
+  ]
+}

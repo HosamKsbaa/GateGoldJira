@@ -1,0 +1,2162 @@
+{
+  "area": "access",
+  "title": "Authentication, sessions and company accounts",
+  "summary": "Atomic current account journeys, local-only password boundaries and managed identity candidates. Source-backed implementation status is not a runtime verification result. Existing test paths are related references, not claims of complete per-case coverage.",
+  "sources": {
+    "login": {
+      "path": "frontend/src/app/core/auth/sign-in.page.ts",
+      "line": 16
+    },
+    "loginSubmit": {
+      "path": "frontend/src/app/core/auth/sign-in.page.ts",
+      "line": 67
+    },
+    "session": {
+      "path": "frontend/src/app/core/auth/auth.service.ts",
+      "line": 31
+    },
+    "credentials": {
+      "path": "frontend/src/app/core/auth/auth.service.ts",
+      "line": 78
+    },
+    "provider": {
+      "path": "frontend/src/app/core/auth/sign-in.provider.ts",
+      "line": 17
+    },
+    "oidc": {
+      "path": "frontend/src/app/core/auth/sign-in.provider.ts",
+      "line": 41
+    },
+    "guards": {
+      "path": "frontend/src/app/core/auth/auth.guards.ts",
+      "line": 6
+    },
+    "localServer": {
+      "path": "backend/internal/platform/auth/local_login.go",
+      "line": 134
+    },
+    "localBoundary": {
+      "path": "backend/internal/platform/auth/local_login.go",
+      "line": 60
+    },
+    "service": {
+      "path": "backend/internal/features/identity/service.go",
+      "line": 94
+    },
+    "approve": {
+      "path": "backend/internal/features/identity/service.go",
+      "line": 106
+    },
+    "update": {
+      "path": "backend/internal/features/identity/service.go",
+      "line": 163
+    },
+    "binding": {
+      "path": "backend/internal/features/identity/binding.go",
+      "line": 25
+    },
+    "usersUi": {
+      "path": "frontend/src/app/features/administration/pages/users/users.page.ts",
+      "line": 159
+    },
+    "onboarding": {
+      "path": "identity/auth0/README.md",
+      "line": 13
+    },
+    "tenant": {
+      "path": "identity/auth0/README.md",
+      "line": 3
+    }
+  },
+  "cases": [
+    {
+      "id": "UC-ACC-0001",
+      "title": "Redirect protected entry to sign-in",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Open a protected URL without a session."
+      ],
+      "expected": [
+        "The sign-in route includes the requested local URL as returnTo."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "guards"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0002",
+      "title": "Sign in with local credentials",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Enter a valid local username and password and submit."
+      ],
+      "expected": [
+        "The approved identity is installed and the requested safe route opens."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "loginSubmit",
+        "credentials",
+        "localServer"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-ACC-0062."
+      ],
+      "httpOperations": [
+        "localSignIn"
+      ]
+    },
+    {
+      "id": "UC-ACC-0003",
+      "title": "Normalize local username",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Submit a valid username with uppercase letters and surrounding spaces."
+      ],
+      "expected": [
+        "The server resolves the normalized local username."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "localServer"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "localSignIn"
+      ]
+    },
+    {
+      "id": "UC-ACC-0004",
+      "title": "Preserve password spaces",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Submit credentials whose password includes significant spaces."
+      ],
+      "expected": [
+        "The original password bytes are checked without trimming."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "localServer"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "localSignIn"
+      ]
+    },
+    {
+      "id": "UC-ACC-0005",
+      "title": "Reject wrong password",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Submit an existing username with a wrong password."
+      ],
+      "expected": [
+        "A generic incorrect-credentials response is shown and no protected session is installed."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "loginSubmit",
+        "localServer"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "localSignIn"
+      ]
+    },
+    {
+      "id": "UC-ACC-0006",
+      "title": "Reject unknown username",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Submit a nonexistent username."
+      ],
+      "expected": [
+        "The same generic credential error is returned without identifying existing accounts."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "localServer"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "localSignIn"
+      ]
+    },
+    {
+      "id": "UC-ACC-0007",
+      "title": "Require username",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Leave username blank or whitespace only."
+      ],
+      "expected": [
+        "The local form cannot submit."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "login"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0008",
+      "title": "Require password",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Leave password blank."
+      ],
+      "expected": [
+        "The local form cannot submit."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "login"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0009",
+      "title": "Bound username length",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Enter more than 64 characters as the username."
+      ],
+      "expected": [
+        "The form or contract rejects the value."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "login",
+        "localServer"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0010",
+      "title": "Bound password length",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Submit a password exceeding the supported 72-character form/server limit."
+      ],
+      "expected": [
+        "Credentials are rejected rather than silently truncated."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "login",
+        "localServer"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0011",
+      "title": "Clear password during request",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Submit the local sign-in form."
+      ],
+      "expected": [
+        "The password field resets before the request completes."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "loginSubmit"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0012",
+      "title": "Prevent repeated busy submission",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Submit again while local login is in progress."
+      ],
+      "expected": [
+        "Busy controls prevent another form submission."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "login"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0013",
+      "title": "Reject inactive approved identity",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Use correct local credentials for a disabled company account."
+      ],
+      "expected": [
+        "Access is denied before an account session is installed."
+      ],
+      "surfaces": [
+        "web",
+        "rest"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "credentials",
+        "binding"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "localSignIn"
+      ]
+    },
+    {
+      "id": "UC-ACC-0014",
+      "title": "Reject unapproved company identity",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Authenticate an identity whose verified email has no active approved company account."
+      ],
+      "expected": [
+        "Company data remains inaccessible."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "binding"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0015",
+      "title": "Show offline login failure",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Submit local login while the API request cannot complete."
+      ],
+      "expected": [
+        "An unavailable-service message appears and another attempt remains possible."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "failure",
+      "implementation": "implemented",
+      "evidence": [
+        "credentials",
+        "loginSubmit"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "localSignIn"
+      ]
+    },
+    {
+      "id": "UC-ACC-0016",
+      "title": "Bound login attempts",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Send requests beyond the local rate limit."
+      ],
+      "expected": [
+        "The login service returns a bounded busy/rate-limit failure."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "localServer"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "localSignIn"
+      ]
+    },
+    {
+      "id": "UC-ACC-0017",
+      "title": "Bound simultaneous password work",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Exceed the local password-verification concurrency capacity."
+      ],
+      "expected": [
+        "Excess work fails busy instead of creating unbounded hashing work."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "performance",
+      "implementation": "implemented",
+      "evidence": [
+        "localServer"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [],
+      "httpOperations": [
+        "localSignIn"
+      ]
+    },
+    {
+      "id": "UC-ACC-0018",
+      "title": "End local session on reload",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "Reload the browser after signing in locally."
+      ],
+      "expected": [
+        "The memory-only token disappears and protected navigation requires sign-in."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "provider",
+        "login"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0019",
+      "title": "Sign out",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "Choose sign out from a signed-in session."
+      ],
+      "expected": [
+        "Token, identity and protected session state clear."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "session",
+        "provider"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0020",
+      "title": "Discard superseded successful login",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Begin one login and replace the session before its successful reply arrives."
+      ],
+      "expected": [
+        "The older result returns superseded and cannot install the old account."
+      ],
+      "surfaces": [
+        "frontend_service"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "credentials"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "This is an internal frontend AuthService epoch invariant. The current public sign-in form disables another submit while busy; it is not a browser journey. Real Go responses can be delayed without fabricating data in a typed Injector/LocalSignIn Playwright Node integration. Browser duplicate-submit protection is separately UC-ACC-0012."
+      ]
+    },
+    {
+      "id": "UC-ACC-0021",
+      "title": "Discard superseded failed login",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "Let an older failed login finish after a newer successful login."
+      ],
+      "expected": [
+        "The older reply cannot clear or replace the newer session."
+      ],
+      "surfaces": [
+        "frontend_service"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "credentials"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "This is an internal frontend AuthService epoch invariant. The current public sign-in form disables another submit while busy; it is not a browser journey. Real Go responses can be delayed without fabricating data in a typed Injector/LocalSignIn Playwright Node integration. Browser duplicate-submit protection is separately UC-ACC-0012."
+      ]
+    },
+    {
+      "id": "UC-ACC-0022",
+      "title": "Reject external return destination",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Supply an external URL as returnTo and complete local login."
+      ],
+      "expected": [
+        "Navigation falls back to the workspace."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "loginSubmit"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0023",
+      "title": "Reject protocol-relative return destination",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Supply a returnTo beginning with two slashes."
+      ],
+      "expected": [
+        "Navigation falls back to the workspace."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "loginSubmit"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0024",
+      "title": "Avoid sign-in redirect loop",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Supply the sign-in path as returnTo."
+      ],
+      "expected": [
+        "Successful local login opens the workspace instead of redirecting back to sign-in."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "loginSubmit"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0025",
+      "title": "Clear denied current session",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "A protected request returns an invalid or expired account-session response."
+      ],
+      "expected": [
+        "The current protected session clears."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "session"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0026",
+      "title": "Refresh ordinary permission denial",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "A valid session attempts an operation returning forbidden."
+      ],
+      "expected": [
+        "The account is refreshed so an operation denial does not automatically invalidate all login state."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "session"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0027",
+      "title": "Ignore old-session authorization failure",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "A delayed failed response arrives after the session epoch changed."
+      ],
+      "expected": [
+        "The response cannot clear the current newer session."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "session"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0028",
+      "title": "Enforce account disable on next request",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "Disable a currently signed-in account, then request protected data."
+      ],
+      "expected": [
+        "The next request denies access and the UI clears protected account state."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "session",
+        "update"
+      ],
+      "operations": [
+        "get_me"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0029",
+      "title": "Refresh changed administrator status",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "Refresh identity after administrator privilege changes."
+      ],
+      "expected": [
+        "The session epoch changes and dependent protected views can discard stale privilege state."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "session"
+      ],
+      "operations": [
+        "get_me"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-ACC-0059."
+      ]
+    },
+    {
+      "id": "UC-ACC-0030",
+      "title": "Deny company administration route",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "Open company users or company activity as a nonadministrator."
+      ],
+      "expected": [
+        "The route guard redirects away from the administration page."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "guards"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0031",
+      "title": "Read own company identity",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "Read the current account through REST or get_me."
+      ],
+      "expected": [
+        "Only the caller identity, email, name, administrator flag and company timezone are returned."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "service"
+      ],
+      "operations": [
+        "get_me"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0032",
+      "title": "Offer managed Google sign-in",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Open sign-in in configured production identity mode and select Continue with Google."
+      ],
+      "expected": [
+        "The managed Google connection redirect begins; actual provider access remains pending tenant provisioning."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "external_pending",
+      "evidence": [
+        "oidc",
+        "tenant"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [
+        "GAP-ACC-001"
+      ],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0033",
+      "title": "Refresh managed browser token",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "Use protected data after a configured managed login needs silent renewal."
+      ],
+      "expected": [
+        "The managed SDK requests a token for the REST audience and required scope; real provider verification is pending."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "external_pending",
+      "evidence": [
+        "oidc",
+        "tenant"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [
+        "GAP-ACC-001"
+      ],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0034",
+      "title": "Log out managed identity",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "Sign out after managed Google login."
+      ],
+      "expected": [
+        "The provider logout flow returns to the application origin; real tenant behavior remains externally unverified."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "external_pending",
+      "evidence": [
+        "oidc",
+        "tenant"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [
+        "GAP-ACC-001"
+      ],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0035",
+      "title": "Reject unsafe local deployment",
+      "actor": "operator",
+      "preconditions": [
+        "The operator is inspecting documented deployment settings without exposing credentials."
+      ],
+      "steps": [
+        "Configure password fixtures outside explicit loopback local development."
+      ],
+      "expected": [
+        "Startup refuses to expose the local password adapter."
+      ],
+      "surfaces": [
+        "operator"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "localBoundary"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go",
+        "frontend/e2e/coverage-access-mcp-surfaces.spec.ts"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0036",
+      "title": "Read approved company accounts",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Open Company users as a company administrator."
+      ],
+      "expected": [
+        "Approved accounts show identity, active/admin flags and current revision."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "usersUi",
+        "approve"
+      ],
+      "operations": [
+        "list_users"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0037",
+      "title": "Page company directory",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Request another approved-user page."
+      ],
+      "expected": [
+        "A bounded next page is returned in directory order."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "usersUi"
+      ],
+      "operations": [
+        "list_users"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0038",
+      "title": "Deny global user directory to project reader",
+      "actor": "reader",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "Request list_users without company administrator access."
+      ],
+      "expected": [
+        "Global account details remain unavailable."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "approve"
+      ],
+      "operations": [
+        "list_users"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0039",
+      "title": "Approve company user",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Submit an approved email and display name without the administrator flag."
+      ],
+      "expected": [
+        "A company account is created without granting project membership or provisioning a password."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "approve",
+        "onboarding"
+      ],
+      "operations": [
+        "approve_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0040",
+      "title": "Approve company administrator",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Approve a company account with the administrator flag selected."
+      ],
+      "expected": [
+        "The new approved account has company administrator privileges."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "approve"
+      ],
+      "operations": [
+        "approve_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0041",
+      "title": "Preserve Arabic display name",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Approve or rename an account using Arabic or mixed-language text."
+      ],
+      "expected": [
+        "The name is retained and rendered with automatic direction."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "usersUi",
+        "approve"
+      ],
+      "operations": [
+        "approve_user",
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-ACC-0060."
+      ]
+    },
+    {
+      "id": "UC-ACC-0042",
+      "title": "Reject invalid approval email",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Approve an account with a malformed email."
+      ],
+      "expected": [
+        "Validation rejects the approval."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "approve"
+      ],
+      "operations": [
+        "approve_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0043",
+      "title": "Reject duplicate approved email",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Approve an email already used by a company account."
+      ],
+      "expected": [
+        "The command rejects a duplicate account rather than creating another identity."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "approve"
+      ],
+      "operations": [
+        "approve_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0044",
+      "title": "Bound display name",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Approve or edit an account with an empty or over-100-character display name."
+      ],
+      "expected": [
+        "The account change is rejected with field validation."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "validation",
+      "implementation": "implemented",
+      "evidence": [
+        "approve",
+        "update"
+      ],
+      "operations": [
+        "approve_user",
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0045",
+      "title": "Edit approved email",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Save a new valid company email at the current account revision."
+      ],
+      "expected": [
+        "The new email is stored without silently creating another user."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "update"
+      ],
+      "operations": [
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0046",
+      "title": "Edit account display name",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Save a changed account display name at its current revision."
+      ],
+      "expected": [
+        "The updated name appears in the refreshed company directory."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "update",
+        "usersUi"
+      ],
+      "operations": [
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-ACC-0063."
+      ]
+    },
+    {
+      "id": "UC-ACC-0047",
+      "title": "Disable account",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Turn off Active account and save."
+      ],
+      "expected": [
+        "Current access ends and assignments that are no longer eligible are cleared."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "update"
+      ],
+      "operations": [
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0048",
+      "title": "Reactivate account",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Restore Active account and save."
+      ],
+      "expected": [
+        "The approved account becomes eligible for access; cleared assignments do not reappear automatically."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "update",
+        "usersUi"
+      ],
+      "operations": [
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0049",
+      "title": "Grant company administrator",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Enable Company administrator on an existing account."
+      ],
+      "expected": [
+        "Company-wide privileges apply after current identity refresh."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "update"
+      ],
+      "operations": [
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0050",
+      "title": "Remove company administrator",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Remove administrator privilege while another active administrator remains."
+      ],
+      "expected": [
+        "The account keeps only its current project roles."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "update"
+      ],
+      "operations": [
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0051",
+      "title": "Protect final active administrator from disable",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Attempt to disable the last active administrator."
+      ],
+      "expected": [
+        "The save is rejected with guidance to retain an active administrator."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "update"
+      ],
+      "operations": [
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0052",
+      "title": "Protect final active administrator from demotion",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Attempt to remove the last active administrator flag."
+      ],
+      "expected": [
+        "The save is rejected."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "update"
+      ],
+      "operations": [
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0053",
+      "title": "Review account conflict",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Submit a stale account revision and select Review current account."
+      ],
+      "expected": [
+        "The conflict exposes current account values and explicit review repopulates the edit form."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "update",
+        "usersUi"
+      ],
+      "operations": [
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Surface correction: browser interaction assertions remain on this stable ID. The distinct service contract is tracked by UC-ACC-0061."
+      ]
+    },
+    {
+      "id": "UC-ACC-0054",
+      "title": "Cancel account edit",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Open an account editor and select Cancel."
+      ],
+      "expected": [
+        "The form resets without changing the account."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "lifecycle",
+      "implementation": "implemented",
+      "evidence": [
+        "usersUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0055",
+      "title": "Retry uncertain account change",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Repeat an accepted account change using its original retry reference and body."
+      ],
+      "expected": [
+        "The same business result is returned without duplicate account or audit change."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "approve",
+        "update",
+        "usersUi"
+      ],
+      "operations": [
+        "approve_user",
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0056",
+      "title": "Clear company directory on account switch",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Switch accounts while directory or save requests are pending."
+      ],
+      "expected": [
+        "Old rows, drafts and delayed responses cannot populate the new session."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "usersUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0057",
+      "title": "Explain local approval boundary",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Open Approve a user in local development."
+      ],
+      "expected": [
+        "The page states approval grants company access and does not create a local username or password."
+      ],
+      "surfaces": [
+        "web"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "onboarding",
+        "usersUi"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": []
+    },
+    {
+      "id": "UC-ACC-0058",
+      "title": "Explain invitation boundary",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Approve an employee account in managed mode."
+      ],
+      "expected": [
+        "The documented onboarding shares the workspace URL separately; approval does not send invitation email."
+      ],
+      "surfaces": [
+        "web",
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "external_pending",
+      "evidence": [
+        "onboarding"
+      ],
+      "operations": [
+        "approve_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Source-backed verification boundary: the exact managed-mode employee approval/onboarding expectation is retained. Local username/password approval is not managed Google onboarding; the Auth0 tenant and real managed identity are not provisioned. See identity/auth0/README.md (managed identity deployment candidate) and frontend/src/app/features/administration/pages/users/users.page.ts (managed invitation notice)."
+      ]
+    },
+    {
+      "id": "UC-ACC-0062",
+      "title": "Exchange valid local credentials",
+      "actor": "anonymous",
+      "preconditions": [
+        "No application session is installed; local cases use explicit loopback development unless the scenario describes the managed provider."
+      ],
+      "steps": [
+        "Submit a valid local username and password to the local sign-in endpoint."
+      ],
+      "expected": [
+        "The server returns a bearer token for the active approved caller without a password or other account identity."
+      ],
+      "surfaces": [
+        "rest"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "loginSubmit",
+        "credentials",
+        "localServer"
+      ],
+      "operations": [],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service counterpart split from UC-ACC-0002; it does not claim browser rendering, form state, session epochs or download assembly."
+      ],
+      "httpOperations": [
+        "localSignIn"
+      ]
+    },
+    {
+      "id": "UC-ACC-0059",
+      "title": "Read current changed administrator privilege",
+      "actor": "user",
+      "preconditions": [
+        "The actor has the account/session state described in the scenario; protected data requires current approval and access."
+      ],
+      "steps": [
+        "Read get_me after the caller company administrator privilege changes."
+      ],
+      "expected": [
+        "The returned administrator flag reflects current persisted authorization rather than token-time privilege."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "permission",
+      "implementation": "implemented",
+      "evidence": [
+        "session"
+      ],
+      "operations": [
+        "get_me"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service counterpart split from UC-ACC-0029; it does not claim browser rendering, form state, session epochs or download assembly."
+      ]
+    },
+    {
+      "id": "UC-ACC-0060",
+      "title": "Preserve Arabic account text through service contracts",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Approve or rename an account using Arabic or mixed-language text."
+      ],
+      "expected": [
+        "The typed account result and subsequent directory read preserve the exact display name."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "localization",
+      "implementation": "implemented",
+      "evidence": [
+        "usersUi",
+        "approve"
+      ],
+      "operations": [
+        "approve_user",
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service counterpart split from UC-ACC-0041; it does not claim browser rendering, form state, session epochs or download assembly."
+      ]
+    },
+    {
+      "id": "UC-ACC-0063",
+      "title": "Persist account display-name changes",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Save a changed display name using the current account revision."
+      ],
+      "expected": [
+        "The typed saved account returns the exact updated display name and a new revision."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "happy_path",
+      "implementation": "implemented",
+      "evidence": [
+        "update",
+        "usersUi"
+      ],
+      "operations": [
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service counterpart split from UC-ACC-0046; it does not claim browser rendering, form state, session epochs or download assembly."
+      ]
+    },
+    {
+      "id": "UC-ACC-0061",
+      "title": "Return current account in a stale-write conflict",
+      "actor": "company_admin",
+      "preconditions": [
+        "The actor is a current approved company administrator; the target account exists unless the case approves a new account."
+      ],
+      "steps": [
+        "Submit an outdated account revision."
+      ],
+      "expected": [
+        "A typed conflict returns the current approved account and the stale change does not overwrite it."
+      ],
+      "surfaces": [
+        "rest",
+        "mcp"
+      ],
+      "kind": "concurrency",
+      "implementation": "implemented",
+      "evidence": [
+        "update",
+        "usersUi"
+      ],
+      "operations": [
+        "update_user"
+      ],
+      "existingTests": [
+        "frontend/e2e/access.spec.ts",
+        "frontend/src/app/core/auth/auth.service.spec.ts",
+        "backend/internal/features/identity/service_test.go"
+      ],
+      "gapIds": [],
+      "notes": [
+        "Atomic service counterpart split from UC-ACC-0053; it does not claim browser rendering, form state, session epochs or download assembly."
+      ]
+    }
+  ]
+}

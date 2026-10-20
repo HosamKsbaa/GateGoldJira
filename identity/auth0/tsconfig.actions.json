@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "target": "ES2022",
+    "verbatimModuleSyntax": false,
+    "outDir": "dist/actions",
+    "ignoreDeprecations": "6.0"
+  },
+  "include": [
+    "src/verified-email-action.ts"
+  ]
+}

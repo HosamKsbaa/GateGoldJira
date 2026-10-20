@@ -1,0 +1,27 @@
+{
+  "issuer": "https://YOUR_TENANT.auth0.com/",
+  "restAudience": "https://api.example.com/api",
+  "mcpAudience": "https://api.example.com/mcp",
+  "requiredScope": "gategoldjira:access",
+  "googleConnection": "google-oauth2",
+  "webClientId": "YOUR_PUBLIC_WEB_CLIENT_ID",
+  "webOrigin": "https://app.example.com",
+  "mcpClientRegistration": "manual-public-client",
+  "mcpRedirectUris": [
+    "http://127.0.0.1:39177/oauth/callback"
+  ],
+  "dynamicClientRegistration": false,
+  "resourceParameterCompatibilityProfile": "compatibility",
+  "mcpClientId": "YOUR_PUBLIC_MCP_CLIENT_ID",
+  "webCallbackUris": [
+    "https://app.example.com/sign-in"
+  ],
+  "webLogoutUris": [
+    "https://app.example.com/"
+  ],
+  "mcpTokenEndpointAuthMethod": "none",
+  "grantTypes": [
+    "authorization_code"
+  ],
+  "signingAlgorithm": "RS256"
+}

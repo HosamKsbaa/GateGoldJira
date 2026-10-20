@@ -1,0 +1,21 @@
+{
+  "name": "gategoldjira-identity",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": "24.21.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc && tsc -p tsconfig.actions.json && cp dist/actions/verified-email-action.js dist/actions/verified-email-action.cjs",
+    "test": "npm run build && node --test dist/verified-email-action.test.js && node -e \"require('./dist/actions/verified-email-action.cjs')\""
+  },
+  "dependencies": {
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "@types/node": "24.10.0"
+  }
+}
